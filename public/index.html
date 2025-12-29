@@ -1861,107 +1861,291 @@
             } catch (error) {
                 console.error('Mark all notifications error:', error);
             }
+        }// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    // Cache DOM elements for better performance
+    const domElements = {
+        createProjectForm: document.getElementById('createProjectForm'),
+        tagInput: document.getElementById('tagInput'),
+        projectSearch: document.getElementById('projectSearch'),
+        statusFilter: document.getElementById('statusFilter'),
+        sortFilter: document.getElementById('sortFilter'),
+        globalSearch: document.getElementById('globalSearch'),
+        prevPageBtn: document.getElementById('prevPage'),
+        nextPageBtn: document.getElementById('nextPage'),
+        notificationBtn: document.getElementById('notificationBtn')
+    };
+    
+    // Store timeout IDs for cleanup
+    const timeouts = {
+        search: null
+    };
+    
+    // ==================== EVENT DELEGATION ====================
+    // Use event delegation for dynamic elements
+    document.addEventListener('click', function(event) {
+        // Handle .btn-primary clicks (including dynamic content)
+        const primaryBtn = event.target.closest('.btn-primary');
+        if (primaryBtn) {
+            const projectId = primaryBtn.dataset.projectId;
+            if (projectId) {
+                event.preventDefault();
+                openProject(projectId);
+                return;
+            }
         }
-
-        // ==================== EVENT LISTENERS ====================
-        function setupEventListeners() {
-            // Create project form
-            document.getElementById('createProjectForm').addEventListener('submit', createProject);
-            
-            // Tag input
-            document.getElementById('tagInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addTag();
+        
+        // Handle modal closing when clicking outside
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    });
+    
+    // ==================== FORM HANDLERS ====================
+    if (domElements.createProjectForm) {
+        domElements.createProjectForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            createProject();
+        });
+    }
+    
+    // ==================== INPUT HANDLERS ====================
+    if (domElements.tagInput) {
+        domElements.tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+        
+        // Optional: Also allow comma as tag separator
+        domElements.tagInput.addEventListener('keydown', function(e) {
+            if (e.key === ',') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+    }
+    
+    // ==================== SEARCH & FILTER HANDLERS ====================
+    if (domElements.projectSearch) {
+        const handleSearch = debounce(function(e) {
+            loadProjects(
+                1, 
+                e.target.value, 
+                domElements.statusFilter ? domElements.statusFilter.value : 'all'
+            );
+        }, 500);
+        
+        domElements.projectSearch.addEventListener('input', handleSearch);
+        domElements.projectSearch.addEventListener('search', handleSearch); // For clear "x" button
+    }
+    
+    if (domElements.statusFilter) {
+        domElements.statusFilter.addEventListener('change', function() {
+            loadProjects(
+                1,
+                domElements.projectSearch ? domElements.projectSearch.value : '',
+                this.value,
+                domElements.sortFilter ? domElements.sortFilter.value : 'newest'
+            );
+        });
+    }
+    
+    if (domElements.sortFilter) {
+        domElements.sortFilter.addEventListener('change', function() {
+            loadProjects(
+                1,
+                domElements.projectSearch ? domElements.projectSearch.value : '',
+                domElements.statusFilter ? domElements.statusFilter.value : 'all',
+                this.value
+            );
+        });
+    }
+    
+    // ==================== GLOBAL SEARCH ====================
+    if (domElements.globalSearch) {
+        domElements.globalSearch.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const searchValue = this.value.trim();
+                
+                if (searchValue && domElements.projectSearch) {
+                    domElements.projectSearch.value = searchValue;
+                    loadProjects(1, searchValue);
                 }
-            });
+                
+                this.value = '';
+                this.blur(); // Remove focus after search
+            }
             
-            // Search input
-            let searchTimeout;
-            document.getElementById('projectSearch').addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    loadProjects(1, e.target.value, document.getElementById('statusFilter').value);
-                }, 500);
-            });
-            
-            // Status filter
-            document.getElementById('statusFilter').addEventListener('change', (e) => {
-                loadProjects(1, document.getElementById('projectSearch').value, e.target.value);
-            });
-            
-            // Sort filter
-            document.getElementById('sortFilter').addEventListener('change', (e) => {
-                loadProjects(1, document.getElementById('projectSearch').value, 
-                            document.getElementById('statusFilter').value, e.target.value);
-            });
-            
-            // Global search
-            document.getElementById('globalSearch').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    document.getElementById('projectSearch').value = e.target.value;
-                    loadProjects(1, e.target.value);
-                    e.target.value = '';
-                }
-            });
-            
-            // Pagination
-            document.getElementById('prevPage').addEventListener('click', () => {
-                if (currentPage > 1) {
-                    loadProjects(currentPage - 1, 
-                                document.getElementById('projectSearch').value,
-                                document.getElementById('statusFilter').value);
-                }
-            });
-            
-            document.getElementById('nextPage').addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    loadProjects(currentPage + 1, 
-                                document.getElementById('projectSearch').value,
-                                document.getElementById('statusFilter').value);
-                }
-            });
-            
-            // Notification button
-            document.getElementById('notificationBtn').addEventListener('click', async () => {
+            // Escape to clear
+            if (e.key === 'Escape') {
+                this.value = '';
+                this.blur();
+            }
+        });
+        
+        // Ctrl/Cmd + K focus (handled in global keyboard shortcuts)
+    }
+    
+    // ==================== PAGINATION ====================
+    if (domElements.prevPageBtn) {
+        domElements.prevPageBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                loadProjects(
+                    currentPage - 1,
+                    domElements.projectSearch ? domElements.projectSearch.value : '',
+                    domElements.statusFilter ? domElements.statusFilter.value : 'all'
+                );
+            }
+        });
+    }
+    
+    if (domElements.nextPageBtn) {
+        domElements.nextPageBtn.addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                loadProjects(
+                    currentPage + 1,
+                    domElements.projectSearch ? domElements.projectSearch.value : '',
+                    domElements.statusFilter ? domElements.statusFilter.value : 'all'
+                );
+            }
+        });
+    }
+    
+    // ==================== NOTIFICATIONS ====================
+    if (domElements.notificationBtn) {
+        domElements.notificationBtn.addEventListener('click', async function() {
+            try {
                 await loadNotifications();
-                document.getElementById('notificationsModal').style.display = 'flex';
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                // Ctrl/Cmd + N for new project
-                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                    e.preventDefault();
-                    openNewProjectModal();
+                const modal = document.getElementById('notificationsModal');
+                if (modal) {
+                    modal.style.display = 'flex';
                 }
-                
-                // Ctrl/Cmd + K for search
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    document.getElementById('globalSearch').focus();
-                }
-                
-                // Escape to close modals
-                if (e.key === 'Escape') {
-                    const modals = document.querySelectorAll('.modal[style*="display: flex"]');
-                    if (modals.length > 0) {
-                        closeModal(modals[0].id);
-                    }
-                }
-            });
-            
-            // Click outside modal to close
-            window.addEventListener('click', (e) => {
-                const modals = document.querySelectorAll('.modal');
-                modals.forEach(modal => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
+            } catch (error) {
+                console.error('Failed to load notifications:', error);
+                showNotification('Failed to load notifications', 'error');
+            }
+        });
+    }
+    
+    // ==================== KEYBOARD SHORTCUTS ====================
+    document.addEventListener('keydown', function(e) {
+        // Don't trigger shortcuts when user is typing in inputs
+        const activeElement = document.activeElement;
+        const isInputFocused = activeElement.tagName === 'INPUT' || 
+                              activeElement.tagName === 'TEXTAREA' ||
+                              activeElement.isContentEditable;
+        
+        if (isInputFocused && !e.ctrlKey && !e.metaKey) {
+            return; // Allow normal typing
         }
+        
+        // Ctrl/Cmd + N for new project
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n' && !e.shiftKey) {
+            e.preventDefault();
+            openNewProjectModal();
+        }
+        
+        // Ctrl/Cmd + Shift + N for new project in new tab (optional)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'N' && e.shiftKey) {
+            e.preventDefault();
+            // Handle new project in new tab if needed
+        }
+        
+        // Ctrl/Cmd + K for search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            if (domElements.globalSearch) {
+                domElements.globalSearch.focus();
+                domElements.globalSearch.select();
+            }
+        }
+        
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal[style*="flex"], .modal[style*="block"]');
+            if (openModal) {
+                openModal.style.display = 'none';
+                
+                // Also clear any global search focus
+                if (domElements.globalSearch && document.activeElement === domElements.globalSearch) {
+                    domElements.globalSearch.blur();
+                }
+            }
+        }
+        
+        // Forward slash (/) to focus search
+        if (e.key === '/' && !isInputFocused) {
+            e.preventDefault();
+            if (domElements.projectSearch) {
+                domElements.projectSearch.focus();
+                domElements.projectSearch.select();
+            }
+        }
+    });
+    
+    // ==================== WINDOW RESIZE HANDLING ====================
+    // Optional: Handle responsive behavior
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            // Refresh projects on resize if needed for responsive layout
+            if (window.innerWidth < 768) {
+                // Mobile-specific adjustments
+            }
+        }, 250);
+    });
+    
+    // ==================== CLEANUP FUNCTION ====================
+    // Return cleanup function to remove event listeners if needed
+    return function cleanupEventListeners() {
+        // Clear any pending timeouts
+        if (timeouts.search) {
+            clearTimeout(timeouts.search);
+        }
+        
+        // Remove event listeners if needed
+        // (Note: Most are on document/window, so they'll persist unless removed)
+        window.removeEventListener('resize', handleResize);
+    };
+}
+
+// ==================== UTILITY FUNCTIONS ====================
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function showNotification(message, type = 'info') {
+    // Implementation for showing notifications
+    console.log(`${type.toUpperCase()}: ${message}`);
+    // You could implement a toast notification system here
+}
+
+// ==================== INITIALIZATION ====================
+// Call setupEventListeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    const cleanup = setupEventListeners();
+    
+    // Optional: Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        if (cleanup && typeof cleanup === 'function') {
+            cleanup();
+        }
+    });
+});
+
+      
 
         // ==================== UTILITY FUNCTIONS ====================
         function showLoading(show) {
