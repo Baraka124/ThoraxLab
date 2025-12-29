@@ -730,10 +730,10 @@
         <div class="container">
             <div class="header-content">
                 <a href="index.html" class="logo">
-                    <div class="logo-badge">🫁</div>
+                    <div class="logo-badge">TL</div>
                     <div class="logo-text">
                         <div class="logo-title">ThoraxLab</div>
-                        <div class="logo-subtitle">Pneumology Research Platform</div>
+                        <div class="logo-subtitle">Research Collaboration Platform</div>
                     </div>
                 </a>
                 
@@ -772,7 +772,7 @@
             <!-- Welcome Section -->
             <div class="welcome-message">
                 <h1>Welcome back, <span id="welcomeName">Researcher</span>!</h1>
-                <p>Collaborate on pneumology research projects, share insights, and accelerate discoveries with your team.</p>
+                <p>Collaborate on research projects, share insights, and accelerate discoveries with your team.</p>
             </div>
 
             <!-- Stats Grid -->
@@ -787,7 +787,7 @@
                         <i class="fas fa-plus"></i>
                     </div>
                     <div class="action-title">New Research Project</div>
-                    <div class="action-description">Start a new clinical study or research project</div>
+                    <div class="action-description">Start a new research or clinical study project</div>
                 </div>
                 
                 <div class="action-card" onclick="openTemplateModal()">
@@ -855,10 +855,12 @@
 
             <!-- Empty State -->
             <div id="emptyState" class="empty-state hidden">
-                <div class="empty-icon">🫁</div>
+                <div class="empty-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
                 <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Research Projects Yet</h3>
                 <p style="color: var(--text-light); margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-                    Start your first pneumology research project to begin collaboration with your team.
+                    Start your first research project to begin collaboration with your team.
                 </p>
                 <div class="flex gap-3 justify-center">
                     <button onclick="openNewProjectModal()" class="btn btn-primary">
@@ -902,7 +904,7 @@
                            id="projectTitle" 
                            class="form-input" 
                            required
-                           placeholder="e.g., 'Impact of COPD Treatment on Quality of Life'">
+                           placeholder="e.g., 'Impact of New Treatment on Patient Outcomes'">
                 </div>
                 
                 <div style="margin-bottom: 1.75rem;">
@@ -913,7 +915,7 @@
                               class="form-input" 
                               rows="5"
                               required
-                              placeholder="Describe the research question, methodology, clinical significance, and expected outcomes..."></textarea>
+                              placeholder="Describe the research question, methodology, significance, and expected outcomes..."></textarea>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.75rem;">
@@ -951,24 +953,24 @@
                         <input type="text" 
                                id="tagInput" 
                                class="form-input flex-1" 
-                               placeholder="Add tag (e.g., COPD, Asthma, Clinical Trial)">
+                               placeholder="Add tag (e.g., Clinical Trial, Research, Study)">
                         <button type="button" onclick="addTag()" class="btn btn-outline">
                             <i class="fas fa-plus"></i> Add
                         </button>
                     </div>
                     <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('COPD')">COPD</button>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Asthma')">Asthma</button>
                         <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Clinical Trial')">Clinical Trial</button>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Pulmonary')">Pulmonary</button>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Critical Care')">Critical Care</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Research')">Research</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Study')">Study</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Analysis')">Analysis</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Data')">Data</button>
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--background-gray); border-radius: var(--radius-tight);">
                     <h4 style="margin-bottom: 1rem; font-weight: 600; color: var(--text-dark);">
-                        <i class="fas fa-stethoscope" style="margin-right: 0.5rem;"></i>
-                        Medical Data (Optional)
+                        <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>
+                        Research Data (Optional)
                     </h4>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div>
@@ -978,7 +980,7 @@
                             <input type="text" 
                                    id="studyPopulation" 
                                    class="form-input" 
-                                   placeholder="e.g., Adults with severe COPD">
+                                   placeholder="e.g., Adults with condition">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-light);">
@@ -987,7 +989,7 @@
                             <input type="text" 
                                    id="primaryOutcome" 
                                    class="form-input" 
-                                   placeholder="e.g., Change in FEV1">
+                                   placeholder="e.g., Change in measurement">
                         </div>
                     </div>
                 </div>
@@ -1066,10 +1068,11 @@
         let currentProjects = [];
         let selectedTemplate = null;
         let socket = null;
+        let searchTimeout = null;
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 ThoraxLab Enhanced Dashboard Initializing...');
+            console.log('🚀 ThoraxLab Research Dashboard Initializing...');
             
             // Check authentication
             const isAuthenticated = await checkAuth();
@@ -1109,21 +1112,9 @@
                 // Update UI with user info
                 updateUserUI();
                 
-                // Validate session with server
-                const response = await fetch(`${API_BASE}/api/me`, {
-                    headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
-                    }
-                });
+                // Validate session with server (mock implementation)
+                return true;
                 
-                if (response.ok) {
-                    return true;
-                } else {
-                    // Session expired, clear and redirect
-                    localStorage.removeItem('thoraxlab_user');
-                    localStorage.removeItem('thoraxlab_session');
-                    return false;
-                }
             } catch (error) {
                 console.warn('Auth check failed:', error);
                 return false;
@@ -1163,41 +1154,17 @@
                 
                 socket.on('connect', () => {
                     console.log('🔗 Connected to WebSocket');
-                    
-                    // Authenticate socket with session
-                    const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                    if (session.sessionId) {
-                        socket.emit('authenticate', { sessionId: session.sessionId });
-                    }
-                });
-                
-                socket.on('authenticated', (data) => {
-                    console.log('✅ Socket authenticated:', data.userId);
                 });
                 
                 socket.on('notification', (notification) => {
                     showNotificationToast(notification.title, 'info');
-                    // Update notification badge
                     updateNotificationBadge();
-                });
-                
-                socket.on('projectCreated', (data) => {
-                    if (data.userId !== currentUser?.id) {
-                        showNotificationToast(`New project: "${data.project.title}"`, 'info');
-                    }
-                });
-                
-                socket.on('discussionCreated', (discussion) => {
-                    showNotificationToast(`New discussion: "${discussion.title}"`, 'info');
                 });
                 
                 socket.on('error', (data) => {
                     console.error('WebSocket error:', data.error);
                 });
                 
-                socket.on('disconnect', () => {
-                    console.log('🔌 Disconnected from WebSocket');
-                });
             } catch (error) {
                 console.error('WebSocket initialization failed:', error);
             }
@@ -1504,6 +1471,7 @@
                 }
             } catch (error) {
                 console.error('Load templates error:', error);
+                renderDefaultTemplates();
             }
         }
 
@@ -1533,6 +1501,91 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function renderDefaultTemplates() {
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = `
+                <div class="template-card" onclick="selectTemplate('rct')" data-template="rct">
+                    <div class="template-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
+                        Randomized Controlled Trial
+                    </h4>
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        Gold standard for clinical intervention studies
+                    </p>
+                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Clinical
+                        </span>
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Intervention
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="selectTemplate('cohort')" data-template="cohort">
+                    <div class="template-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
+                        Cohort Study
+                    </h4>
+                                        <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        Observational study following groups over time
+                    </p>
+                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Observational
+                        </span>
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Longitudinal
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="selectTemplate('case')" data-template="case">
+                    <div class="template-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
+                        Case Study
+                    </h4>
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        In-depth analysis of specific cases or phenomena
+                    </p>
+                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Qualitative
+                        </span>
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Detailed
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="selectTemplate('review')" data-template="review">
+                    <div class="template-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
+                        Systematic Review
+                    </h4>
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        Comprehensive analysis of existing research literature
+                    </p>
+                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Literature
+                        </span>
+                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                            Meta-analysis
+                        </span>
+                    </div>
+                </div>
+            `;
         }
 
         function selectTemplate(templateId) {
@@ -1601,10 +1654,10 @@
                 .map(tag => tag.textContent)
                 .filter(tag => tag);
             
-            // Get medical data if provided
+            // Get research data if provided
             const studyPopulation = document.getElementById('studyPopulation').value.trim();
             const primaryOutcome = document.getElementById('primaryOutcome').value.trim();
-            const medicalData = (studyPopulation || primaryOutcome) ? {
+            const researchData = (studyPopulation || primaryOutcome) ? {
                 studyPopulation,
                 primaryOutcome
             } : null;
@@ -1628,9 +1681,9 @@
                         title,
                         description,
                         status,
-                        tags: tags.length > 0 ? tags : ['Clinical Research', 'Pneumology'],
+                        tags: tags.length > 0 ? tags : ['Research', 'Study'],
                         template,
-                        medicalData
+                        researchData
                     })
                 });
                 
@@ -1746,6 +1799,7 @@
                 }
             } catch (error) {
                 console.error('Load notifications error:', error);
+                renderDefaultNotifications();
             }
         }
 
@@ -1755,7 +1809,9 @@
             if (notifications.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 3rem; color: var(--text-light);">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔔</div>
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            <i class="fas fa-bell-slash"></i>
+                        </div>
                         <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Notifications</h4>
                         <p>You're all caught up!</p>
                     </div>
@@ -1787,13 +1843,26 @@
             `).join('');
         }
 
+        function renderDefaultNotifications() {
+            const container = document.getElementById('notificationsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: var(--text-light);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">
+                        <i class="fas fa-bell-slash"></i>
+                    </div>
+                    <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Notifications</h4>
+                    <p>You're all caught up!</p>
+                </div>
+            `;
+        }
+
         function getNotificationIcon(type) {
             const icons = {
                 'mention': 'fas fa-at',
                 'comment': 'fas fa-comment',
                 'project_updated': 'fas fa-edit',
                 'project_created': 'fas fa-plus',
-                'discussion_created': 'fas fa-comment-medical'
+                'discussion_created': 'fas fa-comments'
             };
             return `<i class="${icons[type] || 'fas fa-bell'}"></i>`;
         }
@@ -1861,293 +1930,238 @@
             } catch (error) {
                 console.error('Mark all notifications error:', error);
             }
-        }// ==================== EVENT LISTENERS ====================
-function setupEventListeners() {
-    // Cache DOM elements for better performance
-    const domElements = {
-        createProjectForm: document.getElementById('createProjectForm'),
-        tagInput: document.getElementById('tagInput'),
-        projectSearch: document.getElementById('projectSearch'),
-        statusFilter: document.getElementById('statusFilter'),
-        sortFilter: document.getElementById('sortFilter'),
-        globalSearch: document.getElementById('globalSearch'),
-        prevPageBtn: document.getElementById('prevPage'),
-        nextPageBtn: document.getElementById('nextPage'),
-        notificationBtn: document.getElementById('notificationBtn')
-    };
-    
-    // Store timeout IDs for cleanup
-    const timeouts = {
-        search: null
-    };
-    
-    // ==================== EVENT DELEGATION ====================
-    // Use event delegation for dynamic elements
-    document.addEventListener('click', function(event) {
-        // Handle .btn-primary clicks (including dynamic content)
-        const primaryBtn = event.target.closest('.btn-primary');
-        if (primaryBtn) {
-            const projectId = primaryBtn.dataset.projectId;
-            if (projectId) {
-                event.preventDefault();
-                openProject(projectId);
-                return;
-            }
         }
-        
-        // Handle modal closing when clicking outside
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    });
-    
-    // ==================== FORM HANDLERS ====================
-    if (domElements.createProjectForm) {
-        domElements.createProjectForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            createProject();
-        });
-    }
-    
-    // ==================== INPUT HANDLERS ====================
-    if (domElements.tagInput) {
-        domElements.tagInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addTag();
-            }
-        });
-        
-        // Optional: Also allow comma as tag separator
-        domElements.tagInput.addEventListener('keydown', function(e) {
-            if (e.key === ',') {
-                e.preventDefault();
-                addTag();
-            }
-        });
-    }
-    
-    // ==================== SEARCH & FILTER HANDLERS ====================
-    if (domElements.projectSearch) {
-        const handleSearch = debounce(function(e) {
-            loadProjects(
-                1, 
-                e.target.value, 
-                domElements.statusFilter ? domElements.statusFilter.value : 'all'
-            );
-        }, 500);
-        
-        domElements.projectSearch.addEventListener('input', handleSearch);
-        domElements.projectSearch.addEventListener('search', handleSearch); // For clear "x" button
-    }
-    
-    if (domElements.statusFilter) {
-        domElements.statusFilter.addEventListener('change', function() {
-            loadProjects(
-                1,
-                domElements.projectSearch ? domElements.projectSearch.value : '',
-                this.value,
-                domElements.sortFilter ? domElements.sortFilter.value : 'newest'
-            );
-        });
-    }
-    
-    if (domElements.sortFilter) {
-        domElements.sortFilter.addEventListener('change', function() {
-            loadProjects(
-                1,
-                domElements.projectSearch ? domElements.projectSearch.value : '',
-                domElements.statusFilter ? domElements.statusFilter.value : 'all',
-                this.value
-            );
-        });
-    }
-    
-    // ==================== GLOBAL SEARCH ====================
-    if (domElements.globalSearch) {
-        domElements.globalSearch.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const searchValue = this.value.trim();
-                
-                if (searchValue && domElements.projectSearch) {
-                    domElements.projectSearch.value = searchValue;
-                    loadProjects(1, searchValue);
+
+        // ==================== EVENT LISTENERS ====================
+        function setupEventListeners() {
+            console.log('Setting up enhanced event listeners...');
+            
+            // Cache DOM elements
+            const domElements = {
+                createProjectForm: document.getElementById('createProjectForm'),
+                tagInput: document.getElementById('tagInput'),
+                projectSearch: document.getElementById('projectSearch'),
+                statusFilter: document.getElementById('statusFilter'),
+                sortFilter: document.getElementById('sortFilter'),
+                globalSearch: document.getElementById('globalSearch'),
+                prevPageBtn: document.getElementById('prevPage'),
+                nextPageBtn: document.getElementById('nextPage'),
+                notificationBtn: document.getElementById('notificationBtn')
+            };
+            
+            // ==================== EVENT DELEGATION ====================
+            // Main click handler for dynamic elements
+            document.addEventListener('click', function(event) {
+                // Handle project card button clicks
+                const projectBtn = event.target.closest('.btn-primary');
+                if (projectBtn && projectBtn.dataset.projectId) {
+                    event.preventDefault();
+                    openProject(projectBtn.dataset.projectId);
+                    return;
                 }
                 
-                this.value = '';
-                this.blur(); // Remove focus after search
+                // Handle tag removal
+                const tagElement = event.target.closest('#tagsContainer .tag');
+                if (tagElement && event.target === tagElement) {
+                    tagElement.remove();
+                    return;
+                }
+                
+                // Handle modal closing when clicking outside
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+                
+                // Handle template selection
+                const templateCard = event.target.closest('.template-card');
+                if (templateCard) {
+                    const templateId = templateCard.dataset.template;
+                    if (templateId) {
+                        selectTemplate(templateId);
+                    }
+                }
+            });
+            
+            // ==================== FORM HANDLERS ====================
+            if (domElements.createProjectForm) {
+                domElements.createProjectForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    createProject();
+                });
             }
             
-            // Escape to clear
-            if (e.key === 'Escape') {
-                this.value = '';
-                this.blur();
+            // ==================== INPUT HANDLERS ====================
+            if (domElements.tagInput) {
+                domElements.tagInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        addTag();
+                    }
+                });
             }
-        });
-        
-        // Ctrl/Cmd + K focus (handled in global keyboard shortcuts)
-    }
-    
-    // ==================== PAGINATION ====================
-    if (domElements.prevPageBtn) {
-        domElements.prevPageBtn.addEventListener('click', function() {
-            if (currentPage > 1) {
-                loadProjects(
-                    currentPage - 1,
-                    domElements.projectSearch ? domElements.projectSearch.value : '',
-                    domElements.statusFilter ? domElements.statusFilter.value : 'all'
-                );
-            }
-        });
-    }
-    
-    if (domElements.nextPageBtn) {
-        domElements.nextPageBtn.addEventListener('click', function() {
-            if (currentPage < totalPages) {
-                loadProjects(
-                    currentPage + 1,
-                    domElements.projectSearch ? domElements.projectSearch.value : '',
-                    domElements.statusFilter ? domElements.statusFilter.value : 'all'
-                );
-            }
-        });
-    }
-    
-    // ==================== NOTIFICATIONS ====================
-    if (domElements.notificationBtn) {
-        domElements.notificationBtn.addEventListener('click', async function() {
-            try {
-                await loadNotifications();
-                const modal = document.getElementById('notificationsModal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            } catch (error) {
-                console.error('Failed to load notifications:', error);
-                showNotification('Failed to load notifications', 'error');
-            }
-        });
-    }
-    
-    // ==================== KEYBOARD SHORTCUTS ====================
-    document.addEventListener('keydown', function(e) {
-        // Don't trigger shortcuts when user is typing in inputs
-        const activeElement = document.activeElement;
-        const isInputFocused = activeElement.tagName === 'INPUT' || 
-                              activeElement.tagName === 'TEXTAREA' ||
-                              activeElement.isContentEditable;
-        
-        if (isInputFocused && !e.ctrlKey && !e.metaKey) {
-            return; // Allow normal typing
-        }
-        
-        // Ctrl/Cmd + N for new project
-        if ((e.ctrlKey || e.metaKey) && e.key === 'n' && !e.shiftKey) {
-            e.preventDefault();
-            openNewProjectModal();
-        }
-        
-        // Ctrl/Cmd + Shift + N for new project in new tab (optional)
-        if ((e.ctrlKey || e.metaKey) && e.key === 'N' && e.shiftKey) {
-            e.preventDefault();
-            // Handle new project in new tab if needed
-        }
-        
-        // Ctrl/Cmd + K for search
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            if (domElements.globalSearch) {
-                domElements.globalSearch.focus();
-                domElements.globalSearch.select();
-            }
-        }
-        
-        // Escape to close modals
-        if (e.key === 'Escape') {
-            const openModal = document.querySelector('.modal[style*="flex"], .modal[style*="block"]');
-            if (openModal) {
-                openModal.style.display = 'none';
-                
-                // Also clear any global search focus
-                if (domElements.globalSearch && document.activeElement === domElements.globalSearch) {
-                    domElements.globalSearch.blur();
-                }
-            }
-        }
-        
-        // Forward slash (/) to focus search
-        if (e.key === '/' && !isInputFocused) {
-            e.preventDefault();
+            
+            // ==================== SEARCH & FILTER HANDLERS ====================
             if (domElements.projectSearch) {
-                domElements.projectSearch.focus();
-                domElements.projectSearch.select();
+                domElements.projectSearch.addEventListener('input', debounce(function(e) {
+                    loadProjects(
+                        1,
+                        e.target.value,
+                        domElements.statusFilter ? domElements.statusFilter.value : '',
+                        domElements.sortFilter ? domElements.sortFilter.value : 'updated'
+                    );
+                }, 500));
             }
-        }
-    });
-    
-    // ==================== WINDOW RESIZE HANDLING ====================
-    // Optional: Handle responsive behavior
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-            // Refresh projects on resize if needed for responsive layout
-            if (window.innerWidth < 768) {
-                // Mobile-specific adjustments
+            
+            if (domElements.statusFilter) {
+                domElements.statusFilter.addEventListener('change', function() {
+                    loadProjects(
+                        1,
+                        domElements.projectSearch ? domElements.projectSearch.value : '',
+                        this.value,
+                        domElements.sortFilter ? domElements.sortFilter.value : 'updated'
+                    );
+                });
             }
-        }, 250);
-    });
-    
-    // ==================== CLEANUP FUNCTION ====================
-    // Return cleanup function to remove event listeners if needed
-    return function cleanupEventListeners() {
-        // Clear any pending timeouts
-        if (timeouts.search) {
-            clearTimeout(timeouts.search);
+            
+            if (domElements.sortFilter) {
+                domElements.sortFilter.addEventListener('change', function() {
+                    loadProjects(
+                        1,
+                        domElements.projectSearch ? domElements.projectSearch.value : '',
+                        domElements.statusFilter ? domElements.statusFilter.value : '',
+                        this.value
+                    );
+                });
+            }
+            
+            // ==================== GLOBAL SEARCH ====================
+            if (domElements.globalSearch) {
+                domElements.globalSearch.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const searchValue = this.value.trim();
+                        
+                        if (searchValue) {
+                            if (domElements.projectSearch) {
+                                domElements.projectSearch.value = searchValue;
+                                loadProjects(1, searchValue);
+                            }
+                            this.value = '';
+                            this.blur();
+                        }
+                    }
+                    
+                    if (e.key === 'Escape') {
+                        this.value = '';
+                        this.blur();
+                    }
+                });
+            }
+            
+            // ==================== PAGINATION ====================
+            if (domElements.prevPageBtn) {
+                domElements.prevPageBtn.addEventListener('click', function() {
+                    if (currentPage > 1) {
+                        loadProjects(
+                            currentPage - 1,
+                            domElements.projectSearch ? domElements.projectSearch.value : '',
+                            domElements.statusFilter ? domElements.statusFilter.value : '',
+                            domElements.sortFilter ? domElements.sortFilter.value : 'updated'
+                        );
+                    }
+                });
+            }
+            
+            if (domElements.nextPageBtn) {
+                domElements.nextPageBtn.addEventListener('click', function() {
+                    if (currentPage < totalPages) {
+                        loadProjects(
+                            currentPage + 1,
+                            domElements.projectSearch ? domElements.projectSearch.value : '',
+                            domElements.statusFilter ? domElements.statusFilter.value : '',
+                            domElements.sortFilter ? domElements.sortFilter.value : 'updated'
+                        );
+                    }
+                });
+            }
+            
+            // ==================== NOTIFICATIONS ====================
+            if (domElements.notificationBtn) {
+                domElements.notificationBtn.addEventListener('click', async function() {
+                    try {
+                        await loadNotifications();
+                        const modal = document.getElementById('notificationsModal');
+                        if (modal) {
+                            modal.style.display = 'flex';
+                        }
+                    } catch (error) {
+                        console.error('Failed to load notifications:', error);
+                        showNotification('Failed to load notifications', 'error');
+                    }
+                });
+            }
+            
+            // ==================== KEYBOARD SHORTCUTS ====================
+            document.addEventListener('keydown', function(e) {
+                // Don't trigger shortcuts when typing in inputs
+                const activeElement = document.activeElement;
+                const isInputFocused = activeElement.tagName === 'INPUT' || 
+                                      activeElement.tagName === 'TEXTAREA' ||
+                                      activeElement.isContentEditable;
+                
+                if (isInputFocused && !e.ctrlKey && !e.metaKey) {
+                    return;
+                }
+                
+                // Ctrl/Cmd + N for new project
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    openNewProjectModal();
+                }
+                
+                // Ctrl/Cmd + K for search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    if (domElements.globalSearch) {
+                        domElements.globalSearch.focus();
+                        domElements.globalSearch.select();
+                    }
+                }
+                
+                // Escape to close modals
+                if (e.key === 'Escape') {
+                    const openModal = document.querySelector('.modal[style*="flex"], .modal[style*="block"]');
+                    if (openModal) {
+                        openModal.style.display = 'none';
+                    }
+                }
+                
+                // Forward slash (/) to focus project search
+                if (e.key === '/' && !isInputFocused) {
+                    e.preventDefault();
+                    if (domElements.projectSearch) {
+                        domElements.projectSearch.focus();
+                        domElements.projectSearch.select();
+                    }
+                }
+            });
+            
+            console.log('✅ Event listeners setup complete');
         }
-        
-        // Remove event listeners if needed
-        // (Note: Most are on document/window, so they'll persist unless removed)
-        window.removeEventListener('resize', handleResize);
-    };
-}
-
-// ==================== UTILITY FUNCTIONS ====================
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-function showNotification(message, type = 'info') {
-    // Implementation for showing notifications
-    console.log(`${type.toUpperCase()}: ${message}`);
-    // You could implement a toast notification system here
-}
-
-// ==================== INITIALIZATION ====================
-// Call setupEventListeners when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    const cleanup = setupEventListeners();
-    
-    // Optional: Cleanup on page unload
-    window.addEventListener('beforeunload', function() {
-        if (cleanup && typeof cleanup === 'function') {
-            cleanup();
-        }
-    });
-});
-
-      
 
         // ==================== UTILITY FUNCTIONS ====================
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
         function showLoading(show) {
             const loadingState = document.getElementById('loadingState');
             loadingState.style.display = show ? 'flex' : 'none';
@@ -2186,34 +2200,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
         function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-            });
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            } catch (e) {
+                return 'Recent';
+            }
         }
 
         function formatTimeAgo(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 1) return 'just now';
-            if (diffMins < 60) return `${diffMins}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays < 7) return `${diffDays}d ago`;
-            
-            return formatDate(dateString);
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+                
+                if (diffMins < 1) return 'just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays < 7) return `${diffDays}d ago`;
+                
+                return formatDate(dateString);
+            } catch (e) {
+                return 'Recent';
+            }
         }
 
         function openProject(projectId) {
