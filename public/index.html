@@ -10,19 +10,26 @@
         :root {
             --primary-blue: #1A5F7A;
             --clinical-green: #00C9A7;
+            --research-purple: #6D5ACF;
+            --warning-orange: #F59E0B;
             --text-dark: #1E293B;
+            --text-medium: #475569;
             --text-light: #64748B;
             --background-gray: #F8FAFC;
             --card-white: #FFFFFF;
             --border-subtle: #E2E8F0;
             --radius-smooth: 12px;
+            --radius-tight: 8px;
             --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --transition-fast: 150ms ease;
+            --transition-smooth: 250ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--background-gray); color: var(--text-dark); }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
         
         .header {
             background: var(--card-white);
@@ -31,6 +38,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: var(--shadow-subtle);
         }
         
         .header-content {
@@ -47,66 +55,295 @@
         }
         
         .logo-badge {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--primary-blue), #00A896);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--research-purple));
             color: white;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.125rem;
+            font-size: 1.25rem;
+            box-shadow: 0 2px 8px rgba(26, 95, 122, 0.2);
+        }
+        
+        .logo-text {
+            line-height: 1.2;
         }
         
         .logo-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--primary-blue);
+            letter-spacing: -0.02em;
         }
         
         .logo-subtitle {
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-light);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--clinical-green));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #EF4444;
+            color: white;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
         }
         
         .dashboard { padding: 2rem 0; }
         
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .welcome-message h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--research-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome-message p {
+            color: var(--text-light);
+            max-width: 600px;
+        }
+        
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
         }
         
         .stat-card {
             background: var(--card-white);
             border-radius: var(--radius-smooth);
-            padding: 1.5rem;
+            padding: 1.75rem;
             border: 1px solid var(--border-subtle);
-            transition: 150ms ease;
+            transition: var(--transition-fast);
+            position: relative;
+            overflow: hidden;
         }
         
-        .stat-card:hover { border-color: var(--clinical-green); }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--clinical-green);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-blue), var(--clinical-green));
+        }
         
         .stat-value {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary-blue);
             line-height: 1;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
         }
         
+        .stat-trend {
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .trend-up { color: #10B981; }
+        .trend-down { color: #EF4444; }
+        
         .stat-label {
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(26, 95, 122, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .action-card {
+            background: var(--card-white);
+            border-radius: var(--radius-smooth);
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            transition: var(--transition-fast);
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--clinical-green);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--clinical-green));
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .action-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .action-description {
             font-size: 0.875rem;
             color: var(--text-light);
         }
         
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            position: relative;
+            min-width: 280px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+        
+        .form-input {
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-tight);
+            font-family: inherit;
+            font-size: 0.875rem;
+            width: 100%;
+            transition: var(--transition-fast);
+            background: var(--card-white);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+        
+        .form-select {
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-tight);
+            background: var(--card-white);
+            font-family: inherit;
+            font-size: 0.875rem;
+            min-width: 160px;
+            cursor: pointer;
+        }
+        
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.75rem;
+            margin-bottom: 3rem;
         }
         
         @media (max-width: 768px) {
@@ -116,28 +353,65 @@
         .project-card {
             background: var(--card-white);
             border-radius: var(--radius-smooth);
-            padding: 1.5rem;
+            padding: 1.75rem;
             border: 1px solid var(--border-subtle);
-            transition: 150ms ease;
+            transition: var(--transition-fast);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
         
         .project-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
             border-color: var(--clinical-green);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .project-badge {
+            position: absolute;
+            top: -8px;
+            right: 1.5rem;
+            background: var(--clinical-green);
+            color: white;
+            padding: 0.25rem 0.875rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 8px rgba(0, 201, 167, 0.3);
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
         }
         
         .project-title {
-            font-size: 1.25rem;
+            font-size: 1.375rem;
             font-weight: 700;
             color: var(--primary-blue);
             margin-bottom: 0.5rem;
+            line-height: 1.3;
+            flex: 1;
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
         }
         
         .project-description {
-            color: var(--text-light);
+            color: var(--text-medium);
             margin: 1rem 0;
             line-height: 1.6;
+            flex: 1;
         }
         
         .tags {
@@ -150,42 +424,90 @@
         .tag {
             background: rgba(26, 95, 122, 0.1);
             color: var(--primary-blue);
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .status {
-            padding: 0.25rem 0.75rem;
+            padding: 0.375rem 0.875rem;
             border-radius: 100px;
             font-size: 0.75rem;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
         }
         
-        .status-active { background: rgba(0, 201, 167, 0.15); color: var(--clinical-green); }
-        .status-planning { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+        .tag-clinical { background: rgba(0, 201, 167, 0.1); color: var(--clinical-green); }
+        .tag-research { background: rgba(109, 90, 207, 0.1); color: var(--research-purple); }
+        
+        .project-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--background-gray);
+            border-radius: var(--radius-tight);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            line-height: 1;
+        }
+        
+        .stat-label-small {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
         
         .project-footer {
-            margin-top: 1rem;
-            padding-top: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
             border-top: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
+        .team-avatars {
+            display: flex;
+        }
+        
+        .team-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: -8px;
+            border: 2px solid white;
+        }
+        
+        .team-avatar.more {
+            background: var(--border-subtle);
+            color: var(--text-light);
+            font-size: 0.6875rem;
+        }
+        
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-tight);
             font-weight: 600;
             font-size: 0.875rem;
             border: none;
             cursor: pointer;
-            transition: 150ms ease;
+            transition: var(--transition-fast);
             text-decoration: none;
         }
         
@@ -194,7 +516,16 @@
             color: white;
         }
         
-        .btn-primary:hover { background: #15526b; }
+        .btn-primary:hover {
+            background: #15526b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
+        }
+        
+        .btn-clinical {
+            background: var(--clinical-green);
+            color: white;
+        }
         
         .btn-outline {
             background: transparent;
@@ -202,16 +533,77 @@
             color: var(--text-dark);
         }
         
-        .form-input {
-            padding: 0.75rem;
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.875rem;
-            width: 100%;
+        .btn-outline:hover {
+            background: var(--background-gray);
+            border-color: var(--text-light);
         }
         
-        .form-input:focus { outline: none; border-color: var(--primary-blue); }
+        .btn-sm {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.8125rem;
+        }
+        
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-white);
+            border-radius: var(--radius-smooth);
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--primary-blue);
+            opacity: 0.3;
+            margin-bottom: 1.5rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 1.25rem 1.75rem;
+            border-radius: var(--radius-smooth);
+            background: var(--card-white);
+            box-shadow: var(--shadow-medium);
+            border-left: 4px solid var(--primary-blue);
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+            display: none;
+        }
+        
+        .notification-error { border-left-color: #EF4444; background: #FEF2F2; }
+        .notification-success { border-left-color: #10B981; background: #F0FDF4; }
+        .notification-warning { border-left-color: #F59E0B; background: #FFFBEB; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
         
         .modal {
             display: none;
@@ -221,61 +613,114 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            z-index: 9998;
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            backdrop-filter: blur(4px);
         }
         
         .modal-content {
             background: white;
             border-radius: var(--radius-smooth);
-            padding: 2rem;
+            padding: 2.5rem;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease-out;
+        }
+        
+        @keyframes modalIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: var(--background-gray);
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        
+        .template-card {
+            padding: 1.5rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-tight);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .template-card:hover {
+            border-color: var(--clinical-green);
+            transform: translateY(-2px);
+        }
+        
+        .template-card.selected {
+            border-color: var(--primary-blue);
+            background: rgba(26, 95, 122, 0.05);
+        }
+        
+        .template-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(26, 95, 122, 0.1);
+            color: var(--primary-blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
         }
         
         .hidden { display: none !important; }
-        .loading {
-            display: flex;
-            justify-content: center;
-            padding: 4rem;
-        }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .w-full { width: 100%; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
         
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-subtle);
-            border-top-color: var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-smooth);
-            background: white;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border-left: 4px solid var(--primary-blue);
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-            max-width: 400px;
-            display: none;
-        }
-        
-        .notification-success { border-left-color: #10B981; background: #F0FDF4; }
-        .notification-error { border-left-color: #EF4444; background: #FEF2F2; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; gap: 1rem; }
+            .user-menu { width: 100%; justify-content: space-between; }
+            .search-box { min-width: 100%; }
+            .filters { width: 100%; }
+            .form-select { flex: 1; }
         }
     </style>
 </head>
@@ -285,20 +730,37 @@
         <div class="container">
             <div class="header-content">
                 <a href="index.html" class="logo">
-                    <div class="logo-badge">TL</div>
-                    <div>
+                    <div class="logo-badge">🫁</div>
+                    <div class="logo-text">
                         <div class="logo-title">ThoraxLab</div>
-                        <div class="logo-subtitle">Pneumology Research</div>
+                        <div class="logo-subtitle">Pneumology Research Platform</div>
                     </div>
                 </a>
                 
-                <div>
-                    <button id="logoutBtn" class="btn btn-outline hidden">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                    <button id="newProjectBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> New Project
-                    </button>
+                <div class="user-menu">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               id="globalSearch" 
+                               class="form-input" 
+                               placeholder="Search projects, discussions...">
+                    </div>
+                    
+                    <div class="notification-badge" id="notificationBtn">
+                        <i class="fas fa-bell" style="font-size: 1.25rem; color: var(--text-light);"></i>
+                        <span class="badge hidden" id="notificationCount">0</span>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">JD</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.875rem;" id="userName">Dr. John Doe</div>
+                            <div style="font-size: 0.75rem; color: var(--text-light);" id="userInstitution">General Hospital</div>
+                        </div>
+                        <button onclick="logout()" class="btn btn-outline btn-sm">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -307,40 +769,117 @@
     <!-- Main Content -->
     <main class="dashboard">
         <div class="container">
-            <div class="dashboard-header" style="margin-bottom: 2rem;">
-                <h1>Research Projects</h1>
-                <div style="display: flex; gap: 1rem;">
-                    <div style="position: relative;">
-                        <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
-                        <input type="text" id="searchInput" class="form-input" style="padding-left: 2.5rem; width: 250px;" placeholder="Search projects...">
+            <!-- Welcome Section -->
+            <div class="welcome-message">
+                <h1>Welcome back, <span id="welcomeName">Researcher</span>!</h1>
+                <p>Collaborate on pneumology research projects, share insights, and accelerate discoveries with your team.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsContainer">
+                <!-- Stats will load here -->
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="openNewProjectModal()">
+                    <div class="action-icon">
+                        <i class="fas fa-plus"></i>
                     </div>
-                    <select id="statusFilter" style="padding: 0.75rem; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <div class="action-title">New Research Project</div>
+                    <div class="action-description">Start a new clinical study or research project</div>
+                </div>
+                
+                <div class="action-card" onclick="openTemplateModal()">
+                    <div class="action-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <div class="action-title">Use a Template</div>
+                    <div class="action-description">Start with a proven research methodology</div>
+                </div>
+                
+                <div class="action-card" onclick="window.location.href='#recent'">
+                    <div class="action-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="action-title">Recent Activity</div>
+                    <div class="action-description">See latest discussions and updates</div>
+                </div>
+                
+                <div class="action-card" onclick="openSearchModal()">
+                    <div class="action-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="action-title">Advanced Search</div>
+                    <div class="action-description">Find projects, discussions, and researchers</div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="projects-header">
+                <h2 style="font-size: 1.75rem; font-weight: 700;">Research Projects</h2>
+                
+                <div class="filters">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               id="projectSearch" 
+                               class="form-input" 
+                               placeholder="Search projects...">
+                    </div>
+                    
+                    <select id="statusFilter" class="form-select">
                         <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="planning">Planning</option>
+                        <option value="planning">Planning Phase</option>
+                        <option value="active">Active Research</option>
                         <option value="completed">Completed</option>
+                    </select>
+                    
+                    <select id="sortFilter" class="form-select">
+                        <option value="updated">Recently Updated</option>
+                        <option value="created">Newest First</option>
+                        <option value="title">Alphabetical</option>
+                        <option value="engagement">Most Active</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Loading -->
-            <div id="loading" class="loading">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading">
                 <div class="spinner"></div>
+                <p style="color: var(--text-light); margin-top: 1rem;">Loading research dashboard...</p>
             </div>
 
-            <!-- Stats -->
-            <div id="statsContainer" class="stats-grid"></div>
-
-            <!-- Projects -->
+            <!-- Projects Grid -->
             <div id="projectsContainer" class="projects-grid"></div>
 
             <!-- Empty State -->
-            <div id="emptyState" class="hidden" style="text-align: center; padding: 4rem 2rem;">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">🫁</div>
-                <h3 style="margin-bottom: 1rem;">No Research Projects</h3>
-                <p style="color: var(--text-light); margin-bottom: 2rem;">Start your first pneumology research project</p>
-                <button id="createFirstBtn" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create First Project
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-icon">🫁</div>
+                <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Research Projects Yet</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    Start your first pneumology research project to begin collaboration with your team.
+                </p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="openNewProjectModal()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Project
+                    </button>
+                    <button onclick="openTemplateModal()" class="btn btn-outline">
+                        <i class="fas fa-file-medical"></i> Browse Templates
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="hidden" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 3rem;">
+                <button id="prevPage" class="btn btn-outline btn-sm">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <div id="pageInfo" style="display: flex; align-items: center; padding: 0 1rem; color: var(--text-light);">
+                    Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                </div>
+                <button id="nextPage" class="btn btn-outline btn-sm">
+                    Next <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </div>
@@ -349,236 +888,700 @@
     <!-- New Project Modal -->
     <div id="newProjectModal" class="modal">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2>Create Research Project</h2>
-                <button onclick="closeModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <div class="modal-header">
+                <h2 style="font-size: 1.75rem; font-weight: 700;">Create Research Project</h2>
+                <button class="modal-close" onclick="closeModal('newProjectModal')">&times;</button>
             </div>
             
             <form id="createProjectForm">
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Project Title</label>
-                    <input type="text" id="projectTitle" class="form-input" required placeholder="Enter project title">
+                <div style="margin-bottom: 1.75rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">
+                        Project Title
+                    </label>
+                    <input type="text" 
+                           id="projectTitle" 
+                           class="form-input" 
+                           required
+                           placeholder="e.g., 'Impact of COPD Treatment on Quality of Life'">
                 </div>
                 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
-                    <textarea id="projectDescription" class="form-input" rows="4" required placeholder="Describe the research"></textarea>
+                <div style="margin-bottom: 1.75rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">
+                        Description
+                    </label>
+                    <textarea id="projectDescription" 
+                              class="form-input" 
+                              rows="5"
+                              required
+                              placeholder="Describe the research question, methodology, clinical significance, and expected outcomes..."></textarea>
                 </div>
                 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Status</label>
-                    <select id="projectStatus" class="form-input">
-                        <option value="planning">Planning Phase</option>
-                        <option value="active">Active Research</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tags</label>
-                    <div id="tagsContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;"></div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" id="tagInput" class="form-input" placeholder="Add tag (press Enter)">
-                        <button type="button" id="addTagBtn" class="btn btn-outline">Add</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.75rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">
+                            Status
+                        </label>
+                        <select id="projectStatus" class="form-select w-full">
+                            <option value="planning">Planning Phase</option>
+                            <option value="active">Active Research</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">
+                            Template (Optional)
+                        </label>
+                        <select id="projectTemplate" class="form-select w-full">
+                            <option value="">No Template</option>
+                            <option value="randomized-controlled-trial">Randomized Controlled Trial</option>
+                            <option value="cohort-study">Cohort Study</option>
+                            <option value="case-study">Case Study</option>
+                            <option value="systematic-review">Systematic Review</option>
+                        </select>
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 0.75rem;">
-                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex: 1;" id="submitBtn">Create Project</button>
+                <div style="margin-bottom: 1.75rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">
+                        Tags
+                    </label>
+                    <div id="tagsContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; min-height: 40px;"></div>
+                    <div class="flex gap-2">
+                        <input type="text" 
+                               id="tagInput" 
+                               class="form-input flex-1" 
+                               placeholder="Add tag (e.g., COPD, Asthma, Clinical Trial)">
+                        <button type="button" onclick="addTag()" class="btn btn-outline">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('COPD')">COPD</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Asthma')">Asthma</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Clinical Trial')">Clinical Trial</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Pulmonary')">Pulmonary</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addCommonTag('Critical Care')">Critical Care</button>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--background-gray); border-radius: var(--radius-tight);">
+                    <h4 style="margin-bottom: 1rem; font-weight: 600; color: var(--text-dark);">
+                        <i class="fas fa-stethoscope" style="margin-right: 0.5rem;"></i>
+                        Medical Data (Optional)
+                    </h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-light);">
+                                Study Population
+                            </label>
+                            <input type="text" 
+                                   id="studyPopulation" 
+                                   class="form-input" 
+                                   placeholder="e.g., Adults with severe COPD">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-light);">
+                                Primary Outcome
+                            </label>
+                            <input type="text" 
+                                   id="primaryOutcome" 
+                                   class="form-input" 
+                                   placeholder="e.g., Change in FEV1">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button type="button" class="btn btn-outline flex-1" onclick="closeModal('newProjectModal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary flex-1" id="createProjectBtn">
+                        <i class="fas fa-plus"></i> Create Project
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification hidden"></div>
+    <!-- Template Selection Modal -->
+    <div id="templateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="font-size: 1.75rem; font-weight: 700;">Choose Research Template</h2>
+                <button class="modal-close" onclick="closeModal('templateModal')">&times;</button>
+            </div>
+            
+            <p style="color: var(--text-light); margin-bottom: 2rem;">
+                Select a research methodology template to get started quickly with pre-defined structure.
+            </p>
+            
+            <div class="template-grid" id="templatesContainer">
+                <!-- Templates will load here -->
+            </div>
+            
+            <div class="mt-6 flex gap-3">
+                <button class="btn btn-outline flex-1" onclick="closeModal('templateModal')">
+                    Cancel
+                </button>
+                <button class="btn btn-primary flex-1" id="useTemplateBtn" onclick="useSelectedTemplate()" disabled>
+                    <i class="fas fa-check"></i> Use Selected Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="notificationsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="font-size: 1.75rem; font-weight: 700;">Notifications</h2>
+                <button class="modal-close" onclick="closeModal('notificationsModal')">&times;</button>
+            </div>
+            
+            <div id="notificationsContainer" style="min-height: 300px;">
+                <!-- Notifications will load here -->
+            </div>
+            
+            <div class="mt-4">
+                <button class="btn btn-outline w-full" onclick="markAllNotificationsAsRead()">
+                    <i class="fas fa-check-double"></i> Mark All as Read
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="notification hidden"></div>
 
     <script>
+        // ==================== CONFIGURATION ====================
         const API_BASE = window.location.origin;
+        const SOCKET_URL = window.location.origin;
+        
+        // ==================== GLOBAL STATE ====================
         let currentUser = null;
-        let projects = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentProjects = [];
+        let selectedTemplate = null;
+        let socket = null;
 
-        // Check authentication
-        async function checkAuth() {
-            const userData = localStorage.getItem('thoraxlab_user');
-            if (userData) {
-                currentUser = JSON.parse(userData);
-                document.getElementById('logoutBtn').classList.remove('hidden');
-                return true;
-            }
-            return false;
-        }
-
-        // Load dashboard data
-        async function loadDashboard() {
-            try {
-                // Check health
-                await fetch(`${API_BASE}/health`);
-                
-                // Load stats
-                const statsRes = await fetch(`${API_BASE}/api/stats`);
-                const statsData = await statsRes.json();
-                
-                if (statsData.success) {
-                    renderStats(statsData.stats);
-                }
-                
-                // Load projects
-                const projectsRes = await fetch(`${API_BASE}/api/projects`);
-                const projectsData = await projectsRes.json();
-                
-                if (projectsData.success) {
-                    projects = projectsData.projects;
-                    renderProjects(projects);
-                }
-                
-                document.getElementById('loading').classList.add('hidden');
-                
-            } catch (error) {
-                console.error('Failed to load dashboard:', error);
-                showNotification('Could not connect to server', 'error');
-                renderFallbackData();
-            }
-        }
-
-        function renderStats(stats) {
-            const container = document.getElementById('statsContainer');
-            container.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${stats.totalProjects || 0}</div>
-                    <div class="stat-label">Research Projects</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.activeProjects || 0}</div>
-                    <div class="stat-label">Active Studies</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.totalUsers || 0}</div>
-                    <div class="stat-label">Researchers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.platformConsensus || 75}%</div>
-                    <div class="stat-label">Platform Consensus</div>
-                </div>
-            `;
-        }
-
-        function renderFallbackData() {
-            const container = document.getElementById('statsContainer');
-            container.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">Research Projects</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">Active Studies</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">1</div>
-                    <div class="stat-label">Researchers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">75%</div>
-                    <div class="stat-label">Platform Consensus</div>
-                </div>
-            `;
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 ThoraxLab Enhanced Dashboard Initializing...');
             
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('emptyState').classList.remove('hidden');
-        }
-
-        function renderProjects(projectList) {
-            const container = document.getElementById('projectsContainer');
-            const emptyState = document.getElementById('emptyState');
-            
-            if (!projectList || projectList.length === 0) {
-                container.innerHTML = '';
-                container.classList.add('hidden');
-                emptyState.classList.remove('hidden');
+            // Check authentication
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) {
+                window.location.href = 'login.html';
                 return;
             }
             
-            container.classList.remove('hidden');
-            emptyState.classList.add('hidden');
+            // Initialize WebSocket
+            initWebSocket();
             
-            container.innerHTML = projectList.map(project => `
-                <div class="project-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div style="flex: 1;">
-                            <h3 class="project-title">${escapeHtml(project.title)}</h3>
-                            <div class="tags">
-                                ${(project.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
-                            </div>
-                        </div>
-                        <span class="status status-${project.status}">
-                            ${project.status === 'active' ? 'Active' : project.status === 'planning' ? 'Planning' : 'Completed'}
-                        </span>
+            // Load dashboard data
+            await loadDashboardData();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check for notifications
+            checkNotifications();
+            
+            console.log('✅ Dashboard initialized');
+        });
+
+        // ==================== AUTHENTICATION ====================
+        async function checkAuth() {
+            try {
+                const userData = localStorage.getItem('thoraxlab_user');
+                const sessionData = localStorage.getItem('thoraxlab_session');
+                
+                if (!userData || !sessionData) {
+                    return false;
+                }
+                
+                currentUser = JSON.parse(userData);
+                const session = JSON.parse(sessionData);
+                
+                // Update UI with user info
+                updateUserUI();
+                
+                // Validate session with server
+                const response = await fetch(`${API_BASE}/api/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${session.sessionId}`
+                    }
+                });
+                
+                if (response.ok) {
+                    return true;
+                } else {
+                    // Session expired, clear and redirect
+                    localStorage.removeItem('thoraxlab_user');
+                    localStorage.removeItem('thoraxlab_session');
+                    return false;
+                }
+            } catch (error) {
+                console.warn('Auth check failed:', error);
+                return false;
+            }
+        }
+
+        function updateUserUI() {
+            if (!currentUser) return;
+            
+            // Update user name and avatar
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userInstitution').textContent = currentUser.institution || 'General Hospital';
+            document.getElementById('welcomeName').textContent = currentUser.name.split(' ')[0];
+            
+            // Set avatar initials
+            const initials = currentUser.name
+                .split(' ')
+                .map(word => word.charAt(0))
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+            document.getElementById('userAvatar').textContent = initials;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('thoraxlab_user');
+                localStorage.removeItem('thoraxlab_session');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ==================== WEB SOCKET ====================
+        function initWebSocket() {
+            try {
+                socket = io(SOCKET_URL);
+                
+                socket.on('connect', () => {
+                    console.log('🔗 Connected to WebSocket');
+                    
+                    // Authenticate socket with session
+                    const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
+                    if (session.sessionId) {
+                        socket.emit('authenticate', { sessionId: session.sessionId });
+                    }
+                });
+                
+                socket.on('authenticated', (data) => {
+                    console.log('✅ Socket authenticated:', data.userId);
+                });
+                
+                socket.on('notification', (notification) => {
+                    showNotificationToast(notification.title, 'info');
+                    // Update notification badge
+                    updateNotificationBadge();
+                });
+                
+                socket.on('projectCreated', (data) => {
+                    if (data.userId !== currentUser?.id) {
+                        showNotificationToast(`New project: "${data.project.title}"`, 'info');
+                    }
+                });
+                
+                socket.on('discussionCreated', (discussion) => {
+                    showNotificationToast(`New discussion: "${discussion.title}"`, 'info');
+                });
+                
+                socket.on('error', (data) => {
+                    console.error('WebSocket error:', data.error);
+                });
+                
+                socket.on('disconnect', () => {
+                    console.log('🔌 Disconnected from WebSocket');
+                });
+            } catch (error) {
+                console.error('WebSocket initialization failed:', error);
+            }
+        }
+
+        // ==================== DASHBOARD DATA ====================
+        async function loadDashboardData() {
+            showLoading(true);
+            
+            try {
+                // Load stats
+                await loadStats();
+                
+                // Load projects
+                await loadProjects();
+                
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+                showNotification('Failed to load dashboard data', 'error');
+                renderFallbackUI();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/stats`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderStats(data.stats);
+                }
+            } catch (error) {
+                console.error('Load stats error:', error);
+                renderDefaultStats();
+            }
+        }
+
+        async function loadProjects(page = 1, search = '', status = '', sort = 'updated') {
+            try {
+                const params = new URLSearchParams({
+                    page: page,
+                    limit: 12,
+                    search: search,
+                    status: status,
+                    sort: sort
+                });
+                
+                const response = await fetch(`${API_BASE}/api/projects?${params}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentProjects = data.projects;
+                    currentPage = data.pagination.page;
+                    totalPages = data.pagination.totalPages;
+                    
+                    renderProjects(currentProjects);
+                    updatePagination();
+                    
+                    if (currentProjects.length === 0) {
+                        showEmptyState();
+                    } else {
+                        hideEmptyState();
+                    }
+                }
+            } catch (error) {
+                console.error('Load projects error:', error);
+                showNotification('Failed to load projects', 'error');
+            }
+        }
+
+        // ==================== RENDER FUNCTIONS ====================
+        function renderStats(stats) {
+            const container = document.getElementById('statsContainer');
+            
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalProjects || 0}</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-flask"></i></div>
+                        Research Projects
                     </div>
-                    
-                    <p class="project-description">
-                        ${escapeHtml(project.description.substring(0, 150))}${project.description.length > 150 ? '...' : ''}
-                    </p>
-                    
-                    <div class="project-footer">
-                        <div style="color: var(--text-light); font-size: 0.875rem;">
-                            <span><i class="fas fa-user-md"></i> ${escapeHtml(project.lead)}</span>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">${stats.activeProjects || 0}</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        Active Studies
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalUsers || 0}</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-user-md"></i></div>
+                        Researchers
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">${stats.platformConsensus || 75}%</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                        Platform Consensus
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">${stats.researchImpactScore || 100}</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+                        Research Impact
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">${stats.avgTeamSize || 1}</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        Avg Team Size
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDefaultStats() {
+            const container = document.getElementById('statsContainer');
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-flask"></i></div>
+                        Research Projects
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        Active Studies
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-user-md"></i></div>
+                        Researchers
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">75%</div>
+                    <div class="stat-label">
+                        <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                        Platform Consensus
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProjects(projects) {
+            const container = document.getElementById('projectsContainer');
+            
+            container.innerHTML = projects.map(project => {
+                const statusColors = {
+                    'active': 'var(--clinical-green)',
+                    'planning': 'var(--warning-orange)',
+                    'completed': 'var(--primary-blue)'
+                };
+                
+                const statusLabels = {
+                    'active': 'Active Research',
+                    'planning': 'Planning Phase',
+                    'completed': 'Completed'
+                };
+                
+                return `
+                    <div class="project-card">
+                        <div class="project-badge" style="background: ${statusColors[project.status] || 'var(--primary-blue)'}">
+                            ${statusLabels[project.status] || 'Project'}
                         </div>
-                        <button class="btn btn-primary" onclick="window.location.href='project.html?id=${project.id}'">
-                            Open Project
-                        </button>
+                        
+                        <div class="project-header">
+                            <h3 class="project-title">${escapeHtml(project.title)}</h3>
+                        </div>
+                        
+                        <div class="project-meta">
+                            <span><i class="fas fa-user-md" style="margin-right: 0.25rem;"></i> ${escapeHtml(project.lead)}</span>
+                            <span><i class="fas fa-calendar" style="margin-right: 0.25rem;"></i> ${formatDate(project.createdAt)}</span>
+                        </div>
+                        
+                        <p class="project-description">
+                            ${escapeHtml(project.description.substring(0, 180))}
+                            ${project.description.length > 180 ? '...' : ''}
+                        </p>
+                        
+                        <div class="tags">
+                            ${(project.tags || []).slice(0, 3).map(tag => `
+                                <span class="tag">${escapeHtml(tag)}</span>
+                            `).join('')}
+                            ${(project.tags || []).length > 3 ? `<span class="tag">+${(project.tags || []).length - 3} more</span>` : ''}
+                        </div>
+                        
+                        ${project.stats ? `
+                            <div class="project-stats">
+                                <div class="stat">
+                                    <div class="stat-number">${project.stats.discussionCount || 0}</div>
+                                    <div class="stat-label-small">Discussions</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">${project.stats.commentCount || 0}</div>
+                                    <div class="stat-label-small">Comments</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">${project.stats.consensusScore || 75}%</div>
+                                    <div class="stat-label-small">Consensus</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="project-footer">
+                            <div class="team-avatars">
+                                ${project.teamDetails ? project.teamDetails.slice(0, 3).map(member => `
+                                    <div class="team-avatar" title="${escapeHtml(member.name)}">
+                                        ${member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                                    </div>
+                                `).join('') : `
+                                    <div class="team-avatar" title="${escapeHtml(project.lead)}">
+                                        ${project.lead.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                                    </div>
+                                `}
+                                ${project.teamDetails && project.teamDetails.length > 3 ? `
+                                    <div class="team-avatar more" title="${project.teamDetails.length - 3} more members">
+                                        +${project.teamDetails.length - 3}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <button class="btn btn-primary btn-sm" onclick="openProject('${project.id}')">
+                                <i class="fas fa-arrow-right"></i> Open Project
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showEmptyState() {
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('projectsContainer').classList.add('hidden');
+            document.getElementById('pagination').classList.add('hidden');
+        }
+
+        function hideEmptyState() {
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('projectsContainer').classList.remove('hidden');
+            document.getElementById('pagination').classList.remove('hidden');
+        }
+
+        function updatePagination() {
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+            
+            document.getElementById('prevPage').disabled = currentPage <= 1;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages;
+        }
+
+        function renderFallbackUI() {
+            renderDefaultStats();
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function openNewProjectModal() {
+            document.getElementById('newProjectModal').style.display = 'flex';
+            document.getElementById('projectTitle').focus();
+        }
+
+        function openTemplateModal() {
+            loadTemplates();
+            document.getElementById('templateModal').style.display = 'flex';
+        }
+
+        function openSearchModal() {
+            document.getElementById('globalSearch').focus();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function loadTemplates() {
+            try {
+                const response = await fetch(`${API_BASE}/api/templates`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderTemplates(data.templates);
+                }
+            } catch (error) {
+                console.error('Load templates error:', error);
+            }
+        }
+
+        function renderTemplates(templates) {
+            const container = document.getElementById('templatesContainer');
+            
+            container.innerHTML = templates.map(template => `
+                <div class="template-card" onclick="selectTemplate('${template.id}')" data-template="${template.id}">
+                    <div class="template-icon">
+                        <i class="fas fa-${template.id === 'rct' ? 'clipboard-check' : 
+                                         template.id === 'cohort' ? 'chart-bar' : 
+                                         template.id === 'case' ? 'file-medical' : 
+                                         'book'}"></i>
+                    </div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
+                        ${escapeHtml(template.name)}
+                    </h4>
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        ${escapeHtml(template.description)}
+                    </p>
+                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        ${(template.tags || []).map(tag => `
+                            <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
+                                ${escapeHtml(tag)}
+                            </span>
+                        `).join('')}
                     </div>
                 </div>
             `).join('');
         }
 
-        // Modal functions
-        function openModal() {
-            if (!currentUser) {
-                showNotification('Please log in to create projects', 'error');
-                window.location.href = 'login.html';
-                return;
-            }
-            document.getElementById('newProjectModal').style.display = 'flex';
-            document.getElementById('projectTitle').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('newProjectModal').style.display = 'none';
-            document.getElementById('createProjectForm').reset();
-            document.getElementById('tagsContainer').innerHTML = '';
-        }
-
-        // Add tag
-        document.getElementById('addTagBtn').addEventListener('click', addTag);
-        document.getElementById('tagInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addTag();
-            }
-        });
-
-        function addTag() {
-            const input = document.getElementById('tagInput');
-            const tag = input.value.trim();
-            if (tag) {
-                const container = document.getElementById('tagsContainer');
-                const tagEl = document.createElement('span');
-                tagEl.className = 'tag';
-                tagEl.textContent = tag;
-                tagEl.onclick = () => tagEl.remove();
-                container.appendChild(tagEl);
-                input.value = '';
+        function selectTemplate(templateId) {
+            // Remove selection from all
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked
+            const card = document.querySelector(`[data-template="${templateId}"]`);
+            if (card) {
+                card.classList.add('selected');
+                selectedTemplate = templateId;
+                document.getElementById('useTemplateBtn').disabled = false;
             }
         }
 
-        // Create project
-        document.getElementById('createProjectForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function useSelectedTemplate() {
+            if (!selectedTemplate) return;
+            
+            closeModal('templateModal');
+            openNewProjectModal();
+            
+            // Set template in dropdown
+            document.getElementById('projectTemplate').value = selectedTemplate;
+            
+            // Pre-fill based on template
+            switch (selectedTemplate) {
+                case 'rct':
+                    document.getElementById('projectTitle').placeholder = 'Randomized Controlled Trial: [Intervention] vs [Control] for [Condition]';
+                    break;
+                case 'cohort':
+                    document.getElementById('projectTitle').placeholder = 'Cohort Study: [Exposure] and Risk of [Outcome]';
+                    break;
+                case 'case':
+                    document.getElementById('projectTitle').placeholder = 'Case Study: [Unique Presentation] of [Condition]';
+                    break;
+                case 'review':
+                    document.getElementById('projectTitle').placeholder = 'Systematic Review: [Topic] for [Population]';
+                    break;
+            }
+        }
+
+        // ==================== PROJECT CREATION ====================
+        async function createProject(event) {
+            if (event) event.preventDefault();
             
             if (!currentUser) {
-                showNotification('Please log in first', 'error');
+                showNotification('Please log in to create a project', 'error');
                 window.location.href = 'login.html';
                 return;
             }
@@ -586,82 +1589,416 @@
             const title = document.getElementById('projectTitle').value.trim();
             const description = document.getElementById('projectDescription').value.trim();
             const status = document.getElementById('projectStatus').value;
+            const template = document.getElementById('projectTemplate').value;
             
             if (!title || !description) {
-                showNotification('Please fill in all fields', 'error');
+                showNotification('Please fill in all required fields', 'error');
                 return;
             }
             
-            const tags = Array.from(document.querySelectorAll('#tagsContainer .tag')).map(t => t.textContent);
+            // Get tags
+            const tags = Array.from(document.querySelectorAll('#tagsContainer .tag'))
+                .map(tag => tag.textContent)
+                .filter(tag => tag);
             
-            const submitBtn = document.getElementById('submitBtn');
+            // Get medical data if provided
+            const studyPopulation = document.getElementById('studyPopulation').value.trim();
+            const primaryOutcome = document.getElementById('primaryOutcome').value.trim();
+            const medicalData = (studyPopulation || primaryOutcome) ? {
+                studyPopulation,
+                primaryOutcome
+            } : null;
+            
+            // Show loading
+            const submitBtn = document.getElementById('createProjectBtn');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
             submitBtn.disabled = true;
             
             try {
+                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
+                
                 const response = await fetch(`${API_BASE}/api/projects`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.sessionId}`
+                    },
                     body: JSON.stringify({
                         title,
                         description,
                         status,
-                        tags: tags.length > 0 ? tags : ['Clinical Research'],
-                        lead: currentUser.name,
-                        leadId: currentUser.id
+                        tags: tags.length > 0 ? tags : ['Clinical Research', 'Pneumology'],
+                        template,
+                        medicalData
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    closeModal();
-                    showNotification(`Project "${title}" created!`, 'success');
+                    // Close modal
+                    closeModal('newProjectModal');
+                    
+                    // Clear form
+                    document.getElementById('createProjectForm').reset();
+                    document.getElementById('tagsContainer').innerHTML = '';
+                    
+                    // Show success
+                    showNotification(`Project "${title}" created successfully!`, 'success');
+                    
+                    // Reload dashboard data
+                    await loadDashboardData();
+                    
+                    // Redirect to project page after delay
                     setTimeout(() => {
                         window.location.href = `project.html?id=${data.projectId}`;
-                    }, 1000);
+                    }, 1500);
                 } else {
                     throw new Error(data.error || 'Failed to create project');
                 }
             } catch (error) {
+                console.error('Create project error:', error);
                 showNotification('Failed to create project: ' + error.message, 'error');
             } finally {
+                // Restore button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
-        });
-
-        // Search and filter
-        document.getElementById('searchInput').addEventListener('input', filterProjects);
-        document.getElementById('statusFilter').addEventListener('change', filterProjects);
-
-        function filterProjects() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-            
-            const filtered = projects.filter(project => {
-                if (status && project.status !== status) return false;
-                if (search) {
-                    const text = (project.title + ' ' + project.description + ' ' + (project.tags || []).join(' ')).toLowerCase();
-                    if (!text.includes(search)) return false;
-                }
-                return true;
-            });
-            
-            renderProjects(filtered);
         }
 
-        // Utilities
+        // ==================== TAGS ====================
+        function addTag() {
+            const input = document.getElementById('tagInput');
+            const tag = input.value.trim();
+            
+            if (tag && !tagExists(tag)) {
+                const container = document.getElementById('tagsContainer');
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag';
+                tagElement.textContent = tag;
+                tagElement.onclick = function() { this.remove(); };
+                container.appendChild(tagElement);
+                input.value = '';
+            }
+            
+            input.focus();
+        }
+
+        function addCommonTag(tag) {
+            if (!tagExists(tag)) {
+                const container = document.getElementById('tagsContainer');
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag';
+                tagElement.textContent = tag;
+                tagElement.onclick = function() { this.remove(); };
+                container.appendChild(tagElement);
+            }
+        }
+
+        function tagExists(tag) {
+            const tags = Array.from(document.querySelectorAll('#tagsContainer .tag'))
+                .map(t => t.textContent);
+            return tags.includes(tag);
+        }
+
+        // ==================== NOTIFICATIONS ====================
+        async function checkNotifications() {
+            try {
+                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
+                const response = await fetch(`${API_BASE}/api/notifications`, {
+                    headers: {
+                        'Authorization': `Bearer ${session.sessionId}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateNotificationBadge(data.unreadCount || 0);
+                }
+            } catch (error) {
+                console.error('Check notifications error:', error);
+            }
+        }
+
+        function updateNotificationBadge(count) {
+            const badge = document.getElementById('notificationCount');
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
+                const response = await fetch(`${API_BASE}/api/notifications`, {
+                    headers: {
+                        'Authorization': `Bearer ${session.sessionId}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    renderNotifications(data.notifications || []);
+                }
+            } catch (error) {
+                console.error('Load notifications error:', error);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const container = document.getElementById('notificationsContainer');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--text-light);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔔</div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Notifications</h4>
+                        <p>You're all caught up!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notif => `
+                <div style="padding: 1rem; border-bottom: 1px solid var(--border-subtle); ${notif.read ? '' : 'background: rgba(26, 95, 122, 0.05);'}">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <div style="font-weight: 600; color: var(--text-dark);">
+                            ${getNotificationIcon(notif.type)} ${escapeHtml(getNotificationTitle(notif.type))}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">
+                            ${formatTimeAgo(notif.createdAt)}
+                        </div>
+                    </div>
+                    <div style="color: var(--text-medium); font-size: 0.875rem;">
+                        ${escapeHtml(getNotificationMessage(notif))}
+                    </div>
+                    ${!notif.read ? `
+                        <div class="mt-2">
+                            <button class="btn btn-outline btn-sm" onclick="markNotificationAsRead('${notif.id}')">
+                                Mark as Read
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                'mention': 'fas fa-at',
+                'comment': 'fas fa-comment',
+                'project_updated': 'fas fa-edit',
+                'project_created': 'fas fa-plus',
+                'discussion_created': 'fas fa-comment-medical'
+            };
+            return `<i class="${icons[type] || 'fas fa-bell'}"></i>`;
+        }
+
+        function getNotificationTitle(type) {
+            const titles = {
+                'mention': 'You were mentioned',
+                'comment': 'New comment',
+                'project_updated': 'Project updated',
+                'project_created': 'New project',
+                'discussion_created': 'New discussion'
+            };
+            return titles[type] || 'Notification';
+        }
+
+        function getNotificationMessage(notif) {
+            switch (notif.type) {
+                case 'mention':
+                    return `${notif.data.mentionedBy} mentioned you in "${notif.data.discussionTitle}"`;
+                case 'comment':
+                    return `${notif.data.commentedBy} commented on "${notif.data.discussionTitle}"`;
+                case 'project_updated':
+                    return `${notif.data.updatedBy} updated "${notif.data.projectTitle}"`;
+                default:
+                    return notif.data?.message || 'New notification';
+            }
+        }
+
+        async function markNotificationAsRead(notificationId) {
+            try {
+                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
+                const response = await fetch(`${API_BASE}/api/notifications/${notificationId}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${session.sessionId}`
+                    }
+                });
+                
+                if (response.ok) {
+                    // Reload notifications
+                    loadNotifications();
+                    checkNotifications();
+                }
+            } catch (error) {
+                console.error('Mark notification error:', error);
+            }
+        }
+
+        async function markAllNotificationsAsRead() {
+            try {
+                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
+                const response = await fetch(`${API_BASE}/api/notifications/read-all`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${session.sessionId}`
+                    }
+                });
+                
+                if (response.ok) {
+                    // Reload notifications
+                    loadNotifications();
+                    checkNotifications();
+                    showNotification('All notifications marked as read', 'success');
+                }
+            } catch (error) {
+                console.error('Mark all notifications error:', error);
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function setupEventListeners() {
+            // Create project form
+            document.getElementById('createProjectForm').addEventListener('submit', createProject);
+            
+            // Tag input
+            document.getElementById('tagInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+            
+            // Search input
+            let searchTimeout;
+            document.getElementById('projectSearch').addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    loadProjects(1, e.target.value, document.getElementById('statusFilter').value);
+                }, 500);
+            });
+            
+            // Status filter
+            document.getElementById('statusFilter').addEventListener('change', (e) => {
+                loadProjects(1, document.getElementById('projectSearch').value, e.target.value);
+            });
+            
+            // Sort filter
+            document.getElementById('sortFilter').addEventListener('change', (e) => {
+                loadProjects(1, document.getElementById('projectSearch').value, 
+                            document.getElementById('statusFilter').value, e.target.value);
+            });
+            
+            // Global search
+            document.getElementById('globalSearch').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('projectSearch').value = e.target.value;
+                    loadProjects(1, e.target.value);
+                    e.target.value = '';
+                }
+            });
+            
+            // Pagination
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    loadProjects(currentPage - 1, 
+                                document.getElementById('projectSearch').value,
+                                document.getElementById('statusFilter').value);
+                }
+            });
+            
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    loadProjects(currentPage + 1, 
+                                document.getElementById('projectSearch').value,
+                                document.getElementById('statusFilter').value);
+                }
+            });
+            
+            // Notification button
+            document.getElementById('notificationBtn').addEventListener('click', async () => {
+                await loadNotifications();
+                document.getElementById('notificationsModal').style.display = 'flex';
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + N for new project
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    openNewProjectModal();
+                }
+                
+                // Ctrl/Cmd + K for search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('globalSearch').focus();
+                }
+                
+                // Escape to close modals
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.modal[style*="display: flex"]');
+                    if (modals.length > 0) {
+                        closeModal(modals[0].id);
+                    }
+                }
+            });
+            
+            // Click outside modal to close
+            window.addEventListener('click', (e) => {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showLoading(show) {
+            const loadingState = document.getElementById('loadingState');
+            loadingState.style.display = show ? 'flex' : 'none';
+        }
+
         function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
+            const notification = document.getElementById('notificationToast');
             notification.textContent = message;
-            notification.className = `notification ${type === 'error' ? 'notification-error' : type === 'success' ? 'notification-success' : ''}`;
+            notification.className = `notification ${type === 'error' ? 'notification-error' : 
+                                                    type === 'success' ? 'notification-success' : 
+                                                    type === 'warning' ? 'notification-warning' : ''}`;
             notification.style.display = 'block';
             
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 5000);
+        }
+
+        function showNotificationToast(message, type = 'info') {
+            // Create temporary toast
+            const toast = document.createElement('div');
+            toast.className = `notification ${type === 'error' ? 'notification-error' : 
+                                           type === 'success' ? 'notification-success' : 
+                                           type === 'warning' ? 'notification-warning' : ''}`;
+            toast.textContent = message;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '24px';
+            toast.style.right = '24px';
+            toast.style.zIndex = '9999';
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
         }
 
         function escapeHtml(text) {
@@ -670,23 +2007,34 @@
             return div.innerHTML;
         }
 
-        // Event listeners
-        document.getElementById('newProjectBtn').addEventListener('click', openModal);
-        document.getElementById('createFirstBtn').addEventListener('click', openModal);
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('thoraxlab_user');
-            window.location.href = 'login.html';
-        });
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', async () => {
-            const isAuthenticated = await checkAuth();
-            if (!isAuthenticated) {
-                window.location.href = 'login.html';
-                return;
-            }
-            await loadDashboard();
-        });
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            
+            return formatDate(dateString);
+        }
+
+        function openProject(projectId) {
+            window.location.href = `project.html?id=${projectId}`;
+        }
     </script>
 </body>
 </html>
