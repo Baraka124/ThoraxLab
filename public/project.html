@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project | ThoraxLab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1A5F7A;
+            --clinical-green: #00C9A7;
+            --text-dark: #1E293B;
+            --text-light: #64748B;
+            --background-gray: #F8FAFC;
+            --card-white: #FFFFFF;
+            --border-subtle: #E2E8F0;
+            --radius-smooth: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--background-gray); color: var(--text-dark); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        
+        .header {
+            background: var(--card-white);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+        
+        .logo-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+        
+        .project-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #2C5282 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: var(--radius-smooth);
+        }
+        
+        .project-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .status-active { background: rgba(0, 201, 167, 0.2); }
+        .status-planning { background: rgba(245, 158, 11, 0.2); }
+        
+        .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+        .tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.375rem 0.875rem;
+            border-radius: 100px;
+            font-size: 0.875rem;
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: var(--card-white);
+            border-radius: var(--radius-smooth);
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: 150ms ease;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover { background: #15526b; }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-dark);
+        }
+        
+        .btn-sm { padding: 0.5rem 1rem; }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-input:focus { outline: none; border-color: var(--primary-blue); }
+        
+        .discussion-item {
+            border-left: 3px solid var(--clinical-green);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .discussion-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .vote-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .vote-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        
+        .vote-btn:hover { color: var(--clinical-green); }
+        
+        .comment {
+            background: var(--background-gray);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.75rem;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .team-member {
+            text-align: center;
+        }
+        
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 auto 0.5rem;
+        }
+        
+        .hidden { display: none; }
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">🫁</div>
+                    <div>
+                        <div class="logo-title">ThoraxLab</div>
+                    </div>
+                </a>
+                
+                <div>
+                    <button onclick="logout()" class="btn btn-outline btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Project Header -->
+    <div class="project-header">
+        <div class="container">
+            <div id="projectLoading" class="loading">
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="projectContent" class="hidden">
+                <span class="status-badge status-active" id="projectStatus">Loading...</span>
+                <h1 class="project-title" id="projectTitle">Project Title</h1>
+                <div class="tags" id="projectTags"></div>
+                
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-user-md"></i>
+                        <span id="projectLead">Lead Researcher</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span id="projectDate">Start Date</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="projectConsensus">Consensus: 75%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="main-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Project Description -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Project Overview</h3>
+                    </div>
+                    <p id="projectDescription" style="line-height: 1.7;">Loading project details...</p>
+                </div>
+
+                <!-- Discussions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Research Discussions</h3>
+                        <button onclick="toggleDiscussionForm()" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> New Discussion
+                        </button>
+                    </div>
+
+                    <!-- New Discussion Form -->
+                    <div id="newDiscussionForm" class="hidden">
+                        <input type="text" id="discussionTitle" class="form-input" placeholder="Discussion title">
+                        <textarea id="discussionContent" class="form-input" rows="3" placeholder="Discussion content"></textarea>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="toggleDiscussionForm()" class="btn btn-outline">Cancel</button>
+                            <button onclick="createDiscussion()" class="btn btn-primary">Start Discussion</button>
+                        </div>
+                    </div>
+
+                    <!-- Discussions List -->
+                    <div id="discussionsContainer" class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Team -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Research Team</h3>
+                    </div>
+                    <div id="teamContainer" class="team-grid">
+                        <div class="loading">
+                            <div class="spinner" style="width: 24px; height: 24px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">Project Metrics</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>Consensus Progress</span>
+                            <span id="consensusScore">0%</span>
+                        </div>
+                        <div style="height: 8px; background: var(--border-subtle); border-radius: 4px; overflow: hidden;">
+                            <div id="consensusBar" style="height: 100%; background: var(--clinical-green); width: 0%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="text-align: center; padding: 1rem; background: var(--background-gray); border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="discussionCount">0</div>
+                            <div style="font-size: 0.875rem; color: var(--text-light);">Discussions</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--background-gray); border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--clinical-green);" id="commentCount">0</div>
+                            <div style="font-size: 0.875rem; color: var(--text-light);">Comments</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button onclick="toggleDiscussionForm()" class="btn btn-outline" style="justify-content: flex-start;">
+                            <i class="fas fa-comment-medical"></i> Start Discussion
+                        </button>
+                        <button onclick="shareProject()" class="btn btn-outline" style="justify-content: flex-start;">
+                            <i class="fas fa-share"></i> Share Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentProject = null;
+        let currentUser = null;
+        let socket = null;
+        let discussions = [];
+
+        // Initialize
+        async function init() {
+            // Check auth
+            const userData = localStorage.getItem('thoraxlab_user');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = JSON.parse(userData);
+            
+            // Get project ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id');
+            
+            if (!projectId) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Load project
+            await loadProject(projectId);
+            
+            // Connect WebSocket
+            connectSocket();
+            
+            // Load discussions
+            await loadDiscussions(projectId);
+        }
+
+        // Load project
+        async function loadProject(projectId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/projects/${projectId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentProject = data.project;
+                    renderProject();
+                } else {
+                    throw new Error(data.error || 'Project not found');
+                }
+            } catch (error) {
+                console.error('Failed to load project:', error);
+                document.getElementById('projectTitle').textContent = 'Project Not Found';
+                document.getElementById('projectDescription').textContent = 'The requested project could not be loaded.';
+            }
+        }
+
+        function renderProject() {
+            document.getElementById('projectLoading').classList.add('hidden');
+            document.getElementById('projectContent').classList.remove('hidden');
+            
+            // Basic info
+            document.getElementById('projectTitle').textContent = currentProject.title;
+            document.getElementById('projectDescription').textContent = currentProject.description;
+            document.getElementById('projectStatus').textContent = 
+                currentProject.status === 'active' ? 'Active Research' : 
+                currentProject.status === 'planning' ? 'Planning Phase' : 'Completed';
+            document.getElementById('projectStatus').className = 
+                `status-badge status-${currentProject.status}`;
+            
+            // Tags
+            const tagsContainer = document.getElementById('projectTags');
+            tagsContainer.innerHTML = (currentProject.tags || []).map(tag => 
+                `<span class="tag">${escapeHtml(tag)}</span>`
+            ).join('');
+            
+            // Metadata
+            document.getElementById('projectLead').textContent = currentProject.lead || 'Lead Researcher';
+            document.getElementById('projectDate').textContent = 
+                new Date(currentProject.startDate || currentProject.createdAt).toLocaleDateString();
+            document.getElementById('projectConsensus').textContent = 
+                `Consensus: ${currentProject.consensusScore || 75}%`;
+            document.getElementById('consensusScore').textContent = `${currentProject.consensusScore || 75}%`;
+            document.getElementById('consensusBar').style.width = `${currentProject.consensusScore || 75}%`;
+            
+            // Team (simplified)
+            const teamContainer = document.getElementById('teamContainer');
+            teamContainer.innerHTML = `
+                <div class="team-member">
+                    <div class="member-avatar">${(currentProject.lead || 'R').charAt(0)}</div>
+                    <div style="font-weight: 500;">${escapeHtml(currentProject.lead || 'Researcher')}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-light);">Project Lead</div>
+                </div>
+            `;
+        }
+
+        // Load discussions
+        async function loadDiscussions(projectId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/projects/${projectId}/discussions`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    discussions = data.discussions || [];
+                    renderDiscussions();
+                    updateCounts();
+                }
+            } catch (error) {
+                console.error('Failed to load discussions:', error);
+            }
+        }
+
+        function renderDiscussions() {
+            const container = document.getElementById('discussionsContainer');
+            
+            if (discussions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">💬</div>
+                        <h4 style="margin-bottom: 0.5rem;">No Discussions Yet</h4>
+                        <p style="color: var(--text-light);">Start the first discussion for this project</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = discussions.map(discussion => `
+                <div class="discussion-item" data-id="${discussion.id}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <h4 style="margin-bottom: 0.5rem;">${escapeHtml(discussion.title)}</h4>
+                            <p style="color: var(--text-dark);">${escapeHtml(discussion.content)}</p>
+                        </div>
+                        <div class="vote-controls">
+                            <button class="vote-btn" onclick="vote('${discussion.id}', 'up')">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <div style="font-weight: 600; min-width: 1.5rem; text-align: center;">
+                                ${(discussion.upvotes || 0) - (discussion.downvotes || 0)}
+                            </div>
+                            <button class="vote-btn" onclick="vote('${discussion.id}', 'down')">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="discussion-meta">
+                        <span><i class="fas fa-user-md"></i> ${escapeHtml(discussion.author)}</span>
+                        <span><i class="fas fa-clock"></i> ${new Date(discussion.createdAt).toLocaleDateString()}</span>
+                        <span><i class="fas fa-comment"></i> ${(discussion.comments || []).length}</span>
+                    </div>
+                    
+                    <!-- Comments -->
+                    <div id="comments-${discussion.id}">
+                        ${(discussion.comments || []).map(comment => `
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span style="font-weight: 600;">${escapeHtml(comment.author)}</span>
+                                    <span style="font-size: 0.875rem; color: var(--text-light);">
+                                        ${new Date(comment.timestamp).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <p>${escapeHtml(comment.content)}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- Add comment -->
+                    <div style="margin-top: 0.75rem;">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" 
+                                   class="form-input" 
+                                   placeholder="Add a comment..."
+                                   data-discussion="${discussion.id}"
+                                   onkeypress="if(event.key === 'Enter') addComment('${discussion.id}', this.value)">
+                            <button onclick="addComment('${discussion.id}', 
+                                this.previousElementSibling.value)" 
+                                class="btn btn-primary btn-sm">
+                                Post
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // WebSocket
+        function connectSocket() {
+            socket = io(API_BASE);
+            
+            socket.on('connect', () => {
+                console.log('Connected to WebSocket');
+                if (currentProject) {
+                    socket.emit('joinProject', currentProject.id);
+                }
+            });
+            
+            socket.on('discussionCreated', (discussion) => {
+                if (discussion.projectId === currentProject?.id) {
+                    discussions.unshift(discussion);
+                    renderDiscussions();
+                    updateCounts();
+                }
+            });
+            
+            socket.on('commentAdded', (data) => {
+                const discussion = discussions.find(d => d.id === data.discussionId);
+                if (discussion) {
+                    if (!discussion.comments) discussion.comments = [];
+                    discussion.comments.push(data.comment);
+                    renderDiscussions();
+                    updateCounts();
+                }
+            });
+            
+            socket.on('voteUpdate', (data) => {
+                const discussion = discussions.find(d => d.id === data.discussionId);
+                if (discussion) {
+                    discussion.upvotes = data.upvotes;
+                    discussion.downvotes = data.downvotes;
+                    renderDiscussions();
+                }
+            });
+        }
+
+        // Actions
+        function toggleDiscussionForm() {
+            const form = document.getElementById('newDiscussionForm');
+            form.classList.toggle('hidden');
+            
+            if (!form.classList.contains('hidden')) {
+                document.getElementById('discussionTitle').focus();
+            }
+        }
+
+        function createDiscussion() {
+            const title = document.getElementById('discussionTitle').value.trim();
+            const content = document.getElementById('discussionContent').value.trim();
+            
+            if (!title || !content || !currentUser || !socket) {
+                alert('Please fill in both fields');
+                return;
+            }
+            
+            const discussion = {
+                title,
+                content,
+                author: currentUser.name,
+                authorId: currentUser.id
+            };
+            
+            socket.emit('createDiscussion', {
+                projectId: currentProject.id,
+                discussion
+            });
+            
+            // Clear form
+            document.getElementById('discussionTitle').value = '';
+            document.getElementById('discussionContent').value = '';
+            toggleDiscussionForm();
+        }
+
+        function vote(discussionId, voteType) {
+            if (!socket) return;
+            socket.emit('vote', { discussionId, voteType });
+        }
+
+        function addComment(discussionId, content) {
+            if (!content.trim() || !currentUser || !socket) return;
+            
+            const comment = {
+                author: currentUser.name,
+                authorId: currentUser.id,
+                content: content.trim()
+            };
+            
+            socket.emit('addComment', { discussionId, comment });
+        }
+
+        function updateCounts() {
+            document.getElementById('discussionCount').textContent = discussions.length;
+            
+            const totalComments = discussions.reduce((sum, d) => 
+                sum + (d.comments || []).length, 0
+            );
+            document.getElementById('commentCount').textContent = totalComments;
+        }
+
+        function shareProject() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Project link copied to clipboard!');
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('thoraxlab_user');
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
