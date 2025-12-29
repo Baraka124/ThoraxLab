@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* KEEP ALL YOUR EXISTING CSS */
         :root {
             --primary-blue: #1A5F7A;
             --clinical-green: #00C9A7;
@@ -69,12 +70,18 @@
             border-radius: 8px;
             font-family: inherit;
             font-size: 1rem;
+            transition: all 0.2s ease;
         }
         
         .form-input:focus {
             outline: none;
             border-color: var(--primary-blue);
             box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .form-input:invalid:not(:focus):not(:placeholder-shown) {
+            border-color: #EF4444;
         }
         
         .btn {
@@ -89,7 +96,9 @@
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: 150ms ease;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn-primary {
@@ -97,11 +106,49 @@
             color: white;
         }
         
-        .btn-primary:hover { background: #15526b; }
+        .btn-primary:hover {
+            background: #15526b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
         
         .btn-primary:disabled {
             background: var(--text-light);
             cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn-primary:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
         }
         
         .loading {
@@ -126,31 +173,143 @@
         .error-message {
             background: #FEF2F2;
             color: #DC2626;
-            padding: 0.75rem;
+            padding: 0.875rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             text-align: center;
             display: none;
+            border-left: 4px solid #DC2626;
+            animation: slideDown 0.3s ease-out;
         }
         
         .success-message {
             background: #F0FDF4;
             color: #059669;
-            padding: 0.75rem;
+            padding: 0.875rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             text-align: center;
             display: none;
+            border-left: 4px solid #059669;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         
         .demo-note {
             background: #EFF6FF;
             color: #1E40AF;
-            padding: 0.75rem;
+            padding: 0.875rem;
             border-radius: 8px;
             margin-top: 1.5rem;
             text-align: center;
             font-size: 0.875rem;
+            border-left: 4px solid #3B82F6;
+        }
+        
+        .demo-accounts {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .demo-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+        
+        .demo-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .demo-btn {
+            padding: 0.5rem 0.75rem;
+            background: var(--background-gray);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .demo-btn:hover {
+            background: var(--card-white);
+            border-color: var(--primary-blue);
+            transform: translateY(-1px);
+        }
+        
+        .demo-btn:active {
+            transform: translateY(0);
+        }
+        
+        .form-footer {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .form-footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .toggle-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        /* Add these animations */
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
@@ -165,23 +324,43 @@
         <div class="login-card">
             <h2>Welcome Back</h2>
             
-            <div id="errorMessage" class="error-message"></div>
-            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> <span id="successText"></span>
+            </div>
             
             <form id="loginForm">
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input type="text" id="name" class="form-input" placeholder="Dr. John Smith" required>
+                    <input type="text" 
+                           id="name" 
+                           class="form-input" 
+                           placeholder="Dr. John Smith" 
+                           required
+                           autocomplete="name">
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" class="form-input" placeholder="john.smith@hospital.org" required>
+                    <input type="email" 
+                           id="email" 
+                           class="form-input" 
+                           placeholder="john.smith@hospital.org" 
+                           required
+                           autocomplete="email">
                 </div>
                 
                 <div class="form-group">
                     <label for="institution">Institution</label>
-                    <input type="text" id="institution" class="form-input" placeholder="General Hospital" required>
+                    <input type="text" 
+                           id="institution" 
+                           class="form-input" 
+                           placeholder="General Hospital" 
+                           required
+                           autocomplete="organization">
                 </div>
                 
                 <button type="submit" class="btn btn-primary" id="loginBtn">
@@ -189,8 +368,27 @@
                 </button>
             </form>
             
+            <div class="demo-accounts">
+                <div class="demo-title">Quick Login (Demo Accounts)</div>
+                <div class="demo-buttons">
+                    <button class="demo-btn" onclick="fillDemoAccount(0)">
+                        Dr. Sarah Chen
+                    </button>
+                    <button class="demo-btn" onclick="fillDemoAccount(1)">
+                        Prof. James Wilson
+                    </button>
+                    <button class="demo-btn" onclick="fillDemoAccount(2)">
+                        Dr. Maria Rodriguez
+                    </button>
+                </div>
+            </div>
+            
             <div class="demo-note">
                 <i class="fas fa-info-circle"></i> This is a demo platform. No real medical data is stored.
+            </div>
+            
+            <div class="form-footer">
+                Need help? <a href="#" onclick="showHelp()">Contact support</a>
             </div>
         </div>
         
@@ -201,6 +399,7 @@
 
     <script>
         const API_BASE = window.location.origin;
+        let isLoggingIn = false;
         
         // Check if already logged in
         window.addEventListener('DOMContentLoaded', () => {
@@ -209,24 +408,69 @@
                 window.location.href = 'index.html';
             }
             
+            // Auto-focus email field
+            document.getElementById('email').focus();
+            
             // Test server connection
-            checkServer();
+            checkServerConnection();
+            
+            // Add Enter key support
+            document.getElementById('loginForm').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !isLoggingIn) {
+                    e.preventDefault();
+                    handleLogin();
+                }
+            });
+            
+            // Add input validation feedback
+            setupInputValidation();
         });
         
-        async function checkServer() {
+        async function checkServerConnection() {
             try {
                 const response = await fetch(`${API_BASE}/health`);
                 if (response.ok) {
                     console.log('✅ Server is running');
+                    // Add subtle pulse animation to logo when server is ready
+                    document.querySelector('.logo-icon').classList.add('pulse');
+                    setTimeout(() => {
+                        document.querySelector('.logo-icon').classList.remove('pulse');
+                    }, 2000);
                 }
             } catch (error) {
-                console.warn('Server not reachable:', error);
+                console.warn('⚠️ Server not reachable:', error);
+                showWarning('Running in offline mode. Some features may be limited.');
             }
+        }
+        
+        function setupInputValidation() {
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('blur', () => {
+                    if (!input.value.trim() && input.hasAttribute('required')) {
+                        input.classList.add('shake');
+                        setTimeout(() => input.classList.remove('shake'), 500);
+                    }
+                });
+                
+                input.addEventListener('input', () => {
+                    if (input.checkValidity()) {
+                        input.style.borderColor = '';
+                    }
+                });
+            });
         }
         
         // Login form
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!isLoggingIn) {
+                handleLogin();
+            }
+        });
+        
+        async function handleLogin() {
+            if (isLoggingIn) return;
             
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -235,6 +479,10 @@
             // Validation
             if (!name || !email || !institution) {
                 showError('Please fill in all fields');
+                document.getElementById('loginForm').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('loginForm').classList.remove('shake');
+                }, 500);
                 return;
             }
             
@@ -242,15 +490,19 @@
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showError('Please enter a valid email address');
+                document.getElementById('email').focus();
                 return;
             }
             
             // Show loading
+            isLoggingIn = true;
             const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
             loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
             
-            document.getElementById('errorMessage').style.display = 'none';
+            // Hide any previous errors
+            hideError();
             
             try {
                 // Send login request
@@ -269,9 +521,19 @@
                 if (data.success) {
                     // Store user data
                     localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
+                    localStorage.setItem('thoraxlab_session', JSON.stringify({
+                        sessionId: data.sessionId,
+                        expiresAt: data.expiresAt
+                    }));
                     
                     // Show success
                     showSuccess('Login successful! Redirecting...');
+                    
+                    // Add success animation
+                    document.querySelector('.login-card').style.animation = 'none';
+                    setTimeout(() => {
+                        document.querySelector('.login-card').style.animation = 'slideDown 0.5s ease-out';
+                    }, 10);
                     
                     // Redirect to dashboard after delay
                     setTimeout(() => {
@@ -290,14 +552,19 @@
                     console.log('Server not reachable, using local authentication...');
                     
                     const user = {
-                        id: 'user-demo',
+                        id: 'user-demo-' + Date.now(),
                         name,
                         email,
                         institution,
-                        role: 'clinician'
+                        role: 'clinician',
+                        impactScore: 100
                     };
                     
                     localStorage.setItem('thoraxlab_user', JSON.stringify(user));
+                    localStorage.setItem('thoraxlab_session', JSON.stringify({
+                        sessionId: 'demo-session-' + Date.now(),
+                        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+                    }));
                     
                     showSuccess('Connected in offline mode. Redirecting...');
                     
@@ -307,17 +574,54 @@
                     
                 } else {
                     showError(error.message || 'Login failed. Please try again.');
+                    // Add error animation
+                    document.getElementById('loginForm').classList.add('shake');
+                    setTimeout(() => {
+                        document.getElementById('loginForm').classList.remove('shake');
+                    }, 500);
                 }
             } finally {
                 // Reset button
+                isLoggingIn = false;
+                loginBtn.innerHTML = originalText;
                 loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Research Dashboard';
             }
-        });
+        }
         
+        // Demo accounts
+        const demoAccounts = [
+            { name: 'Dr. Sarah Chen', email: 'sarah.chen@thoraxlab.org', institution: 'ThoraxLab Medical Center' },
+            { name: 'Prof. James Wilson', email: 'j.wilson@university.edu', institution: 'University Hospital' },
+            { name: 'Dr. Maria Rodriguez', email: 'm.rodriguez@clinic.org', institution: 'City Pulmonary Clinic' }
+        ];
+        
+        function fillDemoAccount(index) {
+            const account = demoAccounts[index];
+            document.getElementById('name').value = account.name;
+            document.getElementById('email').value = account.email;
+            document.getElementById('institution').value = account.institution;
+            
+            // Add visual feedback
+            const demoBtn = event.target;
+            demoBtn.style.background = 'var(--primary-blue)';
+            demoBtn.style.color = 'white';
+            demoBtn.style.borderColor = 'var(--primary-blue)';
+            
+            setTimeout(() => {
+                demoBtn.style.background = '';
+                demoBtn.style.color = '';
+                demoBtn.style.borderColor = '';
+            }, 500);
+            
+            // Focus on submit button
+            document.getElementById('loginBtn').focus();
+        }
+        
+        // UI helper functions
         function showError(message) {
             const errorEl = document.getElementById('errorMessage');
-            errorEl.textContent = message;
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
             errorEl.style.display = 'block';
             
             // Auto-hide after 5 seconds
@@ -326,21 +630,51 @@
             }, 5000);
         }
         
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
         function showSuccess(message) {
             const successEl = document.getElementById('successMessage');
-            successEl.textContent = message;
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
             successEl.style.display = 'block';
         }
         
-        // Demo login for quick testing
-        window.demoLogin = function() {
-            document.getElementById('name').value = 'Dr. Sarah Chen';
-            document.getElementById('email').value = 'sarah.chen@thoraxlab.org';
-            document.getElementById('institution').value = 'ThoraxLab Medical Center';
-        };
+        function showWarning(message) {
+            // Create temporary warning
+            const warning = document.createElement('div');
+            warning.className = 'demo-note';
+            warning.style.marginTop = '1rem';
+            warning.style.animation = 'slideDown 0.3s ease-out';
+            warning.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            
+            document.querySelector('.login-card').appendChild(warning);
+            
+            setTimeout(() => {
+                warning.style.opacity = '0';
+                warning.style.transform = 'translateY(-10px)';
+                setTimeout(() => warning.remove(), 300);
+            }, 3000);
+        }
         
-        // Auto-fill demo on double-click title
-        document.querySelector('.logo-title').addEventListener('dblclick', window.demoLogin);
+        function showHelp() {
+            alert('For assistance, please contact:\n\n' +
+                  '📧 support@thoraxlab.org\n' +
+                  '📞 +1 (555) 123-4567\n\n' +
+                  'Our support team is available 9 AM - 5 PM EST.');
+            return false;
+        }
+        
+        // Easter egg - double click logo for fun
+        document.querySelector('.logo').addEventListener('dblclick', () => {
+            document.querySelector('.logo-icon').style.transform = 'rotate(360deg)';
+            document.querySelector('.logo-icon').style.transition = 'transform 1s ease';
+            
+            setTimeout(() => {
+                document.querySelector('.logo-icon').style.transform = '';
+            }, 1000);
+        });
     </script>
 </body>
 </html>
