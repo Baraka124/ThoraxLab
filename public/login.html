@@ -7,673 +7,1541 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* KEEP ALL YOUR EXISTING CSS */
+        /* CSS will be completely rewritten too */
         :root {
             --primary-blue: #1A5F7A;
             --clinical-green: #00C9A7;
+            --error-red: #EF4444;
+            --warning-orange: #F59E0B;
+            --success-green: #10B981;
             --text-dark: #1E293B;
+            --text-medium: #475569;
             --text-light: #64748B;
             --background-gray: #F8FAFC;
             --card-white: #FFFFFF;
             --border-subtle: #E2E8F0;
-            --radius-smooth: 12px;
+            --radius-smooth: 16px;
+            --radius-tight: 10px;
+            --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 10px 32px rgba(0, 0, 0, 0.1);
+            --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--background-gray); min-height: 100vh; }
-        
-        .container { max-width: 400px; margin: 0 auto; padding: 2rem 1.5rem; }
-        
-        .logo { text-align: center; margin-bottom: 2rem; }
-        .logo-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--primary-blue);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-gray);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo-badge {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary-blue), #00C9A7);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 24px rgba(26, 95, 122, 0.2);
+        }
+
         .logo-title {
-            font-size: 2rem;
+            font-size: 2.25rem;
             font-weight: 800;
             color: var(--primary-blue);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
+
         .logo-subtitle {
             color: var(--text-light);
             font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
-        
+
         .login-card {
             background: var(--card-white);
             border-radius: var(--radius-smooth);
-            padding: 2rem;
+            padding: 2.5rem;
             border: 1px solid var(--border-subtle);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-medium);
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
         }
-        
-        h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--clinical-green));
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            font-weight: 700;
             color: var(--text-dark);
+            margin-bottom: 0.5rem;
         }
-        
-        .form-group { margin-bottom: 1.5rem; }
-        label {
+
+        .form-subtitle {
+            color: var(--text-light);
+            font-size: 0.9375rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
             color: var(--text-dark);
+            font-size: 0.9375rem;
         }
-        
+
         .form-input {
             width: 100%;
-            padding: 0.875rem;
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
+            padding: 1rem 1rem 1rem 2.75rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-tight);
             font-family: inherit;
             font-size: 1rem;
-            transition: all 0.2s ease;
+            transition: var(--transition-fast);
+            background: var(--card-white);
         }
-        
+
         .form-input:focus {
             outline: none;
             border-color: var(--primary-blue);
             box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-            transform: translateY(-1px);
         }
-        
+
         .form-input:invalid:not(:focus):not(:placeholder-shown) {
-            border-color: #EF4444;
+            border-color: var(--error-red);
         }
-        
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 3.125rem;
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .validation-error {
+            color: var(--error-red);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .input-group:has(.form-input:invalid:not(:focus):not(:placeholder-shown)) .validation-error {
+            display: block;
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.625rem;
             width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-tight);
             font-weight: 600;
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition-smooth);
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-primary {
-            background: var(--primary-blue);
+            background: linear-gradient(135deg, var(--primary-blue), #15526b);
             color: white;
         }
-        
-        .btn-primary:hover {
-            background: #15526b;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 95, 122, 0.3);
         }
-        
-        .btn-primary:active {
+
+        .btn-primary:active:not(:disabled) {
             transform: translateY(0);
         }
-        
+
         .btn-primary:disabled {
-            background: var(--text-light);
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none !important;
         }
-        
-        .btn-primary::after {
+
+        .btn-loading .btn-text {
+            visibility: hidden;
+        }
+
+        .btn-loading::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn-primary:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
-            }
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            padding: 2rem;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-subtle);
-            border-top-color: var(--primary-blue);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .error-message {
-            background: #FEF2F2;
-            color: #DC2626;
-            padding: 0.875rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: center;
-            display: none;
-            border-left: 4px solid #DC2626;
-            animation: slideDown 0.3s ease-out;
-        }
-        
-        .success-message {
-            background: #F0FDF4;
-            color: #059669;
-            padding: 0.875rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: center;
-            display: none;
-            border-left: 4px solid #059669;
-            animation: slideDown 0.3s ease-out;
-        }
-        
-        @keyframes slideDown {
-            from {
-                transform: translateY(-10px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        .demo-note {
-            background: #EFF6FF;
-            color: #1E40AF;
-            padding: 0.875rem;
-            border-radius: 8px;
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.875rem;
-            border-left: 4px solid #3B82F6;
-        }
-        
-        .demo-accounts {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
+
+        .demo-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
             border-top: 1px solid var(--border-subtle);
         }
-        
+
         .demo-title {
             font-size: 0.875rem;
             font-weight: 600;
             color: var(--text-light);
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             text-align: center;
         }
-        
-        .demo-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .demo-btn {
-            padding: 0.5rem 0.75rem;
+
+        .demo-account {
+            padding: 0.875rem;
             background: var(--background-gray);
             border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            color: var(--text-dark);
+            border-radius: var(--radius-tight);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition-fast);
+            text-align: center;
         }
-        
-        .demo-btn:hover {
+
+        .demo-account:hover {
             background: var(--card-white);
             border-color: var(--primary-blue);
             transform: translateY(-1px);
         }
-        
-        .demo-btn:active {
-            transform: translateY(0);
+
+        .demo-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
         }
-        
-        .form-footer {
-            margin-top: 1rem;
-            text-align: center;
+
+        .demo-role {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.75rem;
+            background: var(--background-gray);
+            border-radius: var(--radius-tight);
             font-size: 0.875rem;
             color: var(--text-light);
         }
-        
-        .form-footer a {
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
-        
-        .password-toggle {
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
             position: relative;
         }
-        
-        .toggle-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 1rem;
-        }
-        
-        /* Add these animations */
-        .shake {
-            animation: shake 0.5s ease-in-out;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        
-        .pulse {
+
+        .status-indicator.offline {
+            background: var(--warning-orange);
             animation: pulse 2s infinite;
         }
-        
+
+        .notification-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .notification {
+            background: var(--card-white);
+            border-radius: var(--radius-smooth);
+            padding: 1.25rem 1.75rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-blue);
+            box-shadow: var(--shadow-medium);
+            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .notification.error {
+            border-left-color: var(--error-red);
+            background: #FEF2F2;
+        }
+
+        .notification.success {
+            border-left-color: var(--success-green);
+            background: #F0FDF4;
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-orange);
+            background: #FFFBEB;
+        }
+
+        .notification-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .notification-message {
+            font-size: 0.9375rem;
+            color: var(--text-medium);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 1.125rem;
+            transition: var(--transition-fast);
+        }
+
+        .notification-close:hover {
+            color: var(--text-dark);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        .loading-text {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .loading-subtext {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .logo-title {
+                font-size: 1.875rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .login-card {
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+            
+            .btn,
+            .demo-section {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <div class="logo-icon">🫁</div>
+    <!-- Main Container -->
+    <div class="login-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-badge">TL</div>
             <div class="logo-title">ThoraxLab</div>
-            <div class="logo-subtitle">Pneumology Research Platform</div>
+            <div class="logo-subtitle">Research Collaboration Platform</div>
         </div>
-        
+
+        <!-- Login Card -->
         <div class="login-card">
-            <h2>Welcome Back</h2>
-            
-            <div id="errorMessage" class="error-message">
-                <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+            <!-- Form Header -->
+            <div class="form-header">
+                <h2 class="form-title">Welcome Back</h2>
+                <p class="form-subtitle">Sign in to access your research dashboard</p>
             </div>
-            
-            <div id="successMessage" class="success-message">
-                <i class="fas fa-check-circle"></i> <span id="successText"></span>
-            </div>
-            
-            <form id="loginForm">
+
+            <!-- Login Form -->
+            <form id="loginForm" novalidate>
+                <!-- Name Field -->
                 <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" 
-                           id="name" 
-                           class="form-input" 
-                           placeholder="Dr. John Smith" 
-                           required
-                           autocomplete="name">
+                    <label for="name" class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" 
+                               id="name" 
+                               class="form-input" 
+                               placeholder="Dr. John Smith"
+                               required
+                               autocomplete="name"
+                               aria-label="Full Name">
+                        <div class="validation-error" data-error="name">Please enter your full name</div>
+                    </div>
                 </div>
-                
+
+                <!-- Email Field -->
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" 
-                           id="email" 
-                           class="form-input" 
-                           placeholder="john.smith@hospital.org" 
-                           required
-                           autocomplete="email">
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" 
+                               id="email" 
+                               class="form-input" 
+                               placeholder="john.smith@hospital.org"
+                               required
+                               autocomplete="email"
+                               aria-label="Email Address">
+                        <div class="validation-error" data-error="email">Please enter a valid email address</div>
+                    </div>
                 </div>
-                
+
+                <!-- Institution Field -->
                 <div class="form-group">
-                    <label for="institution">Institution</label>
-                    <input type="text" 
-                           id="institution" 
-                           class="form-input" 
-                           placeholder="General Hospital" 
-                           required
-                           autocomplete="organization">
+                    <label for="institution" class="form-label">Institution</label>
+                    <div class="input-group">
+                        <i class="fas fa-hospital input-icon"></i>
+                        <input type="text" 
+                               id="institution" 
+                               class="form-input" 
+                               placeholder="General Hospital"
+                               required
+                               autocomplete="organization"
+                               aria-label="Institution">
+                        <div class="validation-error" data-error="institution">Please enter your institution</div>
+                    </div>
                 </div>
-                
-                <button type="submit" class="btn btn-primary" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Access Research Dashboard
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="btn btn-primary" 
+                        id="loginBtn"
+                        aria-label="Sign in to dashboard">
+                    <span class="btn-text">
+                        <i class="fas fa-sign-in-alt"></i> Access Research Dashboard
+                    </span>
                 </button>
             </form>
-            
-            <div class="demo-accounts">
-                <div class="demo-title">Quick Login (Demo Accounts)</div>
-                <div class="demo-buttons">
-                    <button class="demo-btn" onclick="fillDemoAccount(0)">
-                        Dr. Sarah Chen
-                    </button>
-                    <button class="demo-btn" onclick="fillDemoAccount(1)">
-                        Prof. James Wilson
-                    </button>
-                    <button class="demo-btn" onclick="fillDemoAccount(2)">
-                        Dr. Maria Rodriguez
-                    </button>
+
+            <!-- Demo Accounts -->
+            <div class="demo-section">
+                <div class="demo-title">Quick Access (Demo)</div>
+                <div class="demo-grid" id="demoAccounts">
+                    <!-- Demo accounts will be loaded dynamically -->
                 </div>
             </div>
-            
-            <div class="demo-note">
-                <i class="fas fa-info-circle"></i> This is a demo platform. No real medical data is stored.
+
+            <!-- Status Bar -->
+            <div class="status-bar" id="statusBar">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">Checking connection...</span>
             </div>
-            
-            <div class="form-footer">
-                Need help? <a href="#" onclick="showHelp()">Contact support</a>
-            </div>
-        </div>
-        
-        <div id="loading" class="loading hidden">
-            <div class="spinner"></div>
         </div>
     </div>
 
+    <!-- Notifications Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Connecting...</div>
+        <div class="loading-subtext" id="loadingSubtext"></div>
+    </div>
+
     <script>
-        const API_BASE = window.location.origin;
-        let isLoggingIn = false;
-        
-        // Check if already logged in
-        window.addEventListener('DOMContentLoaded', () => {
-            const userData = localStorage.getItem('thoraxlab_user');
-            if (userData) {
+        // ============================================
+        // THORAXLAB LOGIN SYSTEM - COMPLETE REWRITE
+        // ============================================
+
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            API_BASE: window.location.origin,
+            LOCAL_STORAGE_KEYS: {
+                USER: 'thoraxlab_user',
+                SESSION: 'thoraxlab_session',
+                LOGIN_ATTEMPTS: 'thoraxlab_login_attempts',
+                LAST_LOGIN: 'thoraxlab_last_login',
+                DEMO_ACCOUNTS: 'thoraxlab_demo_accounts'
+            },
+            SECURITY: {
+                MAX_LOGIN_ATTEMPTS: 5,
+                LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
+                SESSION_DURATION: 24 * 60 * 60 * 1000 // 24 hours
+            },
+            VALIDATION: {
+                NAME_MIN_LENGTH: 2,
+                NAME_MAX_LENGTH: 100,
+                EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                INSTITUTION_MIN_LENGTH: 2
+            },
+            TIMING: {
+                DEBOUNCE_DELAY: 300,
+                NOTIFICATION_TIMEOUT: 5000,
+                RETRY_DELAY: 1000,
+                CHECK_INTERVAL: 30000 // 30 seconds
+            },
+            DEMO_ACCOUNTS: [
+                {
+                    id: 'demo-1',
+                    name: 'Dr. Sarah Chen',
+                    email: 'sarah.chen@thoraxlab.org',
+                    institution: 'ThoraxLab Medical Center',
+                    role: 'Lead Researcher',
+                    specialty: 'Pulmonary Medicine'
+                },
+                {
+                    id: 'demo-2',
+                    name: 'Prof. James Wilson',
+                    email: 'j.wilson@university.edu',
+                    institution: 'University Hospital',
+                    role: 'Research Director',
+                    specialty: 'Clinical Trials'
+                },
+                {
+                    id: 'demo-3',
+                    name: 'Dr. Maria Rodriguez',
+                    email: 'm.rodriguez@clinic.org',
+                    institution: 'City Pulmonary Clinic',
+                    role: 'Clinical Researcher',
+                    specialty: 'Patient Outcomes'
+                }
+            ]
+        };
+
+        // ==================== STATE MANAGEMENT ====================
+        class LoginState {
+            constructor() {
+                this.isLoggingIn = false;
+                this.isOnline = navigator.onLine;
+                this.serverStatus = 'checking';
+                this.loginAttempts = this.getLoginAttempts();
+                this.lastAttemptTime = this.getLastAttemptTime();
+                this.activeNotifications = new Set();
+                this.validationErrors = new Map();
+                this.domElements = new Map();
+                this.timeouts = new Set();
+                this.intervals = new Set();
+            }
+
+            getLoginAttempts() {
+                const attempts = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.LOGIN_ATTEMPTS);
+                return attempts ? parseInt(attempts) : 0;
+            }
+
+            getLastAttemptTime() {
+                const time = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.LAST_LOGIN);
+                return time ? parseInt(time) : null;
+            }
+
+            incrementLoginAttempts() {
+                this.loginAttempts++;
+                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.LOGIN_ATTEMPTS, this.loginAttempts.toString());
+                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.LAST_LOGIN, Date.now().toString());
+            }
+
+            resetLoginAttempts() {
+                this.loginAttempts = 0;
+                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.LOGIN_ATTEMPTS);
+                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.LAST_LOGIN);
+            }
+
+            isAccountLocked() {
+                if (this.loginAttempts < CONFIG.SECURITY.MAX_LOGIN_ATTEMPTS) {
+                    return false;
+                }
+
+                if (!this.lastAttemptTime) {
+                    return false;
+                }
+
+                const timeSinceLastAttempt = Date.now() - this.lastAttemptTime;
+                return timeSinceLastAttempt < CONFIG.SECURITY.LOCKOUT_DURATION;
+            }
+
+            getRemainingLockoutTime() {
+                if (!this.isAccountLocked()) {
+                    return 0;
+                }
+
+                const timeSinceLastAttempt = Date.now() - this.lastAttemptTime;
+                return CONFIG.SECURITY.LOCKOUT_DURATION - timeSinceLastAttempt;
+            }
+
+            clearTimeouts() {
+                for (const timeout of this.timeouts) {
+                    clearTimeout(timeout);
+                }
+                this.timeouts.clear();
+            }
+
+            clearIntervals() {
+                for (const interval of this.intervals) {
+                    clearInterval(interval);
+                }
+                this.intervals.clear();
+            }
+
+            cleanup() {
+                this.clearTimeouts();
+                this.clearIntervals();
+            }
+        }
+
+        // ==================== DOM MANAGER ====================
+        class DOMManager {
+            constructor(state) {
+                this.state = state;
+                this.cacheElements();
+            }
+
+            cacheElements() {
+                const elements = {
+                    // Form elements
+                    loginForm: document.getElementById('loginForm'),
+                    nameInput: document.getElementById('name'),
+                    emailInput: document.getElementById('email'),
+                    institutionInput: document.getElementById('institution'),
+                    loginBtn: document.getElementById('loginBtn'),
+                    
+                    // Demo accounts
+                    demoAccountsContainer: document.getElementById('demoAccounts'),
+                    
+                    // Status
+                    statusBar: document.getElementById('statusBar'),
+                    statusIndicator: document.getElementById('statusIndicator'),
+                    statusText: document.getElementById('statusText'),
+                    
+                    // Loading
+                    loadingOverlay: document.getElementById('loadingOverlay'),
+                    loadingText: document.getElementById('loadingText'),
+                    loadingSubtext: document.getElementById('loadingSubtext'),
+                    
+                    // Notifications
+                    notificationContainer: document.getElementById('notificationContainer')
+                };
+
+                for (const [key, element] of Object.entries(elements)) {
+                    this.state.domElements.set(key, element);
+                }
+            }
+
+            getElement(key) {
+                return this.state.domElements.get(key);
+            }
+
+            showLoading(message = 'Connecting...', submessage = '') {
+                const overlay = this.getElement('loadingOverlay');
+                const text = this.getElement('loadingText');
+                const subtext = this.getElement('loadingSubtext');
+
+                text.textContent = message;
+                subtext.textContent = submessage;
+                overlay.classList.add('active');
+            }
+
+            hideLoading() {
+                const overlay = this.getElement('loadingOverlay');
+                overlay.classList.remove('active');
+            }
+
+            showNotification(type, title, message, duration = CONFIG.TIMING.NOTIFICATION_TIMEOUT) {
+                const container = this.getElement('notificationContainer');
+                const notificationId = `notification-${Date.now()}`;
+
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.id = notificationId;
+                notification.setAttribute('role', 'alert');
+                notification.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+                const iconMap = {
+                    error: 'fas fa-exclamation-circle',
+                    success: 'fas fa-check-circle',
+                    warning: 'fas fa-exclamation-triangle',
+                    info: 'fas fa-info-circle'
+                };
+
+                notification.innerHTML = `
+                    <i class="${iconMap[type] || 'fas fa-bell'} notification-icon"></i>
+                    <div class="notification-content">
+                        <div class="notification-title">${this.escapeHtml(title)}</div>
+                        <div class="notification-message">${this.escapeHtml(message)}</div>
+                    </div>
+                    <button class="notification-close" aria-label="Dismiss notification">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                container.appendChild(notification);
+
+                // Add click handler for close button
+                const closeBtn = notification.querySelector('.notification-close');
+                closeBtn.addEventListener('click', () => {
+                    this.removeNotification(notificationId);
+                });
+
+                // Auto-remove after duration
+                if (duration > 0) {
+                    const timeout = setTimeout(() => {
+                        this.removeNotification(notificationId);
+                    }, duration);
+                    this.state.timeouts.add(timeout);
+                }
+
+                this.state.activeNotifications.add(notificationId);
+                return notificationId;
+            }
+
+            removeNotification(notificationId) {
+                const notification = document.getElementById(notificationId);
+                if (notification) {
+                    notification.style.transform = 'translateX(100%)';
+                    notification.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                        this.state.activeNotifications.delete(notificationId);
+                    }, 300);
+                }
+            }
+
+            clearAllNotifications() {
+                const container = this.getElement('notificationContainer');
+                container.innerHTML = '';
+                this.state.activeNotifications.clear();
+            }
+
+            updateStatus(isOnline, serverStatus = null) {
+                const statusBar = this.getElement('statusBar');
+                const indicator = this.getElement('statusIndicator');
+                const text = this.getElement('statusText');
+
+                if (!isOnline) {
+                    indicator.className = 'status-indicator offline';
+                    text.textContent = 'Offline - Working locally';
+                    statusBar.style.opacity = '0.8';
+                    return;
+                }
+
+                if (serverStatus === 'online') {
+                    indicator.className = 'status-indicator';
+                    text.textContent = 'Connected to ThoraxLab';
+                    statusBar.style.opacity = '1';
+                } else if (serverStatus === 'offline') {
+                    indicator.className = 'status-indicator offline';
+                    text.textContent = 'Server unavailable - Working offline';
+                    statusBar.style.opacity = '0.8';
+                } else {
+                    indicator.className = 'status-indicator offline';
+                    text.textContent = 'Checking connection...';
+                    statusBar.style.opacity = '0.8';
+                }
+            }
+
+            renderDemoAccounts(accounts) {
+                const container = this.getElement('demoAccountsContainer');
+                if (!container) return;
+
+                container.innerHTML = accounts.map(account => `
+                    <div class="demo-account" 
+                         data-account-id="${account.id}"
+                         role="button"
+                         tabindex="0"
+                         aria-label="Sign in as ${account.name}, ${account.role} at ${account.institution}">
+                        <div class="demo-name">${this.escapeHtml(account.name)}</div>
+                        <div class="demo-role">${this.escapeHtml(account.role)}</div>
+                    </div>
+                `).join('');
+
+                // Add event listeners
+                container.querySelectorAll('.demo-account').forEach(accountEl => {
+                    accountEl.addEventListener('click', (e) => {
+                        this.handleDemoAccountClick(e, accounts);
+                    });
+                    
+                    accountEl.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.handleDemoAccountClick(e, accounts);
+                        }
+                    });
+                });
+            }
+
+            handleDemoAccountClick(event, accounts) {
+                const accountId = event.currentTarget.dataset.accountId;
+                const account = accounts.find(acc => acc.id === accountId);
+                
+                if (!account) return;
+
+                // Fill form
+                this.getElement('nameInput').value = account.name;
+                this.getElement('emailInput').value = account.email;
+                this.getElement('institutionInput').value = account.institution;
+
+                // Show visual feedback
+                event.currentTarget.style.transform = 'scale(0.95)';
+                event.currentTarget.style.backgroundColor = 'var(--primary-blue)';
+                event.currentTarget.style.color = 'white';
+
+                setTimeout(() => {
+                    event.currentTarget.style.transform = '';
+                    event.currentTarget.style.backgroundColor = '';
+                    event.currentTarget.style.color = '';
+                }, 300);
+
+                // Focus on submit button
+                this.getElement('loginBtn').focus();
+
+                // Show notification
+                this.showNotification('info', 'Demo Account Selected', 
+                    `Ready to sign in as ${account.name}`);
+            }
+
+            setButtonLoading(loading) {
+                const button = this.getElement('loginBtn');
+                if (loading) {
+                    button.classList.add('btn-loading');
+                    button.disabled = true;
+                } else {
+                    button.classList.remove('btn-loading');
+                    button.disabled = false;
+                }
+            }
+
+            showValidationError(field, message) {
+                const errorElement = document.querySelector(`[data-error="${field}"]`);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            hideValidationError(field) {
+                const errorElement = document.querySelector(`[data-error="${field}"]`);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
+
+            clearValidationErrors() {
+                document.querySelectorAll('.validation-error').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            focusFirstInput() {
+                const nameInput = this.getElement('nameInput');
+                if (nameInput) {
+                    nameInput.focus();
+                }
+            }
+        }
+
+        // ==================== VALIDATION SERVICE ====================
+        class ValidationService {
+            static validateName(name) {
+                if (!name || name.trim().length < CONFIG.VALIDATION.NAME_MIN_LENGTH) {
+                    return {
+                        isValid: false,
+                        message: `Name must be at least ${CONFIG.VALIDATION.NAME_MIN_LENGTH} characters`
+                    };
+                }
+
+                if (name.length > CONFIG.VALIDATION.NAME_MAX_LENGTH) {
+                    return {
+                        isValid: false,
+                        message: `Name must be less than ${CONFIG.VALIDATION.NAME_MAX_LENGTH} characters`
+                    };
+                }
+
+                return { isValid: true };
+            }
+
+            static validateEmail(email) {
+                if (!email) {
+                    return {
+                        isValid: false,
+                        message: 'Email is required'
+                    };
+                }
+
+                if (!CONFIG.VALIDATION.EMAIL_REGEX.test(email)) {
+                    return {
+                        isValid: false,
+                        message: 'Please enter a valid email address'
+                    };
+                }
+
+                return { isValid: true };
+            }
+
+            static validateInstitution(institution) {
+                if (!institution || institution.trim().length < CONFIG.VALIDATION.INSTITUTION_MIN_LENGTH) {
+                    return {
+                        isValid: false,
+                        message: `Institution must be at least ${CONFIG.VALIDATION.INSTITUTION_MIN_LENGTH} characters`
+                    };
+                }
+
+                return { isValid: true };
+            }
+
+            static validateForm(formData) {
+                const errors = [];
+
+                const nameValidation = this.validateName(formData.name);
+                if (!nameValidation.isValid) {
+                    errors.push({ field: 'name', message: nameValidation.message });
+                }
+
+                const emailValidation = this.validateEmail(formData.email);
+                if (!emailValidation.isValid) {
+                    errors.push({ field: 'email', message: emailValidation.message });
+                }
+
+                const institutionValidation = this.validateInstitution(formData.institution);
+                if (!institutionValidation.isValid) {
+                    errors.push({ field: 'institution', message: institutionValidation.message });
+                }
+
+                return {
+                    isValid: errors.length === 0,
+                    errors
+                };
+            }
+        }
+
+        // ==================== API SERVICE ====================
+        class APIService {
+            constructor(state) {
+                this.state = state;
+                this.baseURL = CONFIG.API_BASE;
+            }
+
+            async checkServerStatus() {
+                try {
+                    const response = await fetch(`${this.baseURL}/health`, {
+                        method: 'HEAD',
+                        signal: AbortSignal.timeout(3000)
+                    });
+                    
+                    return response.ok ? 'online' : 'offline';
+                } catch (error) {
+                    console.warn('Server check failed:', error);
+                    return 'offline';
+                }
+            }
+
+            async authenticate(credentials) {
+                try {
+                    const response = await fetch(`${this.baseURL}/api/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(credentials)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        return {
+                            success: true,
+                            user: data.user,
+                            session: {
+                                id: data.sessionId,
+                                expiresAt: data.expiresAt
+                            }
+                        };
+                    } else {
+                        throw new Error(data.error || 'Authentication failed');
+                    }
+                } catch (error) {
+                    console.error('Authentication error:', error);
+                    throw error;
+                }
+            }
+
+            async validateSession(sessionData) {
+                try {
+                    const response = await fetch(`${this.baseURL}/api/validate-session`, {
+                        headers: {
+                            'Authorization': `Bearer ${sessionData}`
+                        }
+                    });
+                    return response.ok;
+                } catch (error) {
+                    return false;
+                }
+            }
+        }
+
+        // ==================== OFFLINE SERVICE ====================
+        class OfflineService {
+            static createLocalSession(userData) {
+                const sessionId = `local-session-${Date.now()}`;
+                const expiresAt = new Date(Date.now() + CONFIG.SECURITY.SESSION_DURATION).toISOString();
+
+                const session = {
+                    id: sessionId,
+                    expiresAt: expiresAt,
+                    isLocal: true
+                };
+
+                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.USER, JSON.stringify(userData));
+                localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION, JSON.stringify(session));
+
+                return { user: userData, session };
+            }
+
+            static getDemoAccounts() {
+                try {
+                    const stored = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.DEMO_ACCOUNTS);
+                    if (stored) {
+                        return JSON.parse(stored);
+                    }
+                } catch (error) {
+                    console.warn('Failed to load stored demo accounts:', error);
+                }
+                return CONFIG.DEMO_ACCOUNTS;
+            }
+
+            static saveDemoAccounts(accounts) {
+                try {
+                    localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.DEMO_ACCOUNTS, JSON.stringify(accounts));
+                } catch (error) {
+                    console.warn('Failed to save demo accounts:', error);
+                }
+            }
+        }
+
+        // ==================== MAIN LOGIN MANAGER ====================
+        class LoginManager {
+            constructor() {
+                this.state = new LoginState();
+                this.dom = new DOMManager(this.state);
+                this.api = new APIService(this.state);
+                this.init();
+            }
+
+            async init() {
+                console.log('🚀 ThoraxLab Login System Initializing...');
+
+                // Check for existing session
+                if (await this.checkExistingSession()) {
+                    this.redirectToDashboard();
+                    return;
+                }
+
+                // Setup event listeners
+                this.setupEventListeners();
+
+                // Load demo accounts
+                this.loadDemoAccounts();
+
+                // Check server status periodically
+                this.checkServerStatus();
+                this.setupStatusChecker();
+
+                // Focus first input
+                setTimeout(() => this.dom.focusFirstInput(), 100);
+
+                console.log('✅ Login system ready');
+            }
+
+            async checkExistingSession() {
+                try {
+                    const userData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
+                    const sessionData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+
+                    if (!userData || !sessionData) {
+                        return false;
+                    }
+
+                    const session = JSON.parse(sessionData);
+                    
+                    // Check if session is expired
+                    if (session.expiresAt && new Date(session.expiresAt) < new Date()) {
+                        this.clearSession();
+                        return false;
+                    }
+
+                    // Validate with server if online
+                    if (this.state.isOnline && !session.isLocal) {
+                        const isValid = await this.api.validateSession(session.id);
+                        if (!isValid) {
+                            this.clearSession();
+                            return false;
+                        }
+                    }
+
+                    return true;
+                } catch (error) {
+                    console.warn('Session check failed:', error);
+                    this.clearSession();
+                    return false;
+                }
+            }
+
+            clearSession() {
+                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
+                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+            }
+
+            setupEventListeners() {
+                const form = this.dom.getElement('loginForm');
+                if (!form) return;
+
+                // Form submission
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Real-time validation
+                const inputs = ['name', 'email', 'institution'];
+                inputs.forEach(field => {
+                    const input = this.dom.getElement(`${field}Input`);
+                    if (input) {
+                        let debounceTimer;
+                        input.addEventListener('input', (e) => {
+                            clearTimeout(debounceTimer);
+                            debounceTimer = setTimeout(() => {
+                                this.validateField(field, e.target.value);
+                            }, CONFIG.TIMING.DEBOUNCE_DELAY);
+                        });
+                    }
+                });
+
+                // Network status
+                window.addEventListener('online', () => this.handleOnline());
+                window.addEventListener('offline', () => this.handleOffline());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    // Ctrl/Cmd + Enter to submit
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        this.handleLogin();
+                    }
+
+                    // Escape to clear notifications
+                    if (e.key === 'Escape') {
+                        this.dom.clearAllNotifications();
+                    }
+                });
+
+                // Cleanup on page unload
+                window.addEventListener('beforeunload', () => {
+                    this.cleanup();
+                });
+            }
+
+            setupStatusChecker() {
+                const interval = setInterval(() => {
+                    this.checkServerStatus();
+                }, CONFIG.TIMING.CHECK_INTERVAL);
+
+                this.state.intervals.add(interval);
+            }
+
+            async checkServerStatus() {
+                if (!this.state.isOnline) {
+                    this.dom.updateStatus(false);
+                    return;
+                }
+
+                try {
+                    const status = await this.api.checkServerStatus();
+                    this.state.serverStatus = status;
+                    this.dom.updateStatus(true, status);
+                } catch (error) {
+                    this.state.serverStatus = 'offline';
+                    this.dom.updateStatus(true, 'offline');
+                }
+            }
+
+            loadDemoAccounts() {
+                const accounts = OfflineService.getDemoAccounts();
+                this.dom.renderDemoAccounts(accounts);
+            }
+
+            validateField(field, value) {
+                let validation;
+
+                switch (field) {
+                    case 'name':
+                        validation = ValidationService.validateName(value);
+                        break;
+                    case 'email':
+                        validation = ValidationService.validateEmail(value);
+                        break;
+                    case 'institution':
+                        validation = ValidationService.validateInstitution(value);
+                        break;
+                    default:
+                        return;
+                }
+
+                if (validation.isValid) {
+                    this.dom.hideValidationError(field);
+                    this.state.validationErrors.delete(field);
+                } else {
+                    this.dom.showValidationError(field, validation.message);
+                    this.state.validationErrors.set(field, validation.message);
+                }
+            }
+
+            async handleLogin() {
+                // Prevent multiple simultaneous logins
+                if (this.state.isLoggingIn) {
+                    return;
+                }
+
+                // Check if account is locked
+                if (this.state.isAccountLocked()) {
+                    const remainingTime = Math.ceil(this.state.getRemainingLockoutTime() / 60000);
+                    this.dom.showNotification('error', 'Account Locked', 
+                        `Too many failed attempts. Try again in ${remainingTime} minutes.`);
+                    return;
+                }
+
+                // Get form data
+                const formData = {
+                    name: this.dom.getElement('nameInput').value.trim(),
+                    email: this.dom.getElement('emailInput').value.trim(),
+                    institution: this.dom.getElement('institutionInput').value.trim()
+                };
+
+                // Validate form
+                const validation = ValidationService.validateForm(formData);
+                if (!validation.isValid) {
+                    validation.errors.forEach(error => {
+                        this.dom.showValidationError(error.field, error.message);
+                    });
+                    
+                    // Focus on first error field
+                    if (validation.errors.length > 0) {
+                        const firstError = validation.errors[0];
+                        const input = this.dom.getElement(`${firstError.field}Input`);
+                        if (input) input.focus();
+                    }
+                    return;
+                }
+
+                // Clear any previous validation errors
+                this.dom.clearValidationErrors();
+
+                // Start login process
+                this.state.isLoggingIn = true;
+                this.dom.setButtonLoading(true);
+                this.dom.showLoading('Authenticating', 'Connecting to ThoraxLab...');
+
+                try {
+                    let result;
+
+                    if (this.state.isOnline && this.state.serverStatus === 'online') {
+                        // Try online authentication
+                        result = await this.api.authenticate(formData);
+                        
+                        if (result.success) {
+                            // Successful online login
+                            this.state.resetLoginAttempts();
+                            this.saveSession(result.user, result.session);
+                            this.dom.showNotification('success', 'Welcome Back!', 
+                                'Redirecting to dashboard...');
+                            
+                            setTimeout(() => this.redirectToDashboard(), 1000);
+                            return;
+                        }
+                    }
+
+                    // Fallback to offline/local authentication
+                    console.log('Using offline authentication');
+                    
+                    const userData = {
+                        id: `user-${Date.now()}`,
+                        ...formData,
+                        role: 'researcher',
+                        isLocal: true,
+                        lastLogin: new Date().toISOString()
+                    };
+
+                    const session = OfflineService.createLocalSession(userData);
+                    
+                    this.state.resetLoginAttempts();
+                    this.dom.showNotification('success', 'Offline Mode Active', 
+                        'Working locally. Some features may be limited.');
+                    
+                    setTimeout(() => this.redirectToDashboard(), 1000);
+
+                } catch (error) {
+                    console.error('Login failed:', error);
+                    
+                    // Increment failed attempts
+                    this.state.incrementLoginAttempts();
+                    
+                    // Show appropriate error message
+                    let errorMessage = 'Login failed. Please try again.';
+                    
+                    if (error.message.includes('Network') || error.message.includes('Failed to fetch')) {
+                        errorMessage = 'Unable to connect to server. Working in offline mode.';
+                    } else if (error.message.includes('401') || error.message.includes('403')) {
+                        errorMessage = 'Invalid credentials. Please check your information.';
+                    }
+
+                    this.dom.showNotification('error', 'Authentication Failed', errorMessage);
+
+                    // Update lockout status if needed
+                    if (this.state.isAccountLocked()) {
+                        const remainingTime = Math.ceil(this.state.getRemainingLockoutTime() / 60000);
+                        this.dom.showNotification('warning', 'Account Temporarily Locked', 
+                            `Please wait ${remainingTime} minutes before trying again.`);
+                    }
+                } finally {
+                    // Reset UI state
+                    this.state.isLoggingIn = false;
+                    this.dom.setButtonLoading(false);
+                    this.dom.hideLoading();
+                }
+            }
+
+            saveSession(user, session) {
+                try {
+                    localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
+                    localStorage.setItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION, JSON.stringify(session));
+                    
+                    // Track successful login
+                    localStorage.setItem('thoraxlab_last_successful_login', new Date().toISOString());
+                } catch (error) {
+                    console.error('Failed to save session:', error);
+                    this.dom.showNotification('error', 'Storage Error', 
+                        'Could not save login information. Please try again.');
+                }
+            }
+
+            redirectToDashboard() {
                 window.location.href = 'index.html';
             }
+
+            handleOnline() {
+                this.state.isOnline = true;
+                this.dom.updateStatus(true, this.state.serverStatus);
+                this.checkServerStatus();
+                
+                this.dom.showNotification('info', 'Back Online', 
+                    'Reconnected to network. Syncing data...', 3000);
+            }
+
+            handleOffline() {
+                this.state.isOnline = false;
+                this.dom.updateStatus(false);
+                
+                this.dom.showNotification('warning', 'Offline Mode', 
+                    'Network connection lost. Working locally.', 3000);
+            }
+
+            cleanup() {
+                this.state.cleanup();
+                this.dom.clearAllNotifications();
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
+        // Start the login system when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the login system
+            const loginManager = new LoginManager();
             
-            // Auto-focus email field
-            document.getElementById('email').focus();
+            // Make available globally for debugging (remove in production)
+            window.ThoraxLabLogin = loginManager;
             
-            // Test server connection
-            checkServerConnection();
-            
-            // Add Enter key support
-            document.getElementById('loginForm').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !isLoggingIn) {
-                    e.preventDefault();
-                    handleLogin();
-                }
-            });
-            
-            // Add input validation feedback
-            setupInputValidation();
+            // Add accessibility improvements
+            document.body.setAttribute('role', 'application');
+            document.body.setAttribute('aria-label', 'ThoraxLab Login Page');
         });
-        
-        async function checkServerConnection() {
-            try {
-                const response = await fetch(`${API_BASE}/health`);
-                if (response.ok) {
-                    console.log('✅ Server is running');
-                    // Add subtle pulse animation to logo when server is ready
-                    document.querySelector('.logo-icon').classList.add('pulse');
-                    setTimeout(() => {
-                        document.querySelector('.logo-icon').classList.remove('pulse');
-                    }, 2000);
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // Page became visible again, check session
+                const userData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
+                if (userData && window.location.pathname.includes('login.html')) {
+                    window.location.href = 'index.html';
                 }
-            } catch (error) {
-                console.warn('⚠️ Server not reachable:', error);
-                showWarning('Running in offline mode. Some features may be limited.');
             }
-        }
-        
-        function setupInputValidation() {
-            const inputs = document.querySelectorAll('.form-input');
-            inputs.forEach(input => {
-                input.addEventListener('blur', () => {
-                    if (!input.value.trim() && input.hasAttribute('required')) {
-                        input.classList.add('shake');
-                        setTimeout(() => input.classList.remove('shake'), 500);
-                    }
-                });
-                
-                input.addEventListener('input', () => {
-                    if (input.checkValidity()) {
-                        input.style.borderColor = '';
-                    }
-                });
-            });
-        }
-        
-        // Login form
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!isLoggingIn) {
-                handleLogin();
-            }
-        });
-        
-        async function handleLogin() {
-            if (isLoggingIn) return;
-            
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const institution = document.getElementById('institution').value.trim();
-            
-            // Validation
-            if (!name || !email || !institution) {
-                showError('Please fill in all fields');
-                document.getElementById('loginForm').classList.add('shake');
-                setTimeout(() => {
-                    document.getElementById('loginForm').classList.remove('shake');
-                }, 500);
-                return;
-            }
-            
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showError('Please enter a valid email address');
-                document.getElementById('email').focus();
-                return;
-            }
-            
-            // Show loading
-            isLoggingIn = true;
-            const loginBtn = document.getElementById('loginBtn');
-            const originalText = loginBtn.innerHTML;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
-            loginBtn.disabled = true;
-            
-            // Hide any previous errors
-            hideError();
-            
-            try {
-                // Send login request
-                const response = await fetch(`${API_BASE}/api/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        institution
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Store user data
-                    localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
-                    localStorage.setItem('thoraxlab_session', JSON.stringify({
-                        sessionId: data.sessionId,
-                        expiresAt: data.expiresAt
-                    }));
-                    
-                    // Show success
-                    showSuccess('Login successful! Redirecting...');
-                    
-                    // Add success animation
-                    document.querySelector('.login-card').style.animation = 'none';
-                    setTimeout(() => {
-                        document.querySelector('.login-card').style.animation = 'slideDown 0.5s ease-out';
-                    }, 10);
-                    
-                    // Redirect to dashboard after delay
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                    
-                } else {
-                    throw new Error(data.error || 'Login failed');
-                }
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                
-                // Fallback: Create local user if server fails
-                if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
-                    console.log('Server not reachable, using local authentication...');
-                    
-                    const user = {
-                        id: 'user-demo-' + Date.now(),
-                        name,
-                        email,
-                        institution,
-                        role: 'clinician',
-                        impactScore: 100
-                    };
-                    
-                    localStorage.setItem('thoraxlab_user', JSON.stringify(user));
-                    localStorage.setItem('thoraxlab_session', JSON.stringify({
-                        sessionId: 'demo-session-' + Date.now(),
-                        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-                    }));
-                    
-                    showSuccess('Connected in offline mode. Redirecting...');
-                    
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                    
-                } else {
-                    showError(error.message || 'Login failed. Please try again.');
-                    // Add error animation
-                    document.getElementById('loginForm').classList.add('shake');
-                    setTimeout(() => {
-                        document.getElementById('loginForm').classList.remove('shake');
-                    }, 500);
-                }
-            } finally {
-                // Reset button
-                isLoggingIn = false;
-                loginBtn.innerHTML = originalText;
-                loginBtn.disabled = false;
-            }
-        }
-        
-        // Demo accounts
-        const demoAccounts = [
-            { name: 'Dr. Sarah Chen', email: 'sarah.chen@thoraxlab.org', institution: 'ThoraxLab Medical Center' },
-            { name: 'Prof. James Wilson', email: 'j.wilson@university.edu', institution: 'University Hospital' },
-            { name: 'Dr. Maria Rodriguez', email: 'm.rodriguez@clinic.org', institution: 'City Pulmonary Clinic' }
-        ];
-        
-        function fillDemoAccount(index) {
-            const account = demoAccounts[index];
-            document.getElementById('name').value = account.name;
-            document.getElementById('email').value = account.email;
-            document.getElementById('institution').value = account.institution;
-            
-            // Add visual feedback
-            const demoBtn = event.target;
-            demoBtn.style.background = 'var(--primary-blue)';
-            demoBtn.style.color = 'white';
-            demoBtn.style.borderColor = 'var(--primary-blue)';
-            
-            setTimeout(() => {
-                demoBtn.style.background = '';
-                demoBtn.style.color = '';
-                demoBtn.style.borderColor = '';
-            }, 500);
-            
-            // Focus on submit button
-            document.getElementById('loginBtn').focus();
-        }
-        
-        // UI helper functions
-        function showError(message) {
-            const errorEl = document.getElementById('errorMessage');
-            const errorText = document.getElementById('errorText');
-            errorText.textContent = message;
-            errorEl.style.display = 'block';
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                errorEl.style.display = 'none';
-            }, 5000);
-        }
-        
-        function hideError() {
-            document.getElementById('errorMessage').style.display = 'none';
-        }
-        
-        function showSuccess(message) {
-            const successEl = document.getElementById('successMessage');
-            const successText = document.getElementById('successText');
-            successText.textContent = message;
-            successEl.style.display = 'block';
-        }
-        
-        function showWarning(message) {
-            // Create temporary warning
-            const warning = document.createElement('div');
-            warning.className = 'demo-note';
-            warning.style.marginTop = '1rem';
-            warning.style.animation = 'slideDown 0.3s ease-out';
-            warning.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-            
-            document.querySelector('.login-card').appendChild(warning);
-            
-            setTimeout(() => {
-                warning.style.opacity = '0';
-                warning.style.transform = 'translateY(-10px)';
-                setTimeout(() => warning.remove(), 300);
-            }, 3000);
-        }
-        
-        function showHelp() {
-            alert('For assistance, please contact:\n\n' +
-                  '📧 support@thoraxlab.org\n' +
-                  '📞 +1 (555) 123-4567\n\n' +
-                  'Our support team is available 9 AM - 5 PM EST.');
-            return false;
-        }
-        
-        // Easter egg - double click logo for fun
-        document.querySelector('.logo').addEventListener('dblclick', () => {
-            document.querySelector('.logo-icon').style.transform = 'rotate(360deg)';
-            document.querySelector('.logo-icon').style.transition = 'transform 1s ease';
-            
-            setTimeout(() => {
-                document.querySelector('.logo-icon').style.transform = '';
-            }, 1000);
         });
     </script>
 </body>
