@@ -1057,1191 +1057,1339 @@
     <div id="notificationToast" class="notification hidden"></div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        const API_BASE = window.location.origin;
-        const SOCKET_URL = window.location.origin;
-        
-        // ==================== GLOBAL STATE ====================
-        let currentUser = null;
-        let currentPage = 1;
-        let totalPages = 1;
-        let currentProjects = [];
-        let selectedTemplate = null;
-        let socket = null;
-        let searchTimeout = null;
+        // ThoraxLab Dashboard - Complete Rewrite
+// Version: 1.0.0
+// Date: 2024-01-20
 
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 ThoraxLab Research Dashboard Initializing...');
-            
-            // Check authentication
-            const isAuthenticated = await checkAuth();
-            if (!isAuthenticated) {
-                window.location.href = 'login.html';
-                return;
+// ==================== CONFIGURATION ====================
+const CONFIG = {
+    API_BASE_URL: window.location.origin,
+    WEBSOCKET_URL: window.location.origin,
+    LOCAL_STORAGE_KEYS: {
+        USER: 'thoraxlab_user_data',
+        SESSION: 'thoraxlab_auth_session',
+        SETTINGS: 'thoraxlab_user_settings'
+    },
+    PAGINATION: {
+        DEFAULT_PAGE: 1,
+        PAGE_SIZE: 12,
+        VISIBLE_PAGES: 5
+    },
+    TIMING: {
+        DEBOUNCE_SEARCH: 500,
+        NOTIFICATION_TIMEOUT: 5000,
+        TOAST_TIMEOUT: 4000,
+        SPINNER_DELAY: 300
+    },
+    UI: {
+        MODAL_TRANSITION: 300,
+        CARD_HOVER_DELAY: 100,
+        TOOLTIP_DELAY: 200
+    }
+};
+
+// ==================== STATE MANAGEMENT ====================
+class ApplicationState {
+    constructor() {
+        this.user = null;
+        this.projects = [];
+        this.stats = null;
+        this.templates = [];
+        this.notifications = [];
+        this.unreadCount = 0;
+        this.pagination = {
+            current: 1,
+            total: 1,
+            hasNext: false,
+            hasPrev: false
+        };
+        this.filters = {
+            search: '',
+            status: 'all',
+            sort: 'recent',
+            tags: []
+        };
+        this.ui = {
+            isLoading: false,
+            activeModal: null,
+            selectedTemplate: null,
+            selectedTags: new Set()
+        };
+        this.socket = null;
+        this.listeners = new Map();
+        this.timeouts = new Map();
+    }
+
+    subscribe(event, callback) {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, new Set());
+        }
+        this.listeners.get(event).add(callback);
+        return () => this.listeners.get(event).delete(callback);
+    }
+
+    emit(event, data) {
+        if (this.listeners.has(event)) {
+            this.listeners.get(event).forEach(callback => callback(data));
+        }
+    }
+
+    clearTimeouts() {
+        for (const timeout of this.timeouts.values()) {
+            clearTimeout(timeout);
+        }
+        this.timeouts.clear();
+    }
+}
+
+const appState = new ApplicationState();
+
+// ==================== DOM MANAGER ====================
+class DOMManager {
+    constructor() {
+        this.cache = new Map();
+        this.observer = null;
+    }
+
+    get(selector, cache = true) {
+        if (cache && this.cache.has(selector)) {
+            return this.cache.get(selector);
+        }
+        
+        const element = document.querySelector(selector);
+        if (element && cache) {
+            this.cache.set(selector, element);
+        }
+        return element;
+    }
+
+    getAll(selector) {
+        return document.querySelectorAll(selector);
+    }
+
+    create(tag, attributes = {}, children = []) {
+        const element = document.createElement(tag);
+        
+        Object.entries(attributes).forEach(([key, value]) => {
+            if (key === 'className') {
+                element.className = value;
+            } else if (key === 'dataset') {
+                Object.entries(value).forEach(([dataKey, dataValue]) => {
+                    element.dataset[dataKey] = dataValue;
+                });
+            } else if (key.startsWith('on')) {
+                element.addEventListener(key.slice(2).toLowerCase(), value);
+            } else {
+                element.setAttribute(key, value);
             }
+        });
+        
+        children.forEach(child => {
+            if (typeof child === 'string') {
+                element.appendChild(document.createTextNode(child));
+            } else if (child instanceof Node) {
+                element.appendChild(child);
+            }
+        });
+        
+        return element;
+    }
+
+    render(container, content) {
+        if (typeof content === 'string') {
+            container.innerHTML = content;
+        } else if (content instanceof Node) {
+            container.innerHTML = '';
+            container.appendChild(content);
+        }
+        return container;
+    }
+
+    show(element) {
+        element?.classList.remove('hidden');
+    }
+
+    hide(element) {
+        element?.classList.add('hidden');
+    }
+
+    toggle(element, condition) {
+        if (condition) {
+            this.show(element);
+        } else {
+            this.hide(element);
+        }
+    }
+
+    addClass(element, className) {
+        element?.classList.add(className);
+    }
+
+    removeClass(element, className) {
+        element?.classList.remove(className);
+    }
+
+    setText(element, text) {
+        if (element) element.textContent = text;
+    }
+
+    setHTML(element, html) {
+        if (element) element.innerHTML = html;
+    }
+
+    observe(selector, callback, options = {}) {
+        if (!this.observer) {
+            this.observer = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(node => {
+                            if (node.nodeType === 1 && node.matches(selector)) {
+                                callback(node);
+                            }
+                        });
+                    }
+                });
+            });
             
-            // Initialize WebSocket
-            initWebSocket();
+            this.observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+}
+
+const DOM = new DOMManager();
+
+// ==================== API SERVICE ====================
+class ApiService {
+    constructor() {
+        this.baseURL = CONFIG.API_BASE_URL;
+        this.headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
+    }
+
+    getAuthHeader() {
+        const session = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+        if (session) {
+            return { 'Authorization': `Bearer ${JSON.parse(session).token}` };
+        }
+        return {};
+    }
+
+    async request(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        const config = {
+            ...options,
+            headers: {
+                ...this.headers,
+                ...this.getAuthHeader(),
+                ...options.headers
+            }
+        };
+
+        try {
+            const response = await fetch(url, config);
             
-            // Load dashboard data
-            await loadDashboardData();
+            if (response.status === 401) {
+                this.handleUnauthorized();
+                throw new Error('Authentication required');
+            }
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || `HTTP ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('API Request failed:', error);
+            throw error;
+        }
+    }
+
+    handleUnauthorized() {
+        localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
+        localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+        window.location.href = '/login.html';
+    }
+
+    // Auth
+    async getCurrentUser() {
+        return this.request('/api/auth/me');
+    }
+
+    // Projects
+    async getProjects(params = {}) {
+        const query = new URLSearchParams({
+            page: params.page || CONFIG.PAGINATION.DEFAULT_PAGE,
+            limit: params.limit || CONFIG.PAGINATION.PAGE_SIZE,
+            search: params.search || '',
+            status: params.status || 'all',
+            sort: params.sort || 'recent',
+            ...params
+        });
+        return this.request(`/api/projects?${query}`);
+    }
+
+    async createProject(data) {
+        return this.request('/api/projects', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async getProject(id) {
+        return this.request(`/api/projects/${id}`);
+    }
+
+    // Stats
+    async getDashboardStats() {
+        return this.request('/api/dashboard/stats');
+    }
+
+    // Templates
+    async getTemplates() {
+        return this.request('/api/templates');
+    }
+
+    // Notifications
+    async getNotifications() {
+        return this.request('/api/notifications');
+    }
+
+    async markNotificationRead(id) {
+        return this.request(`/api/notifications/${id}/read`, {
+            method: 'PUT'
+        });
+    }
+
+    async markAllNotificationsRead() {
+        return this.request('/api/notifications/read-all', {
+            method: 'PUT'
+        });
+    }
+}
+
+const API = new ApiService();
+
+// ==================== WEBSOCKET SERVICE ====================
+class WebSocketService {
+    constructor() {
+        this.socket = null;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
+        this.reconnectDelay = 1000;
+        this.listeners = new Map();
+    }
+
+    connect() {
+        if (this.socket?.readyState === WebSocket.OPEN) return;
+
+        try {
+            this.socket = new WebSocket(CONFIG.WEBSOCKET_URL);
             
-            // Setup event listeners
-            setupEventListeners();
+            this.socket.onopen = () => {
+                console.log('WebSocket connected');
+                this.reconnectAttempts = 0;
+                this.authenticate();
+            };
+
+            this.socket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    this.handleMessage(data);
+                } catch (error) {
+                    console.error('Failed to parse WebSocket message:', error);
+                }
+            };
+
+            this.socket.onclose = () => {
+                console.log('WebSocket disconnected');
+                this.attemptReconnect();
+            };
+
+            this.socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        } catch (error) {
+            console.error('Failed to connect WebSocket:', error);
+        }
+    }
+
+    authenticate() {
+        const session = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+        if (session) {
+            this.send({ type: 'AUTHENTICATE', token: JSON.parse(session).token });
+        }
+    }
+
+    send(data) {
+        if (this.socket?.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify(data));
+        }
+    }
+
+    handleMessage(data) {
+        switch (data.type) {
+            case 'NOTIFICATION':
+                this.handleNotification(data.payload);
+                break;
+            case 'PROJECT_UPDATE':
+                this.handleProjectUpdate(data.payload);
+                break;
+            case 'AUTH_SUCCESS':
+                console.log('WebSocket authenticated');
+                break;
+            case 'ERROR':
+                console.error('WebSocket error:', data.payload);
+                break;
+        }
+    }
+
+    handleNotification(notification) {
+        appState.notifications.unshift(notification);
+        appState.unreadCount++;
+        appState.emit('notification', notification);
+        
+        // Show toast notification
+        UI.showToast(notification.message, 'info');
+    }
+
+    handleProjectUpdate(update) {
+        appState.emit('projectUpdate', update);
+        
+        // Update local projects if needed
+        const index = appState.projects.findIndex(p => p.id === update.projectId);
+        if (index !== -1) {
+            appState.projects[index] = { ...appState.projects[index], ...update };
+            appState.emit('projectsUpdated');
+        }
+    }
+
+    on(event, callback) {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, new Set());
+        }
+        this.listeners.get(event).add(callback);
+    }
+
+    off(event, callback) {
+        if (this.listeners.has(event)) {
+            this.listeners.get(event).delete(callback);
+        }
+    }
+
+    attemptReconnect() {
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
             
-            // Check for notifications
-            checkNotifications();
-            
-            console.log('✅ Dashboard initialized');
+            setTimeout(() => {
+                console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+                this.connect();
+            }, delay);
+        }
+    }
+
+    disconnect() {
+        if (this.socket) {
+            this.socket.close();
+            this.socket = null;
+        }
+    }
+}
+
+const WS = new WebSocketService();
+
+// ==================== UI COMPONENTS ====================
+class UI {
+    static showLoading(show = true) {
+        const loader = DOM.get('#loadingState');
+        DOM.toggle(loader, show);
+        appState.ui.isLoading = show;
+    }
+
+    static showToast(message, type = 'info') {
+        const toast = DOM.create('div', {
+            className: `toast toast-${type}`,
+            textContent: message
         });
 
-        // ==================== AUTHENTICATION ====================
-        async function checkAuth() {
-            try {
-                const userData = localStorage.getItem('thoraxlab_user');
-                const sessionData = localStorage.getItem('thoraxlab_session');
-                
-                if (!userData || !sessionData) {
-                    return false;
-                }
-                
-                currentUser = JSON.parse(userData);
-                const session = JSON.parse(sessionData);
-                
-                // Update UI with user info
-                updateUserUI();
-                
-                // Validate session with server (mock implementation)
-                return true;
-                
-            } catch (error) {
-                console.warn('Auth check failed:', error);
-                return false;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, CONFIG.TIMING.TOAST_TIMEOUT);
+    }
+
+    static showNotification(message, type = 'info') {
+        const notification = DOM.get('#notificationToast');
+        DOM.setText(notification, message);
+        DOM.removeClass(notification, 'notification-error notification-success notification-warning');
+        DOM.addClass(notification, `notification-${type}`);
+        DOM.show(notification);
+
+        appState.timeouts.set('notification', setTimeout(() => {
+            DOM.hide(notification);
+        }, CONFIG.TIMING.NOTIFICATION_TIMEOUT));
+    }
+
+    static openModal(modalId) {
+        const modal = DOM.get(`#${modalId}`);
+        if (modal) {
+            DOM.show(modal);
+            appState.ui.activeModal = modalId;
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    static closeModal() {
+        if (appState.ui.activeModal) {
+            const modal = DOM.get(`#${appState.ui.activeModal}`);
+            if (modal) {
+                DOM.hide(modal);
+                appState.ui.activeModal = null;
+                document.body.style.overflow = '';
             }
         }
+    }
 
-        function updateUserUI() {
-            if (!currentUser) return;
-            
-            // Update user name and avatar
-            document.getElementById('userName').textContent = currentUser.name;
-            document.getElementById('userInstitution').textContent = currentUser.institution || 'General Hospital';
-            document.getElementById('welcomeName').textContent = currentUser.name.split(' ')[0];
-            
-            // Set avatar initials
-            const initials = currentUser.name
-                .split(' ')
-                .map(word => word.charAt(0))
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-            document.getElementById('userAvatar').textContent = initials;
+    static updatePagination() {
+        const prevBtn = DOM.get('#prevPage');
+        const nextBtn = DOM.get('#nextPage');
+        const pageInfo = DOM.get('#pageInfo');
+        const currentPage = DOM.get('#currentPage');
+        const totalPages = DOM.get('#totalPages');
+
+        if (prevBtn) {
+            prevBtn.disabled = appState.pagination.current <= 1;
         }
+        if (nextBtn) {
+            nextBtn.disabled = appState.pagination.current >= appState.pagination.total;
+        }
+        if (pageInfo) {
+            DOM.toggle(pageInfo, appState.pagination.total > 1);
+        }
+        if (currentPage) {
+            DOM.setText(currentPage, appState.pagination.current);
+        }
+        if (totalPages) {
+            DOM.setText(totalPages, appState.pagination.total);
+        }
+    }
 
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('thoraxlab_user');
-                localStorage.removeItem('thoraxlab_session');
-                window.location.href = 'login.html';
+    static updateNotificationBadge() {
+        const badge = DOM.get('#notificationCount');
+        if (badge) {
+            if (appState.unreadCount > 0) {
+                DOM.setText(badge, appState.unreadCount > 99 ? '99+' : appState.unreadCount);
+                DOM.show(badge);
+            } else {
+                DOM.hide(badge);
             }
         }
+    }
 
-        // ==================== WEB SOCKET ====================
-        function initWebSocket() {
-            try {
-                socket = io(SOCKET_URL);
-                
-                socket.on('connect', () => {
-                    console.log('🔗 Connected to WebSocket');
-                });
-                
-                socket.on('notification', (notification) => {
-                    showNotificationToast(notification.title, 'info');
-                    updateNotificationBadge();
-                });
-                
-                socket.on('error', (data) => {
-                    console.error('WebSocket error:', data.error);
-                });
-                
-            } catch (error) {
-                console.error('WebSocket initialization failed:', error);
+    static updateUserInfo() {
+        if (appState.user) {
+            const userName = DOM.get('#userName');
+            const userInstitution = DOM.get('#userInstitution');
+            const welcomeName = DOM.get('#welcomeName');
+            const userAvatar = DOM.get('#userAvatar');
+
+            if (userName) DOM.setText(userName, appState.user.name);
+            if (userInstitution) DOM.setText(userInstitution, appState.user.institution || 'Research Institution');
+            if (welcomeName) DOM.setText(welcomeName, appState.user.name.split(' ')[0]);
+            if (userAvatar) {
+                const initials = appState.user.name
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+                DOM.setText(userAvatar, initials);
             }
         }
+    }
+}
 
-        // ==================== DASHBOARD DATA ====================
-        async function loadDashboardData() {
-            showLoading(true);
-            
-            try {
-                // Load stats
-                await loadStats();
-                
-                // Load projects
-                await loadProjects();
-                
-            } catch (error) {
-                console.error('Failed to load dashboard:', error);
-                showNotification('Failed to load dashboard data', 'error');
-                renderFallbackUI();
-            } finally {
-                showLoading(false);
-            }
+// ==================== RENDERERS ====================
+class Renderer {
+    static renderStats(stats) {
+        const container = DOM.get('#statsContainer');
+        if (!container) return;
+
+        const statsHTML = `
+            <div class="stat-card">
+                <div class="stat-value">${stats.totalProjects || 0}</div>
+                <div class="stat-label">
+                    <div class="stat-icon"><i class="fas fa-flask"></i></div>
+                    Research Projects
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${stats.activeProjects || 0}</div>
+                <div class="stat-label">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    Active Studies
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${stats.totalUsers || 0}</div>
+                <div class="stat-label">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    Researchers
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${stats.avgConsensus || 75}%</div>
+                <div class="stat-label">
+                    <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                    Platform Consensus
+                </div>
+            </div>
+        `;
+
+        DOM.setHTML(container, statsHTML);
+    }
+
+    static renderProjects(projects) {
+        const container = DOM.get('#projectsContainer');
+        const emptyState = DOM.get('#emptyState');
+        const pagination = DOM.get('#pagination');
+
+        if (!container) return;
+
+        if (!projects || projects.length === 0) {
+            DOM.hide(container);
+            DOM.show(emptyState);
+            DOM.hide(pagination);
+            return;
         }
 
-        async function loadStats() {
-            try {
-                const response = await fetch(`${API_BASE}/api/stats`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    renderStats(data.stats);
-                }
-            } catch (error) {
-                console.error('Load stats error:', error);
-                renderDefaultStats();
-            }
-        }
+        DOM.show(container);
+        DOM.hide(emptyState);
+        DOM.show(pagination);
 
-        async function loadProjects(page = 1, search = '', status = '', sort = 'updated') {
-            try {
-                const params = new URLSearchParams({
-                    page: page,
-                    limit: 12,
-                    search: search,
-                    status: status,
-                    sort: sort
-                });
-                
-                const response = await fetch(`${API_BASE}/api/projects?${params}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentProjects = data.projects;
-                    currentPage = data.pagination.page;
-                    totalPages = data.pagination.totalPages;
-                    
-                    renderProjects(currentProjects);
-                    updatePagination();
-                    
-                    if (currentProjects.length === 0) {
-                        showEmptyState();
-                    } else {
-                        hideEmptyState();
-                    }
-                }
-            } catch (error) {
-                console.error('Load projects error:', error);
-                showNotification('Failed to load projects', 'error');
-            }
-        }
+        const projectsHTML = projects.map(project => this.renderProjectCard(project)).join('');
+        DOM.setHTML(container, projectsHTML);
+    }
 
-        // ==================== RENDER FUNCTIONS ====================
-        function renderStats(stats) {
-            const container = document.getElementById('statsContainer');
-            
-            container.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${stats.totalProjects || 0}</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-flask"></i></div>
-                        Research Projects
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">${stats.activeProjects || 0}</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-                        Active Studies
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">${stats.totalUsers || 0}</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-user-md"></i></div>
-                        Researchers
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">${stats.platformConsensus || 75}%</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-handshake"></i></div>
-                        Platform Consensus
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">${stats.researchImpactScore || 100}</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
-                        Research Impact
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">${stats.avgTeamSize || 1}</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-users"></i></div>
-                        Avg Team Size
-                    </div>
-                </div>
-            `;
-        }
+    static renderProjectCard(project) {
+        const statusInfo = this.getStatusInfo(project.status);
+        const tags = project.tags?.slice(0, 3) || [];
+        const teamMembers = project.team?.slice(0, 3) || [];
 
-        function renderDefaultStats() {
-            const container = document.getElementById('statsContainer');
-            container.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-flask"></i></div>
-                        Research Projects
+        return `
+            <div class="project-card">
+                <div class="project-badge" style="background: ${statusInfo.color}">
+                    ${statusInfo.label}
+                </div>
+                <div class="project-header">
+                    <h3 class="project-title">${this.escapeHTML(project.title)}</h3>
+                </div>
+                <div class="project-meta">
+                    <span><i class="fas fa-user-md"></i> ${this.escapeHTML(project.lead)}</span>
+                    <span><i class="fas fa-calendar"></i> ${this.formatDate(project.createdAt)}</span>
+                </div>
+                <p class="project-description">
+                    ${this.escapeHTML(project.description?.substring(0, 180) || '')}
+                    ${project.description?.length > 180 ? '...' : ''}
+                </p>
+                ${tags.length > 0 ? `
+                    <div class="tags">
+                        ${tags.map(tag => `<span class="tag">${this.escapeHTML(tag)}</span>`).join('')}
+                        ${project.tags?.length > 3 ? `<span class="tag">+${project.tags.length - 3} more</span>` : ''}
+                    </div>
+                ` : ''}
+                <div class="project-stats">
+                    <div class="stat">
+                        <div class="stat-number">${project.discussionCount || 0}</div>
+                        <div class="stat-label-small">Discussions</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${project.commentCount || 0}</div>
+                        <div class="stat-label-small">Comments</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${project.consensusScore || 75}%</div>
+                        <div class="stat-label-small">Consensus</div>
                     </div>
                 </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">0</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-                        Active Studies
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">1</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-user-md"></i></div>
-                        Researchers
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">75%</div>
-                    <div class="stat-label">
-                        <div class="stat-icon"><i class="fas fa-handshake"></i></div>
-                        Platform Consensus
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderProjects(projects) {
-            const container = document.getElementById('projectsContainer');
-            
-            container.innerHTML = projects.map(project => {
-                const statusColors = {
-                    'active': 'var(--clinical-green)',
-                    'planning': 'var(--warning-orange)',
-                    'completed': 'var(--primary-blue)'
-                };
-                
-                const statusLabels = {
-                    'active': 'Active Research',
-                    'planning': 'Planning Phase',
-                    'completed': 'Completed'
-                };
-                
-                return `
-                    <div class="project-card">
-                        <div class="project-badge" style="background: ${statusColors[project.status] || 'var(--primary-blue)'}">
-                            ${statusLabels[project.status] || 'Project'}
-                        </div>
-                        
-                        <div class="project-header">
-                            <h3 class="project-title">${escapeHtml(project.title)}</h3>
-                        </div>
-                        
-                        <div class="project-meta">
-                            <span><i class="fas fa-user-md" style="margin-right: 0.25rem;"></i> ${escapeHtml(project.lead)}</span>
-                            <span><i class="fas fa-calendar" style="margin-right: 0.25rem;"></i> ${formatDate(project.createdAt)}</span>
-                        </div>
-                        
-                        <p class="project-description">
-                            ${escapeHtml(project.description.substring(0, 180))}
-                            ${project.description.length > 180 ? '...' : ''}
-                        </p>
-                        
-                        <div class="tags">
-                            ${(project.tags || []).slice(0, 3).map(tag => `
-                                <span class="tag">${escapeHtml(tag)}</span>
-                            `).join('')}
-                            ${(project.tags || []).length > 3 ? `<span class="tag">+${(project.tags || []).length - 3} more</span>` : ''}
-                        </div>
-                        
-                        ${project.stats ? `
-                            <div class="project-stats">
-                                <div class="stat">
-                                    <div class="stat-number">${project.stats.discussionCount || 0}</div>
-                                    <div class="stat-label-small">Discussions</div>
-                                </div>
-                                <div class="stat">
-                                    <div class="stat-number">${project.stats.commentCount || 0}</div>
-                                    <div class="stat-label-small">Comments</div>
-                                </div>
-                                <div class="stat">
-                                    <div class="stat-number">${project.stats.consensusScore || 75}%</div>
-                                    <div class="stat-label-small">Consensus</div>
-                                </div>
+                <div class="project-footer">
+                    <div class="team-avatars">
+                        ${teamMembers.map((member, index) => `
+                            <div class="team-avatar" title="${this.escapeHTML(member.name)}">
+                                ${member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                            </div>
+                        `).join('')}
+                        ${project.team?.length > 3 ? `
+                            <div class="team-avatar more" title="${project.team.length - 3} more members">
+                                +${project.team.length - 3}
                             </div>
                         ` : ''}
-                        
-                        <div class="project-footer">
-                            <div class="team-avatars">
-                                ${project.teamDetails ? project.teamDetails.slice(0, 3).map(member => `
-                                    <div class="team-avatar" title="${escapeHtml(member.name)}">
-                                        ${member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                                    </div>
-                                `).join('') : `
-                                    <div class="team-avatar" title="${escapeHtml(project.lead)}">
-                                        ${project.lead.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                                    </div>
-                                `}
-                                ${project.teamDetails && project.teamDetails.length > 3 ? `
-                                    <div class="team-avatar more" title="${project.teamDetails.length - 3} more members">
-                                        +${project.teamDetails.length - 3}
-                                    </div>
-                                ` : ''}
-                            </div>
-                            
-                            <button class="btn btn-primary" data-project-id="${project.id}">
-                                <i class="fas fa-arrow-right"></i> Open Project
-                            </button>
-                        </div>
                     </div>
-                `;
-            }).join('');
-        }
-
-        function showEmptyState() {
-            document.getElementById('emptyState').classList.remove('hidden');
-            document.getElementById('projectsContainer').classList.add('hidden');
-            document.getElementById('pagination').classList.add('hidden');
-        }
-
-        function hideEmptyState() {
-            document.getElementById('emptyState').classList.add('hidden');
-            document.getElementById('projectsContainer').classList.remove('hidden');
-            document.getElementById('pagination').classList.remove('hidden');
-        }
-
-        function updatePagination() {
-            document.getElementById('currentPage').textContent = currentPage;
-            document.getElementById('totalPages').textContent = totalPages;
-            
-            document.getElementById('prevPage').disabled = currentPage <= 1;
-            document.getElementById('nextPage').disabled = currentPage >= totalPages;
-        }
-
-        function renderFallbackUI() {
-            renderDefaultStats();
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('emptyState').classList.remove('hidden');
-        }
-
-        // ==================== MODAL FUNCTIONS ====================
-        function openNewProjectModal() {
-            document.getElementById('newProjectModal').style.display = 'flex';
-            document.getElementById('projectTitle').focus();
-        }
-
-        function openTemplateModal() {
-            loadTemplates();
-            document.getElementById('templateModal').style.display = 'flex';
-        }
-
-        function openSearchModal() {
-            document.getElementById('globalSearch').focus();
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        async function loadTemplates() {
-            try {
-                const response = await fetch(`${API_BASE}/api/templates`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    renderTemplates(data.templates);
-                }
-            } catch (error) {
-                console.error('Load templates error:', error);
-                renderDefaultTemplates();
-            }
-        }
-
-        function renderTemplates(templates) {
-            const container = document.getElementById('templatesContainer');
-            
-            container.innerHTML = templates.map(template => `
-                <div class="template-card" onclick="selectTemplate('${template.id}')" data-template="${template.id}">
-                    <div class="template-icon">
-                        <i class="fas fa-${template.id === 'rct' ? 'clipboard-check' : 
-                                         template.id === 'cohort' ? 'chart-bar' : 
-                                         template.id === 'case' ? 'file-medical' : 
-                                         'book'}"></i>
-                    </div>
-                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
-                        ${escapeHtml(template.name)}
-                    </h4>
-                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
-                        ${escapeHtml(template.description)}
-                    </p>
-                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                        ${(template.tags || []).map(tag => `
-                            <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                                ${escapeHtml(tag)}
-                            </span>
-                        `).join('')}
-                    </div>
+                    <button class="btn btn-primary" data-project-id="${project.id}">
+                        <i class="fas fa-arrow-right"></i> Open Project
+                    </button>
                 </div>
-            `).join('');
-        }
+            </div>
+        `;
+    }
 
-        function renderDefaultTemplates() {
-            const container = document.getElementById('templatesContainer');
-            container.innerHTML = `
-                <div class="template-card" onclick="selectTemplate('rct')" data-template="rct">
-                    <div class="template-icon">
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
-                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
-                        Randomized Controlled Trial
-                    </h4>
-                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
-                        Gold standard for clinical intervention studies
-                    </p>
-                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Clinical
-                        </span>
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Intervention
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="template-card" onclick="selectTemplate('cohort')" data-template="cohort">
-                    <div class="template-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
-                        Cohort Study
-                    </h4>
-                                        <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
-                        Observational study following groups over time
-                    </p>
-                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Observational
-                        </span>
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Longitudinal
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="template-card" onclick="selectTemplate('case')" data-template="case">
-                    <div class="template-icon">
-                        <i class="fas fa-file-medical"></i>
-                    </div>
-                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
-                        Case Study
-                    </h4>
-                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
-                        In-depth analysis of specific cases or phenomena
-                    </p>
-                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Qualitative
-                        </span>
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Detailed
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="template-card" onclick="selectTemplate('review')" data-template="review">
-                    <div class="template-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">
-                        Systematic Review
-                    </h4>
-                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
-                        Comprehensive analysis of existing research literature
-                    </p>
-                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Literature
-                        </span>
-                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: rgba(26, 95, 122, 0.1); border-radius: 4px; color: var(--primary-blue);">
-                            Meta-analysis
-                        </span>
-                    </div>
-                </div>
-            `;
-        }
+    static renderNotifications(notifications) {
+        const container = DOM.get('#notificationsContainer');
+        if (!container) return;
 
-        function selectTemplate(templateId) {
-            // Remove selection from all
-            document.querySelectorAll('.template-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
-            // Add selection to clicked
-            const card = document.querySelector(`[data-template="${templateId}"]`);
-            if (card) {
-                card.classList.add('selected');
-                selectedTemplate = templateId;
-                document.getElementById('useTemplateBtn').disabled = false;
-            }
-        }
-
-        function useSelectedTemplate() {
-            if (!selectedTemplate) return;
-            
-            closeModal('templateModal');
-            openNewProjectModal();
-            
-            // Set template in dropdown
-            document.getElementById('projectTemplate').value = selectedTemplate;
-            
-            // Pre-fill based on template
-            switch (selectedTemplate) {
-                case 'rct':
-                    document.getElementById('projectTitle').placeholder = 'Randomized Controlled Trial: [Intervention] vs [Control] for [Condition]';
-                    break;
-                case 'cohort':
-                    document.getElementById('projectTitle').placeholder = 'Cohort Study: [Exposure] and Risk of [Outcome]';
-                    break;
-                case 'case':
-                    document.getElementById('projectTitle').placeholder = 'Case Study: [Unique Presentation] of [Condition]';
-                    break;
-                case 'review':
-                    document.getElementById('projectTitle').placeholder = 'Systematic Review: [Topic] for [Population]';
-                    break;
-            }
-        }
-
-        // ==================== PROJECT CREATION ====================
-        async function createProject(event) {
-            if (event) event.preventDefault();
-            
-            if (!currentUser) {
-                showNotification('Please log in to create a project', 'error');
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            const title = document.getElementById('projectTitle').value.trim();
-            const description = document.getElementById('projectDescription').value.trim();
-            const status = document.getElementById('projectStatus').value;
-            const template = document.getElementById('projectTemplate').value;
-            
-            if (!title || !description) {
-                showNotification('Please fill in all required fields', 'error');
-                return;
-            }
-            
-            // Get tags
-            const tags = Array.from(document.querySelectorAll('#tagsContainer .tag'))
-                .map(tag => tag.textContent)
-                .filter(tag => tag);
-            
-            // Get research data if provided
-            const studyPopulation = document.getElementById('studyPopulation').value.trim();
-            const primaryOutcome = document.getElementById('primaryOutcome').value.trim();
-            const researchData = (studyPopulation || primaryOutcome) ? {
-                studyPopulation,
-                primaryOutcome
-            } : null;
-            
-            // Show loading
-            const submitBtn = document.getElementById('createProjectBtn');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
-            submitBtn.disabled = true;
-            
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                
-                const response = await fetch(`${API_BASE}/api/projects`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session.sessionId}`
-                    },
-                    body: JSON.stringify({
-                        title,
-                        description,
-                        status,
-                        tags: tags.length > 0 ? tags : ['Research', 'Study'],
-                        template,
-                        researchData
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Close modal
-                    closeModal('newProjectModal');
-                    
-                    // Clear form
-                    document.getElementById('createProjectForm').reset();
-                    document.getElementById('tagsContainer').innerHTML = '';
-                    
-                    // Show success
-                    showNotification(`Project "${title}" created successfully!`, 'success');
-                    
-                    // Reload dashboard data
-                    await loadDashboardData();
-                    
-                    // Redirect to project page after delay
-                    setTimeout(() => {
-                        window.location.href = `project.html?id=${data.projectId}`;
-                    }, 1500);
-                } else {
-                    throw new Error(data.error || 'Failed to create project');
-                }
-            } catch (error) {
-                console.error('Create project error:', error);
-                showNotification('Failed to create project: ' + error.message, 'error');
-            } finally {
-                // Restore button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-
-        // ==================== TAGS ====================
-        function addTag() {
-            const input = document.getElementById('tagInput');
-            const tag = input.value.trim();
-            
-            if (tag && !tagExists(tag)) {
-                const container = document.getElementById('tagsContainer');
-                const tagElement = document.createElement('span');
-                tagElement.className = 'tag';
-                tagElement.textContent = tag;
-                tagElement.onclick = function() { this.remove(); };
-                container.appendChild(tagElement);
-                input.value = '';
-            }
-            
-            input.focus();
-        }
-
-        function addCommonTag(tag) {
-            if (!tagExists(tag)) {
-                const container = document.getElementById('tagsContainer');
-                const tagElement = document.createElement('span');
-                tagElement.className = 'tag';
-                tagElement.textContent = tag;
-                tagElement.onclick = function() { this.remove(); };
-                container.appendChild(tagElement);
-            }
-        }
-
-        function tagExists(tag) {
-            const tags = Array.from(document.querySelectorAll('#tagsContainer .tag'))
-                .map(t => t.textContent);
-            return tags.includes(tag);
-        }
-
-        // ==================== NOTIFICATIONS ====================
-        async function checkNotifications() {
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                const response = await fetch(`${API_BASE}/api/notifications`, {
-                    headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    updateNotificationBadge(data.unreadCount || 0);
-                }
-            } catch (error) {
-                console.error('Check notifications error:', error);
-            }
-        }
-
-        function updateNotificationBadge(count) {
-            const badge = document.getElementById('notificationCount');
-            if (count > 0) {
-                badge.textContent = count > 99 ? '99+' : count;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        async function loadNotifications() {
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                const response = await fetch(`${API_BASE}/api/notifications`, {
-                    headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    renderNotifications(data.notifications || []);
-                }
-            } catch (error) {
-                console.error('Load notifications error:', error);
-                renderDefaultNotifications();
-            }
-        }
-
-        function renderNotifications(notifications) {
-            const container = document.getElementById('notificationsContainer');
-            
-            if (notifications.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: var(--text-light);">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">
-                            <i class="fas fa-bell-slash"></i>
-                        </div>
-                        <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Notifications</h4>
-                        <p>You're all caught up!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = notifications.map(notif => `
-                <div style="padding: 1rem; border-bottom: 1px solid var(--border-subtle); ${notif.read ? '' : 'background: rgba(26, 95, 122, 0.05);'}">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <div style="font-weight: 600; color: var(--text-dark);">
-                            ${getNotificationIcon(notif.type)} ${escapeHtml(getNotificationTitle(notif.type))}
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-light);">
-                            ${formatTimeAgo(notif.createdAt)}
-                        </div>
-                    </div>
-                    <div style="color: var(--text-medium); font-size: 0.875rem;">
-                        ${escapeHtml(getNotificationMessage(notif))}
-                    </div>
-                    ${!notif.read ? `
-                        <div class="mt-2">
-                            <button class="btn btn-outline btn-sm" onclick="markNotificationAsRead('${notif.id}')">
-                                Mark as Read
-                            </button>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
-
-        function renderDefaultNotifications() {
-            const container = document.getElementById('notificationsContainer');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 3rem; color: var(--text-light);">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">
-                        <i class="fas fa-bell-slash"></i>
-                    </div>
-                    <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Notifications</h4>
+        if (!notifications || notifications.length === 0) {
+            DOM.setHTML(container, `
+                <div class="empty-notifications">
+                    <i class="fas fa-bell-slash"></i>
+                    <h3>No Notifications</h3>
                     <p>You're all caught up!</p>
                 </div>
-            `;
+            `);
+            return;
         }
 
-        function getNotificationIcon(type) {
-            const icons = {
-                'mention': 'fas fa-at',
-                'comment': 'fas fa-comment',
-                'project_updated': 'fas fa-edit',
-                'project_created': 'fas fa-plus',
-                'discussion_created': 'fas fa-comments'
-            };
-            return `<i class="${icons[type] || 'fas fa-bell'}"></i>`;
-        }
+        const notificationsHTML = notifications.map(notification => `
+            <div class="notification-item ${notification.read ? 'read' : 'unread'}">
+                <div class="notification-header">
+                    <span class="notification-type">
+                        <i class="fas fa-${this.getNotificationIcon(notification.type)}"></i>
+                        ${this.getNotificationTitle(notification.type)}
+                    </span>
+                    <span class="notification-time">${this.formatTimeAgo(notification.createdAt)}</span>
+                </div>
+                <div class="notification-body">
+                    ${this.escapeHTML(notification.message)}
+                </div>
+                ${!notification.read ? `
+                    <button class="btn btn-sm btn-outline mark-read-btn" data-notification-id="${notification.id}">
+                        Mark as Read
+                    </button>
+                ` : ''}
+            </div>
+        `).join('');
 
-        function getNotificationTitle(type) {
-            const titles = {
-                'mention': 'You were mentioned',
-                'comment': 'New comment',
-                'project_updated': 'Project updated',
-                'project_created': 'New project',
-                'discussion_created': 'New discussion'
-            };
-            return titles[type] || 'Notification';
-        }
+        DOM.setHTML(container, notificationsHTML);
+    }
 
-        function getNotificationMessage(notif) {
-            switch (notif.type) {
-                case 'mention':
-                    return `${notif.data.mentionedBy} mentioned you in "${notif.data.discussionTitle}"`;
-                case 'comment':
-                    return `${notif.data.commentedBy} commented on "${notif.data.discussionTitle}"`;
-                case 'project_updated':
-                    return `${notif.data.updatedBy} updated "${notif.data.projectTitle}"`;
-                default:
-                    return notif.data?.message || 'New notification';
+    static renderTemplates(templates) {
+        const container = DOM.get('#templatesContainer');
+        if (!container) return;
+
+        const templatesHTML = templates.map(template => `
+            <div class="template-card" data-template-id="${template.id}">
+                <div class="template-icon">
+                    <i class="fas fa-${template.icon || 'file-alt'}"></i>
+                </div>
+                <h4>${this.escapeHTML(template.name)}</h4>
+                <p>${this.escapeHTML(template.description)}</p>
+                <div class="template-tags">
+                    ${(template.tags || []).map(tag => `<span class="template-tag">${this.escapeHTML(tag)}</span>`).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        DOM.setHTML(container, templatesHTML);
+    }
+
+    static getStatusInfo(status) {
+        const statuses = {
+            'planning': { label: 'Planning', color: '#F59E0B' },
+            'active': { label: 'Active', color: '#00C9A7' },
+            'completed': { label: 'Completed', color: '#1A5F7A' },
+            'on-hold': { label: 'On Hold', color: '#64748B' }
+        };
+        return statuses[status] || { label: 'Project', color: '#6D5ACF' };
+    }
+
+    static getNotificationIcon(type) {
+        const icons = {
+            'mention': 'at',
+            'comment': 'comment',
+            'project_update': 'edit',
+            'new_project': 'plus',
+            'new_discussion': 'comments'
+        };
+        return icons[type] || 'bell';
+    }
+
+    static getNotificationTitle(type) {
+        const titles = {
+            'mention': 'Mention',
+            'comment': 'Comment',
+            'project_update': 'Project Updated',
+            'new_project': 'New Project',
+            'new_discussion': 'New Discussion'
+        };
+        return titles[type] || 'Notification';
+    }
+
+    static escapeHTML(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    static formatDate(dateString) {
+        try {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        } catch {
+            return 'Recent';
+        }
+    }
+
+    static formatTimeAgo(dateString) {
+        try {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return this.formatDate(dateString);
+        } catch {
+            return 'Recently';
+        }
+    }
+}
+
+// ==================== EVENT HANDLERS ====================
+class EventManager {
+    static init() {
+        this.setupGlobalEvents();
+        this.setupFormEvents();
+        this.setupSearchEvents();
+        this.setupFilterEvents();
+        this.setupModalEvents();
+        this.setupKeyboardShortcuts();
+    }
+
+    static setupGlobalEvents() {
+        // Click delegation
+        document.addEventListener('click', (e) => {
+            // Project card buttons
+            const projectBtn = e.target.closest('[data-project-id]');
+            if (projectBtn) {
+                e.preventDefault();
+                const projectId = projectBtn.dataset.projectId;
+                window.location.href = `project.html?id=${projectId}`;
+                return;
             }
-        }
 
-        async function markNotificationAsRead(notificationId) {
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                const response = await fetch(`${API_BASE}/api/notifications/${notificationId}/read`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
-                    }
-                });
-                
-                if (response.ok) {
-                    // Reload notifications
-                    loadNotifications();
-                    checkNotifications();
-                }
-            } catch (error) {
-                console.error('Mark notification error:', error);
+            // Notification badge
+            if (e.target.closest('#notificationBtn')) {
+                e.preventDefault();
+                EventManager.handleNotificationsClick();
+                return;
             }
-        }
 
-        async function markAllNotificationsAsRead() {
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                const response = await fetch(`${API_BASE}/api/notifications/read-all`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
-                    }
-                });
-                
-                if (response.ok) {
-                    // Reload notifications
-                    loadNotifications();
-                    checkNotifications();
-                    showNotification('All notifications marked as read', 'success');
-                }
-            } catch (error) {
-                console.error('Mark all notifications error:', error);
+            // Modal close buttons
+            const closeBtn = e.target.closest('.modal-close, [data-close-modal]');
+            if (closeBtn) {
+                e.preventDefault();
+                UI.closeModal();
+                return;
             }
+
+            // Modal backdrop click
+            if (e.target.classList.contains('modal')) {
+                UI.closeModal();
+                return;
+            }
+
+            // Template selection
+            const templateCard = e.target.closest('.template-card');
+            if (templateCard) {
+                EventManager.handleTemplateSelect(templateCard);
+                return;
+            }
+
+            // Tag removal
+            const tagElement = e.target.closest('#tagsContainer .tag');
+            if (tagElement && e.target === tagElement) {
+                tagElement.remove();
+                return;
+            }
+
+            // Notification mark as read
+            const markReadBtn = e.target.closest('.mark-read-btn');
+            if (markReadBtn) {
+                const notificationId = markReadBtn.dataset.notificationId;
+                EventManager.handleMarkNotificationRead(notificationId);
+                return;
+            }
+        });
+
+        // State change listeners
+        appState.subscribe('projectsUpdated', () => {
+            Renderer.renderProjects(appState.projects);
+            UI.updatePagination();
+        });
+
+        appState.subscribe('notification', (notification) => {
+            UI.updateNotificationBadge();
+        });
+    }
+
+    static setupFormEvents() {
+        const createForm = DOM.get('#createProjectForm');
+        if (createForm) {
+            createForm.addEventListener('submit', EventManager.handleCreateProject);
         }
 
-        // ==================== EVENT LISTENERS ====================
-        function setupEventListeners() {
-            console.log('Setting up enhanced event listeners...');
-            
-            // Cache DOM elements
-            const domElements = {
-                createProjectForm: document.getElementById('createProjectForm'),
-                tagInput: document.getElementById('tagInput'),
-                projectSearch: document.getElementById('projectSearch'),
-                statusFilter: document.getElementById('statusFilter'),
-                sortFilter: document.getElementById('sortFilter'),
-                globalSearch: document.getElementById('globalSearch'),
-                prevPageBtn: document.getElementById('prevPage'),
-                nextPageBtn: document.getElementById('nextPage'),
-                notificationBtn: document.getElementById('notificationBtn')
-            };
-            
-            // ==================== EVENT DELEGATION ====================
-            // Main click handler for dynamic elements
-            document.addEventListener('click', function(event) {
-                // Handle project card button clicks
-                const projectBtn = event.target.closest('.btn-primary');
-                if (projectBtn && projectBtn.dataset.projectId) {
-                    event.preventDefault();
-                    openProject(projectBtn.dataset.projectId);
-                    return;
-                }
-                
-                // Handle tag removal
-                const tagElement = event.target.closest('#tagsContainer .tag');
-                if (tagElement && event.target === tagElement) {
-                    tagElement.remove();
-                    return;
-                }
-                
-                // Handle modal closing when clicking outside
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-                
-                // Handle template selection
-                const templateCard = event.target.closest('.template-card');
-                if (templateCard) {
-                    const templateId = templateCard.dataset.template;
-                    if (templateId) {
-                        selectTemplate(templateId);
-                    }
+        const tagInput = DOM.get('#tagInput');
+        if (tagInput) {
+            tagInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    EventManager.handleAddTag();
                 }
             });
-            
-            // ==================== FORM HANDLERS ====================
-            if (domElements.createProjectForm) {
-                domElements.createProjectForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    createProject();
-                });
-            }
-            
-            // ==================== INPUT HANDLERS ====================
-            if (domElements.tagInput) {
-                domElements.tagInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === ',') {
-                        e.preventDefault();
-                        addTag();
-                    }
-                });
-            }
-            
-            // ==================== SEARCH & FILTER HANDLERS ====================
-            if (domElements.projectSearch) {
-                domElements.projectSearch.addEventListener('input', debounce(function(e) {
-                    loadProjects(
-                        1,
-                        e.target.value,
-                        domElements.statusFilter ? domElements.statusFilter.value : '',
-                        domElements.sortFilter ? domElements.sortFilter.value : 'updated'
-                    );
-                }, 500));
-            }
-            
-            if (domElements.statusFilter) {
-                domElements.statusFilter.addEventListener('change', function() {
-                    loadProjects(
-                        1,
-                        domElements.projectSearch ? domElements.projectSearch.value : '',
-                        this.value,
-                        domElements.sortFilter ? domElements.sortFilter.value : 'updated'
-                    );
-                });
-            }
-            
-            if (domElements.sortFilter) {
-                domElements.sortFilter.addEventListener('change', function() {
-                    loadProjects(
-                        1,
-                        domElements.projectSearch ? domElements.projectSearch.value : '',
-                        domElements.statusFilter ? domElements.statusFilter.value : '',
-                        this.value
-                    );
-                });
-            }
-            
-            // ==================== GLOBAL SEARCH ====================
-            if (domElements.globalSearch) {
-                domElements.globalSearch.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const searchValue = this.value.trim();
-                        
-                        if (searchValue) {
-                            if (domElements.projectSearch) {
-                                domElements.projectSearch.value = searchValue;
-                                loadProjects(1, searchValue);
-                            }
-                            this.value = '';
-                            this.blur();
-                        }
-                    }
-                    
-                    if (e.key === 'Escape') {
-                        this.value = '';
-                        this.blur();
-                    }
-                });
-            }
-            
-            // ==================== PAGINATION ====================
-            if (domElements.prevPageBtn) {
-                domElements.prevPageBtn.addEventListener('click', function() {
-                    if (currentPage > 1) {
-                        loadProjects(
-                            currentPage - 1,
-                            domElements.projectSearch ? domElements.projectSearch.value : '',
-                            domElements.statusFilter ? domElements.statusFilter.value : '',
-                            domElements.sortFilter ? domElements.sortFilter.value : 'updated'
-                        );
-                    }
-                });
-            }
-            
-            if (domElements.nextPageBtn) {
-                domElements.nextPageBtn.addEventListener('click', function() {
-                    if (currentPage < totalPages) {
-                        loadProjects(
-                            currentPage + 1,
-                            domElements.projectSearch ? domElements.projectSearch.value : '',
-                            domElements.statusFilter ? domElements.statusFilter.value : '',
-                            domElements.sortFilter ? domElements.sortFilter.value : 'updated'
-                        );
-                    }
-                });
-            }
-            
-            // ==================== NOTIFICATIONS ====================
-            if (domElements.notificationBtn) {
-                domElements.notificationBtn.addEventListener('click', async function() {
-                    try {
-                        await loadNotifications();
-                        const modal = document.getElementById('notificationsModal');
-                        if (modal) {
-                            modal.style.display = 'flex';
-                        }
-                    } catch (error) {
-                        console.error('Failed to load notifications:', error);
-                        showNotification('Failed to load notifications', 'error');
-                    }
-                });
-            }
-            
-            // ==================== KEYBOARD SHORTCUTS ====================
-            document.addEventListener('keydown', function(e) {
-                // Don't trigger shortcuts when typing in inputs
-                const activeElement = document.activeElement;
-                const isInputFocused = activeElement.tagName === 'INPUT' || 
-                                      activeElement.tagName === 'TEXTAREA' ||
-                                      activeElement.isContentEditable;
-                
-                if (isInputFocused && !e.ctrlKey && !e.metaKey) {
-                    return;
-                }
-                
-                // Ctrl/Cmd + N for new project
-                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                    e.preventDefault();
-                    openNewProjectModal();
-                }
-                
-                // Ctrl/Cmd + K for search
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    if (domElements.globalSearch) {
-                        domElements.globalSearch.focus();
-                        domElements.globalSearch.select();
-                    }
-                }
-                
-                // Escape to close modals
-                if (e.key === 'Escape') {
-                    const openModal = document.querySelector('.modal[style*="flex"], .modal[style*="block"]');
-                    if (openModal) {
-                        openModal.style.display = 'none';
-                    }
-                }
-                
-                // Forward slash (/) to focus project search
-                if (e.key === '/' && !isInputFocused) {
-                    e.preventDefault();
-                    if (domElements.projectSearch) {
-                        domElements.projectSearch.focus();
-                        domElements.projectSearch.select();
-                    }
-                }
-            });
-            
-            console.log('✅ Event listeners setup complete');
+        }
+    }
+
+    static setupSearchEvents() {
+        const projectSearch = DOM.get('#projectSearch');
+        if (projectSearch) {
+            projectSearch.addEventListener('input', EventManager.debounce((e) => {
+                appState.filters.search = e.target.value;
+                appState.currentPage = 1;
+                Dashboard.loadProjects();
+            }, CONFIG.TIMING.DEBOUNCE_SEARCH));
         }
 
-        // ==================== UTILITY FUNCTIONS ====================
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
+        const globalSearch = DOM.get('#globalSearch');
+        if (globalSearch) {
+            globalSearch.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const searchValue = globalSearch.value.trim();
+                    if (searchValue && projectSearch) {
+                        projectSearch.value = searchValue;
+                        appState.filters.search = searchValue;
+                        appState.currentPage = 1;
+                        Dashboard.loadProjects();
+                    }
+                    globalSearch.value = '';
+                    globalSearch.blur();
+                }
+            });
+        }
+    }
+
+    static setupFilterEvents() {
+        const statusFilter = DOM.get('#statusFilter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', (e) => {
+                appState.filters.status = e.target.value;
+                appState.currentPage = 1;
+                Dashboard.loadProjects();
+            });
+        }
+
+        const sortFilter = DOM.get('#sortFilter');
+        if (sortFilter) {
+            sortFilter.addEventListener('change', (e) => {
+                appState.filters.sort = e.target.value;
+                appState.currentPage = 1;
+                Dashboard.loadProjects();
+            });
+        }
+    }
+
+    static setupModalEvents() {
+        // New project modal
+        const newProjectBtn = DOM.get('[data-action="new-project"]');
+        if (newProjectBtn) {
+            newProjectBtn.addEventListener('click', () => {
+                UI.openModal('newProjectModal');
+            });
+        }
+
+        // Template modal
+        const templateBtn = DOM.get('[data-action="open-templates"]');
+        if (templateBtn) {
+            templateBtn.addEventListener('click', async () => {
+                await Dashboard.loadTemplates();
+                UI.openModal('templateModal');
+            });
+        }
+    }
+
+    static setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Skip if user is typing in inputs
+            const activeElement = document.activeElement;
+            const isInput = activeElement.tagName === 'INPUT' || 
+                           activeElement.tagName === 'TEXTAREA' ||
+                           activeElement.isContentEditable;
+            
+            if (isInput && !e.ctrlKey && !e.metaKey) return;
+
+            // Ctrl/Cmd + N for new project
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                UI.openModal('newProjectModal');
+            }
+
+            // Ctrl/Cmd + K for search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const search = DOM.get('#globalSearch') || DOM.get('#projectSearch');
+                search?.focus();
+                search?.select();
+            }
+
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                UI.closeModal();
+            }
+
+            // Forward slash for search
+            if (e.key === '/' && !isInput) {
+                e.preventDefault();
+                const search = DOM.get('#projectSearch');
+                search?.focus();
+                search?.select();
+            }
+        });
+    }
+
+    static handleCreateProject = async (e) => {
+        e.preventDefault();
+        
+        const form = e.target;
+        const formData = new FormData(form);
+        const projectData = {
+            title: formData.get('projectTitle'),
+            description: formData.get('projectDescription'),
+            status: formData.get('projectStatus'),
+            tags: Array.from(appState.ui.selectedTags),
+            template: appState.ui.selectedTemplate
+        };
+
+        try {
+            UI.showLoading(true);
+            const response = await API.createProject(projectData);
+            
+            if (response.success) {
+                UI.showNotification('Project created successfully!', 'success');
+                UI.closeModal();
+                form.reset();
+                appState.ui.selectedTags.clear();
+                appState.ui.selectedTemplate = null;
+                
+                // Reload projects
+                await Dashboard.loadProjects();
+                
+                // Navigate to new project after delay
+                setTimeout(() => {
+                    window.location.href = `project.html?id=${response.projectId}`;
+                }, 1500);
+            }
+        } catch (error) {
+            UI.showNotification(`Failed to create project: ${error.message}`, 'error');
+        } finally {
+            UI.showLoading(false);
+        }
+    };
+
+    static handleAddTag() {
+        const tagInput = DOM.get('#tagInput');
+        if (!tagInput) return;
+
+        const tag = tagInput.value.trim();
+        if (tag && !appState.ui.selectedTags.has(tag)) {
+            appState.ui.selectedTags.add(tag);
+            this.renderTags();
+            tagInput.value = '';
+            tagInput.focus();
+        }
+    }
+
+    static handleRemoveTag(tag) {
+        appState.ui.selectedTags.delete(tag);
+        this.renderTags();
+    }
+
+    static renderTags() {
+        const container = DOM.get('#tagsContainer');
+        if (!container) return;
+
+        const tagsHTML = Array.from(appState.ui.selectedTags).map(tag => `
+            <span class="tag" onclick="EventManager.handleRemoveTag('${tag}')">
+                ${Renderer.escapeHTML(tag)}
+                <i class="fas fa-times"></i>
+            </span>
+        `).join('');
+
+        DOM.setHTML(container, tagsHTML);
+    }
+
+    static handleTemplateSelect(templateCard) {
+        const templateId = templateCard.dataset.templateId;
+        if (!templateId) return;
+
+        // Remove selection from all cards
+        DOM.getAll('.template-card').forEach(card => {
+            DOM.removeClass(card, 'selected');
+        });
+
+        // Add selection to clicked card
+        DOM.addClass(templateCard, 'selected');
+        appState.ui.selectedTemplate = templateId;
+
+        // Enable use template button
+        const useTemplateBtn = DOM.get('#useTemplateBtn');
+        if (useTemplateBtn) {
+            useTemplateBtn.disabled = false;
+        }
+    }
+
+    static handleNotificationsClick = async () => {
+        await Dashboard.loadNotifications();
+        UI.openModal('notificationsModal');
+    };
+
+    static handleMarkNotificationRead = async (notificationId) => {
+        try {
+            await API.markNotificationRead(notificationId);
+            appState.unreadCount = Math.max(0, appState.unreadCount - 1);
+            UI.updateNotificationBadge();
+            
+            // Reload notifications
+            await Dashboard.loadNotifications();
+        } catch (error) {
+            console.error('Failed to mark notification as read:', error);
+        }
+    };
+
+    static handleMarkAllNotificationsRead = async () => {
+        try {
+            await API.markAllNotificationsRead();
+            appState.unreadCount = 0;
+            UI.updateNotificationBadge();
+            await Dashboard.loadNotifications();
+            UI.showNotification('All notifications marked as read', 'success');
+        } catch (error) {
+            UI.showNotification('Failed to mark notifications as read', 'error');
+        }
+    };
+
+    static debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
                 clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+                func(...args);
             };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+}
+
+// ==================== DASHBOARD MANAGER ====================
+class Dashboard {
+    static async init() {
+        console.log('🚀 ThoraxLab Dashboard Initializing...');
+
+        // Check authentication
+        const isAuthenticated = await this.checkAuth();
+        if (!isAuthenticated) {
+            window.location.href = 'login.html';
+            return;
         }
 
-        function showLoading(show) {
-            const loadingState = document.getElementById('loadingState');
-            loadingState.style.display = show ? 'flex' : 'none';
-        }
+        // Initialize WebSocket
+        WS.connect();
 
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notificationToast');
-            notification.textContent = message;
-            notification.className = `notification ${type === 'error' ? 'notification-error' : 
-                                                    type === 'success' ? 'notification-success' : 
-                                                    type === 'warning' ? 'notification-warning' : ''}`;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 5000);
-        }
+        // Load initial data
+        await this.loadInitialData();
 
-        function showNotificationToast(message, type = 'info') {
-            // Create temporary toast
-            const toast = document.createElement('div');
-            toast.className = `notification ${type === 'error' ? 'notification-error' : 
-                                           type === 'success' ? 'notification-success' : 
-                                           type === 'warning' ? 'notification-warning' : ''}`;
-            toast.textContent = message;
-            toast.style.position = 'fixed';
-            toast.style.bottom = '24px';
-            toast.style.right = '24px';
-            toast.style.zIndex = '9999';
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 4000);
-        }
+        // Setup event listeners
+        EventManager.init();
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        // Setup window events
+        window.addEventListener('beforeunload', () => {
+            appState.clearTimeouts();
+            WS.disconnect();
+        });
 
-        function formatDate(dateString) {
-            try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-            } catch (e) {
-                return 'Recent';
+        console.log('✅ Dashboard initialized successfully');
+    }
+
+    static async checkAuth() {
+        try {
+            const userData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
+            const sessionData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+
+            if (!userData || !sessionData) {
+                return false;
             }
-        }
 
-        function formatTimeAgo(dateString) {
-            try {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffMins = Math.floor(diffMs / 60000);
-                const diffHours = Math.floor(diffMs / 3600000);
-                const diffDays = Math.floor(diffMs / 86400000);
-                
-                if (diffMins < 1) return 'just now';
-                if (diffMins < 60) return `${diffMins}m ago`;
-                if (diffHours < 24) return `${diffHours}h ago`;
-                if (diffDays < 7) return `${diffDays}d ago`;
-                
-                return formatDate(dateString);
-            } catch (e) {
-                return 'Recent';
+            appState.user = JSON.parse(userData);
+            UI.updateUserInfo();
+
+            // Validate session with server
+            await API.getCurrentUser();
+            return true;
+        } catch (error) {
+            console.warn('Authentication check failed:', error);
+            this.logout();
+            return false;
+        }
+    }
+
+    static logout() {
+        localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
+        localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
+        window.location.href = 'login.html';
+    }
+
+    static async loadInitialData() {
+        UI.showLoading(true);
+
+        try {
+            await Promise.all([
+                this.loadStats(),
+                this.loadProjects(),
+                this.checkNotifications()
+            ]);
+        } catch (error) {
+            console.error('Failed to load initial data:', error);
+            UI.showNotification('Failed to load dashboard data', 'error');
+        } finally {
+            UI.showLoading(false);
+        }
+    }
+
+    static async loadStats() {
+        try {
+            const response = await API.getDashboardStats();
+            if (response.success) {
+                appState.stats = response.stats;
+                Renderer.renderStats(appState.stats);
             }
+        } catch (error) {
+            console.error('Failed to load stats:', error);
         }
+    }
 
-        function openProject(projectId) {
-            window.location.href = `project.html?id=${projectId}`;
+    static async loadProjects() {
+        try {
+            const response = await API.getProjects({
+                page: appState.currentPage,
+                search: appState.filters.search,
+                status: appState.filters.status,
+                sort: appState.filters.sort
+            });
+
+            if (response.success) {
+                appState.projects = response.projects;
+                appState.pagination = {
+                    current: response.pagination.page,
+                    total: response.pagination.totalPages,
+                    hasNext: response.pagination.page < response.pagination.totalPages,
+                    hasPrev: response.pagination.page > 1
+                };
+
+                Renderer.renderProjects(appState.projects);
+                UI.updatePagination();
+            }
+        } catch (error) {
+            console.error('Failed to load projects:', error);
+            UI.showNotification('Failed to load projects', 'error');
         }
+    }
+
+    static async loadTemplates() {
+        try {
+            const response = await API.getTemplates();
+            if (response.success) {
+                appState.templates = response.templates;
+                Renderer.renderTemplates(appState.templates);
+            }
+        } catch (error) {
+            console.error('Failed to load templates:', error);
+        }
+    }
+
+    static async loadNotifications() {
+        try {
+            const response = await API.getNotifications();
+            if (response.success) {
+                appState.notifications = response.notifications;
+                Renderer.renderNotifications(appState.notifications);
+            }
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+        }
+    }
+
+    static async checkNotifications() {
+        try {
+            const response = await API.getNotifications();
+            if (response.success) {
+                appState.unreadCount = response.unreadCount || 0;
+                UI.updateNotificationBadge();
+            }
+        } catch (error) {
+            console.error('Failed to check notifications:', error);
+        }
+    }
+
+    static async loadNextPage() {
+        if (appState.pagination.current < appState.pagination.total) {
+            appState.currentPage++;
+            await this.loadProjects();
+        }
+    }
+
+    static async loadPrevPage() {
+        if (appState.pagination.current > 1) {
+            appState.currentPage--;
+            await this.loadProjects();
+        }
+    }
+}
+
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+    Dashboard.init();
+});
+
+// ==================== GLOBAL EXPORTS ====================
+window.ThoraxLab = {
+    Dashboard,
+    UI,
+    API,
+    WS,
+    EventManager,
+    Renderer,
+    getState: () => appState
+};
     </script>
 </body>
 </html>
