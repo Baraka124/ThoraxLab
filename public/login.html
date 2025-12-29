@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ThoraxLab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1A5F7A;
+            --clinical-green: #00C9A7;
+            --text-dark: #1E293B;
+            --text-light: #64748B;
+            --background-gray: #F8FAFC;
+            --card-white: #FFFFFF;
+            --border-subtle: #E2E8F0;
+            --radius-smooth: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--background-gray); min-height: 100vh; }
+        
+        .container { max-width: 400px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .logo { text-align: center; margin-bottom: 2rem; }
+        .logo-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+        }
+        .logo-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+        .logo-subtitle {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        .login-card {
+            background: var(--card-white);
+            border-radius: var(--radius-smooth);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: 150ms ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover { background: #15526b; }
+        
+        .btn-primary:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .success-message {
+            background: #F0FDF4;
+            color: #059669;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .demo-note {
+            background: #EFF6FF;
+            color: #1E40AF;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">🫁</div>
+            <div class="logo-title">ThoraxLab</div>
+            <div class="logo-subtitle">Pneumology Research Platform</div>
+        </div>
+        
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="form-input" placeholder="Dr. John Smith" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="john.smith@hospital.org" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="institution">Institution</label>
+                    <input type="text" id="institution" class="form-input" placeholder="General Hospital" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Access Research Dashboard
+                </button>
+            </form>
+            
+            <div class="demo-note">
+                <i class="fas fa-info-circle"></i> This is a demo platform. No real medical data is stored.
+            </div>
+        </div>
+        
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('thoraxlab_user');
+            if (userData) {
+                window.location.href = 'index.html';
+            }
+            
+            // Test server connection
+            checkServer();
+        });
+        
+        async function checkServer() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    console.log('✅ Server is running');
+                }
+            } catch (error) {
+                console.warn('Server not reachable:', error);
+            }
+        }
+        
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const institution = document.getElementById('institution').value.trim();
+            
+            // Validation
+            if (!name || !email || !institution) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            // Show loading
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            try {
+                // Send login request
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        institution
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store user data
+                    localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
+                    
+                    // Show success
+                    showSuccess('Login successful! Redirecting...');
+                    
+                    // Redirect to dashboard after delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                    
+                } else {
+                    throw new Error(data.error || 'Login failed');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Fallback: Create local user if server fails
+                if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+                    console.log('Server not reachable, using local authentication...');
+                    
+                    const user = {
+                        id: 'user-demo',
+                        name,
+                        email,
+                        institution,
+                        role: 'clinician'
+                    };
+                    
+                    localStorage.setItem('thoraxlab_user', JSON.stringify(user));
+                    
+                    showSuccess('Connected in offline mode. Redirecting...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                    
+                } else {
+                    showError(error.message || 'Login failed. Please try again.');
+                }
+            } finally {
+                // Reset button
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Research Dashboard';
+            }
+        });
+        
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+        }
+        
+        // Demo login for quick testing
+        window.demoLogin = function() {
+            document.getElementById('name').value = 'Dr. Sarah Chen';
+            document.getElementById('email').value = 'sarah.chen@thoraxlab.org';
+            document.getElementById('institution').value = 'ThoraxLab Medical Center';
+        };
+        
+        // Auto-fill demo on double-click title
+        document.querySelector('.logo-title').addEventListener('dblclick', window.demoLogin);
+    </script>
+</body>
+</html>
