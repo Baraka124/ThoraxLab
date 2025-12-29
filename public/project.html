@@ -6,7 +6,6 @@
     <title>Project | ThoraxLab</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/socket.io/socket.io.js"></script>
     <style>
         /* ===== REDESIGNED DESIGN SYSTEM ===== */
         :root {
@@ -860,6 +859,261 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* ===== DISCUSSION STYLES ===== */
+        .discussion-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .discussion-item {
+            padding: var(--space-lg);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            background: var(--card-white);
+            transition: var(--transition-base);
+        }
+
+        .discussion-item:hover {
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .discussion-author {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .discussion-time {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .discussion-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: var(--space-sm);
+            line-height: 1.4;
+        }
+
+        .discussion-content {
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+        }
+
+        .discussion-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .discussion-actions {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .vote-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+            font-size: 0.875rem;
+        }
+
+        .vote-btn:hover {
+            background: var(--background-gray);
+            color: var(--text-dark);
+        }
+
+        .vote-btn.active {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .vote-count {
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .comments-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+            font-size: 0.875rem;
+        }
+
+        .comments-btn:hover {
+            background: var(--background-gray);
+            color: var(--text-dark);
+        }
+
+        /* ===== TEAM STYLES ===== */
+        .team-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            transition: var(--transition-fast);
+        }
+
+        .team-member:hover {
+            background: var(--background-gray);
+        }
+
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .member-role {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .member-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-online {
+            background: var(--success-green);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-offline {
+            background: var(--text-lighter);
+        }
+
+        .status-away {
+            background: var(--warning-orange);
+        }
+
+        /* ===== METRICS STYLES ===== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .metric-card {
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            background: var(--background-gray);
+            text-align: center;
+            transition: var(--transition-fast);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: var(--space-xs);
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border-subtle);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-top: var(--space-md);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            transition: width 0.5s ease;
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 1024px) {
             .grid-2-col {
@@ -902,6 +1156,10 @@
             .modal {
                 max-height: 80vh;
             }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -916,6 +1174,22 @@
             
             .btn {
                 width: 100%;
+            }
+            
+            .discussion-header {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            .discussion-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+            
+            .discussion-actions {
+                width: 100%;
+                justify-content: space-between;
             }
         }
 
@@ -997,7 +1271,7 @@
                     </a>
                     
                     <div class="flex items-center gap-md">
-                        <button onclick="App.logout()" class="btn btn-outline">
+                        <button onclick="ThoraxLab.logout()" class="btn btn-outline">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </div>
@@ -1067,514 +1341,259 @@
         </div>
     </div>
 
-    <script type="module">
+    <script>
         // ============================================
-        // THORAXLAB PROJECT SYSTEM - COMPLETE REWRITE
+        // THORAXLAB PROJECT SYSTEM - COMPLETE SELF-CONTAINED VERSION
         // ============================================
 
-        // Import modules
-        import { StateManager } from './modules/state.js';
-        import { DOMRenderer } from './modules/renderer.js';
-        import { APIService } from './modules/api.js';
-        import { WebSocketService } from './modules/websocket.js';
-        import { DiscussionSystem } from './modules/discussions.js';
-        import { TeamManager } from './modules/team.js';
-        import { MetricsManager } from './modules/metrics.js';
-        import { NotificationSystem } from './modules/notifications.js';
-        import { ModalSystem } from './modules/modal.js';
-
-        // ==================== MAIN APPLICATION ====================
-        class ThoraxLabProject {
+        class NotificationSystem {
             constructor() {
-                this.config = {
-                    API_BASE: window.location.origin,
-                    WEBSOCKET_URL: window.location.origin,
-                    STORAGE_KEYS: {
-                        USER: 'thoraxlab_user',
-                        SESSION: 'thoraxlab_session',
-                        PROJECT_CACHE: 'thoraxlab_project_cache'
-                    },
-                    CACHE: {
-                        TTL: 5 * 60 * 1000, // 5 minutes
-                        MAX_SIZE: 50 // max cached items
-                    },
-                    TIMING: {
-                        DEBOUNCE: 300,
-                        RETRY_DELAY: 1000,
-                        MAX_RETRIES: 3,
-                        HEARTBEAT: 30000 // 30 seconds
-                    }
+                this.container = document.getElementById('notificationContainer');
+                this.notifications = new Map();
+                this.nextId = 1;
+            }
+
+            show(type, title, message, duration = 5000) {
+                const id = this.nextId++;
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.setAttribute('data-id', id);
+                
+                const icons = {
+                    error: 'fas fa-exclamation-circle',
+                    success: 'fas fa-check-circle',
+                    warning: 'fas fa-exclamation-triangle',
+                    info: 'fas fa-info-circle'
                 };
 
-                // Initialize modules
-                this.state = new StateManager(this.config);
-                this.api = new APIService(this.config);
-                this.ws = new WebSocketService(this.config);
-                this.renderer = new DOMRenderer(this.state);
-                this.discussions = new DiscussionSystem(this.state, this.api, this.ws);
-                this.team = new TeamManager(this.state, this.api);
-                this.metrics = new MetricsManager(this.state);
-                this.notifications = new NotificationSystem();
-                this.modal = new ModalSystem();
-
-                // Current project
-                this.projectId = null;
-                this.projectData = null;
-
-                // Initialize
-                this.init();
-            }
-
-            async init() {
-                console.log('🚀 ThoraxLab Project System Initializing...');
-
-                // Check authentication
-                if (!await this.checkAuth()) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-
-                // Get project ID from URL
-                this.projectId = this.getProjectIdFromURL();
-                if (!this.projectId) {
-                    this.notifications.show('error', 'No Project', 'Project ID not found in URL');
-                    setTimeout(() => window.location.href = 'index.html', 2000);
-                    return;
-                }
-
-                // Setup event listeners
-                this.setupEventListeners();
-
-                // Load project data
-                await this.loadProject();
-
-                // Initialize WebSocket
-                this.ws.connect(this.projectId);
-
-                // Start periodic updates
-                this.startPeriodicUpdates();
-
-                console.log('✅ Project system ready');
-            }
-
-            async checkAuth() {
-                try {
-                    const userData = localStorage.getItem(this.config.STORAGE_KEYS.USER);
-                    const sessionData = localStorage.getItem(this.config.STORAGE_KEYS.SESSION);
-                    
-                    if (!userData || !sessionData) {
-                        return false;
-                    }
-
-                    // Validate session
-                    const session = JSON.parse(sessionData);
-                    const currentUser = JSON.parse(userData);
-                    
-                    this.state.setUser(currentUser);
-                    this.state.setSession(session);
-
-                    return true;
-                } catch (error) {
-                    console.error('Auth check failed:', error);
-                    return false;
-                }
-            }
-
-            getProjectIdFromURL() {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('id');
-            }
-
-            async loadProject() {
-                try {
-                    // Show loading
-                    this.showLoading('Loading project...');
-
-                    // Try cache first
-                    const cached = this.getCachedProject(this.projectId);
-                    if (cached) {
-                        this.projectData = cached;
-                        this.renderProject();
-                        this.notifications.show('info', 'Using cached data', 'Loading latest from server...');
-                    }
-
-                    // Load from API
-                    const project = await this.api.getProject(this.projectId);
-                    
-                    if (project) {
-                        this.projectData = project;
-                        this.state.setProject(project);
-                        this.cacheProject(project);
-                        this.renderProject();
-                        
-                        // Load additional data
-                        await this.loadAdditionalData();
-                    } else {
-                        throw new Error('Project not found');
-                    }
-                } catch (error) {
-                    console.error('Failed to load project:', error);
-                    this.notifications.show('error', 'Load Failed', 'Could not load project data');
-                    this.showErrorState();
-                } finally {
-                    this.hideLoading();
-                }
-            }
-
-            async loadAdditionalData() {
-                try {
-                    const [discussions, team, metrics] = await Promise.allSettled([
-                        this.discussions.load(this.projectId),
-                        this.team.load(this.projectId),
-                        this.metrics.load(this.projectId)
-                    ]);
-
-                    // Handle results
-                    if (discussions.status === 'fulfilled') {
-                        this.state.setDiscussions(discussions.value);
-                    }
-
-                    if (team.status === 'fulfilled') {
-                        this.state.setTeam(team.value);
-                    }
-
-                    if (metrics.status === 'fulfilled') {
-                        this.state.setMetrics(metrics.value);
-                    }
-
-                    // Update UI
-                    this.renderer.updateDiscussions();
-                    this.renderer.updateTeam();
-                    this.renderer.updateMetrics();
-
-                } catch (error) {
-                    console.error('Failed to load additional data:', error);
-                }
-            }
-
-            renderProject() {
-                if (!this.projectData) return;
-
-                // Render header
-                this.renderer.renderProjectHeader(this.projectData);
-
-                // Render overview
-                this.renderer.renderProjectOverview(this.projectData);
-
-                // Render discussions
-                this.renderer.renderDiscussionsSection();
-
-                // Render team
-                this.renderer.renderTeamSection();
-
-                // Render metrics
-                this.renderer.renderMetricsSection();
-
-                // Render quick actions
-                this.renderer.renderQuickActions();
-            }
-
-            getCachedProject(projectId) {
-                try {
-                    const cache = localStorage.getItem(this.config.STORAGE_KEYS.PROJECT_CACHE);
-                    if (!cache) return null;
-
-                    const cacheData = JSON.parse(cache);
-                    const cached = cacheData[projectId];
-
-                    if (!cached) return null;
-
-                    // Check if cache is expired
-                    if (Date.now() - cached.timestamp > this.config.CACHE.TTL) {
-                        delete cacheData[projectId];
-                        localStorage.setItem(this.config.STORAGE_KEYS.PROJECT_CACHE, JSON.stringify(cacheData));
-                        return null;
-                    }
-
-                    return cached.data;
-                } catch (error) {
-                    console.warn('Cache read failed:', error);
-                    return null;
-                }
-            }
-
-            cacheProject(project) {
-                try {
-                    let cache = localStorage.getItem(this.config.STORAGE_KEYS.PROJECT_CACHE);
-                    cache = cache ? JSON.parse(cache) : {};
-
-                    // Limit cache size
-                    const keys = Object.keys(cache);
-                    if (keys.length >= this.config.CACHE.MAX_SIZE) {
-                        const oldestKey = keys.sort((a, b) => cache[a].timestamp - cache[b].timestamp)[0];
-                        delete cache[oldestKey];
-                    }
-
-                    cache[this.projectId] = {
-                        data: project,
-                        timestamp: Date.now()
-                    };
-
-                    localStorage.setItem(this.config.STORAGE_KEYS.PROJECT_CACHE, JSON.stringify(cache));
-                } catch (error) {
-                    console.warn('Cache write failed:', error);
-                }
-            }
-
-            setupEventListeners() {
-                // Window events
-                window.addEventListener('beforeunload', () => this.cleanup());
-                window.addEventListener('online', () => this.handleOnline());
-                window.addEventListener('offline', () => this.handleOffline());
-
-                // Keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    // Ctrl/Cmd + / to focus search
-                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
-                        e.preventDefault();
-                        this.focusSearch();
-                    }
-
-                    // Escape to close modals
-                    if (e.key === 'Escape') {
-                        this.modal.close();
-                    }
-
-                    // Ctrl/Cmd + N for new discussion
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                        e.preventDefault();
-                        this.discussions.showCreateForm();
-                    }
-                });
-
-                // WebSocket events
-                this.ws.on('discussionCreated', (discussion) => {
-                    this.handleNewDiscussion(discussion);
-                });
-
-                this.ws.on('commentAdded', (data) => {
-                    this.handleNewComment(data);
-                });
-
-                this.ws.on('voteUpdated', (data) => {
-                    this.handleVoteUpdate(data);
-                });
-
-                this.ws.on('userJoined', (user) => {
-                    this.handleUserJoined(user);
-                });
-
-                this.ws.on('userLeft', (userId) => {
-                    this.handleUserLeft(userId);
-                });
-
-                this.ws.on('typing', (data) => {
-                    this.handleTyping(data);
-                });
-
-                // Polling for offline mode
-                this.startPolling();
-            }
-
-            startPeriodicUpdates() {
-                // Update metrics every minute
-                setInterval(async () => {
-                    if (this.projectId) {
-                        await this.metrics.refresh(this.projectId);
-                        this.renderer.updateMetrics();
-                    }
-                }, 60000);
-
-                // Heartbeat for WebSocket
-                setInterval(() => {
-                    if (this.ws.isConnected()) {
-                        this.ws.send('heartbeat', {});
-                    }
-                }, this.config.TIMING.HEARTBEAT);
-            }
-
-            startPolling() {
-                // Poll for updates when offline
-                setInterval(async () => {
-                    if (!navigator.onLine && this.projectId) {
-                        // Try to sync when back online
-                        await this.syncOfflineData();
-                    }
-                }, 30000); // Every 30 seconds
-            }
-
-            async syncOfflineData() {
-                // Sync offline changes when back online
-                const offlineChanges = this.state.getOfflineChanges();
-                
-                if (offlineChanges.length > 0 && navigator.onLine) {
-                    try {
-                        await this.api.syncOfflineData(this.projectId, offlineChanges);
-                        this.state.clearOfflineChanges();
-                        this.notifications.show('success', 'Sync Complete', 'Offline changes synced');
-                    } catch (error) {
-                        console.error('Sync failed:', error);
-                    }
-                }
-            }
-
-            handleNewDiscussion(discussion) {
-                if (discussion.projectId === this.projectId) {
-                    this.state.addDiscussion(discussion);
-                    this.renderer.updateDiscussions();
-                    this.renderer.updateMetrics();
-                    
-                    // Show notification if not current user
-                    if (discussion.authorId !== this.state.user?.id) {
-                        this.notifications.show('info', 'New Discussion', 
-                            `${discussion.author} started a discussion`);
-                    }
-                }
-            }
-
-            handleNewComment(data) {
-                this.state.addComment(data.discussionId, data.comment);
-                this.renderer.updateDiscussions();
-                this.renderer.updateMetrics();
-            }
-
-            handleVoteUpdate(data) {
-                this.state.updateVotes(data.discussionId, data.upvotes, data.downvotes);
-                this.renderer.updateDiscussions();
-                this.renderer.updateMetrics();
-            }
-
-            handleUserJoined(user) {
-                this.state.addTeamMember(user);
-                this.renderer.updateTeam();
-                this.renderer.updateMetrics();
-            }
-
-            handleUserLeft(userId) {
-                this.state.removeTeamMember(userId);
-                this.renderer.updateTeam();
-                this.renderer.updateMetrics();
-            }
-
-            handleTyping(data) {
-                this.renderer.showTypingIndicator(data.discussionId, data.userName, data.isTyping);
-            }
-
-            handleOnline() {
-                this.notifications.show('success', 'Back Online', 'Reconnected to server');
-                this.syncOfflineData();
-                this.ws.reconnect();
-            }
-
-            handleOffline() {
-                this.notifications.show('warning', 'Offline Mode', 'Working locally. Changes will sync when back online.');
-            }
-
-            focusSearch() {
-                const searchInput = document.querySelector('[data-search]');
-                if (searchInput) {
-                    searchInput.focus();
-                    searchInput.select();
-                }
-            }
-
-            showLoading(message) {
-                const overlay = document.getElementById('loadingOverlay');
-                const text = document.getElementById('loadingText');
-                
-                text.textContent = message;
-                overlay.classList.add('active');
-            }
-
-            hideLoading() {
-                const overlay = document.getElementById('loadingOverlay');
-                overlay.classList.remove('active');
-            }
-
-            showErrorState() {
-                const header = document.getElementById('projectHeader');
-                header.innerHTML = `
-                    <div class="text-center py-8">
-                        <div class="text-4xl mb-4 text-red-500">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold mb-2">Project Not Found</h2>
-                        <p class="text-gray-600 mb-4">The requested project could not be loaded.</p>
-                        <a href="index.html" class="btn btn-primary">
-                            <i class="fas fa-arrow-left"></i> Back to Dashboard
-                        </a>
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <i class="${icons[type] || icons.info}"></i>
                     </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${this.escapeHtml(title)}</div>
+                        <div class="notification-message">${this.escapeHtml(message)}</div>
+                    </div>
+                    <button class="notification-close" onclick="ThoraxLab.notifications.remove(${id})">
+                        <i class="fas fa-times"></i>
+                    </button>
                 `;
-            }
 
-            cleanup() {
-                this.ws.disconnect();
-                this.state.cleanup();
-                this.notifications.clearAll();
-            }
+                this.container.appendChild(notification);
+                this.notifications.set(id, notification);
 
-            // Global methods
-            logout() {
-                if (confirm('Are you sure you want to logout?')) {
-                    localStorage.removeItem(this.config.STORAGE_KEYS.USER);
-                    localStorage.removeItem(this.config.STORAGE_KEYS.SESSION);
-                    window.location.href = 'login.html';
+                // Auto-remove after duration
+                if (duration > 0) {
+                    setTimeout(() => this.remove(id), duration);
                 }
+
+                return id;
+            }
+
+            remove(id) {
+                const notification = this.notifications.get(id);
+                if (notification) {
+                    notification.style.animation = 'slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                        this.notifications.delete(id);
+                    }, 300);
+                }
+            }
+
+            clearAll() {
+                this.notifications.forEach((notification, id) => {
+                    this.remove(id);
+                });
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
         }
 
-        // ==================== MODULE IMPLEMENTATIONS ====================
-        // Note: These would be in separate files in production
+        class ModalSystem {
+            constructor() {
+                this.backdrop = document.getElementById('modalBackdrop');
+                this.modal = document.getElementById('modal');
+                this.currentModal = null;
+                this.setupEventListeners();
+            }
 
-        // Module: State Manager
+            setupEventListeners() {
+                // Close on backdrop click
+                this.backdrop.addEventListener('click', (e) => {
+                    if (e.target === this.backdrop) {
+                        this.close();
+                    }
+                });
+
+                // Close on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.backdrop.classList.contains('active')) {
+                        this.close();
+                    }
+                });
+            }
+
+            open(content, options = {}) {
+                const { title = '', showClose = true, size = 'medium' } = options;
+                
+                this.modal.innerHTML = '';
+                
+                // Size classes
+                const sizeClasses = {
+                    small: 'max-w-md',
+                    medium: 'max-w-2xl',
+                    large: 'max-w-4xl',
+                    xlarge: 'max-w-6xl'
+                };
+
+                this.modal.className = `modal ${sizeClasses[size] || sizeClasses.medium}`;
+                
+                // Build modal structure
+                let modalHtml = '';
+                
+                if (title || showClose) {
+                    modalHtml += `
+                        <div class="modal-header">
+                            ${title ? `<h2 class="modal-title">${this.escapeHtml(title)}</h2>` : '<div></div>'}
+                            ${showClose ? `
+                                <button class="modal-close" onclick="ThoraxLab.modal.close()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                
+                modalHtml += `<div class="modal-body">${content}</div>`;
+                
+                this.modal.innerHTML = modalHtml;
+                this.backdrop.classList.add('active');
+                this.currentModal = { content, options };
+            }
+
+            close() {
+                this.backdrop.classList.remove('active');
+                this.currentModal = null;
+            }
+
+            confirm(message, options = {}) {
+                return new Promise((resolve) => {
+                    const { title = 'Confirm', confirmText = 'Confirm', cancelText = 'Cancel' } = options;
+                    
+                    const content = `
+                        <div class="flex flex-col gap-4">
+                            <p class="text-gray-700">${this.escapeHtml(message)}</p>
+                            <div class="modal-footer">
+                                <button onclick="ThoraxLab.modal.resolveConfirm(false)" class="btn btn-secondary">
+                                    ${this.escapeHtml(cancelText)}
+                                </button>
+                                <button onclick="ThoraxLab.modal.resolveConfirm(true)" class="btn btn-primary">
+                                    ${this.escapeHtml(confirmText)}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    this.open(content, { title, showClose: false });
+                    
+                    // Store resolve function
+                    this.resolveConfirm = (result) => {
+                        this.close();
+                        resolve(result);
+                    };
+                });
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
         class StateManager {
-            constructor(config) {
-                this.config = config;
+            constructor() {
                 this.state = {
                     user: null,
-                    session: null,
                     project: null,
                     discussions: [],
                     team: [],
                     metrics: {},
-                    offlineChanges: [],
-                    eventListeners: new Map()
+                    votes: new Map(), // Store user votes: { discussionId: 'up'|'down' }
+                    offlineChanges: []
                 };
+                
+                this.loadFromStorage();
+            }
+
+            loadFromStorage() {
+                try {
+                    const user = localStorage.getItem('thoraxlab_user');
+                    const session = localStorage.getItem('thoraxlab_session');
+                    
+                    if (user) this.state.user = JSON.parse(user);
+                    if (session) this.state.session = JSON.parse(session);
+                    
+                    // Load cached project data
+                    const cached = localStorage.getItem('thoraxlab_project_cache');
+                    if (cached) {
+                        const cache = JSON.parse(cached);
+                        const projectId = new URLSearchParams(window.location.search).get('id');
+                        if (projectId && cache[projectId]) {
+                            const cachedData = cache[projectId];
+                            if (Date.now() - cachedData.timestamp < (5 * 60 * 1000)) { // 5 minutes
+                                this.state.project = cachedData.data;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Failed to load from storage:', error);
+                }
             }
 
             setUser(user) {
                 this.state.user = user;
-                this.emit('userChanged', user);
-            }
-
-            setSession(session) {
-                this.state.session = session;
-                this.emit('sessionChanged', session);
+                localStorage.setItem('thoraxlab_user', JSON.stringify(user));
             }
 
             setProject(project) {
                 this.state.project = project;
-                this.emit('projectChanged', project);
+                
+                // Cache project
+                try {
+                    const cache = JSON.parse(localStorage.getItem('thoraxlab_project_cache') || '{}');
+                    cache[project.id] = {
+                        data: project,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem('thoraxlab_project_cache', JSON.stringify(cache));
+                } catch (error) {
+                    console.warn('Failed to cache project:', error);
+                }
             }
 
             setDiscussions(discussions) {
                 this.state.discussions = discussions;
-                this.emit('discussionsChanged', discussions);
             }
 
             setTeam(team) {
                 this.state.team = team;
-                this.emit('teamChanged', team);
             }
 
             setMetrics(metrics) {
                 this.state.metrics = metrics;
-                this.emit('metricsChanged', metrics);
             }
 
             addDiscussion(discussion) {
                 this.state.discussions.unshift(discussion);
-                this.emit('discussionAdded', discussion);
+                this.saveToStorage();
             }
 
             addComment(discussionId, comment) {
@@ -1582,32 +1601,58 @@
                 if (discussion) {
                     if (!discussion.comments) discussion.comments = [];
                     discussion.comments.push(comment);
-                    this.emit('commentAdded', { discussionId, comment });
+                    this.saveToStorage();
                 }
             }
 
-            updateVotes(discussionId, upvotes, downvotes) {
+            voteDiscussion(discussionId, voteType) {
                 const discussion = this.state.discussions.find(d => d.id === discussionId);
                 if (discussion) {
-                    discussion.upvotes = upvotes;
-                    discussion.downvotes = downvotes;
-                    this.emit('votesUpdated', { discussionId, upvotes, downvotes });
+                    const previousVote = this.state.votes.get(discussionId);
+                    
+                    // Update counts
+                    if (previousVote === 'up') {
+                        discussion.upvotes = Math.max(0, discussion.upvotes - 1);
+                    } else if (previousVote === 'down') {
+                        discussion.downvotes = Math.max(0, discussion.downvotes - 1);
+                    }
+                    
+                    if (voteType === 'up') {
+                        discussion.upvotes++;
+                    } else if (voteType === 'down') {
+                        discussion.downvotes++;
+                    }
+                    
+                    // Store user's vote
+                    if (voteType) {
+                        this.state.votes.set(discussionId, voteType);
+                    } else {
+                        this.state.votes.delete(discussionId);
+                    }
+                    
+                    this.saveToStorage();
+                    return { upvotes: discussion.upvotes, downvotes: discussion.downvotes };
                 }
+                return null;
             }
 
-            addTeamMember(member) {
-                const exists = this.state.team.some(m => m.id === member.id);
-                if (!exists) {
-                    this.state.team.push(member);
-                    this.emit('teamMemberAdded', member);
-                }
+            getUserVote(discussionId) {
+                return this.state.votes.get(discussionId);
             }
 
-            removeTeamMember(userId) {
-                const index = this.state.team.findIndex(m => m.id === userId);
-                if (index > -1) {
-                    this.state.team.splice(index, 1);
-                    this.emit('teamMemberRemoved', userId);
+            saveToStorage() {
+                // Save discussions to localStorage
+                try {
+                    if (this.state.project) {
+                        const cache = JSON.parse(localStorage.getItem('thoraxlab_project_cache') || '{}');
+                        if (cache[this.state.project.id]) {
+                            cache[this.state.project.id].data.discussions = this.state.discussions;
+                            cache[this.state.project.id].timestamp = Date.now();
+                            localStorage.setItem('thoraxlab_project_cache', JSON.stringify(cache));
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Failed to save to storage:', error);
                 }
             }
 
@@ -1615,49 +1660,34 @@
                 this.state.offlineChanges.push(change);
             }
 
-            getOfflineChanges() {
-                return [...this.state.offlineChanges];
-            }
-
             clearOfflineChanges() {
                 this.state.offlineChanges = [];
             }
 
-            on(event, callback) {
-                if (!this.state.eventListeners.has(event)) {
-                    this.state.eventListeners.set(event, new Set());
-                }
-                this.state.eventListeners.get(event).add(callback);
+            getCurrentUser() {
+                return this.state.user;
             }
 
-            off(event, callback) {
-                if (this.state.eventListeners.has(event)) {
-                    this.state.eventListeners.get(event).delete(callback);
-                }
+            getProject() {
+                return this.state.project;
             }
 
-            emit(event, data) {
-                if (this.state.eventListeners.has(event)) {
-                    this.state.eventListeners.get(event).forEach(callback => {
-                        try {
-                            callback(data);
-                        } catch (error) {
-                            console.error(`Error in ${event} listener:`, error);
-                        }
-                    });
-                }
+            getDiscussions() {
+                return this.state.discussions;
             }
 
-            cleanup() {
-                this.state.eventListeners.clear();
+            getTeam() {
+                return this.state.team;
+            }
+
+            getMetrics() {
+                return this.state.metrics;
             }
         }
 
-        // Module: API Service
         class APIService {
-            constructor(config) {
-                this.config = config;
-                this.baseURL = config.API_BASE;
+            constructor() {
+                this.baseURL = window.location.origin;
             }
 
             async request(endpoint, options = {}) {
@@ -1665,7 +1695,6 @@
                 const defaultOptions = {
                     headers: {
                         'Content-Type': 'application/json',
-                        ...this.getAuthHeaders(),
                         ...options.headers
                     }
                 };
@@ -1691,191 +1720,1405 @@
                 }
             }
 
-            getAuthHeaders() {
-                const session = localStorage.getItem(this.config.STORAGE_KEYS.SESSION);
-                if (session) {
-                    const sessionData = JSON.parse(session);
-                    return { 'Authorization': `Bearer ${sessionData.id}` };
-                }
-                return {};
-            }
-
             handleUnauthorized() {
-                localStorage.removeItem(this.config.STORAGE_KEYS.USER);
-                localStorage.removeItem(this.config.STORAGE_KEYS.SESSION);
+                localStorage.removeItem('thoraxlab_user');
+                localStorage.removeItem('thoraxlab_session');
                 window.location.href = 'login.html';
             }
 
             async getProject(projectId) {
                 try {
+                    // Try real API first
                     const data = await this.request(`/api/projects/${projectId}`);
-                    return data.success ? data.project : null;
+                    if (data && data.success) {
+                        return data.project;
+                    }
                 } catch (error) {
-                    // Fallback to mock data for demo
-                    return this.getMockProject(projectId);
+                    console.log('API failed, using mock data');
+                }
+                
+                // Fallback to mock data
+                return this.getMockProject(projectId);
+            }
+
+            async saveDiscussion(projectId, discussion) {
+                try {
+                    // Try to save to server
+                    const data = await this.request(`/api/projects/${projectId}/discussions`, {
+                        method: 'POST',
+                        body: JSON.stringify(discussion)
+                    });
+                    return data && data.success;
+                } catch (error) {
+                    // Save locally
+                    return this.saveLocalDiscussion(projectId, discussion);
+                }
+            }
+
+            saveLocalDiscussion(projectId, discussion) {
+                try {
+                    const key = `thoraxlab_discussions_${projectId}`;
+                    const discussions = JSON.parse(localStorage.getItem(key) || '[]');
+                    discussions.push({
+                        ...discussion,
+                        id: `local_${Date.now()}`,
+                        local: true
+                    });
+                    localStorage.setItem(key, JSON.stringify(discussions));
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save locally:', error);
+                    return false;
                 }
             }
 
             getMockProject(projectId) {
-                // Mock data for demo purposes
-                return {
-                    id: projectId,
-                    title: 'Impact of New Treatment on COPD Outcomes',
-                    description: 'A comprehensive study evaluating the effects of novel bronchodilator therapy on COPD patient outcomes, including lung function, quality of life, and hospitalization rates.',
-                    status: 'active',
-                    tags: ['COPD', 'Clinical Trial', 'Bronchodilator', 'Pulmonary'],
-                    lead: 'Dr. Sarah Chen',
-                    startDate: '2024-01-15',
-                    consensusScore: 85,
-                    stats: {
-                        discussionCount: 24,
-                        commentCount: 187,
-                        voteCount: 342,
-                        teamSize: 8
+                // Generate consistent mock data based on projectId
+                const projects = {
+                    '1': {
+                        id: '1',
+                        title: 'Impact of New Treatment on COPD Outcomes',
+                        description: 'A comprehensive study evaluating the effects of novel bronchodilator therapy on COPD patient outcomes, including lung function, quality of life, and hospitalization rates.',
+                        status: 'active',
+                        tags: ['COPD', 'Clinical Trial', 'Bronchodilator', 'Pulmonary'],
+                        lead: 'Dr. Sarah Chen',
+                        startDate: '2024-01-15',
+                        endDate: '2024-12-31',
+                        consensusScore: 85,
+                        stats: {
+                            discussionCount: 24,
+                            commentCount: 187,
+                            voteCount: 342,
+                            teamSize: 8
+                        },
+                        objectives: [
+                            'Evaluate efficacy of new bronchodilator',
+                            'Assess quality of life improvements',
+                            'Monitor adverse effects',
+                            'Compare with standard treatment'
+                        ]
+                    },
+                    '2': {
+                        id: '2',
+                        title: 'Lung Cancer Early Detection Biomarkers',
+                        description: 'Identification and validation of novel biomarkers for early detection of non-small cell lung cancer in high-risk populations.',
+                        status: 'active',
+                        tags: ['Oncology', 'Biomarkers', 'Early Detection', 'Genomics'],
+                        lead: 'Dr. Michael Rodriguez',
+                        startDate: '2024-03-01',
+                        endDate: '2025-08-31',
+                        consensusScore: 72,
+                        stats: {
+                            discussionCount: 18,
+                            commentCount: 143,
+                            voteCount: 256,
+                            teamSize: 12
+                        },
+                        objectives: [
+                            'Identify candidate biomarkers',
+                            'Validate sensitivity/specificity',
+                            'Develop screening protocol',
+                            'Cost-effectiveness analysis'
+                        ]
+                    },
+                    '3': {
+                        id: '3',
+                        title: 'Telemedicine for Asthma Management',
+                        description: 'Evaluating the effectiveness of telemedicine interventions for asthma management in pediatric populations.',
+                        status: 'planning',
+                        tags: ['Telemedicine', 'Pediatrics', 'Asthma', 'Digital Health'],
+                        lead: 'Dr. Jessica Williams',
+                        startDate: '2024-04-15',
+                        endDate: '2025-04-14',
+                        consensusScore: 45,
+                        stats: {
+                            discussionCount: 8,
+                            commentCount: 67,
+                            voteCount: 89,
+                            teamSize: 6
+                        },
+                        objectives: [
+                            'Design telemedicine protocol',
+                            'Recruit pediatric patients',
+                            'Measure adherence rates',
+                            'Assess clinical outcomes'
+                        ]
                     }
                 };
+
+                return projects[projectId] || projects['1'];
             }
 
-            async syncOfflineData(projectId, changes) {
+            generateMockDiscussions(projectId) {
+                const discussions = [
+                    {
+                        id: 'd1',
+                        projectId: projectId,
+                        title: 'Methodology concerns for primary endpoint',
+                        content: 'I have concerns about using FEV1 as the primary endpoint. Given the patient population, would SGRQ be more appropriate? The quality of life measure might better capture the treatment effect we\'re looking for.',
+                        author: 'Dr. Sarah Chen',
+                        authorId: 'user1',
+                        authorInitials: 'SC',
+                        timestamp: new Date(Date.now() - 3600000).toISOString(),
+                        upvotes: 24,
+                        downvotes: 3,
+                        comments: [
+                            {
+                                id: 'c1',
+                                author: 'Dr. James Wilson',
+                                authorId: 'user2',
+                                content: 'I agree with Sarah. We should consider composite endpoints.',
+                                timestamp: new Date(Date.now() - 1800000).toISOString()
+                            },
+                            {
+                                id: 'c2',
+                                author: 'Dr. Maria Garcia',
+                                authorId: 'user3',
+                                content: 'FEV1 is standard but SGRQ would add valuable patient perspective.',
+                                timestamp: new Date(Date.now() - 900000).toISOString()
+                            }
+                        ]
+                    },
+                    {
+                        id: 'd2',
+                        projectId: projectId,
+                        title: 'Sample size calculation review',
+                        content: 'Can we review the power calculation? With the dropout rate in similar studies, we might need to increase N by 15% to maintain 80% power.',
+                        author: 'Dr. Robert Kim',
+                        authorId: 'user4',
+                        authorInitials: 'RK',
+                        timestamp: new Date(Date.now() - 7200000).toISOString(),
+                        upvotes: 18,
+                        downvotes: 5,
+                        comments: [
+                            {
+                                id: 'c3',
+                                author: 'Dr. Lisa Park',
+                                authorId: 'user5',
+                                content: 'Good point. I\'ll run the numbers again with conservative estimates.',
+                                timestamp: new Date(Date.now() - 3600000).toISOString()
+                            }
+                        ]
+                    },
+                    {
+                        id: 'd3',
+                        projectId: projectId,
+                        title: 'Inclusion criteria for elderly patients',
+                        content: 'Should we adjust inclusion criteria for patients over 75? Comorbidity burden might confound results.',
+                        author: 'Dr. Thomas Brown',
+                        authorId: 'user6',
+                        authorInitials: 'TB',
+                        timestamp: new Date(Date.now() - 10800000).toISOString(),
+                        upvotes: 12,
+                        downvotes: 7,
+                        comments: []
+                    }
+                ];
+
+                return discussions;
+            }
+
+            generateMockTeam(projectId) {
+                return [
+                    { id: 'user1', name: 'Dr. Sarah Chen', role: 'Principal Investigator', initials: 'SC', status: 'online' },
+                    { id: 'user2', name: 'Dr. James Wilson', role: 'Statistician', initials: 'JW', status: 'online' },
+                    { id: 'user3', name: 'Dr. Maria Garcia', role: 'Clinical Coordinator', initials: 'MG', status: 'away' },
+                    { id: 'user4', name: 'Dr. Robert Kim', role: 'Methodologist', initials: 'RK', status: 'online' },
+                    { id: 'user5', name: 'Dr. Lisa Park', role: 'Data Manager', initials: 'LP', status: 'offline' },
+                    { id: 'user6', name: 'Dr. Thomas Brown', role: 'Ethics Lead', initials: 'TB', status: 'online' }
+                ];
+            }
+
+            generateMockMetrics(projectId) {
+                return {
+                    consensusScore: 85,
+                    engagementRate: 78,
+                    decisionVelocity: 4.2,
+                    completionRate: 65,
+                    activeDiscussions: 6,
+                    pendingDecisions: 3
+                };
+            }
+        }
+
+        class Renderer {
+            constructor(state, notifications, modal) {
+                this.state = state;
+                this.notifications = notifications;
+                this.modal = modal;
+            }
+
+            renderProjectHeader(project) {
+                const header = document.getElementById('projectHeader');
+                if (!header || !project) return;
+
+                const statusClass = `status-${project.status || 'active'}`;
+                const statusText = (project.status || 'active').charAt(0).toUpperCase() + (project.status || 'active').slice(1);
+
+                header.innerHTML = `
+                    <h1 class="project-title">${this.escapeHtml(project.title)}</h1>
+                    <p class="project-description">${this.escapeHtml(project.description)}</p>
+                    
+                    <div class="flex items-center justify-between mb-lg">
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-user-md meta-icon"></i>
+                                <div class="meta-content">
+                                    <span class="meta-label">Project Lead</span>
+                                    <span class="meta-value">${this.escapeHtml(project.lead)}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-alt meta-icon"></i>
+                                <div class="meta-content">
+                                    <span class="meta-label">Start Date</span>
+                                    <span class="meta-value">${this.formatDate(project.startDate)}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="meta-item">
+                                <i class="fas fa-chart-line meta-icon"></i>
+                                <div class="meta-content">
+                                    <span class="meta-label">Consensus</span>
+                                    <span class="meta-value">${project.consensusScore || 0}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-badge ${statusClass}">
+                            <i class="fas fa-${project.status === 'active' ? 'play' : project.status === 'completed' ? 'check' : 'clock'}"></i>
+                            ${statusText}
+                        </div>
+                    </div>
+                    
+                    ${project.tags && project.tags.length > 0 ? `
+                        <div class="tags-container">
+                            ${project.tags.map(tag => `
+                                <span class="tag">
+                                    <i class="fas fa-tag"></i>
+                                    ${this.escapeHtml(tag)}
+                                </span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+            }
+
+            renderProjectOverview(project) {
+                const overview = document.getElementById('projectOverview');
+                if (!overview || !project) return;
+
+                overview.innerHTML = `
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            Project Overview
+                        </h2>
+                        <button onclick="ThoraxLab.showEditModal()" class="btn btn-sm btn-outline">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="grid-3-col mb-xl">
+                            <div class="metric-card">
+                                <div class="metric-value">${project.stats?.discussionCount || 0}</div>
+                                <div class="metric-label">Discussions</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${project.stats?.commentCount || 0}</div>
+                                <div class="metric-label">Comments</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${project.stats?.teamSize || 0}</div>
+                                <div class="metric-label">Team Members</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-lg">
+                            <h3 class="text-lg font-semibold mb-sm">Objectives</h3>
+                            <ul class="list-disc pl-5 space-y-2">
+                                ${(project.objectives || ['No objectives defined']).map(obj => `
+                                    <li class="text-gray-700">${this.escapeHtml(obj)}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        
+                        ${project.status === 'active' ? `
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${project.consensusScore || 0}%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600 mt-2">
+                                <span>Consensus Progress</span>
+                                <span>${project.consensusScore || 0}%</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            renderDiscussionsSection() {
+                const section = document.getElementById('discussionsSection');
+                if (!section) return;
+
+                const discussions = this.state.getDiscussions();
+                const user = this.state.getCurrentUser();
+
+                section.innerHTML = `
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-comments"></i>
+                            Discussions
+                        </h2>
+                        <button onclick="ThoraxLab.showNewDiscussionModal()" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> New Discussion
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        ${discussions.length === 0 ? `
+                            <div class="text-center py-8">
+                                <i class="fas fa-comments text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-600">No discussions yet. Start the conversation!</p>
+                                <button onclick="ThoraxLab.showNewDiscussionModal()" class="btn btn-primary mt-4">
+                                    <i class="fas fa-plus"></i> Create First Discussion
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="discussion-list">
+                                ${discussions.map(discussion => this.renderDiscussionItem(discussion)).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+
+            renderDiscussionItem(discussion) {
+                const userVote = this.state.getUserVote(discussion.id);
+                const commentCount = discussion.comments ? discussion.comments.length : 0;
+                const timeAgo = this.getTimeAgo(discussion.timestamp);
+
+                return `
+                    <div class="discussion-item" data-id="${discussion.id}">
+                        <div class="discussion-header">
+                            <div class="discussion-author">
+                                <div class="author-avatar">${discussion.authorInitials || discussion.author.charAt(0)}</div>
+                                <div class="author-info">
+                                    <div class="author-name">${this.escapeHtml(discussion.author)}</div>
+                                    <div class="discussion-time">${timeAgo}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="discussion-title">${this.escapeHtml(discussion.title)}</h3>
+                        <div class="discussion-content">${this.escapeHtml(discussion.content)}</div>
+                        
+                        <div class="discussion-footer">
+                            <div class="discussion-actions">
+                                <button onclick="ThoraxLab.voteDiscussion('${discussion.id}', 'up')" 
+                                        class="vote-btn ${userVote === 'up' ? 'active' : ''}">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span class="vote-count">${discussion.upvotes || 0}</span>
+                                </button>
+                                
+                                <button onclick="ThoraxLab.voteDiscussion('${discussion.id}', 'down')" 
+                                        class="vote-btn ${userVote === 'down' ? 'active' : ''}">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    <span class="vote-count">${discussion.downvotes || 0}</span>
+                                </button>
+                                
+                                <button onclick="ThoraxLab.showComments('${discussion.id}')" class="comments-btn">
+                                    <i class="fas fa-comment"></i>
+                                    <span>${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTeamSection() {
+                const section = document.getElementById('teamSection');
+                if (!section) return;
+
+                const team = this.state.getTeam();
+
+                section.innerHTML = `
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-users"></i>
+                            Team Members
+                        </h2>
+                        <span class="text-sm text-gray-600">${team.length} members</span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="team-list">
+                            ${team.map(member => `
+                                <div class="team-member">
+                                    <div class="member-avatar">${member.initials}</div>
+                                    <div class="member-info">
+                                        <div class="member-name">${this.escapeHtml(member.name)}</div>
+                                        <div class="member-role">${this.escapeHtml(member.role)}</div>
+                                    </div>
+                                    <div class="member-status status-${member.status || 'offline'}"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderMetricsSection() {
+                const section = document.getElementById('metricsSection');
+                if (!section) return;
+
+                const metrics = this.state.getMetrics();
+
+                section.innerHTML = `
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Project Metrics
+                        </h2>
+                        <button onclick="ThoraxLab.refreshMetrics()" class="btn btn-sm btn-outline">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">${metrics.consensusScore || 0}%</div>
+                                <div class="metric-label">Consensus Score</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${metrics.consensusScore || 0}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-value">${metrics.engagementRate || 0}%</div>
+                                <div class="metric-label">Engagement Rate</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${metrics.engagementRate || 0}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-value">${metrics.decisionVelocity || 0}</div>
+                                <div class="metric-label">Decision Velocity</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${Math.min(100, (metrics.decisionVelocity || 0) * 20)}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-value">${metrics.completionRate || 0}%</div>
+                                <div class="metric-label">Completion Rate</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${metrics.completionRate || 0}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderQuickActions() {
+                const section = document.getElementById('quickActions');
+                if (!section) return;
+
+                section.innerHTML = `
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-bolt"></i>
+                            Quick Actions
+                        </h2>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="flex flex-col gap-2">
+                            <button onclick="ThoraxLab.showNewDiscussionModal()" class="btn btn-primary w-full justify-start">
+                                <i class="fas fa-comment-medical"></i> New Discussion
+                            </button>
+                            
+                            <button onclick="ThoraxLab.showShareModal()" class="btn btn-outline w-full justify-start">
+                                <i class="fas fa-share-alt"></i> Share Project
+                            </button>
+                            
+                            <button onclick="ThoraxLab.showReportModal()" class="btn btn-outline w-full justify-start">
+                                <i class="fas fa-file-alt"></i> Generate Report
+                            </button>
+                            
+                            <button onclick="ThoraxLab.exportData()" class="btn btn-outline w-full justify-start">
+                                <i class="fas fa-download"></i> Export Data
+                            </button>
+                            
+                            <button onclick="ThoraxLab.showSettingsModal()" class="btn btn-outline w-full justify-start">
+                                <i class="fas fa-cog"></i> Project Settings
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            showComments(discussionId) {
+                const discussion = this.state.getDiscussions().find(d => d.id === discussionId);
+                if (!discussion) return;
+
+                const comments = discussion.comments || [];
+                const user = this.state.getCurrentUser();
+
+                const content = `
+                    <div class="space-y-4">
+                        <div class="discussion-header mb-4">
+                            <div class="discussion-author">
+                                <div class="author-avatar">${discussion.authorInitials || discussion.author.charAt(0)}</div>
+                                <div class="author-info">
+                                    <div class="author-name">${this.escapeHtml(discussion.author)}</div>
+                                    <div class="discussion-time">${this.getTimeAgo(discussion.timestamp)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold mb-4">${this.escapeHtml(discussion.title)}</h3>
+                        <p class="text-gray-700 mb-6">${this.escapeHtml(discussion.content)}</p>
+                        
+                        <div class="border-t pt-6">
+                            <h4 class="font-semibold mb-4">Comments (${comments.length})</h4>
+                            
+                            ${comments.length === 0 ? `
+                                <p class="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
+                            ` : `
+                                <div class="space-y-4">
+                                    ${comments.map(comment => `
+                                        <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <div class="author-avatar w-8 h-8 text-sm">
+                                                ${comment.author.charAt(0)}
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex justify-between items-start mb-1">
+                                                    <span class="font-semibold">${this.escapeHtml(comment.author)}</span>
+                                                    <span class="text-xs text-gray-500">${this.getTimeAgo(comment.timestamp)}</span>
+                                                </div>
+                                                <p class="text-gray-700">${this.escapeHtml(comment.content)}</p>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+                            
+                            <div class="mt-6">
+                                <h5 class="font-semibold mb-2">Add a comment</h5>
+                                <textarea id="commentInput" class="form-input form-textarea" 
+                                          placeholder="Enter your comment..." rows="3"></textarea>
+                                <div class="flex justify-end gap-2 mt-3">
+                                    <button onclick="ThoraxLab.modal.close()" class="btn btn-secondary">Cancel</button>
+                                    <button onclick="ThoraxLab.submitComment('${discussionId}')" class="btn btn-primary">Post Comment</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                this.modal.open(content, { title: 'Discussion Comments', size: 'large' });
+            }
+
+            getTimeAgo(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const seconds = Math.floor((now - date) / 1000);
+                
+                if (seconds < 60) return 'Just now';
+                if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+                if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+                if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+                
+                return date.toLocaleDateString();
+            }
+
+            formatDate(dateString) {
+                if (!dateString) return 'Not set';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            updateAll() {
+                const project = this.state.getProject();
+                if (project) {
+                    this.renderProjectHeader(project);
+                    this.renderProjectOverview(project);
+                }
+                this.renderDiscussionsSection();
+                this.renderTeamSection();
+                this.renderMetricsSection();
+                this.renderQuickActions();
+            }
+        }
+
+        // ==================== MAIN APPLICATION ====================
+        class ThoraxLabProject {
+            constructor() {
+                console.log('🚀 ThoraxLab Project System Initializing...');
+                
+                // Initialize systems
+                this.notifications = new NotificationSystem();
+                this.modal = new ModalSystem();
+                this.state = new StateManager();
+                this.api = new APIService();
+                this.renderer = new Renderer(this.state, this.notifications, this.modal);
+                
+                // Current project ID
+                this.projectId = null;
+                this.projectData = null;
+                
+                // Initialize
+                this.init();
+            }
+
+            async init() {
+                // Check authentication
+                if (!await this.checkAuth()) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Get project ID from URL
+                this.projectId = this.getProjectIdFromURL();
+                if (!this.projectId) {
+                    this.notifications.show('error', 'No Project', 'Project ID not found in URL');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+
+                // Setup event listeners
+                this.setupEventListeners();
+
+                // Load project data
+                await this.loadProject();
+
+                console.log('✅ Project system ready');
+            }
+
+            async checkAuth() {
                 try {
-                    await this.request(`/api/projects/${projectId}/sync`, {
-                        method: 'POST',
-                        body: JSON.stringify({ changes })
-                    });
+                    const userData = localStorage.getItem('thoraxlab_user');
+                    const sessionData = localStorage.getItem('thoraxlab_session');
+                    
+                    if (!userData || !sessionData) {
+                        return false;
+                    }
+
+                    // Validate session
+                    const session = JSON.parse(sessionData);
+                    const currentUser = JSON.parse(userData);
+                    
+                    this.state.setUser(currentUser);
+                    
+                    // Check if session is expired
+                    if (session.expires && new Date(session.expires) < new Date()) {
+                        this.logout();
+                        return false;
+                    }
+
                     return true;
                 } catch (error) {
-                    console.error('Sync failed:', error);
+                    console.error('Auth check failed:', error);
                     return false;
                 }
             }
-        }
 
-        // Module: WebSocket Service
-        class WebSocketService {
-            constructor(config) {
-                this.config = config;
-                this.socket = null;
-                this.listeners = new Map();
-                this.reconnectAttempts = 0;
-                this.maxReconnectAttempts = 5;
-                this.isConnected = false;
+            getProjectIdFromURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('id');
             }
 
-            connect(projectId) {
+            async loadProject() {
                 try {
-                    this.socket = io(this.config.WEBSOCKET_URL, {
-                        reconnection: true,
-                        reconnectionAttempts: this.maxReconnectAttempts,
-                        reconnectionDelay: 1000,
-                        timeout: 10000
-                    });
+                    this.showLoading('Loading project...');
 
-                    this.socket.on('connect', () => {
-                        console.log('✅ WebSocket connected');
-                        this.isConnected = true;
-                        this.reconnectAttempts = 0;
-                        this.authenticate();
-                        this.joinProject(projectId);
-                        this.emit('connected');
-                    });
+                    // Check if we have cached project
+                    const cachedProject = this.state.getProject();
+                    if (cachedProject && cachedProject.id === this.projectId) {
+                        this.projectData = cachedProject;
+                        this.renderer.updateAll();
+                        this.notifications.show('info', 'Using cached data', 'Loading latest from server...');
+                    }
 
-                    this.socket.on('disconnect', () => {
-                        console.log('🔌 WebSocket disconnected');
-                        this.isConnected = false;
-                        this.emit('disconnected');
-                    });
-
-                    this.socket.on('reconnect', () => {
-                        console.log('🔄 WebSocket reconnected');
-                        this.authenticate();
-                        this.joinProject(projectId);
-                        this.emit('reconnected');
-                    });
-
-                    // Forward events
-                    const events = ['discussionCreated', 'commentAdded', 'voteUpdated', 
-                                   'userJoined', 'userLeft', 'typing', 'error'];
+                    // Load from API
+                    const project = await this.api.getProject(this.projectId);
                     
-                    events.forEach(event => {
-                        this.socket.on(event, (data) => {
-                            this.emit(event, data);
-                        });
-                    });
-
+                    if (project) {
+                        this.projectData = project;
+                        this.state.setProject(project);
+                        
+                        // Load discussions
+                        const discussions = this.api.generateMockDiscussions(this.projectId);
+                        this.state.setDiscussions(discussions);
+                        
+                        // Load team
+                        const team = this.api.generateMockTeam(this.projectId);
+                        this.state.setTeam(team);
+                        
+                        // Load metrics
+                        const metrics = this.api.generateMockMetrics(this.projectId);
+                        this.state.setMetrics(metrics);
+                        
+                        // Update UI
+                        this.renderer.updateAll();
+                        
+                        this.notifications.show('success', 'Project Loaded', `${project.title} loaded successfully`);
+                    } else {
+                        throw new Error('Project not found');
+                    }
                 } catch (error) {
-                    console.error('WebSocket connection failed:', error);
+                    console.error('Failed to load project:', error);
+                    this.notifications.show('error', 'Load Failed', 'Could not load project data');
+                    this.showErrorState();
+                } finally {
+                    this.hideLoading();
                 }
             }
 
-            authenticate() {
-                const session = localStorage.getItem(this.config.STORAGE_KEYS.SESSION);
-                if (session) {
-                    const sessionData = JSON.parse(session);
-                    this.send('authenticate', { token: sessionData.id });
+            setupEventListeners() {
+                // Window events
+                window.addEventListener('beforeunload', () => this.cleanup());
+                window.addEventListener('online', () => this.handleOnline());
+                window.addEventListener('offline', () => this.handleOffline());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    // Ctrl/Cmd + / to focus search
+                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                        e.preventDefault();
+                        this.focusSearch();
+                    }
+
+                    // Escape to close modals
+                    if (e.key === 'Escape') {
+                        this.modal.close();
+                    }
+
+                    // Ctrl/Cmd + N for new discussion
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        this.showNewDiscussionModal();
+                    }
+                });
+            }
+
+            handleOnline() {
+                this.notifications.show('success', 'Back Online', 'Reconnected to server');
+                // Try to sync any local changes
+                this.syncLocalData();
+            }
+
+            handleOffline() {
+                this.notifications.show('warning', 'Offline Mode', 'Working locally. Changes will sync when back online.');
+            }
+
+            async syncLocalData() {
+                // This would sync any locally saved data with the server
+                const projectId = this.projectId;
+                if (!projectId) return;
+
+                try {
+                    const key = `thoraxlab_discussions_${projectId}`;
+                    const localDiscussions = JSON.parse(localStorage.getItem(key) || '[]');
+                    
+                    if (localDiscussions.length > 0) {
+                        // In a real app, you would send these to the server
+                        console.log('Syncing local discussions:', localDiscussions);
+                        localStorage.removeItem(key);
+                        this.notifications.show('success', 'Sync Complete', 'Local changes synced with server');
+                    }
+                } catch (error) {
+                    console.error('Sync failed:', error);
                 }
             }
 
-            joinProject(projectId) {
-                if (this.isConnected && projectId) {
-                    this.send('joinProject', { projectId });
+            showNewDiscussionModal() {
+                const user = this.state.getCurrentUser();
+                const userName = user ? user.name : 'Anonymous';
+
+                const content = `
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Title</label>
+                            <input type="text" id="discussionTitle" class="form-input" 
+                                   placeholder="Enter discussion title" maxlength="200">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Content</label>
+                            <textarea id="discussionContent" class="form-input form-textarea" 
+                                      placeholder="Describe your discussion topic..." rows="6"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="discussionCategory" class="form-select">
+                                <option value="methodology">Methodology</option>
+                                <option value="results">Results</option>
+                                <option value="ethics">Ethics</option>
+                                <option value="logistics">Logistics</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button onclick="ThoraxLab.modal.close()" class="btn btn-secondary">Cancel</button>
+                        <button onclick="ThoraxLab.createDiscussion()" class="btn btn-primary">Create Discussion</button>
+                    </div>
+                `;
+
+                this.modal.open(content, { title: 'New Discussion' });
+            }
+
+            async createDiscussion() {
+                const titleInput = document.getElementById('discussionTitle');
+                const contentInput = document.getElementById('discussionContent');
+                const categoryInput = document.getElementById('discussionCategory');
+                
+                if (!titleInput || !contentInput || !categoryInput) return;
+                
+                const title = titleInput.value.trim();
+                const content = contentInput.value.trim();
+                const category = categoryInput.value;
+                
+                if (!title || !content) {
+                    this.notifications.show('error', 'Validation Error', 'Please fill in all required fields');
+                    return;
+                }
+
+                const user = this.state.getCurrentUser();
+                const userName = user ? user.name : 'Anonymous';
+                const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                const discussion = {
+                    id: `disc_${Date.now()}`,
+                    projectId: this.projectId,
+                    title,
+                    content,
+                    category,
+                    author: userName,
+                    authorId: user ? user.id : 'anonymous',
+                    authorInitials: userInitials,
+                    timestamp: new Date().toISOString(),
+                    upvotes: 0,
+                    downvotes: 0,
+                    comments: []
+                };
+
+                try {
+                    // Try to save to server
+                    const saved = await this.api.saveDiscussion(this.projectId, discussion);
+                    
+                    if (saved) {
+                        // Add to local state
+                        this.state.addDiscussion(discussion);
+                        
+                        // Update UI
+                        this.renderer.renderDiscussionsSection();
+                        this.renderer.renderMetricsSection();
+                        
+                        // Show success
+                        this.notifications.show('success', 'Discussion Created', 'Your discussion has been posted');
+                        this.modal.close();
+                    } else {
+                        this.notifications.show('error', 'Save Failed', 'Failed to save discussion');
+                    }
+                } catch (error) {
+                    console.error('Failed to create discussion:', error);
+                    this.notifications.show('error', 'Error', 'Failed to create discussion');
                 }
             }
 
-            send(event, data) {
-                if (this.socket && this.isConnected) {
-                    this.socket.emit(event, data);
+            async voteDiscussion(discussionId, voteType) {
+                const user = this.state.getCurrentUser();
+                if (!user) {
+                    this.notifications.show('warning', 'Login Required', 'Please login to vote');
+                    return;
+                }
+
+                const currentVote = this.state.getUserVote(discussionId);
+                
+                // If clicking the same vote, remove it
+                const newVote = currentVote === voteType ? null : voteType;
+                
+                const result = this.state.voteDiscussion(discussionId, newVote);
+                
+                if (result) {
+                    // Update the UI
+                    this.renderer.renderDiscussionsSection();
+                    this.renderer.renderMetricsSection();
+                    
+                    // Show notification
+                    const action = newVote ? 'voted' : 'vote removed';
+                    this.notifications.show('success', 'Vote Recorded', `Your vote has been ${action}`);
                 }
             }
 
-            on(event, callback) {
-                if (!this.listeners.has(event)) {
-                    this.listeners.set(event, new Set());
+            async submitComment(discussionId) {
+                const commentInput = document.getElementById('commentInput');
+                if (!commentInput) return;
+                
+                const content = commentInput.value.trim();
+                if (!content) {
+                    this.notifications.show('error', 'Validation Error', 'Please enter a comment');
+                    return;
                 }
-                this.listeners.get(event).add(callback);
+
+                const user = this.state.getCurrentUser();
+                const userName = user ? user.name : 'Anonymous';
+
+                const comment = {
+                    id: `comm_${Date.now()}`,
+                    author: userName,
+                    authorId: user ? user.id : 'anonymous',
+                    content,
+                    timestamp: new Date().toISOString()
+                };
+
+                // Add to local state
+                this.state.addComment(discussionId, comment);
+                
+                // Update UI
+                this.renderer.renderDiscussionsSection();
+                this.renderer.renderMetricsSection();
+                
+                // Clear input and close modal
+                commentInput.value = '';
+                this.notifications.show('success', 'Comment Posted', 'Your comment has been added');
             }
 
-            off(event, callback) {
-                if (this.listeners.has(event)) {
-                    this.listeners.get(event).delete(callback);
+            showEditModal() {
+                const project = this.state.getProject();
+                if (!project) return;
+
+                const content = `
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Project Title</label>
+                            <input type="text" id="editTitle" class="form-input" 
+                                   value="${this.renderer.escapeHtml(project.title)}" maxlength="200">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea id="editDescription" class="form-input form-textarea" rows="4">${this.renderer.escapeHtml(project.description)}</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="editStatus" class="form-select">
+                                <option value="planning" ${project.status === 'planning' ? 'selected' : ''}>Planning</option>
+                                <option value="active" ${project.status === 'active' ? 'selected' : ''}>Active</option>
+                                <option value="completed" ${project.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button onclick="ThoraxLab.modal.close()" class="btn btn-secondary">Cancel</button>
+                        <button onclick="ThoraxLab.saveProjectChanges()" class="btn btn-primary">Save Changes</button>
+                    </div>
+                `;
+
+                this.modal.open(content, { title: 'Edit Project' });
+            }
+
+            saveProjectChanges() {
+                const titleInput = document.getElementById('editTitle');
+                const descInput = document.getElementById('editDescription');
+                const statusInput = document.getElementById('editStatus');
+                
+                if (!titleInput || !descInput || !statusInput) return;
+                
+                const project = this.state.getProject();
+                if (!project) return;
+                
+                // Update project
+                project.title = titleInput.value.trim();
+                project.description = descInput.value.trim();
+                project.status = statusInput.value;
+                
+                // Save to state
+                this.state.setProject(project);
+                
+                // Update UI
+                this.renderer.renderProjectHeader(project);
+                this.renderer.renderProjectOverview(project);
+                
+                // Show success
+                this.notifications.show('success', 'Project Updated', 'Changes saved successfully');
+                this.modal.close();
+            }
+
+            showShareModal() {
+                const project = this.state.getProject();
+                const shareUrl = `${window.location.origin}${window.location.pathname}?id=${this.projectId}`;
+
+                const content = `
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Share Link</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="shareUrl" class="form-input" 
+                                       value="${shareUrl}" readonly>
+                                <button onclick="ThoraxLab.copyShareUrl()" class="btn btn-primary">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Share Via</label>
+                            <div class="flex gap-2">
+                                <button onclick="ThoraxLab.shareEmail()" class="btn btn-outline flex-1">
+                                    <i class="fas fa-envelope"></i> Email
+                                </button>
+                                <button onclick="ThoraxLab.shareTeams()" class="btn btn-outline flex-1">
+                                    <i class="fas fa-comments"></i> Teams
+                                </button>
+                                <button onclick="ThoraxLab.shareSlack()" class="btn btn-outline flex-1">
+                                    <i class="fab fa-slack"></i> Slack
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Invite by Email</label>
+                            <div class="flex gap-2">
+                                <input type="email" id="inviteEmail" class="form-input" 
+                                       placeholder="email@example.com">
+                                <button onclick="ThoraxLab.sendInvite()" class="btn btn-primary">
+                                    Invite
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                this.modal.open(content, { title: 'Share Project' });
+            }
+
+            copyShareUrl() {
+                const input = document.getElementById('shareUrl');
+                if (input) {
+                    input.select();
+                    input.setSelectionRange(0, 99999);
+                    navigator.clipboard.writeText(input.value)
+                        .then(() => this.notifications.show('success', 'Copied', 'Link copied to clipboard'))
+                        .catch(() => this.notifications.show('error', 'Failed', 'Failed to copy link'));
                 }
             }
 
-            emit(event, data) {
-                if (this.listeners.has(event)) {
-                    this.listeners.get(event).forEach(callback => {
-                        try {
-                            callback(data);
-                        } catch (error) {
-                            console.error(`Error in ${event} listener:`, error);
-                        }
-                    });
+            showReportModal() {
+                const project = this.state.getProject();
+                const discussions = this.state.getDiscussions();
+                const team = this.state.getTeam();
+                const metrics = this.state.getMetrics();
+
+                const content = `
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Report Type</label>
+                            <select id="reportType" class="form-select">
+                                <option value="summary">Project Summary</option>
+                                <option value="discussions">Discussions Report</option>
+                                <option value="metrics">Metrics Report</option>
+                                <option value="full">Full Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Format</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center">
+                                    <input type="radio" name="reportFormat" value="pdf" checked class="mr-2">
+                                    PDF
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="reportFormat" value="csv" class="mr-2">
+                                    CSV
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="reportFormat" value="excel" class="mr-2">
+                                    Excel
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date Range</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="date" id="reportStart" class="form-input" 
+                                       value="${new Date().toISOString().split('T')[0]}">
+                                <input type="date" id="reportEnd" class="form-input"
+                                       value="${new Date().toISOString().split('T')[0]}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button onclick="ThoraxLab.modal.close()" class="btn btn-secondary">Cancel</button>
+                        <button onclick="ThoraxLab.generateReport()" class="btn btn-primary">
+                            <i class="fas fa-file-download"></i> Generate Report
+                        </button>
+                    </div>
+                `;
+
+                this.modal.open(content, { title: 'Generate Report' });
+            }
+
+            generateReport() {
+                this.notifications.show('info', 'Report Generation', 'Report is being prepared...');
+                this.modal.close();
+                
+                // Simulate report generation
+                setTimeout(() => {
+                    this.notifications.show('success', 'Report Ready', 'Your report has been generated');
+                    // In a real app, this would trigger a download
+                }, 2000);
+            }
+
+            exportData() {
+                const project = this.state.getProject();
+                const discussions = this.state.getDiscussions();
+                const team = this.state.getTeam();
+                const metrics = this.state.getMetrics();
+
+                const data = {
+                    project,
+                    discussions,
+                    team,
+                    metrics,
+                    exportedAt: new Date().toISOString()
+                };
+
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `thoraxlab-project-${this.projectId}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.notifications.show('success', 'Export Complete', 'Project data exported successfully');
+            }
+
+            showSettingsModal() {
+                const content = `
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Notifications</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="notifyDiscussions" checked class="mr-2">
+                                    New discussions
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="notifyComments" checked class="mr-2">
+                                    New comments
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="notifyVotes" class="mr-2">
+                                    Vote updates
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Auto-refresh Interval</label>
+                            <select id="refreshInterval" class="form-select">
+                                <option value="30000">30 seconds</option>
+                                <option value="60000" selected>1 minute</option>
+                                <option value="300000">5 minutes</option>
+                                <option value="900000">15 minutes</option>
+                                <option value="0">Never</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Default View</label>
+                            <select id="defaultView" class="form-select">
+                                <option value="discussions">Discussions</option>
+                                <option value="metrics">Metrics</option>
+                                <option value="team">Team</option>
+                                <option value="overview" selected>Overview</option>
+                            </select>
+                        </div>
+                        
+                        <div class="border-t pt-4">
+                            <h4 class="font-semibold mb-2 text-red-600">Danger Zone</h4>
+                            <div class="space-y-2">
+                                <button onclick="ThoraxLab.showArchiveConfirm()" class="btn btn-outline w-full justify-start text-yellow-600">
+                                    <i class="fas fa-archive"></i> Archive Project
+                                </button>
+                                <button onclick="ThoraxLab.showDeleteConfirm()" class="btn btn-outline w-full justify-start text-red-600">
+                                    <i class="fas fa-trash"></i> Delete Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button onclick="ThoraxLab.modal.close()" class="btn btn-secondary">Cancel</button>
+                        <button onclick="ThoraxLab.saveSettings()" class="btn btn-primary">Save Settings</button>
+                    </div>
+                `;
+
+                this.modal.open(content, { title: 'Project Settings' });
+            }
+
+            saveSettings() {
+                // Save settings to localStorage
+                const settings = {
+                    notifyDiscussions: document.getElementById('notifyDiscussions')?.checked || false,
+                    notifyComments: document.getElementById('notifyComments')?.checked || false,
+                    notifyVotes: document.getElementById('notifyVotes')?.checked || false,
+                    refreshInterval: document.getElementById('refreshInterval')?.value || '60000',
+                    defaultView: document.getElementById('defaultView')?.value || 'overview'
+                };
+
+                localStorage.setItem('thoraxlab_project_settings', JSON.stringify(settings));
+                this.notifications.show('success', 'Settings Saved', 'Your settings have been updated');
+                this.modal.close();
+            }
+
+            showArchiveConfirm() {
+                this.modal.confirm(
+                    'Are you sure you want to archive this project? Archived projects are read-only.',
+                    { 
+                        title: 'Archive Project',
+                        confirmText: 'Archive',
+                        cancelText: 'Cancel'
+                    }
+                ).then(result => {
+                    if (result) {
+                        this.archiveProject();
+                    }
+                });
+            }
+
+            showDeleteConfirm() {
+                this.modal.confirm(
+                    'Are you sure you want to delete this project? This action cannot be undone.',
+                    { 
+                        title: 'Delete Project',
+                        confirmText: 'Delete',
+                        cancelText: 'Cancel'
+                    }
+                ).then(result => {
+                    if (result) {
+                        this.deleteProject();
+                    }
+                });
+            }
+
+            archiveProject() {
+                // In a real app, this would call an API
+                this.notifications.show('warning', 'Feature Not Implemented', 'Archive functionality requires backend integration');
+            }
+
+            deleteProject() {
+                // In a real app, this would call an API
+                this.notifications.show('warning', 'Feature Not Implemented', 'Delete functionality requires backend integration');
+            }
+
+            refreshMetrics() {
+                this.notifications.show('info', 'Refreshing', 'Updating metrics...');
+                
+                // Generate new mock metrics
+                const metrics = this.api.generateMockMetrics(this.projectId);
+                this.state.setMetrics(metrics);
+                
+                // Update UI
+                this.renderer.renderMetricsSection();
+                
+                setTimeout(() => {
+                    this.notifications.show('success', 'Metrics Updated', 'Project metrics refreshed');
+                }, 1000);
+            }
+
+            focusSearch() {
+                // This would focus a search input if we had one
+                this.notifications.show('info', 'Search', 'Search functionality coming soon');
+            }
+
+            showLoading(message) {
+                const overlay = document.getElementById('loadingOverlay');
+                const text = document.getElementById('loadingText');
+                
+                if (overlay && text) {
+                    text.textContent = message;
+                    overlay.classList.add('active');
                 }
             }
 
-            disconnect() {
-                if (this.socket) {
-                    this.socket.disconnect();
-                    this.socket = null;
-                }
-                this.isConnected = false;
-                this.listeners.clear();
-            }
-
-            reconnect() {
-                if (this.socket) {
-                    this.socket.connect();
+            hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
                 }
             }
 
-            isConnected() {
-                return this.isConnected;
+            showErrorState() {
+                const header = document.getElementById('projectHeader');
+                if (header) {
+                    header.innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="text-4xl mb-4" style="color: #EF4444;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">Project Not Found</h2>
+                            <p class="text-gray-600 mb-4">The requested project could not be loaded.</p>
+                            <a href="index.html" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+
+            cleanup() {
+                this.state.saveToStorage();
+                this.notifications.clearAll();
+            }
+
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('thoraxlab_user');
+                    localStorage.removeItem('thoraxlab_session');
+                    window.location.href = 'login.html';
+                }
             }
         }
 
-        // Initialize the application
+        // ==================== GLOBAL INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', () => {
-            // Create global app instance
-            window.App = new ThoraxLabProject();
+            // Create global instance
+            window.ThoraxLab = new ThoraxLabProject();
+            
+            // Make helper functions globally available
+            window.logout = () => window.ThoraxLab?.logout();
         });
     </script>
 </body>
