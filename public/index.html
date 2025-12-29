@@ -9,21 +9,15 @@
     <style>
         /* ==================== CSS VARIABLES ==================== */
         :root {
-            /* Primary Colors */
-            --primary-blue: #1A5F7A;
-            --primary-blue-dark: #14485E;
-            --primary-blue-light: #E8F4F8;
-            
-            /* Secondary Colors */
-            --clinical-green: #00C9A7;
-            --clinical-green-dark: #00A88C;
-            --research-purple: #6D5ACF;
-            --research-purple-dark: #5A4BB8;
-            --warning-orange: #F59E0B;
-            --warning-orange-dark: #D87E00;
-            --error-red: #EF4444;
-            --error-red-dark: #DC2626;
-            --success-green: #10B981;
+            /* ThoraxLab Brand Colors */
+            --thorax-primary: #1A5F7A;
+            --thorax-primary-dark: #14485E;
+            --thorax-primary-light: #E8F4F8;
+            --thorax-secondary: #0D8B70;
+            --thorax-accent: #6D5ACF;
+            --thorax-warning: #F59E0B;
+            --thorax-error: #EF4444;
+            --thorax-success: #10B981;
             
             /* Neutral Colors */
             --text-dark: #1E293B;
@@ -56,7 +50,7 @@
             /* Typography */
             --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'SF Mono', Monaco, 'Cascadia Mono', 'Roboto Mono', monospace;
+            --font-brand: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
             /* Spacing */
             --space-xs: 0.25rem;
@@ -65,6 +59,7 @@
             --space-lg: 1.5rem;
             --space-xl: 2rem;
             --space-2xl: 3rem;
+            --space-3xl: 4rem;
         }
 
         /* ==================== RESET & BASE ==================== */
@@ -90,42 +85,92 @@
             overflow-x: hidden;
         }
 
-        /* ==================== TYPOGRAPHY ==================== */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-            color: var(--text-dark);
+        /* ==================== THORAXLAB BRAND IDENTITY ==================== */
+        .thoraxlab-brand {
+            position: relative;
+            margin-bottom: var(--space-2xl);
+            padding: var(--space-xl);
+            background: linear-gradient(135deg, 
+                rgba(26, 95, 122, 0.03) 0%,
+                rgba(26, 95, 122, 0.08) 100%);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
         }
 
-        h1 { font-size: 2.5rem; margin-bottom: var(--space-lg); }
-        h2 { font-size: 2rem; margin-bottom: var(--space-md); }
-        h3 { font-size: 1.5rem; margin-bottom: var(--space-sm); }
-        h4 { font-size: 1.25rem; margin-bottom: var(--space-sm); }
+        .thoraxlab-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--thorax-primary);
+        }
 
-        p { margin-bottom: var(--space-md); }
+        .thoraxlab-brand::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                var(--thorax-primary) 0%,
+                var(--thorax-secondary) 50%,
+                var(--thorax-accent) 100%);
+            opacity: 0.8;
+        }
 
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary-blue), var(--research-purple));
+        .thoraxlab-logo-area {
+            position: relative;
+            width: 180px;
+            height: 120px;
+            background: linear-gradient(135deg, 
+                var(--thorax-primary) 0%,
+                var(--thorax-primary-dark) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            overflow: hidden;
+        }
+
+        .thoraxlab-logo-text {
+            font-family: var(--font-brand);
+            font-weight: 800;
+            font-size: 3.5rem;
+            letter-spacing: -0.02em;
+            color: white;
+            text-align: center;
+            line-height: 1;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .thoraxlab-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--thorax-primary);
+            line-height: 1.1;
+            margin-bottom: var(--space-sm);
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, 
+                var(--thorax-primary) 0%,
+                var(--thorax-secondary) 50%,
+                var(--thorax-accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .text-mono {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-        }
-
-        /* ==================== LAYOUT ==================== */
+        /* ==================== DASHBOARD COMPONENTS ==================== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 var(--space-lg);
         }
 
-        /* ==================== HEADER ==================== */
         .header {
             background: var(--card-white);
             border-bottom: 1px solid var(--border-subtle);
@@ -145,171 +190,6 @@
             gap: var(--space-lg);
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            text-decoration: none;
-            transition: transform var(--transition-fast);
-        }
-
-        .logo:hover {
-            transform: translateY(-1px);
-        }
-
-        .logo-badge {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--research-purple));
-            color: white;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-normal);
-        }
-
-        .logo:hover .logo-badge {
-            transform: rotate(5deg);
-            box-shadow: var(--shadow-md);
-        }
-
-        .logo-text { line-height: 1.2; }
-        .logo-title { 
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: var(--primary-blue);
-            letter-spacing: -0.02em;
-        }
-        .logo-subtitle {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-light);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        /* ==================== USER MENU ==================== */
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-        }
-
-        .search-box {
-            position: relative;
-            min-width: 280px;
-            flex: 1;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            pointer-events: none;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: var(--radius-full);
-            transition: background-color var(--transition-fast);
-        }
-
-        .user-info:hover {
-            background: var(--background-gray);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--clinical-green));
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-            border: 2px solid var(--card-white);
-            box-shadow: var(--shadow-xs);
-            transition: all var(--transition-normal);
-        }
-
-        .user-info:hover .user-avatar {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .notification-badge {
-            position: relative;
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-full);
-            transition: background-color var(--transition-fast);
-        }
-
-        .notification-badge:hover {
-            background: var(--background-gray);
-        }
-
-        .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: var(--error-red);
-            color: white;
-            font-size: 0.6875rem;
-            font-weight: 700;
-            min-width: 20px;
-            height: 20px;
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 6px;
-            border: 2px solid var(--card-white);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* ==================== DASHBOARD ==================== */
-        .dashboard {
-            padding: var(--space-2xl) 0;
-            min-height: calc(100vh - 88px);
-        }
-
-        /* ==================== WELCOME SECTION ==================== */
-        .welcome-message {
-            margin-bottom: var(--space-2xl);
-            position: relative;
-        }
-
-        .welcome-message h1 {
-            background: linear-gradient(135deg, var(--primary-blue), var(--research-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        /* ==================== STATS GRID ==================== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -330,80 +210,18 @@
 
         .stat-card:hover {
             transform: translateY(-4px);
-            border-color: var(--clinical-green);
+            border-color: var(--thorax-secondary);
             box-shadow: var(--shadow-lg);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 6px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--primary-blue), var(--clinical-green));
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
         }
 
         .stat-value {
             font-size: 2.75rem;
             font-weight: 800;
-            color: var(--primary-blue);
+            color: var(--thorax-primary);
             line-height: 1;
-            display: flex;
-            align-items: baseline;
-            gap: var(--space-xs);
             margin-bottom: var(--space-xs);
         }
 
-        .stat-trend {
-            font-size: 0.875rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: var(--radius-full);
-            background: var(--background-gray);
-            margin-left: var(--space-sm);
-        }
-
-        .trend-up { color: var(--success-green); }
-        .trend-down { color: var(--error-red); }
-
-        .stat-label {
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: 0.875rem;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(26, 95, 122, 0.1);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-blue);
-            font-size: 1.25rem;
-            transition: all var(--transition-normal);
-        }
-
-        .stat-card:hover .stat-icon {
-            background: var(--primary-blue);
-            color: white;
-            transform: rotate(5deg);
-        }
-
-        /* ==================== QUICK ACTIONS ==================== */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -419,85 +237,39 @@
             transition: all var(--transition-normal);
             cursor: pointer;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
 
         .action-card:hover {
             transform: translateY(-4px);
-            border-color: var(--clinical-green);
+            border-color: var(--thorax-secondary);
             box-shadow: var(--shadow-lg);
         }
 
-        .action-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--clinical-green));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform var(--transition-normal);
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
         }
 
-        .action-card:hover::after {
-            transform: scaleX(1);
-        }
-
-        .action-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--clinical-green));
-            color: white;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            margin: 0 auto var(--space-md);
-            transition: all var(--transition-normal);
-        }
-
-        .action-card:hover .action-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .action-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: var(--space-sm);
-            color: var(--text-dark);
-        }
-
-        .action-description {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            line-height: 1.5;
-        }
-
-        /* ==================== PROJECTS SECTION ==================== */
-        .projects-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-            flex-wrap: wrap;
-            gap: var(--space-lg);
-            padding: var(--space-lg);
+        .project-card {
             background: var(--card-white);
             border-radius: var(--radius-lg);
+            padding: var(--space-xl);
             border: 1px solid var(--border-subtle);
-        }
-
-        .filters {
+            transition: all var(--transition-normal);
+            height: 100%;
             display: flex;
-            gap: var(--space-md);
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
         }
 
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--thorax-secondary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ==================== FORM ELEMENTS ==================== */
         .form-input, .form-select {
             padding: 0.875rem var(--space-md);
             border: 1px solid var(--border-subtle);
@@ -511,198 +283,10 @@
 
         .form-input:focus, .form-select:focus {
             outline: none;
-            border-color: var(--primary-blue);
+            border-color: var(--thorax-primary);
             box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
         }
 
-        .form-select {
-            min-width: 160px;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            padding-right: 40px;
-        }
-
-        /* ==================== PROJECTS GRID ==================== */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: var(--space-xl);
-            margin-bottom: var(--space-2xl);
-        }
-
-        @media (max-width: 768px) {
-            .projects-grid { grid-template-columns: 1fr; }
-        }
-
-        .project-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid var(--border-subtle);
-            transition: all var(--transition-normal);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--clinical-green);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .project-badge {
-            position: absolute;
-            top: -8px;
-            right: var(--space-xl);
-            background: var(--clinical-green);
-            color: white;
-            padding: 0.375rem 1rem;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: var(--shadow-sm);
-            z-index: 1;
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: var(--space-md);
-            gap: var(--space-md);
-        }
-
-        .project-title {
-            font-size: 1.375rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-bottom: var(--space-sm);
-            line-height: 1.3;
-            flex: 1;
-        }
-
-        .project-meta {
-            display: flex;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .project-description {
-            color: var(--text-medium);
-            margin: var(--space-md) 0;
-            line-height: 1.6;
-            flex: 1;
-        }
-
-        .tags {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-            margin: var(--space-md) 0;
-        }
-
-        .tag {
-            background: rgba(26, 95, 122, 0.1);
-            color: var(--primary-blue);
-            padding: 0.375rem 0.875rem;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            transition: all var(--transition-fast);
-        }
-
-        .tag:hover {
-            background: rgba(26, 95, 122, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .tag-clinical { background: rgba(0, 201, 167, 0.1); color: var(--clinical-green); }
-        .tag-research { background: rgba(109, 90, 207, 0.1); color: var(--research-purple); }
-
-        .project-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-sm);
-            margin: var(--space-md) 0;
-            padding: var(--space-md);
-            background: var(--background-gray);
-            border-radius: var(--radius-md);
-        }
-
-        .stat {
-            text-align: center;
-            padding: var(--space-sm);
-        }
-
-        .stat-number {
-            font-size: 1.375rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            line-height: 1;
-        }
-
-        .stat-label-small {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-top: var(--space-xs);
-        }
-
-        .project-footer {
-            margin-top: var(--space-lg);
-            padding-top: var(--space-lg);
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .team-avatars {
-            display: flex;
-        }
-
-        .team-avatar {
-            width: 36px;
-            height: 36px;
-            background: var(--primary-blue);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: -8px;
-            border: 2px solid var(--card-white);
-            transition: transform var(--transition-fast);
-        }
-
-        .team-avatar:hover {
-            transform: translateY(-2px);
-            z-index: 2;
-        }
-
-        .team-avatar.more {
-            background: var(--border-subtle);
-            color: var(--text-light);
-            font-size: 0.6875rem;
-        }
-
-        /* ==================== BUTTONS ==================== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -715,215 +299,16 @@
             border: none;
             cursor: pointer;
             transition: all var(--transition-normal);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-            outline: none;
-            user-select: none;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn:active {
-            transform: translateY(1px);
         }
 
         .btn-primary {
-            background: var(--primary-blue);
+            background: var(--thorax-primary);
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-blue-dark);
+            background: var(--thorax-primary-dark);
             box-shadow: var(--shadow-md);
-        }
-
-        .btn-clinical {
-            background: var(--clinical-green);
-            color: white;
-        }
-
-        .btn-clinical:hover {
-            background: var(--clinical-green-dark);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-subtle);
-            color: var(--text-dark);
-        }
-
-        .btn-outline:hover {
-            background: var(--background-gray);
-            border-color: var(--text-light);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-sm {
-            padding: 0.625rem 1.25rem;
-            font-size: 0.8125rem;
-        }
-
-        /* ==================== LOADING STATES ==================== */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-2xl) var(--space-xl);
-            text-align: center;
-        }
-
-        .spinner {
-            width: 56px;
-            height: 56px;
-            border: 3px solid var(--border-subtle);
-            border-top-color: var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: var(--space-lg);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ==================== SKELETON LOADING ==================== */
-        .skeleton {
-            background: linear-gradient(90deg, 
-                var(--background-gray) 25%, 
-                var(--background-gray-dark) 50%, 
-                var(--background-gray) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: var(--radius-md);
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .skeleton-stat {
-            height: 2.5rem;
-            width: 80%;
-            margin-bottom: 0.75rem;
-        }
-
-        .skeleton-text {
-            height: 1rem;
-            width: 60%;
-            margin-bottom: 0.5rem;
-        }
-
-        .skeleton-text-sm {
-            height: 0.875rem;
-            width: 40%;
-        }
-
-        .skeleton-card {
-            height: 350px;
-            border-radius: var(--radius-lg);
-        }
-
-        /* ==================== EMPTY STATES ==================== */
-        .empty-state {
-            text-align: center;
-            padding: var(--space-2xl) var(--space-xl);
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-subtle);
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            color: var(--primary-blue);
-            opacity: 0.2;
-            margin-bottom: var(--space-lg);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* ==================== NOTIFICATIONS ==================== */
-        .notification {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            padding: var(--space-md) var(--space-lg);
-            border-radius: var(--radius-lg);
-            background: var(--card-white);
-            box-shadow: var(--shadow-lg);
-            border-left: 4px solid var(--primary-blue);
-            z-index: 9999;
-            animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 400px;
-            display: none;
-            transform-origin: top right;
-        }
-
-        .notification.show {
-            display: block;
-        }
-
-        .notification-error { 
-            border-left-color: var(--error-red); 
-            background: linear-gradient(135deg, #FEF2F2, white);
-        }
-        .notification-success { 
-            border-left-color: var(--success-green); 
-            background: linear-gradient(135deg, #F0FDF4, white);
-        }
-        .notification-warning { 
-            border-left-color: var(--warning-orange); 
-            background: linear-gradient(135deg, #FFFBEB, white);
-        }
-        .notification-info { 
-            border-left-color: var(--primary-blue); 
-            background: linear-gradient(135deg, #EFF6FF, white);
-        }
-
-        @keyframes slideIn {
-            from { 
-                transform: translateX(100%) scale(0.8);
-                opacity: 0;
-            }
-            to { 
-                transform: translateX(0) scale(1);
-                opacity: 1;
-            }
         }
 
         /* ==================== MODALS ==================== */
@@ -940,16 +325,10 @@
             justify-content: center;
             padding: var(--space-md);
             backdrop-filter: blur(4px);
-            animation: fadeIn 0.2s ease-out;
         }
 
         .modal.show {
             display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .modal-content {
@@ -960,286 +339,67 @@
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            animation: modalIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            box-shadow: var(--shadow-xl);
-        }
-
-        @keyframes modalIn {
-            from { 
-                transform: translateY(-20px) scale(0.95);
-                opacity: 0;
-            }
-            to { 
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-md);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-light);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-        }
-
-        .modal-close:hover {
-            background: var(--background-gray);
-            color: var(--text-dark);
-            transform: rotate(90deg);
-        }
-
-        .template-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-lg);
-            margin: var(--space-xl) 0;
-        }
-
-        .template-card {
-            padding: var(--space-xl);
-            border: 2px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .template-card:hover {
-            border-color: var(--clinical-green);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .template-card.selected {
-            border-color: var(--primary-blue);
-            background: var(--primary-blue-light);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .template-icon {
-            width: 56px;
-            height: 56px;
-            background: rgba(26, 95, 122, 0.1);
-            color: var(--primary-blue);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: var(--space-md);
-            transition: all var(--transition-normal);
-        }
-
-        .template-card:hover .template-icon {
-            background: var(--primary-blue);
-            color: white;
-            transform: rotate(5deg);
-        }
-
-        /* ==================== FORM ELEMENTS ==================== */
-        .form-group {
-            margin-bottom: var(--space-xl);
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: var(--space-sm);
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 0.875rem;
-        }
-
-        .form-helper {
-            display: block;
-            margin-top: var(--space-xs);
-            font-size: 0.75rem;
-            color: var(--text-light);
         }
 
         /* ==================== UTILITIES ==================== */
         .hidden { display: none !important; }
         .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: var(--space-sm); }
+        .justify-center { justify-content: center; }
         .gap-3 { gap: var(--space-md); }
-        .gap-4 { gap: var(--space-lg); }
-        .gap-6 { gap: var(--space-xl); }
-        .w-full { width: 100%; }
-        .mt-2 { margin-top: var(--space-sm); }
-        .mt-4 { margin-top: var(--space-md); }
-        .mt-6 { margin-top: var(--space-lg); }
         .mt-8 { margin-top: var(--space-xl); }
-        .mb-2 { margin-bottom: var(--space-sm); }
-        .mb-4 { margin-bottom: var(--space-md); }
-        .mb-6 { margin-bottom: var(--space-lg); }
-        .mb-8 { margin-bottom: var(--space-xl); }
-        .p-4 { padding: var(--space-md); }
-        .p-6 { padding: var(--space-lg); }
-
-        /* ==================== ACCESSIBILITY ==================== */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        .skip-to-main {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--primary-blue);
-            color: white;
-            padding: var(--space-sm) var(--space-md);
-            text-decoration: none;
-            z-index: 9999;
-            transition: top 0.3s;
-        }
-
-        .skip-to-main:focus {
-            top: 0;
-        }
-
-        /* Focus styles for keyboard navigation */
-        *:focus-visible {
-            outline: 2px solid var(--primary-blue);
-            outline-offset: 2px;
-            border-radius: var(--radius-sm);
-        }
 
         /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 1024px) {
-            .container { padding: 0 var(--space-md); }
-            .projects-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .quick-actions { grid-template-columns: repeat(2, 1fr); }
-        }
-
         @media (max-width: 768px) {
-            .header-content { flex-direction: column; gap: var(--space-md); }
-            .user-menu { width: 100%; justify-content: space-between; }
-            .search-box { min-width: 100%; }
-            .filters { width: 100%; flex-direction: column; }
-            .form-select { width: 100%; }
             .projects-grid { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
             .quick-actions { grid-template-columns: 1fr; }
-            h1 { font-size: 2rem; }
-            h2 { font-size: 1.75rem; }
-        }
-
-        @media (max-width: 480px) {
-            .container { padding: 0 var(--space-sm); }
-            .project-footer { flex-direction: column; align-items: stretch; }
-            .btn { width: 100%; }
-            .modal-content { padding: var(--space-lg); }
-        }
-
-        /* ==================== DARK MODE SUPPORT ==================== */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --text-dark: #F1F5F9;
-                --text-medium: #CBD5E1;
-                --text-light: #94A3B8;
-                --background-gray: #0F172A;
-                --card-white: #1E293B;
-                --border-subtle: #334155;
+            .thoraxlab-logo-area {
+                width: 140px;
+                height: 90px;
             }
-            
-            .header {
-                background: rgba(30, 41, 59, 0.95);
-            }
-        }
-
-        /* ==================== PRINT STYLES ==================== */
-        @media print {
-            .header, .quick-actions, .modal, .notification {
-                display: none !important;
-            }
-            
-            body {
-                background: white;
-                color: black;
-            }
-            
-            .container {
-                max-width: 100%;
-                padding: 0;
+            .thoraxlab-logo-text {
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="skip-to-main">Skip to main content</a>
-
     <!-- Header -->
-    <header class="header" role="banner">
+    <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo" aria-label="ThoraxLab Home">
-                    <div class="logo-badge" aria-hidden="true">TL</div>
-                    <div class="logo-text">
-                        <div class="logo-title">ThoraxLab</div>
-                        <div class="logo-subtitle">Research Collaboration Platform</div>
+                <a href="/public/index.html" class="logo-compact">
+                    <div class="logo-compact-badge">T</div>
+                    <div class="logo-compact-text">
+                        <div class="logo-compact-title">ThoraxLab</div>
                     </div>
                 </a>
                 
+                <nav class="main-nav">
+                    <a href="/public/index.html" class="nav-link active">Dashboard</a>
+                    <a href="/public/project.html" class="nav-link">Projects</a>
+                    <a href="/public/login.html" class="nav-link">Login</a>
+                </nav>
+                
                 <div class="user-menu">
-                    <div class="search-box" role="search">
-                        <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
                         <input type="text" 
                                id="globalSearch" 
                                class="form-input" 
-                               placeholder="Search projects, discussions..." 
-                               aria-label="Search">
+                               placeholder="Search projects...">
                     </div>
                     
-                    <button class="notification-badge" 
-                            id="notificationBtn" 
-                            aria-label="Notifications"
-                            onclick="ThoraxLab?.UI?.openModal('notificationsModal')">
-                        <i class="fas fa-bell" aria-hidden="true"></i>
-                        <span class="badge hidden" id="notificationCount" aria-live="polite">0</span>
-                    </button>
-                    
-                    <div class="user-info" role="button" tabindex="0" aria-label="User menu">
-                        <div class="user-avatar" id="userAvatar" aria-hidden="true">JD</div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">JD</div>
                         <div>
-                            <div id="userName" style="font-weight: 600; font-size: 0.875rem;">Dr. John Doe</div>
-                            <div id="userInstitution" style="font-size: 0.75rem; color: var(--text-light);">General Hospital</div>
+                            <div id="userName">Dr. John Doe</div>
+                            <div id="userInstitution">General Hospital</div>
                         </div>
                     </div>
                     
-                    <button onclick="ThoraxLab?.Dashboard?.logout()" 
-                            class="btn btn-outline btn-sm" 
-                            aria-label="Logout">
-                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout
+                    <button data-action="logout" class="btn btn-outline btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
             </div>
@@ -1247,178 +407,141 @@
     </header>
 
     <!-- Main Content -->
-    <main class="dashboard" id="main-content" role="main">
+    <main class="dashboard">
         <div class="container">
-            <!-- Welcome Section -->
-            <div class="welcome-message">
-                <h1>Welcome back, <span id="welcomeName">Researcher</span>!</h1>
-                <p>Collaborate on research projects, share insights, and accelerate discoveries with your team.</p>
-            </div>
+            <!-- ThoraxLab Brand -->
+            <section class="thoraxlab-brand">
+                <div class="thoraxlab-identity">
+                    <div class="thoraxlab-main">
+                        <div class="thoraxlab-logo-area">
+                            <div class="thoraxlab-logo-text">ThoraxLab</div>
+                        </div>
+                        
+                        <div class="thoraxlab-content">
+                            <div class="thoraxlab-tagline">Advanced Research Platform</div>
+                            <h1 class="thoraxlab-title">ThoraxLab</h1>
+                            <p class="thoraxlab-subtitle">
+                                Collaborative platform for thoracic research and clinical studies.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <!-- Stats Grid with Skeleton -->
-            <div class="stats-grid" id="statsContainer">
-                <!-- Stats will load here -->
-                <div class="stat-card skeleton">
-                    <div class="skeleton-stat"></div>
-                    <div class="skeleton-text"></div>
-                </div>
-                <div class="stat-card skeleton">
-                    <div class="skeleton-stat"></div>
-                    <div class="skeleton-text"></div>
-                </div>
-                <div class="stat-card skeleton">
-                    <div class="skeleton-stat"></div>
-                    <div class="skeleton-text"></div>
-                </div>
-                <div class="stat-card skeleton">
-                    <div class="skeleton-stat"></div>
-                    <div class="skeleton-text"></div>
-                </div>
-            </div>
+            <!-- Stats Grid -->
+            <section class="stats-grid" id="statsContainer">
+                <!-- Stats load dynamically -->
+            </section>
 
             <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="action-card" onclick="ThoraxLab?.UI?.openModal('newProjectModal')" aria-label="Create new research project">
+            <section class="quick-actions">
+                <button class="action-card" data-action="open-modal" data-modal="newProjectModal">
                     <div class="action-icon">
-                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        <i class="fas fa-plus"></i>
                     </div>
                     <div class="action-title">New Research Project</div>
-                    <div class="action-description">Start a new research or clinical study project</div>
+                    <div class="action-description">Start a new clinical study</div>
                 </button>
                 
-                <button class="action-card" onclick="ThoraxLab?.UI?.openModal('templateModal')" aria-label="Use project template">
+                <button class="action-card" data-action="open-modal" data-modal="templateModal">
                     <div class="action-icon">
-                        <i class="fas fa-file-medical" aria-hidden="true"></i>
+                        <i class="fas fa-file-medical"></i>
                     </div>
                     <div class="action-title">Use a Template</div>
-                    <div class="action-description">Start with a proven research methodology</div>
+                    <div class="action-description">Start with proven methodology</div>
                 </button>
                 
-                <button class="action-card" onclick="window.location.href='#recent'" aria-label="View recent activity">
+                <button class="action-card" data-action="navigate" data-target="/public/project.html">
                     <div class="action-icon">
-                        <i class="fas fa-history" aria-hidden="true"></i>
+                        <i class="fas fa-list"></i>
                     </div>
-                    <div class="action-title">Recent Activity</div>
-                    <div class="action-description">See latest discussions and updates</div>
+                    <div class="action-title">View All Projects</div>
+                    <div class="action-description">Browse research initiatives</div>
                 </button>
-                
-                <button class="action-card" onclick="ThoraxLab?.UI?.openModal('searchModal')" aria-label="Open advanced search">
-                    <div class="action-icon">
-                        <i class="fas fa-search" aria-hidden="true"></i>
-                    </div>
-                    <div class="action-title">Advanced Search</div>
-                    <div class="action-description">Find projects, discussions, and researchers</div>
-                </button>
-            </div>
+            </section>
 
             <!-- Projects Section -->
-            <div class="projects-header">
-                <h2>Research Projects</h2>
-                
-                <div class="filters">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                        <input type="text" 
-                               id="projectSearch" 
-                               class="form-input" 
-                               placeholder="Search projects..."
-                               aria-label="Search projects">
+            <section class="projects-section">
+                <div class="projects-header">
+                    <h2>Your Research Projects</h2>
+                    
+                    <div class="filters">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" 
+                                   id="projectSearch" 
+                                   class="form-input" 
+                                   placeholder="Search projects...">
+                        </div>
+                        
+                        <select id="statusFilter" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="planning">Planning</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                        </select>
                     </div>
-                    
-                    <select id="statusFilter" class="form-select" aria-label="Filter by status">
-                        <option value="">All Status</option>
-                        <option value="planning">Planning Phase</option>
-                        <option value="active">Active Research</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                    
-                    <select id="sortFilter" class="form-select" aria-label="Sort projects by">
-                        <option value="updated">Recently Updated</option>
-                        <option value="created">Newest First</option>
-                        <option value="title">Alphabetical</option>
-                        <option value="engagement">Most Active</option>
-                    </select>
                 </div>
-            </div>
 
-            <!-- Loading State -->
-            <div id="loadingState" class="loading">
-                <div class="spinner" aria-label="Loading"></div>
-                <p>Loading research dashboard...</p>
-            </div>
-
-            <!-- Projects Grid with Skeletons -->
-            <div id="projectsContainer" class="projects-grid">
-                <!-- Projects will load here -->
-                <div class="project-card skeleton-card"></div>
-                <div class="project-card skeleton-card"></div>
-                <div class="project-card skeleton-card"></div>
-            </div>
-
-            <!-- Empty State -->
-            <div id="emptyState" class="empty-state hidden">
-                <div class="empty-icon">
-                    <i class="fas fa-flask" aria-hidden="true"></i>
+                <!-- Loading -->
+                <div id="loadingState" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading research projects...</p>
                 </div>
-                <h3>No Research Projects Yet</h3>
-                <p>Start your first research project to begin collaboration with your team.</p>
-                <div class="flex gap-3 justify-center">
-                    <button onclick="ThoraxLab?.UI?.openModal('newProjectModal')" 
-                            class="btn btn-primary">
-                        <i class="fas fa-plus" aria-hidden="true"></i> Create Project
-                    </button>
-                    <button onclick="ThoraxLab?.UI?.openModal('templateModal')" 
-                            class="btn btn-outline">
-                        <i class="fas fa-file-medical" aria-hidden="true"></i> Browse Templates
-                    </button>
-                </div>
-            </div>
 
-            <!-- Pagination -->
-            <div id="pagination" class="hidden" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 3rem;">
-                <button id="prevPage" class="btn btn-outline btn-sm" aria-label="Previous page">
-                    <i class="fas fa-chevron-left" aria-hidden="true"></i> Previous
-                </button>
-                <div id="pageInfo" style="display: flex; align-items: center; padding: 0 1rem; color: var(--text-light);" aria-live="polite">
-                    Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                <!-- Projects Grid -->
+                <div id="projectsContainer" class="projects-grid">
+                    <!-- Projects load dynamically -->
                 </div>
-                <button id="nextPage" class="btn btn-outline btn-sm" aria-label="Next page">
-                    Next <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </button>
-            </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state hidden">
+                    <div class="empty-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>No Research Projects Yet</h3>
+                    <p>Start your first research project to begin collaboration.</p>
+                    <div class="flex gap-3 justify-center">
+                        <button data-action="open-modal" data-modal="newProjectModal" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination" class="pagination hidden">
+                    <button id="prevPage" class="btn btn-outline">Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" class="btn btn-outline">Next</button>
+                </div>
+            </section>
         </div>
     </main>
 
     <!-- Modals -->
-    <!-- New Project Modal -->
-    <div id="newProjectModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="newProjectTitle">
+    <div id="newProjectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="newProjectTitle">Create Research Project</h2>
-                <button class="modal-close" onclick="ThoraxLab?.UI?.closeModal()" aria-label="Close modal">&times;</button>
+                <h2>Create Research Project</h2>
+                <button class="modal-close" data-action="close-modal">&times;</button>
             </div>
             
-            <form id="createProjectForm" onsubmit="event.preventDefault(); ThoraxLab?.EventManager?.handleCreateProject(event);">
-                <!-- Form content remains similar but updated for accessibility -->
+            <form id="createProjectForm">
                 <div class="form-group">
                     <label for="projectTitle" class="form-label">Project Title</label>
                     <input type="text" 
                            id="projectTitle" 
                            class="form-input" 
                            required
-                           placeholder="e.g., 'Impact of New Treatment on Patient Outcomes'"
-                           aria-describedby="projectTitleHelp">
-                    <span id="projectTitleHelp" class="form-helper">Choose a descriptive title for your research project</span>
+                           placeholder="Project title">
                 </div>
                 
-                <!-- Rest of form fields with proper accessibility -->
-                
                 <div class="flex gap-3 mt-8">
-                    <button type="button" class="btn btn-outline flex-1" onclick="ThoraxLab?.UI?.closeModal()">
+                    <button type="button" class="btn btn-outline flex-1" data-action="close-modal">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary flex-1" id="createProjectBtn">
-                        <i class="fas fa-plus" aria-hidden="true"></i> Create Project
+                    <button type="submit" class="btn btn-primary flex-1">
+                        <i class="fas fa-plus"></i> Create Project
                     </button>
                 </div>
             </form>
@@ -1426,1222 +549,570 @@
     </div>
 
     <!-- Template Modal -->
-    <div id="templateModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="templateTitle">
+    <div id="templateModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="templateTitle">Choose Research Template</h2>
-                <button class="modal-close" onclick="ThoraxLab?.UI?.closeModal()" aria-label="Close modal">&times;</button>
+                <h2>Choose Research Template</h2>
+                <button class="modal-close" data-action="close-modal">&times;</button>
             </div>
-            
-            <p>Select a research methodology template to get started quickly with pre-defined structure.</p>
             
             <div class="template-grid" id="templatesContainer">
-                <!-- Templates will load here -->
-            </div>
-            
-            <div class="mt-8 flex gap-3">
-                <button class="btn btn-outline flex-1" onclick="ThoraxLab?.UI?.closeModal()">
-                    Cancel
-                </button>
-                <button class="btn btn-primary flex-1" 
-                        id="useTemplateBtn" 
-                        onclick="ThoraxLab?.EventManager?.handleUseTemplate()" 
-                        disabled>
-                    <i class="fas fa-check" aria-hidden="true"></i> Use Selected Template
-                </button>
+                <!-- Templates load dynamically -->
             </div>
         </div>
     </div>
 
-    <!-- Search Modal -->
-    <div id="searchModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h2 id="searchTitle">Advanced Search</h2>
-                <button class="modal-close" onclick="ThoraxLab?.UI?.closeModal()" aria-label="Close modal">&times;</button>
-            </div>
-            
-            <div class="search-modal-content">
-                <div class="form-group">
-                    <label for="advancedSearch" class="form-label">Search across all content</label>
-                    <input type="text" 
-                           id="advancedSearch" 
-                           class="form-input" 
-                           placeholder="Search projects, discussions, files, comments..." 
-                           autofocus>
-                </div>
-                
-                <div class="mt-6 grid grid-cols-2 gap-4">
-                    <div>
-                        <h4 class="mb-3">Content Type</h4>
-                        <div class="space-y-2">
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox" checked> Projects
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox" checked> Discussions
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox"> Files
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox"> Comments
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="mb-3">Date Range</h4>
-                        <div class="space-y-2">
-                            <input type="date" class="form-input" placeholder="From date">
-                            <input type="date" class="form-input" placeholder="To date">
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="searchResults" class="mt-6 hidden">
-                    <!-- Search results will appear here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notificationsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="notificationsTitle">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="notificationsTitle">Notifications</h2>
-                <button class="modal-close" onclick="ThoraxLab?.UI?.closeModal()" aria-label="Close modal">&times;</button>
-            </div>
-            
-            <div id="notificationsContainer" style="min-height: 300px;">
-                <!-- Notifications will load here -->
-            </div>
-            
-            <div class="mt-6">
-                <button class="btn btn-outline w-full" onclick="ThoraxLab?.EventManager?.handleMarkAllNotificationsAsRead()">
-                    <i class="fas fa-check-double" aria-hidden="true"></i> Mark All as Read
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Toast -->
-    <div id="notificationToast" class="notification hidden" role="alert" aria-live="assertive"></div>
-
-    <!-- Shortcuts Modal -->
-    <div id="shortcutsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="shortcutsTitle">Keyboard Shortcuts</h2>
-                <button class="modal-close" onclick="ThoraxLab?.UI?.closeModal()" aria-label="Close modal">&times;</button>
-            </div>
-            
-            <div class="shortcuts-grid mt-6">
-                <div class="flex items-center justify-between p-3 border-b border-border-subtle">
-                    <kbd class="px-2 py-1 bg-background-gray rounded text-sm">Ctrl</kbd> + <kbd class="px-2 py-1 bg-background-gray rounded text-sm">N</kbd>
-                    <span>New Project</span>
-                </div>
-                <div class="flex items-center justify-between p-3 border-b border-border-subtle">
-                    <kbd class="px-2 py-1 bg-background-gray rounded text-sm">Ctrl</kbd> + <kbd class="px-2 py-1 bg-background-gray rounded text-sm">K</kbd>
-                    <span>Search</span>
-                </div>
-                <div class="flex items-center justify-between p-3 border-b border-border-subtle">
-                    <kbd class="px-2 py-1 bg-background-gray rounded text-sm">Ctrl</kbd> + <kbd class="px-2 py-1 bg-background-gray rounded text-sm">/</kbd>
-                    <span>Show Shortcuts</span>
-                </div>
-                <div class="flex items-center justify-between p-3">
-                    <kbd class="px-2 py-1 bg-background-gray rounded text-sm">Esc</kbd>
-                    <span>Close Modal</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="globalLoading" class="modal" style="display: none;">
-        <div class="modal-content" style="background: transparent; box-shadow: none;">
-            <div class="spinner"></div>
-            <p class="mt-4 text-white text-center">Loading...</p>
-        </div>
-    </div>
+    <!-- Notification -->
+    <div id="notificationToast" class="notification hidden"></div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        const CONFIG = {
-            API_BASE_URL: window.location.origin,
-            LOCAL_STORAGE_KEYS: {
-                USER: 'thoraxlab_user_data',
-                SESSION: 'thoraxlab_auth_session',
-                SETTINGS: 'thoraxlab_user_settings'
-            },
-            PAGINATION: {
-                PAGE_SIZE: 12
-            },
-            TIMING: {
-                DEBOUNCE_SEARCH: 300,
-                NOTIFICATION_TIMEOUT: 5000,
-                SPINNER_DELAY: 300
-            }
-        };
-
-        // ==================== STATE MANAGEMENT ====================
-        class ThoraxLabState {
+        // ==================== COMPLETE APPLICATION ====================
+        class ThoraxLabApp {
             constructor() {
-                this.user = null;
-                this.projects = [];
-                this.stats = null;
-                this.templates = [];
-                this.notifications = [];
-                this.unreadCount = 0;
-                this.pagination = {
-                    current: 1,
-                    total: 1,
-                    hasNext: false,
-                    hasPrev: false
+                this.config = {
+                    BASE_PATH: window.location.pathname.includes('/public/') ? '/public/' : '/',
+                    API_BASE_URL: window.location.origin,
+                    PAGE_SIZE: 9
                 };
-                this.filters = {
-                    search: '',
-                    status: '',
-                    sort: 'updated'
-                };
-                this.ui = {
-                    isLoading: false,
-                    activeModal: null,
-                    selectedTemplate: null,
-                    selectedTags: new Set()
-                };
-                this.listeners = new Map();
-                this.timeouts = new Map();
-            }
-
-            subscribe(event, callback) {
-                if (!this.listeners.has(event)) {
-                    this.listeners.set(event, new Set());
-                }
-                this.listeners.get(event).add(callback);
-                return () => this.listeners.get(event).delete(callback);
-            }
-
-            emit(event, data) {
-                if (this.listeners.has(event)) {
-                    this.listeners.get(event).forEach(callback => callback(data));
-                }
-            }
-
-            clearTimeouts() {
-                for (const timeout of this.timeouts.values()) {
-                    clearTimeout(timeout);
-                }
-                this.timeouts.clear();
-            }
-
-            // Error handling
-            handleError(error, context = '') {
-                console.error(`[ThoraxLab Error] ${context}:`, error);
-                this.emit('error', { error, context });
                 
-                // Show user-friendly error
-                if (typeof ThoraxLab !== 'undefined' && ThoraxLab.UI) {
-                    ThoraxLab.UI.showNotification(
-                        `Something went wrong${context ? ` in ${context}` : ''}. Please try again.`,
-                        'error'
-                    );
-                }
-                
-                return error;
-            }
-        }
-
-        // ==================== DOM MANAGER ====================
-        class DOMHelper {
-            constructor() {
-                this.cache = new Map();
-            }
-
-            get(selector) {
-                if (this.cache.has(selector)) {
-                    return this.cache.get(selector);
-                }
-                
-                const element = document.querySelector(selector);
-                if (element) {
-                    this.cache.set(selector, element);
-                }
-                return element;
-            }
-
-            getAll(selector) {
-                return document.querySelectorAll(selector);
-            }
-
-            create(tag, attributes = {}) {
-                const element = document.createElement(tag);
-                
-                Object.entries(attributes).forEach(([key, value]) => {
-                    if (key === 'className') {
-                        element.className = value;
-                    } else if (key === 'dataset') {
-                        Object.entries(value).forEach(([dataKey, dataValue]) => {
-                            element.dataset[dataKey] = dataValue;
-                        });
-                    } else if (key === 'textContent') {
-                        element.textContent = value;
-                    } else if (key === 'innerHTML') {
-                        element.innerHTML = value;
-                    } else if (key.startsWith('on')) {
-                        element.addEventListener(key.slice(2).toLowerCase(), value);
-                    } else if (key === 'ariaLabel') {
-                        element.setAttribute('aria-label', value);
-                    } else if (key === 'role') {
-                        element.setAttribute('role', value);
-                    } else {
-                        element.setAttribute(key, value);
-                    }
-                });
-                
-                return element;
-            }
-
-            show(element) {
-                if (element) {
-                    element.classList.remove('hidden');
-                }
-            }
-
-            hide(element) {
-                if (element) {
-                    element.classList.add('hidden');
-                }
-            }
-
-            toggle(element, condition) {
-                if (condition) {
-                    this.show(element);
-                } else {
-                    this.hide(element);
-                }
-            }
-
-            setText(element, text) {
-                if (element) {
-                    element.textContent = text;
-                }
-            }
-
-            setHTML(element, html) {
-                if (element) {
-                    element.innerHTML = html;
-                }
-            }
-
-            addClass(element, className) {
-                if (element) {
-                    element.classList.add(className);
-                }
-            }
-
-            removeClass(element, className) {
-                if (element) {
-                    element.classList.remove(className);
-                }
-            }
-
-            clearCache() {
-                this.cache.clear();
-            }
-        }
-
-        // ==================== API SERVICE ====================
-        class ApiService {
-            constructor() {
-                this.baseURL = CONFIG.API_BASE_URL;
-                this.headers = {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                };
-            }
-
-            async request(endpoint, options = {}) {
-                const url = `${this.baseURL}${endpoint}`;
-                const config = {
-                    ...options,
-                    headers: {
-                        ...this.headers,
-                        ...options.headers
+                this.state = {
+                    user: null,
+                    projects: [],
+                    stats: null,
+                    templates: [],
+                    filters: {
+                        search: '',
+                        status: '',
+                        page: 1,
+                        totalPages: 1
+                    },
+                    ui: {
+                        activeModal: null,
+                        isLoading: false
                     }
                 };
+                
+                this.init();
+            }
 
-                try {
-                    const response = await fetch(url, config);
+            init() {
+                this.setupDOM();
+                this.setupEvents();
+                this.loadInitialData();
+            }
+
+            setupDOM() {
+                this.elements = {
+                    statsContainer: document.getElementById('statsContainer'),
+                    projectsContainer: document.getElementById('projectsContainer'),
+                    loadingState: document.getElementById('loadingState'),
+                    emptyState: document.getElementById('emptyState'),
+                    pagination: document.getElementById('pagination'),
+                    projectSearch: document.getElementById('projectSearch'),
+                    statusFilter: document.getElementById('statusFilter')
+                };
+            }
+
+            setupEvents() {
+                // Global event delegation
+                document.addEventListener('click', (e) => {
+                    const action = e.target.dataset?.action || 
+                                  e.target.closest('[data-action]')?.dataset?.action;
                     
-                    if (response.status === 401) {
-                        this.handleUnauthorized();
-                        throw new Error('Authentication required');
-                    }
+                    if (!action) return;
 
-                    if (!response.ok) {
-                        const error = await response.json().catch(() => ({}));
-                        throw new Error(error.message || `HTTP ${response.status}`);
+                    switch(action) {
+                        case 'open-modal':
+                            const modalId = e.target.dataset?.modal || 
+                                          e.target.closest('[data-modal]')?.dataset?.modal;
+                            this.openModal(modalId);
+                            break;
+                            
+                        case 'close-modal':
+                            this.closeModal();
+                            break;
+                            
+                        case 'logout':
+                            this.logout();
+                            break;
+                            
+                        case 'navigate':
+                            const target = e.target.dataset?.target || 
+                                         e.target.closest('[data-target]')?.dataset?.target;
+                            if (target) window.location.href = target;
+                            break;
+                            
+                        case 'select-template':
+                            const templateId = e.target.dataset?.templateId || 
+                                            e.target.closest('[data-template-id]')?.dataset?.templateId;
+                            this.selectTemplate(templateId);
+                            break;
+                            
+                        case 'use-template':
+                            this.useSelectedTemplate();
+                            break;
                     }
+                });
 
-                    return await response.json();
+                // Search with debounce
+                if (this.elements.projectSearch) {
+                    let searchTimeout;
+                    this.elements.projectSearch.addEventListener('input', (e) => {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => {
+                            this.state.filters.search = e.target.value;
+                            this.state.filters.page = 1;
+                            this.loadProjects();
+                        }, 300);
+                    });
+                }
+
+                // Status filter
+                if (this.elements.statusFilter) {
+                    this.elements.statusFilter.addEventListener('change', (e) => {
+                        this.state.filters.status = e.target.value;
+                        this.state.filters.page = 1;
+                        this.loadProjects();
+                    });
+                }
+
+                // Form submission
+                const createForm = document.getElementById('createProjectForm');
+                if (createForm) {
+                    createForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.createProject(new FormData(e.target));
+                    });
+                }
+
+                // Escape key for modals
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.state.ui.activeModal) {
+                        this.closeModal();
+                    }
+                });
+
+                // Modal backdrop click
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        this.closeModal();
+                    }
+                });
+            }
+
+            async loadInitialData() {
+                try {
+                    this.setLoading(true);
+                    
+                    await Promise.all([
+                        this.loadUser(),
+                        this.loadStats(),
+                        this.loadProjects(),
+                        this.loadTemplates()
+                    ]);
+                    
                 } catch (error) {
-                    console.error('API Request failed:', error);
-                    throw error;
+                    this.showNotification('Failed to load dashboard data', 'error');
+                    console.error('Initialization error:', error);
+                } finally {
+                    this.setLoading(false);
                 }
             }
 
-            handleUnauthorized() {
-                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
-                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
-                window.location.href = '/login.html';
-            }
-
-            // Mock API methods for demo
-            async getDashboardStats() {
-                // Simulate API call
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve({
-                            success: true,
-                            stats: {
-                                totalProjects: 24,
-                                activeProjects: 12,
-                                totalUsers: 156,
-                                avgConsensus: 78
-                            }
-                        });
-                    }, 500);
-                });
-            }
-
-            async getProjects(params = {}) {
-                // Simulate API call
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        const mockProjects = this.generateMockProjects(params);
-                        resolve({
-                            success: true,
-                            projects: mockProjects,
-                            pagination: {
-                                page: params.page || 1,
-                                totalPages: 3,
-                                totalItems: mockProjects.length
-                            }
-                        });
-                    }, 600);
-                });
-            }
-
-            async createProject(data) {
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve({
-                            success: true,
-                            projectId: 'project_' + Date.now(),
-                            message: 'Project created successfully'
-                        });
-                    }, 800);
-                });
-            }
-
-            generateMockProjects(params) {
-                const statuses = ['planning', 'active', 'completed'];
-                const templates = ['clinical-trial', 'cohort-study', 'case-study', 'systematic-review'];
+            async loadUser() {
+                // Mock user data - in real app, fetch from API
+                this.state.user = {
+                    name: 'Dr. John Doe',
+                    institution: 'General Hospital',
+                    role: 'Lead Researcher'
+                };
                 
-                return Array.from({ length: 6 }, (_, i) => ({
+                // Update UI
+                const welcomeName = document.getElementById('welcomeName');
+                const userName = document.getElementById('userName');
+                const userInstitution = document.getElementById('userInstitution');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (welcomeName) welcomeName.textContent = this.state.user.name.split(' ')[0];
+                if (userName) userName.textContent = this.state.user.name;
+                if (userInstitution) userInstitution.textContent = this.state.user.institution;
+                if (userAvatar) {
+                    const initials = this.state.user.name
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                    userAvatar.textContent = initials;
+                }
+            }
+
+            async loadStats() {
+                // Mock stats data
+                const stats = {
+                    totalProjects: 24,
+                    activeProjects: 12,
+                    totalResearchers: 156,
+                    consensusScore: 78
+                };
+                
+                this.state.stats = stats;
+                
+                // Render stats
+                if (this.elements.statsContainer) {
+                    this.elements.statsContainer.innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalProjects}</div>
+                            <div class="stat-label">
+                                <div class="stat-icon"><i class="fas fa-flask"></i></div>
+                                Research Projects
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.activeProjects}</div>
+                            <div class="stat-label">
+                                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                                Active Studies
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalResearchers}</div>
+                            <div class="stat-label">
+                                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                                Researchers
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.consensusScore}%</div>
+                            <div class="stat-label">
+                                <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                                Platform Consensus
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            async loadProjects() {
+                try {
+                    this.setLoading(true);
+                    
+                    // Mock API call
+                    const mockProjects = this.generateMockProjects();
+                    
+                    // Apply filters
+                    let filtered = mockProjects;
+                    
+                    if (this.state.filters.search) {
+                        const search = this.state.filters.search.toLowerCase();
+                        filtered = filtered.filter(p => 
+                            p.title.toLowerCase().includes(search) ||
+                            p.description.toLowerCase().includes(search)
+                        );
+                    }
+                    
+                    if (this.state.filters.status) {
+                        filtered = filtered.filter(p => p.status === this.state.filters.status);
+                    }
+                    
+                    // Pagination
+                    const startIndex = (this.state.filters.page - 1) * this.config.PAGE_SIZE;
+                    const paginated = filtered.slice(startIndex, startIndex + this.config.PAGE_SIZE);
+                    this.state.filters.totalPages = Math.ceil(filtered.length / this.config.PAGE_SIZE);
+                    
+                    this.state.projects = paginated;
+                    this.renderProjects();
+                    this.updatePagination();
+                    
+                } catch (error) {
+                    this.showNotification('Failed to load projects', 'error');
+                    console.error('Load projects error:', error);
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            async loadTemplates() {
+                // Mock templates
+                this.state.templates = [
+                    { id: 'clinical-trial', name: 'Clinical Trial', description: 'Full clinical trial protocol' },
+                    { id: 'cohort-study', name: 'Cohort Study', description: 'Observational cohort study' },
+                    { id: 'case-study', name: 'Case Study', description: 'Detailed case analysis' },
+                    { id: 'systematic-review', name: 'Systematic Review', description: 'Literature review methodology' }
+                ];
+                
+                // Render templates if modal is open
+                const templatesContainer = document.getElementById('templatesContainer');
+                if (templatesContainer) {
+                    templatesContainer.innerHTML = this.state.templates.map(template => `
+                        <div class="template-card" data-template-id="${template.id}">
+                            <div class="template-icon">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <h4>${template.name}</h4>
+                            <p>${template.description}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            generateMockProjects() {
+                const statuses = ['planning', 'active', 'completed'];
+                const titles = [
+                    'Lung Cancer Treatment Efficacy Study',
+                    'COVID-19 Pulmonary Complications Research',
+                    'Asthma Management in Pediatric Patients',
+                    'COPD Early Detection Methods',
+                    'Tuberculosis Diagnostic Accuracy',
+                    'Pneumonia Prevention Strategies'
+                ];
+                
+                return Array.from({ length: 24 }, (_, i) => ({
                     id: `project_${i + 1}`,
-                    title: `Research Project ${i + 1}: ${['Lung Cancer', 'COVID-19', 'Asthma', 'COPD', 'Tuberculosis', 'Pneumonia'][i]}`,
-                    description: `A comprehensive study on ${['lung cancer treatments', 'COVID-19 variants', 'asthma triggers', 'COPD management', 'TB diagnostics', 'pneumonia prevention'][i]} involving multiple research institutions.`,
+                    title: titles[i % titles.length],
+                    description: `A comprehensive study involving multiple research institutions and clinical centers to advance understanding and treatment methodologies.`,
                     status: statuses[i % 3],
-                    lead: ['Dr. Smith', 'Dr. Johnson', 'Dr. Williams', 'Dr. Brown', 'Dr. Davis', 'Dr. Miller'][i],
+                    lead: `Dr. ${['Smith', 'Johnson', 'Williams', 'Brown', 'Davis', 'Miller'][i % 6]}`,
                     createdAt: new Date(Date.now() - i * 86400000).toISOString(),
-                    tags: ['Clinical Trial', 'Research', 'Study', 'Data Analysis', 'Medical'].slice(0, (i % 3) + 2),
+                    tags: ['Clinical', 'Research', 'Thoracic', 'Medicine', 'Study'],
                     discussionCount: Math.floor(Math.random() * 50) + 10,
                     commentCount: Math.floor(Math.random() * 200) + 50,
-                    consensusScore: Math.floor(Math.random() * 30) + 70,
-                    team: Array.from({ length: Math.floor(Math.random() * 5) + 3 }, (_, j) => ({
-                        name: `Researcher ${j + 1}`,
-                        role: ['PI', 'Co-PI', 'Researcher', 'Data Analyst'][j % 4]
-                    }))
-                })).filter(p => {
-                    if (params.status && p.status !== params.status) return false;
-                    if (params.search) {
-                        const search = params.search.toLowerCase();
-                        return p.title.toLowerCase().includes(search) || 
-                               p.description.toLowerCase().includes(search) ||
-                               p.tags.some(tag => tag.toLowerCase().includes(search));
+                    consensusScore: Math.floor(Math.random() * 30) + 70
+                }));
+            }
+
+            renderProjects() {
+                if (!this.elements.projectsContainer) return;
+                
+                if (!this.state.projects.length) {
+                    this.elements.emptyState.classList.remove('hidden');
+                    this.elements.projectsContainer.classList.add('hidden');
+                    this.elements.pagination.classList.add('hidden');
+                    return;
+                }
+                
+                this.elements.emptyState.classList.add('hidden');
+                this.elements.projectsContainer.classList.remove('hidden');
+                
+                const projectsHTML = this.state.projects.map(project => `
+                    <article class="project-card">
+                        <div class="project-badge" style="background: ${this.getStatusColor(project.status)}">
+                            ${project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                        </div>
+                        <div class="project-header">
+                            <h3 class="project-title">${project.title}</h3>
+                        </div>
+                        <p class="project-description">${project.description.substring(0, 120)}...</p>
+                        <div class="project-meta">
+                            <span><i class="fas fa-user-md"></i> ${project.lead}</span>
+                            <span><i class="fas fa-calendar"></i> ${this.formatDate(project.createdAt)}</span>
+                        </div>
+                        <div class="project-stats">
+                            <div class="stat">
+                                <div class="stat-number">${project.discussionCount}</div>
+                                <div class="stat-label-small">Discussions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${project.commentCount}</div>
+                                <div class="stat-label-small">Comments</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${project.consensusScore}%</div>
+                                <div class="stat-label-small">Consensus</div>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <button class="btn btn-primary" 
+                                    onclick="window.location.href='${this.config.BASE_PATH}project.html?id=${project.id}'">
+                                <i class="fas fa-arrow-right"></i> Open Project
+                            </button>
+                        </div>
+                    </article>
+                `).join('');
+                
+                this.elements.projectsContainer.innerHTML = projectsHTML;
+            }
+
+            updatePagination() {
+                if (!this.elements.pagination) return;
+                
+                const totalPages = this.state.filters.totalPages;
+                
+                if (totalPages > 1) {
+                    this.elements.pagination.classList.remove('hidden');
+                    
+                    const pageInfo = document.getElementById('pageInfo');
+                    const prevBtn = document.getElementById('prevPage');
+                    const nextBtn = document.getElementById('nextPage');
+                    
+                    if (pageInfo) pageInfo.textContent = `Page ${this.state.filters.page} of ${totalPages}`;
+                    
+                    if (prevBtn) {
+                        prevBtn.disabled = this.state.filters.page <= 1;
+                        prevBtn.onclick = () => {
+                            if (this.state.filters.page > 1) {
+                                this.state.filters.page--;
+                                this.loadProjects();
+                            }
+                        };
                     }
-                    return true;
-                });
-            }
-        }
-
-        // ==================== UI MANAGER ====================
-        class UIManager {
-            constructor(dom, state) {
-                this.dom = dom;
-                this.state = state;
-            }
-
-            showLoading(show = true) {
-                const loader = this.dom.get('#loadingState');
-                const skeleton = this.dom.get('#statsContainer .skeleton');
-                
-                if (show) {
-                    this.dom.show(loader);
-                    if (skeleton) this.dom.show(skeleton);
+                    
+                    if (nextBtn) {
+                        nextBtn.disabled = this.state.filters.page >= totalPages;
+                        nextBtn.onclick = () => {
+                            if (this.state.filters.page < totalPages) {
+                                this.state.filters.page++;
+                                this.loadProjects();
+                            }
+                        };
+                    }
                 } else {
-                    this.dom.hide(loader);
-                    if (skeleton) this.dom.hide(skeleton);
+                    this.elements.pagination.classList.add('hidden');
                 }
-                
-                this.state.ui.isLoading = show;
             }
 
-            showNotification(message, type = 'info', duration = 5000) {
-                const notification = this.dom.get('#notificationToast');
-                if (!notification) return;
-                
-                this.dom.setText(notification, message);
-                
-                // Clear existing classes
-                ['notification-error', 'notification-success', 'notification-warning', 'notification-info']
-                    .forEach(cls => this.dom.removeClass(notification, cls));
-                
-                this.dom.addClass(notification, `notification-${type}`);
-                this.dom.show(notification);
-                this.dom.addClass(notification, 'show');
-                
-                // Clear existing timeout
-                if (this.state.timeouts.has('notification')) {
-                    clearTimeout(this.state.timeouts.get('notification'));
+            async createProject(formData) {
+                try {
+                    this.showNotification('Creating project...', 'info');
+                    
+                    // Mock API call
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    const projectData = {
+                        title: formData.get('projectTitle'),
+                        description: formData.get('projectDescription') || '',
+                        status: 'planning',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    // Add to projects
+                    this.state.projects.unshift({
+                        id: `project_${Date.now()}`,
+                        ...projectData,
+                        lead: this.state.user.name,
+                        discussionCount: 0,
+                        commentCount: 0,
+                        consensusScore: 0
+                    });
+                    
+                    this.closeModal();
+                    this.showNotification('Project created successfully!', 'success');
+                    this.loadProjects(); // Refresh list
+                    
+                    // Reset form
+                    const form = document.getElementById('createProjectForm');
+                    if (form) form.reset();
+                    
+                } catch (error) {
+                    this.showNotification('Failed to create project', 'error');
+                    console.error('Create project error:', error);
                 }
-                
-                // Set new timeout
-                const timeout = setTimeout(() => {
-                    this.dom.removeClass(notification, 'show');
-                    setTimeout(() => this.dom.hide(notification), 300);
-                }, duration);
-                
-                this.state.timeouts.set('notification', timeout);
+            }
+
+            selectTemplate(templateId) {
+                const template = this.state.templates.find(t => t.id === templateId);
+                if (template) {
+                    this.showNotification(`Selected template: ${template.name}`, 'info');
+                    this.closeModal();
+                    
+                    // Open new project modal with template pre-filled
+                    setTimeout(() => {
+                        this.openModal('newProjectModal');
+                        const titleInput = document.getElementById('projectTitle');
+                        if (titleInput) {
+                            titleInput.value = `New ${template.name}`;
+                        }
+                    }, 500);
+                }
+            }
+
+            useSelectedTemplate() {
+                // This would be called from template modal
+                this.showNotification('Template applied', 'success');
+                this.closeModal();
             }
 
             openModal(modalId) {
-                const modal = this.dom.get(`#${modalId}`);
+                const modal = document.getElementById(modalId);
                 if (modal) {
-                    this.dom.show(modal);
-                    this.dom.addClass(modal, 'show');
+                    modal.classList.add('show');
                     this.state.ui.activeModal = modalId;
                     document.body.style.overflow = 'hidden';
-                    
-                    // Focus first focusable element
-                    const focusable = modal.querySelector('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                    if (focusable) focusable.focus();
                 }
             }
 
             closeModal() {
                 if (this.state.ui.activeModal) {
-                    const modal = this.dom.get(`#${this.state.ui.activeModal}`);
+                    const modal = document.getElementById(this.state.ui.activeModal);
                     if (modal) {
-                        this.dom.removeClass(modal, 'show');
-                        setTimeout(() => {
-                            this.dom.hide(modal);
-                            this.state.ui.activeModal = null;
-                            document.body.style.overflow = '';
-                        }, 300);
+                        modal.classList.remove('show');
+                        this.state.ui.activeModal = null;
+                        document.body.style.overflow = '';
                     }
                 }
             }
 
-            updatePagination() {
-                const prevBtn = this.dom.get('#prevPage');
-                const nextBtn = this.dom.get('#nextPage');
-                const currentPage = this.dom.get('#currentPage');
-                const totalPages = this.dom.get('#totalPages');
-                const pagination = this.dom.get('#pagination');
-
-                if (prevBtn) {
-                    prevBtn.disabled = this.state.pagination.current <= 1;
-                }
-                if (nextBtn) {
-                    nextBtn.disabled = this.state.pagination.current >= this.state.pagination.total;
-                }
-                if (currentPage) {
-                    this.dom.setText(currentPage, this.state.pagination.current);
-                }
-                if (totalPages) {
-                    this.dom.setText(totalPages, this.state.pagination.total);
-                }
-                if (pagination) {
-                    this.dom.toggle(pagination, this.state.pagination.total > 1);
-                }
-            }
-
-            updateNotificationBadge() {
-                const badge = this.dom.get('#notificationCount');
-                if (badge) {
-                    if (this.state.unreadCount > 0) {
-                        this.dom.setText(badge, this.state.unreadCount > 99 ? '99+' : this.state.unreadCount);
-                        this.dom.show(badge);
+            setLoading(isLoading) {
+                this.state.ui.isLoading = isLoading;
+                if (this.elements.loadingState) {
+                    if (isLoading) {
+                        this.elements.loadingState.classList.remove('hidden');
                     } else {
-                        this.dom.hide(badge);
+                        this.elements.loadingState.classList.add('hidden');
                     }
                 }
             }
 
-            updateUserInfo() {
-                const userName = this.dom.get('#userName');
-                const userInstitution = this.dom.get('#userInstitution');
-                const welcomeName = this.dom.get('#welcomeName');
-                const userAvatar = this.dom.get('#userAvatar');
-
-                if (this.state.user) {
-                    if (userName) this.dom.setText(userName, this.state.user.name);
-                    if (userInstitution) this.dom.setText(userInstitution, this.state.user.institution || 'Research Institution');
-                    if (welcomeName) this.dom.setText(welcomeName, this.state.user.name.split(' ')[0]);
-                    if (userAvatar) {
-                        const initials = this.state.user.name
-                            .split(' ')
-                            .map(n => n[0])
-                            .join('')
-                            .toUpperCase()
-                            .substring(0, 2);
-                        this.dom.setText(userAvatar, initials);
-                    }
-                }
-            }
-        }
-
-        // ==================== RENDERER ====================
-        class Renderer {
-            constructor(dom) {
-                this.dom = dom;
-            }
-
-            renderStats(stats) {
-                const container = this.dom.get('#statsContainer');
-                if (!container) return;
-
-                const statsHTML = `
-                    <div class="stat-card" role="region" aria-label="Research Projects">
-                        <div class="stat-value">${stats.totalProjects || 0}</div>
-                        <div class="stat-label">
-                            <div class="stat-icon"><i class="fas fa-flask" aria-hidden="true"></i></div>
-                            Research Projects
-                        </div>
-                    </div>
-                    <div class="stat-card" role="region" aria-label="Active Studies">
-                        <div class="stat-value">${stats.activeProjects || 0}</div>
-                        <div class="stat-label">
-                            <div class="stat-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
-                            Active Studies
-                        </div>
-                    </div>
-                    <div class="stat-card" role="region" aria-label="Researchers">
-                        <div class="stat-value">${stats.totalUsers || 0}</div>
-                        <div class="stat-label">
-                            <div class="stat-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
-                            Researchers
-                        </div>
-                    </div>
-                    <div class="stat-card" role="region" aria-label="Platform Consensus">
-                        <div class="stat-value">${stats.avgConsensus || 75}%</div>
-                        <div class="stat-label">
-                            <div class="stat-icon"><i class="fas fa-handshake" aria-hidden="true"></i></div>
-                            Platform Consensus
-                        </div>
-                    </div>
-                `;
-
-                this.dom.setHTML(container, statsHTML);
-            }
-
-            renderProjects(projects) {
-                const container = this.dom.get('#projectsContainer');
-                const emptyState = this.dom.get('#emptyState');
-
-                if (!container) return;
-
-                if (!projects || projects.length === 0) {
-                    this.dom.hide(container);
-                    this.dom.show(emptyState);
-                    return;
-                }
-
-                this.dom.show(container);
-                this.dom.hide(emptyState);
-
-                const projectsHTML = projects.map(project => this.renderProjectCard(project)).join('');
-                this.dom.setHTML(container, projectsHTML);
-            }
-
-            renderProjectCard(project) {
-                const statusInfo = this.getStatusInfo(project.status);
-                const tags = project.tags?.slice(0, 3) || [];
-                const teamMembers = project.team?.slice(0, 3) || [];
-
-                return `
-                    <article class="project-card" role="article" aria-labelledby="project-title-${project.id}">
-                        <div class="project-badge" style="background: ${statusInfo.color}" aria-label="Project status: ${statusInfo.label}">
-                            ${statusInfo.label}
-                        </div>
-                        <div class="project-header">
-                            <h3 class="project-title" id="project-title-${project.id}">${this.escapeHTML(project.title)}</h3>
-                        </div>
-                        <div class="project-meta">
-                            <span><i class="fas fa-user-md" aria-hidden="true"></i> ${this.escapeHTML(project.lead)}</span>
-                            <span><i class="fas fa-calendar" aria-hidden="true"></i> ${this.formatDate(project.createdAt)}</span>
-                        </div>
-                        <p class="project-description">
-                            ${this.escapeHTML(project.description?.substring(0, 180) || '')}
-                            ${project.description?.length > 180 ? '...' : ''}
-                        </p>
-                        ${tags.length > 0 ? `
-                            <div class="tags" role="list" aria-label="Project tags">
-                                ${tags.map(tag => `<span class="tag" role="listitem">${this.escapeHTML(tag)}</span>`).join('')}
-                                ${project.tags?.length > 3 ? `<span class="tag">+${project.tags.length - 3} more</span>` : ''}
-                            </div>
-                        ` : ''}
-                        <div class="project-stats" role="region" aria-label="Project statistics">
-                            <div class="stat">
-                                <div class="stat-number">${project.discussionCount || 0}</div>
-                                <div class="stat-label-small">Discussions</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-number">${project.commentCount || 0}</div>
-                                <div class="stat-label-small">Comments</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-number">${project.consensusScore || 75}%</div>
-                                <div class="stat-label-small">Consensus</div>
-                            </div>
-                        </div>
-                        <div class="project-footer">
-                            <div class="team-avatars" role="list" aria-label="Team members">
-                                ${teamMembers.map((member, index) => `
-                                    <div class="team-avatar" role="listitem" title="${this.escapeHTML(member.name)}" aria-label="${this.escapeHTML(member.name)}">
-                                        ${member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                                    </div>
-                                `).join('')}
-                                ${project.team?.length > 3 ? `
-                                    <div class="team-avatar more" role="listitem" aria-label="${project.team.length - 3} more members">
-                                        +${project.team.length - 3}
-                                    </div>
-                                ` : ''}
-                            </div>
-                            <button class="btn btn-primary" 
-                                    onclick="window.location.href='project.html?id=${project.id}'" 
-                                    aria-label="Open project: ${this.escapeHTML(project.title)}">
-                                <i class="fas fa-arrow-right" aria-hidden="true"></i> Open Project
-                            </button>
-                        </div>
-                    </article>
-                `;
-            }
-
-            getStatusInfo(status) {
-                const statuses = {
-                    'planning': { label: 'Planning', color: '#F59E0B' },
-                    'active': { label: 'Active', color: '#00C9A7' },
-                    'completed': { label: 'Completed', color: '#1A5F7A' }
-                };
-                return statuses[status] || { label: 'Project', color: '#6D5ACF' };
-            }
-
-            escapeHTML(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            formatDate(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    const now = new Date();
-                    const diffTime = Math.abs(now - date);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                    if (diffDays === 0) return 'Today';
-                    if (diffDays === 1) return 'Yesterday';
-                    if (diffDays < 7) return `${diffDays} days ago`;
-                    
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                } catch {
-                    return 'Recently';
-                }
-            }
-        }
-
-        // ==================== EVENT MANAGER ====================
-        class EventManager {
-            constructor(dom, state, ui, api) {
-                this.dom = dom;
-                this.state = state;
-                this.ui = ui;
-                this.api = api;
-                this.debounceTimers = new Map();
-            }
-
-            init() {
-                this.setupGlobalEvents();
-                this.setupFormEvents();
-                this.setupSearchEvents();
-                this.setupFilterEvents();
-                this.setupModalEvents();
-                this.setupKeyboardShortcuts();
-            }
-
-            setupGlobalEvents() {
-                // Click delegation
-                document.addEventListener('click', (e) => {
-                    // Modal backdrop click
-                    if (e.target.classList.contains('modal')) {
-                        this.ui.closeModal();
-                    }
-                });
-
-                // State change listeners
-                this.state.subscribe('projectsUpdated', () => {
-                    // Re-render projects when state changes
-                    if (ThoraxLab?.Renderer) {
-                        ThoraxLab.Renderer.renderProjects(this.state.projects);
-                        this.ui.updatePagination();
-                    }
-                });
-
-                this.state.subscribe('error', ({ error, context }) => {
-                    console.error(`Error in ${context}:`, error);
-                    this.ui.showNotification(`Error: ${error.message || 'Something went wrong'}`, 'error');
-                });
-            }
-
-            setupFormEvents() {
-                const createForm = this.dom.get('#createProjectForm');
-                if (createForm) {
-                    createForm.addEventListener('submit', (e) => this.handleCreateProject(e));
-                }
-            }
-
-            setupSearchEvents() {
-                const projectSearch = this.dom.get('#projectSearch');
-                const globalSearch = this.dom.get('#globalSearch');
-
-                if (projectSearch) {
-                    projectSearch.addEventListener('input', this.debounce((e) => {
-                        this.state.filters.search = e.target.value;
-                        this.state.pagination.current = 1;
-                        this.loadProjects();
-                    }, CONFIG.TIMING.DEBOUNCE_SEARCH));
-                }
-
-                if (globalSearch) {
-                    globalSearch.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            const searchValue = globalSearch.value.trim();
-                            if (searchValue && projectSearch) {
-                                projectSearch.value = searchValue;
-                                this.state.filters.search = searchValue;
-                                this.state.pagination.current = 1;
-                                this.loadProjects();
-                            }
-                            globalSearch.value = '';
-                        }
-                    });
-                }
-            }
-
-            setupFilterEvents() {
-                const statusFilter = this.dom.get('#statusFilter');
-                const sortFilter = this.dom.get('#sortFilter');
-
-                if (statusFilter) {
-                    statusFilter.addEventListener('change', (e) => {
-                        this.state.filters.status = e.target.value;
-                        this.state.pagination.current = 1;
-                        this.loadProjects();
-                    });
-                }
-
-                if (sortFilter) {
-                    sortFilter.addEventListener('change', (e) => {
-                        this.state.filters.sort = e.target.value;
-                        this.state.pagination.current = 1;
-                        this.loadProjects();
-                    });
-                }
-            }
-
-            setupModalEvents() {
-                // Close modal with Escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && this.state.ui.activeModal) {
-                        this.ui.closeModal();
-                    }
-                });
-
-                // Template selection
-                this.dom.get('#templatesContainer')?.addEventListener('click', (e) => {
-                    const templateCard = e.target.closest('.template-card');
-                    if (templateCard) {
-                        this.handleTemplateSelect(templateCard);
-                    }
-                });
-            }
-
-            setupKeyboardShortcuts() {
-                document.addEventListener('keydown', (e) => {
-                    // Skip if user is typing in inputs
-                    const activeElement = document.activeElement;
-                    const isInput = activeElement.tagName === 'INPUT' || 
-                                   activeElement.tagName === 'TEXTAREA' ||
-                                   activeElement.isContentEditable;
-                    
-                    if (isInput && !e.ctrlKey && !e.metaKey) return;
-
-                    // Ctrl/Cmd + N for new project
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                        e.preventDefault();
-                        this.ui.openModal('newProjectModal');
-                    }
-
-                    // Ctrl/Cmd + K for search
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                        e.preventDefault();
-                        const search = this.dom.get('#globalSearch') || this.dom.get('#projectSearch');
-                        search?.focus();
-                        search?.select();
-                    }
-
-                    // Ctrl/Cmd + / for shortcuts
-                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
-                        e.preventDefault();
-                        this.ui.openModal('shortcutsModal');
-                    }
-                });
-            }
-
-            async handleCreateProject(e) {
-                e.preventDefault();
+            showNotification(message, type = 'info') {
+                const toast = document.getElementById('notificationToast');
+                if (!toast) return;
                 
-                try {
-                    this.ui.showNotification('Creating project...', 'info');
-                    
-                    const form = e.target;
-                    const formData = new FormData(form);
-                    const projectData = {
-                        title: formData.get('projectTitle'),
-                        description: formData.get('projectDescription'),
-                        status: formData.get('projectStatus'),
-                        tags: Array.from(this.state.ui.selectedTags),
-                        template: this.state.ui.selectedTemplate
-                    };
-
-                    const response = await this.api.createProject(projectData);
-                    
-                    if (response.success) {
-                        this.ui.showNotification('Project created successfully!', 'success');
-                        this.ui.closeModal();
-                        form.reset();
-                        this.state.ui.selectedTags.clear();
-                        this.state.ui.selectedTemplate = null;
-                        
-                        // Reload projects
-                        await this.loadProjects();
-                    }
-                } catch (error) {
-                    this.state.handleError(error, 'create project');
-                }
-            }
-
-            handleTemplateSelect(templateCard) {
-                const templateId = templateCard.dataset.templateId;
-                if (!templateId) return;
-
-                // Remove selection from all cards
-                this.dom.getAll('.template-card').forEach(card => {
-                    this.dom.removeClass(card, 'selected');
-                });
-
-                // Add selection to clicked card
-                this.dom.addClass(templateCard, 'selected');
-                this.state.ui.selectedTemplate = templateId;
-
-                // Enable use template button
-                const useTemplateBtn = this.dom.get('#useTemplateBtn');
-                if (useTemplateBtn) {
-                    useTemplateBtn.disabled = false;
-                }
-            }
-
-            handleUseTemplate() {
-                if (this.state.ui.selectedTemplate) {
-                    this.ui.closeModal();
-                    this.ui.openModal('newProjectModal');
-                    // In a real app, you would pre-fill the form with template data
-                    this.ui.showNotification(`Template "${this.state.ui.selectedTemplate}" selected`, 'success');
-                }
-            }
-
-            handleMarkAllNotificationsAsRead() {
-                this.state.unreadCount = 0;
-                this.ui.updateNotificationBadge();
-                this.ui.showNotification('All notifications marked as read', 'success');
-            }
-
-            debounce(func, wait) {
-                return (...args) => {
-                    clearTimeout(this.debounceTimers.get(func));
-                    const timer = setTimeout(() => func(...args), wait);
-                    this.debounceTimers.set(func, timer);
-                };
-            }
-
-            async loadProjects() {
-                try {
-                    this.ui.showLoading(true);
-                    
-                    const response = await this.api.getProjects({
-                        page: this.state.pagination.current,
-                        search: this.state.filters.search,
-                        status: this.state.filters.status,
-                        sort: this.state.filters.sort
-                    });
-
-                    if (response.success) {
-                        this.state.projects = response.projects;
-                        this.state.pagination = {
-                            current: response.pagination.page,
-                            total: response.pagination.totalPages,
-                            hasNext: response.pagination.page < response.pagination.totalPages,
-                            hasPrev: response.pagination.page > 1
-                        };
-
-                        if (ThoraxLab?.Renderer) {
-                            ThoraxLab.Renderer.renderProjects(this.state.projects);
-                        }
-                        this.ui.updatePagination();
-                    }
-                } catch (error) {
-                    this.state.handleError(error, 'load projects');
-                } finally {
-                    this.ui.showLoading(false);
-                }
-            }
-        }
-
-        // ==================== DASHBOARD MANAGER ====================
-        class DashboardManager {
-            constructor(dom, state, ui, api, eventManager) {
-                this.dom = dom;
-                this.state = state;
-                this.ui = ui;
-                this.api = api;
-                this.eventManager = eventManager;
-            }
-
-            async init() {
-                console.log('🚀 ThoraxLab Dashboard Initializing...');
+                toast.textContent = message;
+                toast.className = `notification notification-${type} show`;
                 
-                try {
-                    // Check authentication
-                    await this.checkAuth();
-                    
-                    // Load initial data
-                    await this.loadInitialData();
-                    
-                    // Setup event listeners
-                    this.eventManager.init();
-                    
-                    // Setup window events
-                    window.addEventListener('beforeunload', () => {
-                        this.state.clearTimeouts();
-                    });
-                    
-                    console.log('✅ Dashboard initialized successfully');
-                } catch (error) {
-                    console.error('Failed to initialize dashboard:', error);
-                    this.ui.showNotification('Failed to initialize dashboard', 'error');
-                }
-            }
-
-            async checkAuth() {
-                try {
-                    // Check if user data exists in localStorage
-                    const userData = localStorage.getItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
-                    
-                    if (userData) {
-                        this.state.user = JSON.parse(userData);
-                        this.ui.updateUserInfo();
-                    } else {
-                        // For demo purposes, create mock user
-                        this.state.user = {
-                            name: 'Dr. John Doe',
-                            institution: 'General Hospital',
-                            role: 'Lead Researcher'
-                        };
-                        this.ui.updateUserInfo();
-                    }
-                } catch (error) {
-                    this.state.handleError(error, 'authentication check');
-                }
-            }
-
-            async loadInitialData() {
-                try {
-                    this.ui.showLoading(true);
-                    
-                    await Promise.all([
-                        this.loadStats(),
-                        this.loadProjects(),
-                        this.checkNotifications()
-                    ]);
-                } catch (error) {
-                    this.state.handleError(error, 'load initial data');
-                } finally {
-                    this.ui.showLoading(false);
-                }
-            }
-
-            async loadStats() {
-                try {
-                    const response = await this.api.getDashboardStats();
-                    if (response.success) {
-                        this.state.stats = response.stats;
-                        if (ThoraxLab?.Renderer) {
-                            ThoraxLab.Renderer.renderStats(this.state.stats);
-                        }
-                    }
-                } catch (error) {
-                    this.state.handleError(error, 'load stats');
-                }
-            }
-
-            async loadProjects() {
-                await this.eventManager.loadProjects();
-            }
-
-            async checkNotifications() {
-                // Simulate notifications check
-                this.state.unreadCount = 3;
-                this.ui.updateNotificationBadge();
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
             }
 
             logout() {
-                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.USER);
-                localStorage.removeItem(CONFIG.LOCAL_STORAGE_KEYS.SESSION);
-                this.ui.showNotification('Logged out successfully', 'info');
-                
-                // Redirect to login after delay
+                this.showNotification('Logged out successfully', 'info');
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = `${this.config.BASE_PATH}login.html`;
                 }, 1000);
+            }
+
+            // Helper methods
+            getStatusColor(status) {
+                const colors = {
+                    planning: '#F59E0B',
+                    active: '#0D8B70',
+                    completed: '#1A5F7A'
+                };
+                return colors[status] || '#6D5ACF';
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
             }
         }
 
-        // ==================== GLOBAL EXPORTS ====================
-        window.ThoraxLab = (function() {
-            // Create instances
-            const dom = new DOMHelper();
-            const state = new ThoraxLabState();
-            const api = new ApiService();
-            const ui = new UIManager(dom, state);
-            const renderer = new Renderer(dom);
-            const eventManager = new EventManager(dom, state, ui, api);
-            const dashboard = new DashboardManager(dom, state, ui, api, eventManager);
-
-            // Initialize on DOM ready
-            document.addEventListener('DOMContentLoaded', () => {
-                dashboard.init();
-            });
-
-            // Return public API
-            return {
-                DOM: dom,
-                State: state,
-                UI: ui,
-                API: api,
-                Renderer: renderer,
-                EventManager: eventManager,
-                Dashboard: dashboard,
-                
-                // Helper methods
-                showNotification: (message, type) => ui.showNotification(message, type),
-                openModal: (modalId) => ui.openModal(modalId),
-                closeModal: () => ui.closeModal(),
-                logout: () => dashboard.logout(),
-                getState: () => state
-            };
-        })();
-
-        // ==================== ERROR HANDLING ====================
-        // Global error handler
-        window.addEventListener('error', (event) => {
-            console.error('Global error caught:', event.error);
-            
-            if (typeof ThoraxLab !== 'undefined' && ThoraxLab.UI) {
-                ThoraxLab.UI.showNotification(
-                    'An unexpected error occurred. Please refresh the page.',
-                    'error'
-                );
-            }
+        // Initialize application
+        window.addEventListener('DOMContentLoaded', () => {
+            window.ThoraxLab = new ThoraxLabApp();
         });
-
-        // Unhandled promise rejection handler
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
-            
-            if (typeof ThoraxLab !== 'undefined' && ThoraxLab.UI) {
-                ThoraxLab.UI.showNotification(
-                    'Something went wrong. Please try again.',
-                    'error'
-                );
-            }
-        });
-
-        // ==================== COMPATIBILITY ====================
-        // Ensure compatibility with other files that might expect these functions
-        window.openNewProjectModal = () => ThoraxLab?.UI?.openModal('newProjectModal');
-        window.openTemplateModal = () => ThoraxLab?.UI?.openModal('templateModal');
-        window.openSearchModal = () => ThoraxLab?.UI?.openModal('searchModal');
-        window.closeModal = (modalId) => ThoraxLab?.UI?.closeModal();
-        window.useSelectedTemplate = () => ThoraxLab?.EventManager?.handleUseTemplate();
-        window.addTag = () => {
-            const input = document.getElementById('tagInput');
-            if (input?.value?.trim()) {
-                ThoraxLab.State.ui.selectedTags.add(input.value.trim());
-                // Re-render tags
-                const tagsContainer = document.getElementById('tagsContainer');
-                if (tagsContainer) {
-                    tagsContainer.innerHTML = Array.from(ThoraxLab.State.ui.selectedTags)
-                        .map(tag => `<span class="tag">${tag} <i class="fas fa-times"></i></span>`)
-                        .join('');
-                }
-                input.value = '';
-            }
-        };
-        window.addCommonTag = (tag) => {
-            ThoraxLab.State.ui.selectedTags.add(tag);
-            // Re-render tags
-            const tagsContainer = document.getElementById('tagsContainer');
-            if (tagsContainer) {
-                tagsContainer.innerHTML = Array.from(ThoraxLab.State.ui.selectedTags)
-                    .map(t => `<span class="tag">${t} <i class="fas fa-times"></i></span>`)
-                    .join('');
-            }
-        };
-        window.markAllNotificationsAsRead = () => ThoraxLab?.EventManager?.handleMarkAllNotificationsAsRead();
-        window.logout = () => ThoraxLab?.Dashboard?.logout();
-
-        console.log('📦 ThoraxLab Core loaded successfully');
     </script>
 </body>
 </html>
