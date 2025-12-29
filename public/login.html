@@ -6,13 +6,12 @@
     <title>Login | ThoraxLab</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ========== CORE STYLES ========== */
+        /* ===== CORE STYLES ===== */
         :root {
             --primary: #1A5F7A;
             --primary-dark: #12485c;
             --secondary: #00C9A7;
             --error: #EF4444;
-            --warning: #F59E0B;
             --success: #10B981;
             --text-dark: #1E293B;
             --text-medium: #475569;
@@ -43,30 +42,10 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ========== SKIP LINK ========== */
-        .skip-link {
-            position: absolute;
-            top: -3rem;
-            left: 1rem;
-            background: var(--primary);
-            color: white;
-            padding: 0.75rem 1.25rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            z-index: 1000;
-            transition: top var(--transition);
-        }
-
-        .skip-link:focus {
-            top: 1rem;
-            outline: 3px solid var(--secondary);
-        }
-
-        /* ========== MAIN CONTAINER ========== */
+        /* ===== MAIN CONTAINER ===== */
         .login-wrapper {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             animation: fadeIn 0.4s ease-out;
         }
 
@@ -75,7 +54,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ========== LOGO ========== */
+        /* ===== LOGO ===== */
         .logo-area {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -109,7 +88,7 @@
             font-weight: 500;
         }
 
-        /* ========== LOGIN CARD ========== */
+        /* ===== LOGIN CARD ===== */
         .login-card {
             background: var(--card-white);
             border-radius: var(--radius);
@@ -130,7 +109,7 @@
             border-radius: var(--radius) var(--radius) 0 0;
         }
 
-        /* ========== FORM ========== */
+        /* ===== FORM HEADER ===== */
         .form-header {
             margin-bottom: 2rem;
         }
@@ -145,6 +124,48 @@
         .form-subtitle {
             color: var(--text-light);
             font-size: 0.9375rem;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .tab-button:hover {
+            background: var(--bg-gray);
+            color: var(--text-dark);
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== FORM ===== */
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
         }
 
         .form-group {
@@ -165,7 +186,7 @@
 
         .form-input {
             width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
+            padding: 0.875rem 1rem;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-family: inherit;
@@ -180,15 +201,6 @@
             box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
         }
 
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            font-size: 1.125rem;
-        }
-
         .error-message {
             color: var(--error);
             font-size: 0.8125rem;
@@ -200,8 +212,8 @@
             display: block;
         }
 
-        /* ========== BUTTON ========== */
-        .login-btn {
+        /* ===== BUTTON ===== */
+        .submit-btn {
             width: 100%;
             padding: 1rem;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -217,18 +229,15 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
+            margin-top: 1rem;
         }
 
-        .login-btn:hover:not(:disabled) {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(26, 95, 122, 0.2);
         }
 
-        .login-btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .login-btn:disabled {
+        .submit-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
@@ -251,82 +260,21 @@
             display: none;
         }
 
-        /* ========== DEMO ACCOUNTS ========== */
-        .demo-section {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .demo-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .demo-account {
+        /* ===== ADMIN NOTE ===== */
+        .admin-note {
+            margin-top: 1.5rem;
             padding: 1rem;
             background: var(--bg-gray);
-            border: 1px solid var(--border);
             border-radius: 8px;
-            cursor: pointer;
-            transition: all var(--transition);
-            text-align: center;
-        }
-
-        .demo-account:hover {
-            background: var(--card-white);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .demo-name {
+            border-left: 4px solid var(--primary);
             font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 0.25rem;
         }
 
-        .demo-role {
-            font-size: 0.75rem;
-            color: var(--text-light);
+        .admin-note strong {
+            color: var(--primary);
         }
 
-        /* ========== STATUS BAR ========== */
-        .status-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1.5rem;
-            padding: 0.75rem;
-            background: var(--bg-gray);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-        }
-
-        .status-dot.offline {
-            background: var(--warning);
-            animation: pulse 2s infinite;
-        }
-
-        /* ========== NOTIFICATIONS ========== */
+        /* ===== NOTIFICATIONS ===== */
         .notifications {
             position: fixed;
             top: 1rem;
@@ -356,20 +304,7 @@
             border-left-color: var(--success);
         }
 
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: 0.25rem;
-            font-size: 1rem;
-        }
-
-        /* ========== LOADING OVERLAY ========== */
+        /* ===== LOADING ===== */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -403,14 +338,9 @@
             margin-bottom: 1rem;
         }
 
-        /* ========== ANIMATIONS ========== */
+        /* ===== ANIMATIONS ===== */
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
         }
 
         @keyframes slideInRight {
@@ -418,7 +348,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* ========== RESPONSIVE ========== */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .login-card {
                 padding: 2rem 1.5rem;
@@ -432,25 +362,9 @@
                 font-size: 1.375rem;
             }
         }
-
-        /* ========== PRINT STYLES ========== */
-        @media print {
-            .login-card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-            
-            .login-btn,
-            .demo-section {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Skip Navigation -->
-    <a href="#loginForm" class="skip-link">Skip to login form</a>
-
     <!-- Main Container -->
     <div class="login-wrapper">
         <!-- Logo Area -->
@@ -462,221 +376,189 @@
 
         <!-- Login Card -->
         <div class="login-card">
-            <!-- Form Header -->
-            <div class="form-header">
-                <h2 class="form-title">Welcome Back</h2>
-                <p class="form-subtitle">Sign in to your research dashboard</p>
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="login">Login</button>
+                <button class="tab-button" data-tab="register">Register</button>
             </div>
 
             <!-- Login Form -->
-            <form id="loginForm" novalidate>
-                <!-- Name Field -->
+            <form id="loginForm" class="form active" novalidate>
                 <div class="form-group">
-                    <label for="name" class="form-label">Full Name</label>
+                    <label for="loginEmail" class="form-label">Email</label>
                     <div class="input-container">
-                        <div class="input-icon">👤</div>
-                        <input type="text" 
-                               id="name" 
-                               class="form-input" 
-                               placeholder="Dr. John Smith"
-                               required
-                               autocomplete="name"
-                               aria-label="Full name">
-                    </div>
-                    <div class="error-message" data-error="name">Please enter your full name</div>
-                </div>
-
-                <!-- Email Field -->
-                <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
-                    <div class="input-container">
-                        <div class="input-icon">✉️</div>
                         <input type="email" 
-                               id="email" 
+                               id="loginEmail" 
                                class="form-input" 
-                               placeholder="john.smith@hospital.org"
                                required
-                               autocomplete="email"
-                               aria-label="Email address">
+                               autocomplete="email">
                     </div>
-                    <div class="error-message" data-error="email">Please enter a valid email</div>
+                    <div class="error-message" data-error="loginEmail">Valid email required</div>
                 </div>
 
-                <!-- Institution Field -->
                 <div class="form-group">
-                    <label for="institution" class="form-label">Institution</label>
+                    <label for="loginPassword" class="form-label">Password</label>
                     <div class="input-container">
-                        <div class="input-icon">🏥</div>
-                        <input type="text" 
-                               id="institution" 
+                        <input type="password" 
+                               id="loginPassword" 
                                class="form-input" 
-                               placeholder="General Hospital"
                                required
-                               autocomplete="organization"
-                               aria-label="Institution name">
+                               autocomplete="current-password">
                     </div>
-                    <div class="error-message" data-error="institution">Please enter your institution</div>
+                    <div class="error-message" data-error="loginPassword">Password required</div>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" 
-                        class="login-btn" 
-                        id="loginBtn"
-                        aria-label="Sign in to dashboard">
+                <button type="submit" class="submit-btn" id="loginBtn">
                     <div class="btn-spinner"></div>
-                    <span class="btn-text">
-                        <span class="btn-icon">→</span> Access Dashboard
-                    </span>
+                    <span class="btn-text">Login to Dashboard</span>
                 </button>
+
+                <div class="admin-note">
+                    <strong>Default Admin:</strong> Use <code>Admin</code> / <code>Admin123</code> for testing
+                </div>
             </form>
 
-            <!-- Demo Accounts -->
-            <div class="demo-section">
-                <div class="demo-title">Quick Access (Demo)</div>
-                <div class="demo-grid" id="demoGrid">
-                    <!-- Dynamically loaded -->
+            <!-- Register Form -->
+            <form id="registerForm" class="form" novalidate>
+                <div class="form-group">
+                    <label for="registerName" class="form-label">Full Name</label>
+                    <div class="input-container">
+                        <input type="text" 
+                               id="registerName" 
+                               class="form-input" 
+                               required
+                               autocomplete="name">
+                    </div>
+                    <div class="error-message" data-error="registerName">Full name required</div>
                 </div>
-            </div>
 
-            <!-- Status Bar -->
-            <div class="status-bar" id="statusBar">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Checking connection...</span>
-            </div>
+                <div class="form-group">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <div class="input-container">
+                        <input type="email" 
+                               id="registerEmail" 
+                               class="form-input" 
+                               required
+                               autocomplete="email">
+                    </div>
+                    <div class="error-message" data-error="registerEmail">Valid email required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerInstitution" class="form-label">Institution</label>
+                    <div class="input-container">
+                        <input type="text" 
+                               id="registerInstitution" 
+                               class="form-input" 
+                               required
+                               autocomplete="organization">
+                    </div>
+                    <div class="error-message" data-error="registerInstitution">Institution required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <div class="input-container">
+                        <input type="password" 
+                               id="registerPassword" 
+                               class="form-input" 
+                               required
+                               autocomplete="new-password"
+                               minlength="6">
+                    </div>
+                    <div class="error-message" data-error="registerPassword">Password (min 6 characters)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerConfirm" class="form-label">Confirm Password</label>
+                    <div class="input-container">
+                        <input type="password" 
+                               id="registerConfirm" 
+                               class="form-input" 
+                               required
+                               autocomplete="new-password">
+                    </div>
+                    <div class="error-message" data-error="registerConfirm">Passwords must match</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="registerBtn">
+                    <div class="btn-spinner"></div>
+                    <span class="btn-text">Create Account</span>
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Notifications Container -->
+    <!-- Notifications -->
     <div class="notifications" id="notifications"></div>
 
-    <!-- Loading Overlay -->
+    <!-- Loading -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <div id="loadingMessage">Authenticating...</div>
+        <div id="loadingMessage">Processing...</div>
     </div>
 
     <script>
         // ============================================
-        // THORAXLAB LOGIN - OPTIMIZED VERSION
+        // THORAXLAB AUTH SYSTEM
         // ============================================
 
-        // ==================== CONFIG ====================
         const CONFIG = {
-            API_BASE: '', // Use relative paths (matches server.js)
+            API_BASE: '',
             ENDPOINTS: {
                 LOGIN: '/api/login',
-                HEALTH: '/health',
-                VALIDATE: '/api/session/validate'
+                REGISTER: '/api/register',
+                HEALTH: '/health'
             },
-            STORAGE_KEYS: {
-                USER: 'thoraxlab_user',
+            STORAGE: {
                 SESSION: 'thoraxlab_session',
-                FORM_DRAFT: 'thoraxlab_form_draft',
-                ATTEMPTS: 'thoraxlab_attempts'
+                USER: 'thoraxlab_user'
             },
-            VALIDATION: {
-                NAME_MIN: 2,
-                NAME_MAX: 100,
-                EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                INST_MIN: 2
-            },
-            SECURITY: {
-                MAX_ATTEMPTS: 5,
-                LOCKOUT_MS: 15 * 60 * 1000 // 15 minutes
-            },
-            TIMING: {
-                DEBOUNCE: 300,
-                NOTIFICATION_TIMEOUT: 5000,
-                CHECK_INTERVAL: 30000
+            DEFAULT_ADMIN: {
+                email: 'Admin',
+                password: 'Admin123'
             }
         };
 
-        // ==================== DEMO ACCOUNTS ====================
-        const DEMO_ACCOUNTS = [
-            {
-                id: 'demo-1',
-                name: 'Dr. Sarah Chen',
-                email: 'sarah.chen@thoraxlab.org',
-                institution: 'ThoraxLab Medical Center',
-                role: 'Lead Researcher'
-            },
-            {
-                id: 'demo-2',
-                name: 'Prof. James Wilson',
-                email: 'j.wilson@university.edu',
-                institution: 'University Hospital',
-                role: 'Research Director'
-            },
-            {
-                id: 'demo-3',
-                name: 'Dr. Maria Rodriguez',
-                email: 'm.rodriguez@clinic.org',
-                institution: 'City Pulmonary Clinic',
-                role: 'Clinical Researcher'
-            }
-        ];
-
-        // ==================== MAIN LOGIN SYSTEM ====================
-        class ThoraxLabLogin {
+        class AuthSystem {
             constructor() {
-                this.state = {
-                    isLoading: false,
-                    isOnline: navigator.onLine,
-                    serverStatus: 'checking',
-                    attempts: this.getStoredAttempts(),
-                    lastAttempt: this.getLastAttempt(),
-                    activeNotifications: new Set()
-                };
-                
-                this.abortController = new AbortController();
-                this.debounceTimers = new Map();
+                this.currentTab = 'login';
+                this.isLoading = false;
                 this.init();
             }
 
-            // ========== INITIALIZATION ==========
-            async init() {
-                // Check for existing valid session
-                if (await this.checkExistingSession()) {
-                    this.redirectToDashboard();
-                    return;
-                }
-
-                // Setup DOM references
+            init() {
                 this.cacheElements();
-                
-                // Setup event listeners
                 this.setupListeners();
+                this.checkExistingSession();
                 
-                // Load form draft if exists
-                this.loadFormDraft();
-                
-                // Load demo accounts
-                this.loadDemoAccounts();
-                
-                // Check server status
-                this.checkServerStatus();
-                
-                // Setup periodic checks
-                this.setupPeriodicChecks();
-                
-                // Focus first input
-                setTimeout(() => this.elements.name.focus(), 100);
-                
-                console.log('ThoraxLab Login initialized');
+                console.log('Auth system initialized');
             }
 
-            // ========== DOM MANAGEMENT ==========
             cacheElements() {
                 this.elements = {
-                    form: document.getElementById('loginForm'),
-                    name: document.getElementById('name'),
-                    email: document.getElementById('email'),
-                    institution: document.getElementById('institution'),
+                    // Tabs
+                    loginTab: document.querySelector('[data-tab="login"]'),
+                    registerTab: document.querySelector('[data-tab="register"]'),
+                    
+                    // Forms
+                    loginForm: document.getElementById('loginForm'),
+                    registerForm: document.getElementById('registerForm'),
+                    
+                    // Login inputs
+                    loginEmail: document.getElementById('loginEmail'),
+                    loginPassword: document.getElementById('loginPassword'),
                     loginBtn: document.getElementById('loginBtn'),
-                    demoGrid: document.getElementById('demoGrid'),
-                    statusBar: document.getElementById('statusBar'),
-                    statusDot: document.getElementById('statusDot'),
-                    statusText: document.getElementById('statusText'),
+                    
+                    // Register inputs
+                    registerName: document.getElementById('registerName'),
+                    registerEmail: document.getElementById('registerEmail'),
+                    registerInstitution: document.getElementById('registerInstitution'),
+                    registerPassword: document.getElementById('registerPassword'),
+                    registerConfirm: document.getElementById('registerConfirm'),
+                    registerBtn: document.getElementById('registerBtn'),
+                    
+                    // UI
                     notifications: document.getElementById('notifications'),
                     loadingOverlay: document.getElementById('loadingOverlay'),
                     loadingMessage: document.getElementById('loadingMessage')
@@ -684,530 +566,333 @@
             }
 
             setupListeners() {
-                const { form, name, email, institution } = this.elements;
+                // Tab switching
+                this.elements.loginTab.addEventListener('click', () => this.switchTab('login'));
+                this.elements.registerTab.addEventListener('click', () => this.switchTab('register'));
                 
-                // Form submission
-                form.addEventListener('submit', (e) => this.handleSubmit(e));
+                // Form submissions
+                this.elements.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+                this.elements.registerForm.addEventListener('submit', (e) => this.handleRegister(e));
                 
-                // Input validation with debouncing
-                [name, email, institution].forEach(input => {
-                    input.addEventListener('input', (e) => {
-                        this.debounceValidation(e.target);
-                        this.saveFormDraft();
-                    });
-                });
-                
-                // Network events
-                window.addEventListener('online', () => this.handleNetworkChange(true));
-                window.addEventListener('offline', () => this.handleNetworkChange(false));
-                
-                // Beforeunload cleanup
-                window.addEventListener('beforeunload', () => this.cleanup());
+                // Real-time validation
+                this.setupValidation();
             }
 
-            // ========== FORM VALIDATION ==========
-            debounceValidation(input) {
-                const field = input.id;
-                clearTimeout(this.debounceTimers.get(field));
+            switchTab(tab) {
+                if (this.currentTab === tab || this.isLoading) return;
                 
-                const timer = setTimeout(() => {
-                    this.validateField(field, input.value);
-                }, CONFIG.TIMING.DEBOUNCE);
+                this.currentTab = tab;
                 
-                this.debounceTimers.set(field, timer);
+                // Update tabs
+                this.elements.loginTab.classList.toggle('active', tab === 'login');
+                this.elements.registerTab.classList.toggle('active', tab === 'register');
+                
+                // Update forms
+                this.elements.loginForm.classList.toggle('active', tab === 'login');
+                this.elements.registerForm.classList.toggle('active', tab === 'register');
+                
+                // Clear errors
+                this.clearErrors();
             }
 
-            validateField(field, value) {
-                let isValid = true;
-                let message = '';
+            setupValidation() {
+                // Login validation
+                this.elements.loginEmail.addEventListener('blur', () => this.validateEmail(this.elements.loginEmail));
+                this.elements.loginPassword.addEventListener('blur', () => this.validatePassword(this.elements.loginPassword));
                 
-                switch(field) {
-                    case 'name':
-                        if (!value || value.trim().length < CONFIG.VALIDATION.NAME_MIN) {
-                            isValid = false;
-                            message = `Name must be at least ${CONFIG.VALIDATION.NAME_MIN} characters`;
-                        } else if (value.length > CONFIG.VALIDATION.NAME_MAX) {
-                            isValid = false;
-                            message = `Name must be less than ${CONFIG.VALIDATION.NAME_MAX} characters`;
-                        }
-                        break;
-                        
-                    case 'email':
-                        if (!value) {
-                            isValid = false;
-                            message = 'Email is required';
-                        } else if (!CONFIG.VALIDATION.EMAIL_REGEX.test(value)) {
-                            isValid = false;
-                            message = 'Please enter a valid email address';
-                        }
-                        break;
-                        
-                    case 'institution':
-                        if (!value || value.trim().length < CONFIG.VALIDATION.INST_MIN) {
-                            isValid = false;
-                            message = `Institution must be at least ${CONFIG.VALIDATION.INST_MIN} characters`;
-                        }
-                        break;
-                }
-                
-                this.showFieldError(field, !isValid, message);
+                // Register validation
+                this.elements.registerName.addEventListener('blur', () => this.validateName(this.elements.registerName));
+                this.elements.registerEmail.addEventListener('blur', () => this.validateEmail(this.elements.registerEmail));
+                this.elements.registerInstitution.addEventListener('blur', () => this.validateInstitution(this.elements.registerInstitution));
+                this.elements.registerPassword.addEventListener('input', () => this.validatePasswordMatch());
+                this.elements.registerConfirm.addEventListener('input', () => this.validatePasswordMatch());
+            }
+
+            // ========== VALIDATION ==========
+            validateEmail(input) {
+                const email = input.value.trim();
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValid = email && regex.test(email);
+                this.showError(input, !isValid, 'Valid email required');
                 return isValid;
             }
 
-            validateForm() {
-                const fields = ['name', 'email', 'institution'];
-                let isValid = true;
-                
-                for (const field of fields) {
-                    const value = this.elements[field].value.trim();
-                    if (!this.validateField(field, value)) {
-                        isValid = false;
-                        if (isValid === false) {
-                            this.elements[field].focus();
-                            break;
-                        }
-                    }
-                }
-                
+            validatePassword(input) {
+                const password = input.value;
+                const isValid = password && password.length >= 6;
+                this.showError(input, !isValid, 'Password (min 6 characters)');
                 return isValid;
             }
 
-            showFieldError(field, show, message = '') {
-                const errorEl = document.querySelector(`[data-error="${field}"]`);
-                if (!errorEl) return;
+            validateName(input) {
+                const name = input.value.trim();
+                const isValid = name && name.length >= 2;
+                this.showError(input, !isValid, 'Full name required');
+                return isValid;
+            }
+
+            validateInstitution(input) {
+                const institution = input.value.trim();
+                const isValid = institution && institution.length >= 2;
+                this.showError(input, !isValid, 'Institution required');
+                return isValid;
+            }
+
+            validatePasswordMatch() {
+                const password = this.elements.registerPassword.value;
+                const confirm = this.elements.registerConfirm.value;
+                const isValid = password && confirm && password === confirm;
                 
-                const container = errorEl.closest('.form-group');
+                this.showError(this.elements.registerConfirm, !isValid && confirm, 'Passwords must match');
+                return isValid;
+            }
+
+            validateLoginForm() {
+                const isEmailValid = this.validateEmail(this.elements.loginEmail);
+                const isPasswordValid = this.validatePassword(this.elements.loginPassword);
+                return isEmailValid && isPasswordValid;
+            }
+
+            validateRegisterForm() {
+                const isNameValid = this.validateName(this.elements.registerName);
+                const isEmailValid = this.validateEmail(this.elements.registerEmail);
+                const isInstitutionValid = this.validateInstitution(this.elements.registerInstitution);
+                const isPasswordValid = this.validatePassword(this.elements.registerPassword);
+                const isConfirmValid = this.validatePasswordMatch();
+                
+                return isNameValid && isEmailValid && isInstitutionValid && isPasswordValid && isConfirmValid;
+            }
+
+            showError(input, show, message) {
+                const errorId = input.id;
+                const errorEl = document.querySelector(`[data-error="${errorId}"]`);
+                const container = input.closest('.form-group');
                 
                 if (show) {
                     container.classList.add('show-error');
-                    if (message) errorEl.textContent = message;
+                    if (errorEl && message) errorEl.textContent = message;
                 } else {
                     container.classList.remove('show-error');
                 }
             }
 
-            // ========== FORM PERSISTENCE ==========
-            saveFormDraft() {
-                const draft = {
-                    name: this.elements.name.value,
-                    email: this.elements.email.value,
-                    institution: this.elements.institution.value,
-                    timestamp: Date.now()
-                };
-                
-                try {
-                    localStorage.setItem(CONFIG.STORAGE_KEYS.FORM_DRAFT, JSON.stringify(draft));
-                } catch (e) {
-                    console.warn('Could not save form draft:', e);
-                }
-            }
-
-            loadFormDraft() {
-                try {
-                    const saved = localStorage.getItem(CONFIG.STORAGE_KEYS.FORM_DRAFT);
-                    if (!saved) return;
-                    
-                    const draft = JSON.parse(saved);
-                    // Only load if less than 1 hour old
-                    if (Date.now() - draft.timestamp < 60 * 60 * 1000) {
-                        this.elements.name.value = draft.name || '';
-                        this.elements.email.value = draft.email || '';
-                        this.elements.institution.value = draft.institution || '';
-                    }
-                } catch (e) {
-                    // Ignore errors
-                }
-            }
-
-            clearFormDraft() {
-                localStorage.removeItem(CONFIG.STORAGE_KEYS.FORM_DRAFT);
-            }
-
-            // ========== DEMO ACCOUNTS ==========
-            loadDemoAccounts() {
-                if (!this.elements.demoGrid) return;
-                
-                const html = DEMO_ACCOUNTS.map(account => `
-                    <button class="demo-account" 
-                            type="button"
-                            data-account="${account.id}"
-                            aria-label="Use demo account: ${account.name}">
-                        <div class="demo-name">${this.escapeHtml(account.name)}</div>
-                        <div class="demo-role">${this.escapeHtml(account.role)}</div>
-                    </button>
-                `).join('');
-                
-                this.elements.demoGrid.innerHTML = html;
-                
-                // Add click handlers
-                this.elements.demoGrid.querySelectorAll('.demo-account').forEach(btn => {
-                    btn.addEventListener('click', (e) => this.useDemoAccount(e));
+            clearErrors() {
+                document.querySelectorAll('.form-group').forEach(el => {
+                    el.classList.remove('show-error');
                 });
             }
 
-            useDemoAccount(event) {
-                const accountId = event.currentTarget.dataset.account;
-                const account = DEMO_ACCOUNTS.find(acc => acc.id === accountId);
-                if (!account) return;
-                
-                // Fill form
-                this.elements.name.value = account.name;
-                this.elements.email.value = account.email;
-                this.elements.institution.value = account.institution;
-                
-                // Validate
-                this.validateField('name', account.name);
-                this.validateField('email', account.email);
-                this.validateField('institution', account.institution);
-                
-                // Show feedback
-                event.currentTarget.style.backgroundColor = 'var(--primary)';
-                event.currentTarget.style.color = 'white';
-                
-                setTimeout(() => {
-                    event.currentTarget.style.backgroundColor = '';
-                    event.currentTarget.style.color = '';
-                }, 500);
-                
-                this.showNotification('info', 'Demo Account Selected', 
-                    `Ready to sign in as ${account.name}`);
-                
-                // Focus submit button
-                this.elements.loginBtn.focus();
-            }
-
-            // ========== SECURITY & ATTEMPTS ==========
-            getStoredAttempts() {
+            // ========== API CALLS ==========
+            async callAPI(endpoint, data) {
                 try {
-                    const attempts = localStorage.getItem(CONFIG.STORAGE_KEYS.ATTEMPTS);
-                    return attempts ? parseInt(attempts) : 0;
-                } catch {
-                    return 0;
-                }
-            }
-
-            getLastAttempt() {
-                try {
-                    const time = localStorage.getItem('thoraxlab_last_attempt');
-                    return time ? parseInt(time) : null;
-                } catch {
-                    return null;
-                }
-            }
-
-            incrementAttempts() {
-                this.state.attempts++;
-                localStorage.setItem(CONFIG.STORAGE_KEYS.ATTEMPTS, this.state.attempts.toString());
-                localStorage.setItem('thoraxlab_last_attempt', Date.now().toString());
-            }
-
-            resetAttempts() {
-                this.state.attempts = 0;
-                localStorage.removeItem(CONFIG.STORAGE_KEYS.ATTEMPTS);
-                localStorage.removeItem('thoraxlab_last_attempt');
-            }
-
-            isLockedOut() {
-                if (this.state.attempts < CONFIG.SECURITY.MAX_ATTEMPTS) {
-                    return false;
-                }
-                
-                if (!this.state.lastAttempt) {
-                    return false;
-                }
-                
-                const timeSince = Date.now() - this.state.lastAttempt;
-                return timeSince < CONFIG.SECURITY.LOCKOUT_MS;
-            }
-
-            getLockoutRemaining() {
-                if (!this.isLockedOut()) return 0;
-                return CONFIG.SECURITY.LOCKOUT_MS - (Date.now() - this.state.lastAttempt);
-            }
-
-            // ========== SESSION MANAGEMENT ==========
-            async checkExistingSession() {
-                try {
-                    const sessionData = localStorage.getItem(CONFIG.STORAGE_KEYS.SESSION);
-                    if (!sessionData) return false;
-                    
-                    const session = JSON.parse(sessionData);
-                    
-                    // Check expiration
-                    if (session.expiresAt && new Date(session.expiresAt) < new Date()) {
-                        this.clearSession();
-                        return false;
-                    }
-                    
-                    // Don't auto-redirect demo sessions
-                    if (session.isDemo) {
-                        return false;
-                    }
-                    
-                    return true;
-                } catch (error) {
-                    this.clearSession();
-                    return false;
-                }
-            }
-
-            clearSession() {
-                localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
-                localStorage.removeItem(CONFIG.STORAGE_KEYS.SESSION);
-            }
-
-            saveSession(userData, sessionData) {
-                try {
-                    // Store minimal user data
-                    const safeUserData = {
-                        id: userData.id || `user-${Date.now()}`,
-                        name: userData.name,
-                        email: userData.email,
-                        institution: userData.institution,
-                        role: userData.role || 'researcher',
-                        lastLogin: new Date().toISOString()
-                    };
-                    
-                    localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(safeUserData));
-                    localStorage.setItem(CONFIG.STORAGE_KEYS.SESSION, JSON.stringify(sessionData));
-                    
-                } catch (error) {
-                    console.error('Failed to save session:', error);
-                    this.showNotification('error', 'Storage Error', 
-                        'Could not save login information');
-                }
-            }
-
-            // ========== API COMMUNICATION ==========
-            async checkServerStatus() {
-                if (!this.state.isOnline) {
-                    this.updateStatusDisplay(false);
-                    return 'offline';
-                }
-                
-                try {
-                    const response = await fetch(CONFIG.ENDPOINTS.HEALTH, {
-                        method: 'HEAD',
-                        signal: AbortSignal.timeout(2000)
-                    });
-                    
-                    const status = response.ok ? 'online' : 'offline';
-                    this.state.serverStatus = status;
-                    this.updateStatusDisplay(true, status);
-                    return status;
-                    
-                } catch (error) {
-                    this.state.serverStatus = 'offline';
-                    this.updateStatusDisplay(true, 'offline');
-                    return 'offline';
-                }
-            }
-
-            async attemptServerLogin(formData) {
-                try {
-                    const response = await fetch(CONFIG.ENDPOINTS.LOGIN, {
+                    const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(formData),
-                        signal: this.abortController.signal
+                        body: JSON.stringify(data)
                     });
-                    
+
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+                        const errorText = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
                     }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        return {
-                            success: true,
-                            user: data.user,
-                            session: {
-                                id: data.sessionId,
-                                expiresAt: data.expiresAt,
-                                isDemo: false
-                            }
-                        };
-                    } else {
-                        throw new Error(data.error || 'Login failed');
-                    }
-                    
+
+                    return await response.json();
                 } catch (error) {
-                    if (error.name === 'AbortError') {
-                        throw new Error('Request cancelled');
-                    }
+                    console.error('API call failed:', error);
                     throw error;
                 }
             }
 
-            // ========== LOGIN HANDLING ==========
-            async handleSubmit(event) {
+            // ========== LOGIN ==========
+            async handleLogin(event) {
                 event.preventDefault();
+                if (this.isLoading) return;
                 
-                // Check lockout
-                if (this.isLockedOut()) {
-                    const remaining = Math.ceil(this.getLockoutRemaining() / 60000);
-                    this.showNotification('error', 'Account Locked',
-                        `Too many failed attempts. Try again in ${remaining} minute${remaining !== 1 ? 's' : ''}.`);
+                if (!this.validateLoginForm()) {
+                    this.showNotification('error', 'Validation Error', 'Please check all fields');
                     return;
                 }
                 
-                // Validate form
-                if (!this.validateForm()) {
-                    this.showNotification('warning', 'Validation Error',
-                        'Please check the highlighted fields.');
-                    return;
-                }
-                
-                // Prepare form data
-                const formData = {
-                    name: this.elements.name.value.trim(),
-                    email: this.elements.email.value.trim(),
-                    institution: this.elements.institution.value.trim()
+                const credentials = {
+                    email: this.elements.loginEmail.value.trim(),
+                    password: this.elements.loginPassword.value
                 };
                 
-                // Sanitize inputs
-                Object.keys(formData).forEach(key => {
-                    formData[key] = this.sanitizeInput(formData[key]);
-                });
+                // Check for default admin (local validation)
+                if (credentials.email === CONFIG.DEFAULT_ADMIN.email && 
+                    credentials.password === CONFIG.DEFAULT_ADMIN.password) {
+                    this.handleAdminLogin();
+                    return;
+                }
                 
-                // Start login process
-                this.setLoading(true, 'Authenticating...');
+                await this.processLogin(credentials);
+            }
+
+            async processLogin(credentials) {
+                this.setLoading(true, 'Logging in...');
                 
                 try {
-                    let result;
+                    const result = await this.callAPI(CONFIG.ENDPOINTS.LOGIN, credentials);
                     
-                    // Try server login if available
-                    if (this.state.isOnline && this.state.serverStatus === 'online') {
-                        result = await this.attemptServerLogin(formData);
+                    if (result.success) {
+                        this.saveSession(result.user, result.sessionId);
+                        this.showNotification('success', 'Welcome!', 'Redirecting to dashboard...');
+                        setTimeout(() => this.redirectToDashboard(), 1000);
+                    } else {
+                        throw new Error(result.error || 'Login failed');
                     }
-                    
-                    // If server login failed or offline, use local session
-                    if (!result || !result.success) {
-                        result = this.createLocalSession(formData);
-                    }
-                    
-                    // Success!
-                    this.resetAttempts();
-                    this.clearFormDraft();
-                    this.saveSession(result.user, result.session);
-                    
-                    this.showNotification('success', 'Welcome!', 
-                        'Redirecting to dashboard...');
-                    
-                    setTimeout(() => this.redirectToDashboard(), 1000);
-                    
                 } catch (error) {
-                    console.error('Login failed:', error);
-                    
-                    // Increment failed attempts
-                    this.incrementAttempts();
-                    
-                    // Show appropriate error
-                    let message = 'Login failed. Please try again.';
-                    
-                    if (error.message.includes('Network') || error.message.includes('fetch')) {
-                        message = 'Cannot reach server. Working in offline mode.';
-                    } else if (error.message.includes('401') || error.message.includes('403')) {
-                        message = 'Invalid credentials. Please check your information.';
-                    }
-                    
-                    this.showNotification('error', 'Authentication Failed', message);
-                    
-                    // Check if now locked out
-                    if (this.isLockedOut()) {
-                        const remaining = Math.ceil(this.getLockoutRemaining() / 60000);
-                        this.showNotification('warning', 'Account Locked',
-                            `Too many attempts. Please wait ${remaining} minute${remaining !== 1 ? 's' : ''}.`);
-                    }
-                    
+                    this.showNotification('error', 'Login Failed', error.message || 'Invalid credentials');
                 } finally {
                     this.setLoading(false);
                 }
             }
 
-            createLocalSession(formData) {
-                const userData = {
-                    id: `local-user-${Date.now()}`,
-                    ...formData,
-                    role: 'researcher',
-                    isLocal: true
+            handleAdminLogin() {
+                // Create local admin session
+                const adminUser = {
+                    id: 'admin_001',
+                    email: 'Admin',
+                    name: 'System Administrator',
+                    institution: 'ThoraxLab HQ',
+                    role: 'administrator'
                 };
                 
-                const sessionData = {
-                    id: `local-session-${Date.now()}`,
+                const session = {
+                    id: `admin_sess_${Date.now()}`,
                     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                    isLocal: true,
-                    isDemo: formData.email.includes('thoraxlab.org') || 
-                           formData.email.includes('demo')
+                    isAdmin: true
                 };
                 
-                return {
-                    success: true,
-                    user: userData,
-                    session: sessionData
-                };
+                this.saveSession(adminUser, session.id);
+                this.showNotification('success', 'Admin Access', 'Welcome Administrator');
+                setTimeout(() => this.redirectToDashboard(), 1000);
             }
 
-            // ========== UI UPDATES ==========
-            setLoading(loading, message = '') {
-                this.state.isLoading = loading;
+            // ========== REGISTRATION ==========
+            async handleRegister(event) {
+                event.preventDefault();
+                if (this.isLoading) return;
                 
-                if (loading) {
-                    this.elements.loginBtn.disabled = true;
-                    this.elements.loginBtn.classList.add('btn-loading');
-                    this.elements.loadingOverlay.classList.add('active');
-                    if (message) {
-                        this.elements.loadingMessage.textContent = message;
-                    }
-                } else {
-                    this.elements.loginBtn.disabled = false;
-                    this.elements.loginBtn.classList.remove('btn-loading');
-                    this.elements.loadingOverlay.classList.remove('active');
-                }
-            }
-
-            updateStatusDisplay(isOnline, serverStatus = null) {
-                const { statusDot, statusText } = this.elements;
-                
-                if (!isOnline) {
-                    statusDot.className = 'status-dot offline';
-                    statusText.textContent = 'Offline - Working locally';
+                if (!this.validateRegisterForm()) {
+                    this.showNotification('error', 'Validation Error', 'Please check all fields');
                     return;
                 }
                 
-                switch(serverStatus) {
-                    case 'online':
-                        statusDot.className = 'status-dot';
-                        statusText.textContent = 'Connected to ThoraxLab';
-                        break;
-                    case 'offline':
-                        statusDot.className = 'status-dot offline';
-                        statusText.textContent = 'Server unavailable - Working offline';
-                        break;
-                    default:
-                        statusDot.className = 'status-dot offline';
-                        statusText.textContent = 'Checking connection...';
+                const userData = {
+                    name: this.elements.registerName.value.trim(),
+                    email: this.elements.registerEmail.value.trim(),
+                    institution: this.elements.registerInstitution.value.trim(),
+                    password: this.elements.registerPassword.value
+                };
+                
+                await this.processRegistration(userData);
+            }
+
+            async processRegistration(userData) {
+                this.setLoading(true, 'Creating account...');
+                
+                try {
+                    const result = await this.callAPI(CONFIG.ENDPOINTS.REGISTER, userData);
+                    
+                    if (result.success) {
+                        this.showNotification('success', 'Account Created', 'Please login with your credentials');
+                        this.switchTab('login');
+                        // Auto-fill login form
+                        this.elements.loginEmail.value = userData.email;
+                        this.elements.loginPassword.value = '';
+                        this.elements.loginEmail.focus();
+                    } else {
+                        throw new Error(result.error || 'Registration failed');
+                    }
+                } catch (error) {
+                    this.showNotification('error', 'Registration Failed', error.message || 'Could not create account');
+                } finally {
+                    this.setLoading(false);
                 }
             }
 
-            showNotification(type, title, message, duration = CONFIG.TIMING.NOTIFICATION_TIMEOUT) {
-                const notificationId = `notif-${Date.now()}`;
+            // ========== SESSION MANAGEMENT ==========
+            checkExistingSession() {
+                try {
+                    const sessionData = localStorage.getItem(CONFIG.STORAGE.SESSION);
+                    const userData = localStorage.getItem(CONFIG.STORAGE.USER);
+                    
+                    if (sessionData && userData) {
+                        const session = JSON.parse(sessionData);
+                        const user = JSON.parse(userData);
+                        
+                        // Check if session is expired
+                        if (session.expiresAt && new Date(session.expiresAt) > new Date()) {
+                            // Auto-redirect if session is valid
+                            setTimeout(() => this.redirectToDashboard(), 500);
+                            return true;
+                        } else {
+                            // Clear expired session
+                            localStorage.removeItem(CONFIG.STORAGE.SESSION);
+                            localStorage.removeItem(CONFIG.STORAGE.USER);
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Session check error:', error);
+                    this.clearSession();
+                }
+                return false;
+            }
+
+            saveSession(user, sessionId) {
+                const session = {
+                    id: sessionId,
+                    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                };
+                
+                localStorage.setItem(CONFIG.STORAGE.USER, JSON.stringify(user));
+                localStorage.setItem(CONFIG.STORAGE.SESSION, JSON.stringify(session));
+            }
+
+            clearSession() {
+                localStorage.removeItem(CONFIG.STORAGE.USER);
+                localStorage.removeItem(CONFIG.STORAGE.SESSION);
+            }
+
+            redirectToDashboard() {
+                window.location.href = 'index.html';
+            }
+
+            // ========== UI HELPERS ==========
+            setLoading(loading, message = '') {
+                this.isLoading = loading;
+                
+                if (loading) {
+                    this.elements.loadingOverlay.classList.add('active');
+                    this.elements.loadingMessage.textContent = message;
+                    this.elements.loginBtn.disabled = true;
+                    this.elements.registerBtn.disabled = true;
+                    this.elements.loginBtn.classList.add('btn-loading');
+                    this.elements.registerBtn.classList.add('btn-loading');
+                } else {
+                    this.elements.loadingOverlay.classList.remove('active');
+                    this.elements.loginBtn.disabled = false;
+                    this.elements.registerBtn.disabled = false;
+                    this.elements.loginBtn.classList.remove('btn-loading');
+                    this.elements.registerBtn.classList.remove('btn-loading');
+                }
+            }
+
+            showNotification(type, title, message, duration = 5000) {
+                const notificationId = `notif_${Date.now()}`;
                 const container = this.elements.notifications;
                 
                 const notification = document.createElement('div');
                 notification.className = `notification ${type}`;
                 notification.id = notificationId;
-                notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
-                notification.setAttribute('aria-live', 'polite');
                 
                 const icons = {
                     error: '❌',
                     success: '✅',
-                    warning: '⚠️',
-                    info: 'ℹ️'
+                    warning: '⚠️'
                 };
                 
                 notification.innerHTML = `
@@ -1216,147 +901,32 @@
                         <div style="font-weight: 600; margin-bottom: 0.25rem;">${this.escapeHtml(title)}</div>
                         <div style="font-size: 0.9375rem; color: var(--text-medium);">${this.escapeHtml(message)}</div>
                     </div>
-                    <button class="notification-close" aria-label="Dismiss">
+                    <button onclick="document.getElementById('${notificationId}').remove()" 
+                            style="background: none; border: none; color: var(--text-light); cursor: pointer; padding: 0.25rem; font-size: 1rem;">
                         ✕
                     </button>
                 `;
                 
                 container.appendChild(notification);
                 
-                // Add close handler
-                notification.querySelector('.notification-close').addEventListener('click', () => {
-                    this.removeNotification(notificationId);
-                });
-                
-                // Auto-remove
                 if (duration > 0) {
                     setTimeout(() => {
-                        this.removeNotification(notificationId);
+                        const notif = document.getElementById(notificationId);
+                        if (notif) notif.remove();
                     }, duration);
                 }
-                
-                this.state.activeNotifications.add(notificationId);
-                
-                // Announce to screen readers
-                this.announceToScreenReader(`${title}: ${message}`);
             }
 
-            removeNotification(id) {
-                const notification = document.getElementById(id);
-                if (notification) {
-                    notification.style.opacity = '0';
-                    notification.style.transform = 'translateX(100%)';
-                    
-                    setTimeout(() => {
-                        notification.remove();
-                        this.state.activeNotifications.delete(id);
-                    }, 300);
-                }
-            }
-
-            announceToScreenReader(message) {
-                // Create or update live region
-                let liveRegion = document.getElementById('sr-live');
-                if (!liveRegion) {
-                    liveRegion = document.createElement('div');
-                    liveRegion.id = 'sr-live';
-                    liveRegion.className = 'sr-only';
-                    liveRegion.setAttribute('aria-live', 'polite');
-                    liveRegion.setAttribute('aria-atomic', 'true');
-                    document.body.appendChild(liveRegion);
-                }
-                
-                // Update message
-                liveRegion.textContent = message;
-                
-                // Clear after a moment
-                setTimeout(() => {
-                    liveRegion.textContent = '';
-                }, 1000);
-            }
-
-            // ========== NETWORK HANDLING ==========
-            handleNetworkChange(isOnline) {
-                this.state.isOnline = isOnline;
-                
-                if (isOnline) {
-                    this.updateStatusDisplay(true, this.state.serverStatus);
-                    this.checkServerStatus();
-                    this.showNotification('info', 'Back Online', 
-                        'Reconnected to network', 3000);
-                } else {
-                    this.updateStatusDisplay(false);
-                    this.showNotification('warning', 'Offline Mode',
-                        'Network connection lost. Working locally.', 3000);
-                }
-            }
-
-            setupPeriodicChecks() {
-                // Check server status every 30 seconds
-                setInterval(() => {
-                    this.checkServerStatus();
-                }, CONFIG.TIMING.CHECK_INTERVAL);
-            }
-
-            // ========== UTILITIES ==========
             escapeHtml(text) {
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
             }
-
-            sanitizeInput(text) {
-                return text.trim()
-                    .replace(/[<>]/g, '') // Basic XSS prevention
-                    .substring(0, 200); // Limit length
-            }
-
-            redirectToDashboard() {
-                window.location.href = 'index.html';
-            }
-
-            cleanup() {
-                // Abort any ongoing requests
-                this.abortController.abort();
-                
-                // Clear all timers
-                for (const timer of this.debounceTimers.values()) {
-                    clearTimeout(timer);
-                }
-                this.debounceTimers.clear();
-                
-                // Clear any remaining timeouts/intervals would go here
-            }
         }
 
-        // ==================== INITIALIZATION ====================
-        // Initialize when DOM is ready
+        // ========== INITIALIZE ==========
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize login system
-            const loginSystem = new ThoraxLabLogin();
-            
-            // Make available for debugging if needed
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                window.thoraxLabLogin = loginSystem;
-            }
-        });
-
-        // Handle page visibility changes
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                // Page became visible - check if we should redirect
-                const sessionData = localStorage.getItem('thoraxlab_session');
-                if (sessionData && window.location.pathname.includes('login.html')) {
-                    try {
-                        const session = JSON.parse(sessionData);
-                        if (!session.isDemo && session.expiresAt && new Date(session.expiresAt) > new Date()) {
-                            window.location.href = 'index.html';
-                        }
-                    } catch (e) {
-                        // Ignore errors
-                    }
-                }
-            }
+            new AuthSystem();
         });
     </script>
 </body>
