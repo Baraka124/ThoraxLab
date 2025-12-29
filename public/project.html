@@ -8,41 +8,96 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/socket.io/socket.io.js"></script>
     <style>
-        /* ===== IMPROVED DESIGN SYSTEM ===== */
+        /* ===== REDESIGNED DESIGN SYSTEM ===== */
         :root {
+            /* Primary Colors */
             --primary-blue: #1A5F7A;
+            --primary-blue-dark: #0F4559;
+            --primary-blue-light: #2A7A99;
+            
+            /* Secondary Colors */
             --clinical-green: #00C9A7;
             --medical-teal: #00A896;
             --research-purple: #6D5ACF;
             --warning-orange: #F59E0B;
             --error-red: #EF4444;
             --success-green: #10B981;
+            
+            /* Neutrals */
             --text-dark: #1E293B;
             --text-medium: #475569;
             --text-light: #64748B;
+            --text-lighter: #94A3B8;
             --background-gray: #F8FAFC;
+            --background-gray-dark: #F1F5F9;
             --card-white: #FFFFFF;
             --border-subtle: #E2E8F0;
-            --radius-smooth: 16px;
-            --radius-tight: 10px;
-            --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-medium: 0 10px 32px rgba(0, 0, 0, 0.1);
-            --shadow-large: 0 20px 60px rgba(0, 0, 0, 0.15);
-            --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            --border-medium: #CBD5E1;
+            
+            /* Gradients */
             --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--medical-teal));
             --gradient-clinical: linear-gradient(135deg, var(--clinical-green), var(--medical-teal));
             --gradient-research: linear-gradient(135deg, var(--research-purple), #8B5CF6);
+            --gradient-warning: linear-gradient(135deg, var(--warning-orange), #F97316);
+            --gradient-success: linear-gradient(135deg, var(--success-green), #22C55E);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Z-indices */
+            --z-dropdown: 100;
+            --z-sticky: 200;
+            --z-modal-backdrop: 300;
+            --z-modal: 400;
+            --z-popover: 500;
+            --z-tooltip: 600;
+            --z-toast: 700;
         }
 
+        /* ===== RESET & BASE STYLES ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :focus-visible {
+            outline: 3px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background-gray);
             color: var(--text-dark);
             line-height: 1.6;
@@ -51,36 +106,334 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* ===== IMPROVED LAYOUT ===== */
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
+        /* ===== UTILITY CLASSES ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 2.5rem;
-            padding: 2.5rem 0;
-            align-items: start;
+        .hidden {
+            display: none !important;
         }
 
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ===== LOADING STATES ===== */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-2xl);
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-lg);
+        }
+
+        .loading-text {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== SKELETON LOADING ===== */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-md);
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ===== NOTIFICATION SYSTEM ===== */
+        .notification-container {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            z-index: var(--z-toast);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            max-width: 400px;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .notification {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-xl);
+            border-left: 4px solid var(--primary-blue);
+            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+        }
+
+        .notification.error {
+            border-left-color: var(--error-red);
+            background: #FEF2F2;
+        }
+
+        .notification.success {
+            border-left-color: var(--success-green);
+            background: #F0FDF4;
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-orange);
+            background: #FFFBEB;
+        }
+
+        .notification.info {
+            border-left-color: var(--primary-blue);
+            background: #EFF6FF;
+        }
+
+        .notification-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            color: var(--text-dark);
+        }
+
+        .notification-message {
+            font-size: 0.9375rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: var(--space-xs);
+            font-size: 1.125rem;
+            transition: var(--transition-fast);
+            border-radius: var(--radius-sm);
+        }
+
+        .notification-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
 
-        /* ===== IMPROVED HEADER ===== */
+        /* ===== MODAL SYSTEM ===== */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: var(--z-modal-backdrop);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-base);
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-white);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition-base);
+        }
+
+        .modal-backdrop.active .modal {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: var(--space-xs);
+            font-size: 1.5rem;
+            line-height: 1;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--background-gray);
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: var(--space-xl);
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .modal-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+        }
+
+        /* ===== LAYOUT SYSTEM ===== */
+        .app-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        .grid-2-col {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: var(--space-xl);
+            align-items: start;
+        }
+
+        .grid-3-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-sm {
+            gap: var(--space-sm);
+        }
+
+        .gap-md {
+            gap: var(--space-md);
+        }
+
+        .gap-lg {
+            gap: var(--space-lg);
+        }
+
+        .gap-xl {
+            gap: var(--space-xl);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .mt-sm { margin-top: var(--space-sm); }
+        .mt-md { margin-top: var(--space-md); }
+        .mt-lg { margin-top: var(--space-lg); }
+        .mt-xl { margin-top: var(--space-xl); }
+        .mb-sm { margin-bottom: var(--space-sm); }
+        .mb-md { margin-bottom: var(--space-md); }
+        .mb-lg { margin-bottom: var(--space-lg); }
+        .mb-xl { margin-bottom: var(--space-xl); }
+
+        /* ===== HEADER ===== */
         .app-header {
             background: var(--card-white);
             border-bottom: 1px solid var(--border-subtle);
-            padding: 1rem 0;
+            padding: var(--space-md) 0;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: var(--z-sticky);
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.95);
         }
@@ -94,7 +447,7 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.875rem;
+            gap: var(--space-sm);
             text-decoration: none;
             transition: var(--transition-fast);
         }
@@ -103,18 +456,18 @@
             transform: translateY(-1px);
         }
 
-        .logo-icon {
-            width: 42px;
-            height: 42px;
+        .logo-badge {
+            width: 40px;
+            height: 40px;
             background: var(--gradient-primary);
             color: white;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
+            font-size: 1.125rem;
+            box-shadow: var(--shadow-md);
         }
 
         .logo-text {
@@ -122,14 +475,14 @@
         }
 
         .logo-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: var(--primary-blue);
             letter-spacing: -0.02em;
         }
 
         .logo-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.6875rem;
             font-weight: 600;
             color: var(--text-light);
             letter-spacing: 0.05em;
@@ -138,389 +491,25 @@
 
         .header-actions {
             display: flex;
-            gap: 1rem;
+            gap: var(--space-md);
             align-items: center;
         }
 
-        /* ===== IMPROVED PROJECT HEADER ===== */
-        .project-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 3.5rem 0;
-            margin: -1.5rem -1.5rem 2.5rem;
-            border-radius: 0 0 var(--radius-smooth) var(--radius-smooth);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .project-header-content {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-        }
-
-        .project-title {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .project-subtitle {
-            font-size: 1.125rem;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-            max-width: 700px;
-        }
-
-        /* ===== IMPROVED STATUS & TAGS ===== */
-        .project-meta {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.625rem 1.25rem;
-            border-radius: 100px;
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-active {
-            background: rgba(0, 201, 167, 0.2);
-            color: white;
-            border: 1px solid rgba(0, 201, 167, 0.3);
-        }
-
-        .status-planning {
-            background: rgba(245, 158, 11, 0.2);
-            color: white;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .status-completed {
-            background: rgba(16, 185, 129, 0.2);
-            color: white;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .tags-container {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin: 1.5rem 0;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-radius: 100px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: var(--transition-fast);
-        }
-
-        .tag:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-1px);
-        }
-
-        .tag i {
-            font-size: 0.75rem;
-        }
-
-        /* ===== IMPROVED CARDS ===== */
-        .card {
-            background: var(--card-white);
-            border-radius: var(--radius-smooth);
-            padding: 2rem;
-            border: 1px solid var(--border-subtle);
-            transition: var(--transition-smooth);
-            box-shadow: var(--shadow-subtle);
-            margin-bottom: 1.5rem;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--clinical-green);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--background-gray);
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-title i {
-            color: var(--primary-blue);
-        }
-
-        /* ===== IMPROVED DISCUSSIONS ===== */
-        .discussion-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            max-height: 600px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-        }
-
-        .discussion-item {
-            background: var(--card-white);
-            border-radius: var(--radius-tight);
-            padding: 1.5rem;
-            border: 1px solid var(--border-subtle);
-            transition: var(--transition-fast);
-            position: relative;
-        }
-
-        .discussion-item:hover {
-            border-color: var(--clinical-green);
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .discussion-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--gradient-clinical);
-            border-radius: 4px 0 0 4px;
-        }
-
-        .discussion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            gap: 1rem;
-        }
-
-        .discussion-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            line-height: 1.3;
-            flex: 1;
-        }
-
-        .discussion-content {
-            color: var(--text-medium);
-            line-height: 1.7;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: var(--background-gray);
-            border-radius: var(--radius-tight);
-            border-left: 3px solid var(--clinical-green);
-        }
-
-        /* ===== IMPROVED VOTING SYSTEM ===== */
-        .vote-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--background-gray);
-            padding: 0.5rem;
-            border-radius: var(--radius-tight);
-        }
-
-        .vote-btn {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: var(--transition-fast);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-        }
-
-        .vote-btn:hover {
-            background: var(--card-white);
-            color: var(--clinical-green);
-            transform: scale(1.1);
-        }
-
-        .vote-btn.active {
-            background: var(--clinical-green);
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 201, 167, 0.3);
-        }
-
-        .vote-count {
-            font-weight: 800;
-            font-size: 1.125rem;
-            color: var(--text-dark);
-            min-width: 2.5rem;
-            text-align: center;
-        }
-
-        /* ===== IMPROVED COMMENTS ===== */
-        .comments-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .comment {
-            background: var(--background-gray);
-            border-radius: var(--radius-tight);
-            padding: 1.25rem;
-            margin-top: 1rem;
-            position: relative;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .comment-author {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .comment-avatar {
-            width: 28px;
-            height: 28px;
-            background: var(--gradient-primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .comment-time {
-            font-size: 0.75rem;
-            color: var(--text-light);
-        }
-
-        .comment-content {
-            color: var(--text-medium);
-            line-height: 1.6;
-            padding-left: 2.25rem;
-        }
-
-        /* ===== IMPROVED FORMS ===== */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 0.9375rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--border-subtle);
-            border-radius: var(--radius-tight);
-            font-family: inherit;
-            font-size: 1rem;
-            transition: var(--transition-fast);
-            background: var(--card-white);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-
-        /* ===== IMPROVED BUTTONS ===== */
+        /* ===== BUTTON SYSTEM ===== */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.625rem;
-            padding: 0.875rem 1.75rem;
-            border-radius: var(--radius-tight);
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--radius-md);
             font-weight: 600;
-            font-size: 0.9375rem;
-            border: none;
+            font-size: 0.875rem;
+            border: 2px solid transparent;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: var(--transition-base);
             text-decoration: none;
+            white-space: nowrap;
             position: relative;
             overflow: hidden;
         }
@@ -534,7 +523,7 @@
             height: 5px;
             background: rgba(255, 255, 255, 0.5);
             opacity: 0;
-            border-radius: 100%;
+            border-radius: 50%;
             transform: scale(1, 1) translate(-50%);
             transform-origin: 50% 50%;
         }
@@ -559,313 +548,378 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(26, 95, 122, 0.3);
+            box-shadow: var(--shadow-lg);
         }
 
-        .btn-clinical {
-            background: var(--gradient-clinical);
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: var(--card-white);
+            border-color: var(--border-subtle);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--background-gray);
+            border-color: var(--border-medium);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--error-red);
             color: white;
         }
 
         .btn-outline {
             background: transparent;
-            border: 2px solid var(--border-subtle);
+            border-color: var(--border-subtle);
             color: var(--text-dark);
         }
 
-        .btn-outline:hover {
+        .btn-outline:hover:not(:disabled) {
             background: var(--background-gray);
             border-color: var(--text-light);
-            transform: translateY(-1px);
         }
 
         .btn-sm {
-            padding: 0.625rem 1.25rem;
+            padding: 0.375rem 0.75rem;
             font-size: 0.8125rem;
+        }
+
+        .btn-lg {
+            padding: 0.875rem 1.75rem;
+            font-size: 1rem;
         }
 
         .btn-icon {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             padding: 0;
-            justify-content: center;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
         }
 
-        /* ===== IMPROVED TEAM SECTION ===== */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 1.25rem;
-            margin-top: 1.5rem;
+        .btn-loading .btn-text {
+            visibility: hidden;
         }
 
-        .team-member {
-            text-align: center;
-            padding: 1.25rem;
-            background: var(--background-gray);
-            border-radius: var(--radius-tight);
-            transition: var(--transition-fast);
-        }
-
-        .team-member:hover {
-            background: var(--card-white);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .member-avatar {
-            width: 56px;
-            height: 56px;
-            background: var(--gradient-primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin: 0 auto 0.75rem;
-            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
-        }
-
-        .member-name {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .member-role {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .member-status {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #10B981;
-            border-radius: 50%;
-            margin-top: 0.5rem;
-            position: relative;
-        }
-
-        .member-status::after {
+        .btn-loading::after {
             content: '';
             position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: #10B981;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
             border-radius: 50%;
-            opacity: 0.3;
-            animation: pulse 2s infinite;
+            animation: spin 0.8s linear infinite;
         }
 
-        /* ===== IMPROVED METRICS ===== */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: var(--space-lg);
         }
 
-        .metric-card {
-            padding: 1.25rem;
-            background: var(--background-gray);
-            border-radius: var(--radius-tight);
-            text-align: center;
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9375rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9375rem;
             transition: var(--transition-fast);
-        }
-
-        .metric-card:hover {
             background: var(--card-white);
-            transform: translateY(-2px);
+            color: var(--text-dark);
         }
 
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary-blue);
-            line-height: 1;
-            margin-bottom: 0.25rem;
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
         }
 
-        .metric-label {
-            font-size: 0.8125rem;
-            color: var(--text-light);
-            font-weight: 500;
+        .form-input:disabled {
+            background: var(--background-gray);
+            cursor: not-allowed;
         }
 
-        .progress-bar {
-            height: 8px;
-            background: var(--border-subtle);
-            border-radius: 4px;
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            background: var(--card-white);
+            color: var(--text-dark);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748B' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25em;
+            padding-right: 2.5rem;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+
+        /* ===== CARD SYSTEM ===== */
+        .card {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            transition: var(--transition-base);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .card-body {
+            padding: var(--space-lg);
+        }
+
+        .card-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        /* ===== PROJECT HEADER ===== */
+        .project-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-2xl) 0;
+            margin: calc(-1 * var(--space-lg)) calc(-1 * var(--space-lg)) var(--space-xl);
+            position: relative;
             overflow: hidden;
-            margin-top: 0.75rem;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient-clinical);
-            border-radius: 4px;
-            transition: width 1s ease-out;
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
         }
 
-        /* ===== IMPROVED LOADING STATES ===== */
-        .loading {
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .project-header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-description {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-xl);
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .meta-icon {
+            font-size: 1.25rem;
+            opacity: 0.8;
+        }
+
+        .meta-content {
             display: flex;
             flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--border-subtle);
-            border-top-color: var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1.5rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* ===== IMPROVED NOTIFICATIONS ===== */
-        .notification {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            padding: 1.25rem 1.75rem;
-            border-radius: var(--radius-smooth);
-            background: var(--card-white);
-            box-shadow: var(--shadow-large);
-            border-left: 4px solid var(--primary-blue);
-            z-index: 9999;
-            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-width: 400px;
-            display: none;
+            gap: var(--space-sm);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
+        .status-active {
+            background: rgba(0, 201, 167, 0.2);
+        }
+
+        .status-planning {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .tags-container {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-top: var(--space-lg);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .grid-2-col {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
             }
-            to {
-                transform: translateX(0);
-                opacity: 1;
+            
+            .grid-3-col {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        .notification-error {
-            border-left-color: var(--error-red);
-            background: #FEF2F2;
-        }
-
-        .notification-success {
-            border-left-color: var(--success-green);
-            background: #F0FDF4;
-        }
-
-        .notification-warning {
-            border-left-color: var(--warning-orange);
-            background: #FFFBEB;
-        }
-
-        /* ===== IMPROVED UTILITIES ===== */
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-3 { gap: 0.75rem; }
-        .gap-4 { gap: 1rem; }
-        .w-full { width: 100%; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .text-center { text-align: center; }
-
-        /* ===== IMPROVED RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
             .app-container {
-                padding: 0 1rem;
+                padding: 0 var(--space-md);
             }
             
             .project-header {
-                padding: 2.5rem 1rem;
-                margin: -1rem -1rem 2rem;
-                border-radius: 0;
+                margin: calc(-1 * var(--space-md)) calc(-1 * var(--space-md)) var(--space-lg);
+                padding: var(--space-xl) 0;
             }
             
             .project-title {
                 font-size: 2rem;
             }
             
-            .main-grid {
-                padding: 1.5rem 0;
-                gap: 1.5rem;
-            }
-            
             .project-meta {
-                gap: 1rem;
+                gap: var(--space-lg);
             }
             
-            .card {
-                padding: 1.5rem;
-            }
-            
-            .card-title {
-                font-size: 1.25rem;
+            .grid-3-col {
+                grid-template-columns: 1fr;
             }
             
             .header-content {
                 flex-direction: column;
-                gap: 1rem;
+                gap: var(--space-md);
             }
             
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .discussion-header {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-            
-            .vote-controls {
-                align-self: flex-start;
+            .modal {
+                max-height: 80vh;
             }
         }
 
-        /* ===== IMPROVED ACCESSIBILITY ===== */
+        @media (max-width: 480px) {
+            .modal-body {
+                padding: var(--space-lg);
+            }
+            
+            .modal-footer {
+                padding: var(--space-lg);
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* ===== REDUCED MOTION ===== */
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -876,25 +930,19 @@
             }
         }
 
-        .focus-visible {
-            outline: 3px solid var(--primary-blue);
-            outline-offset: 2px;
-        }
-
-        /* ===== IMPROVED PRINT STYLES ===== */
+        /* ===== PRINT STYLES ===== */
         @media print {
             .app-header,
             .btn,
-            .vote-controls,
-            .comment-input-container,
-            .project-header::before {
+            .modal-backdrop,
+            .notification-container {
                 display: none !important;
             }
             
             .project-header {
                 background: white !important;
                 color: var(--text-dark) !important;
-                padding: 2rem 0 !important;
+                padding: var(--space-lg) 0 !important;
                 margin: 0 !important;
             }
             
@@ -904,12 +952,12 @@
                 break-inside: avoid;
             }
             
-            .main-grid {
+            .grid-2-col {
                 display: block;
             }
         }
 
-        /* ===== IMPROVED CUSTOM SCROLLBAR ===== */
+        /* ===== CUSTOM SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -917,12 +965,12 @@
 
         ::-webkit-scrollbar-track {
             background: var(--background-gray);
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
         }
 
         ::-webkit-scrollbar-thumb {
             background: var(--border-subtle);
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
         }
 
         ::-webkit-scrollbar-thumb:hover {
@@ -936,23 +984,20 @@
         <div class="app-container">
             <div class="header-content">
                 <a href="index.html" class="logo">
-                    <div class="logo-icon">🫁</div>
+                    <div class="logo-badge">TL</div>
                     <div class="logo-text">
                         <div class="logo-title">ThoraxLab</div>
-                        <div class="logo-subtitle">Pneumology Research</div>
+                        <div class="logo-subtitle">Research Platform</div>
                     </div>
                 </a>
                 
                 <div class="header-actions">
-                    <a href="index.html" class="btn btn-outline">
+                    <a href="index.html" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Dashboard
                     </a>
                     
-                    <div class="flex items-center gap-3">
-                        <div id="userInfo" class="hidden">
-                            <span id="userName" class="body-small"></span>
-                        </div>
-                        <button onclick="logout()" class="btn btn-outline">
+                    <div class="flex items-center gap-md">
+                        <button onclick="App.logout()" class="btn btn-outline">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </div>
@@ -964,1093 +1009,873 @@
     <!-- Project Header -->
     <div class="project-header">
         <div class="app-container">
-            <div id="projectLoading" class="loading">
-                <div class="spinner"></div>
-                <p style="color: white; opacity: 0.8; margin-top: 1rem;">Loading project...</p>
-            </div>
-            
-            <div id="projectContent" class="hidden">
-                <div class="flex items-center gap-4 mb-4">
-                    <span class="status-badge status-active" id="projectStatus">
-                        <i class="fas fa-circle"></i> <span id="statusText">Active</span>
-                    </span>
-                    <span style="opacity: 0.9;" id="projectPhase">
-                        <i class="fas fa-flask"></i> Research Project
-                    </span>
-                </div>
-                
-                <h1 class="project-title" id="projectTitle">Loading Project...</h1>
-                <p class="project-subtitle" id="projectSubtitle">Pneumology Research Collaboration</p>
-                
-                <div class="tags-container" id="projectTags">
-                    <!-- Tags will load here -->
-                </div>
-                
-                <div class="project-meta">
-                    <div class="meta-item" style="display: flex; align-items: center; gap: 0.5rem; color: white; opacity: 0.9;">
-                        <i class="fas fa-user-md" style="font-size: 1.125rem;"></i>
-                        <div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">Lead Researcher</div>
-                            <div style="font-weight: 600;" id="projectLead">Loading...</div>
-                        </div>
-                    </div>
-                    <div class="meta-item" style="display: flex; align-items: center; gap: 0.5rem; color: white; opacity: 0.9;">
-                        <i class="fas fa-calendar" style="font-size: 1.125rem;"></i>
-                        <div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">Started</div>
-                            <div style="font-weight: 600;" id="projectDate">Loading...</div>
-                        </div>
-                    </div>
-                    <div class="meta-item" style="display: flex; align-items: center; gap: 0.5rem; color: white; opacity: 0.9;">
-                        <i class="fas fa-chart-line" style="font-size: 1.125rem;"></i>
-                        <div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">Consensus</div>
-                            <div style="font-weight: 600;" id="projectConsensus">Loading...</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="project-header-content" id="projectHeader">
+                <!-- Content loaded dynamically -->
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
     <main class="app-container">
-        <div class="main-grid">
-            <!-- Left Column: Project Content & Discussions -->
+        <div class="grid-2-col">
+            <!-- Main Content Area -->
             <div>
-                <!-- Project Description -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-file-medical"></i> Project Overview
-                        </h3>
-                        <button onclick="toggleEditDescription()" class="btn btn-outline btn-sm" id="editDescBtn">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                    </div>
-                    
-                    <div id="descriptionView">
-                        <p id="projectDescription" style="line-height: 1.8; font-size: 1.0625rem;">
-                            Loading project details...
-                        </p>
-                    </div>
-                    
-                    <div id="descriptionEdit" class="hidden">
-                        <textarea id="editDescription" class="form-input form-textarea" rows="6"></textarea>
-                        <div class="flex gap-3 mt-4">
-                            <button onclick="saveDescription()" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Changes
-                            </button>
-                            <button onclick="toggleEditDescription()" class="btn btn-outline">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
+                <!-- Project Overview -->
+                <div class="card" id="projectOverview">
+                    <!-- Content loaded dynamically -->
                 </div>
 
-                <!-- Discussions Section -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-comments"></i> Research Discussions
-                        </h3>
-                        <button onclick="toggleDiscussionForm()" class="btn btn-clinical">
-                            <i class="fas fa-plus"></i> New Discussion
-                        </button>
-                    </div>
-
-                    <!-- New Discussion Form -->
-                    <div id="newDiscussionForm" class="hidden mt-4">
-                        <div class="form-group">
-                            <input type="text" 
-                                   id="discussionTitle" 
-                                   class="form-input" 
-                                   placeholder="What would you like to discuss?"
-                                   autocomplete="off">
-                        </div>
-                        <div class="form-group">
-                            <textarea id="discussionContent" 
-                                      class="form-input form-textarea" 
-                                      placeholder="Describe your research question, clinical consideration, or hypothesis..."
-                                      rows="4"></textarea>
-                        </div>
-                        <div class="flex gap-3">
-                            <button onclick="toggleDiscussionForm()" class="btn btn-outline flex-1">
-                                Cancel
-                            </button>
-                            <button onclick="createDiscussion()" class="btn btn-primary flex-1" id="createDiscussionBtn">
-                                <i class="fas fa-paper-plane"></i> Start Discussion
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Discussions List -->
-                    <div id="discussionsContainer" class="discussion-list mt-4">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p style="color: var(--text-light); margin-top: 1rem;">Loading discussions...</p>
-                        </div>
-                    </div>
-
-                    <!-- Empty Discussions State -->
-                    <div id="emptyDiscussions" class="hidden" style="text-align: center; padding: 3rem 2rem;">
-                        <div style="font-size: 3rem; color: var(--text-light); opacity: 0.3; margin-bottom: 1.5rem;">
-                            <i class="fas fa-comment-medical"></i>
-                        </div>
-                        <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);">No Discussions Yet</h4>
-                        <p style="color: var(--text-light); margin-bottom: 1.5rem;">
-                            Start the first discussion to collaborate with your team
-                        </p>
-                        <button onclick="toggleDiscussionForm()" class="btn btn-clinical">
-                            <i class="fas fa-plus"></i> Start First Discussion
-                        </button>
-                    </div>
+                <!-- Discussions -->
+                <div class="card" id="discussionsSection">
+                    <!-- Content loaded dynamically -->
                 </div>
             </div>
 
-            <!-- Right Column: Team & Activity -->
+            <!-- Sidebar -->
             <div>
                 <!-- Team Section -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-users"></i> Research Team
-                        </h3>
-                        <span style="font-size: 0.875rem; color: var(--text-light);" id="teamCount">
-                            0 members
-                        </span>
-                    </div>
-                    
-                    <div class="team-grid" id="teamContainer">
-                        <div class="skeleton" style="width: 100%; height: 120px;"></div>
-                        <div class="skeleton" style="width: 100%; height: 120px;"></div>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <button onclick="inviteToProject()" class="btn btn-outline w-full">
-                            <i class="fas fa-user-plus"></i> Invite Researchers
-                        </button>
-                    </div>
+                <div class="card" id="teamSection">
+                    <!-- Content loaded dynamically -->
                 </div>
 
-                <!-- Project Stats -->
-                <div class="card">
-                    <h3 class="card-title" style="margin-bottom: 1.5rem;">
-                        <i class="fas fa-chart-bar"></i> Project Metrics
-                    </h3>
-                    
-                    <div style="margin-bottom: 1.5rem;">
-                        <div class="flex justify-between mb-2">
-                            <span style="font-size: 0.875rem; color: var(--text-dark); font-weight: 600;">
-                                Consensus Progress
-                            </span>
-                            <span style="font-size: 0.875rem; font-weight: 700; color: var(--primary-blue);" id="consensusScore">
-                                0%
-                            </span>
-                        </div>
-                        <div class="progress-bar">
-                            <div id="consensusBar" class="progress-fill" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-value" id="discussionCount">0</div>
-                            <div class="metric-label">Discussions</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value" id="commentCount">0</div>
-                            <div class="metric-label">Comments</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value" id="voteCount">0</div>
-                            <div class="metric-label">Votes</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value" id="teamSize">1</div>
-                            <div class="metric-label">Team Members</div>
-                        </div>
-                    </div>
+                <!-- Metrics -->
+                <div class="card" id="metricsSection">
+                    <!-- Content loaded dynamically -->
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="card">
-                    <h3 class="card-title" style="margin-bottom: 1.5rem;">
-                        <i class="fas fa-bolt"></i> Quick Actions
-                    </h3>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <button onclick="toggleDiscussionForm()" class="btn btn-outline" style="justify-content: flex-start;">
-                            <i class="fas fa-comment-medical"></i> Start Discussion
-                        </button>
-                        <button onclick="shareProject()" class="btn btn-outline" style="justify-content: flex-start;">
-                            <i class="fas fa-share"></i> Share Project
-                        </button>
-                        <button onclick="exportProject()" class="btn btn-outline" style="justify-content: flex-start;">
-                            <i class="fas fa-download"></i> Export Data
-                        </button>
-                        <button onclick="requestToJoin()" class="btn btn-outline" style="justify-content: flex-start;">
-                            <i class="fas fa-user-plus"></i> Request to Join
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="card">
-                    <h3 class="card-title" style="margin-bottom: 1.5rem;">
-                        <i class="fas fa-history"></i> Recent Activity
-                    </h3>
-                    
-                    <div id="activityContainer" style="min-height: 120px;">
-                        <div style="text-align: center; padding: 2rem; color: var(--text-light);">
-                            <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                            <p>No recent activity</p>
-                        </div>
-                    </div>
+                <div class="card" id="quickActions">
+                    <!-- Content loaded dynamically -->
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Notification -->
-    <div id="notification" class="notification hidden"></div>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
 
-    <!-- Export Modal -->
-    <div id="exportModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 style="font-size: 1.5rem; font-weight: 700;">Export Project Data</h3>
-                <button class="modal-close" onclick="closeExportModal()">&times;</button>
-            </div>
-            
-            <div style="margin: 2rem 0;">
-                <p style="color: var(--text-light); margin-bottom: 1.5rem;">
-                    Choose a format to export your project data:
-                </p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <button onclick="exportAsJSON()" class="btn btn-outline" style="flex-direction: column; height: 100px;">
-                        <i class="fas fa-file-code" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                        <span>JSON</span>
-                        <span style="font-size: 0.75rem; color: var(--text-light);">For developers</span>
-                    </button>
-                    
-                    <button onclick="exportAsCSV()" class="btn btn-outline" style="flex-direction: column; height: 100px;">
-                        <i class="fas fa-file-csv" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                        <span>CSV</span>
-                        <span style="font-size: 0.75rem; color: var(--text-light);">For spreadsheets</span>
-                    </button>
-                </div>
-            </div>
+    <!-- Modals -->
+    <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal" id="modal"></div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="modal-backdrop" id="loadingOverlay">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">Loading...</div>
         </div>
     </div>
 
-    <script>
-        // ===== IMPROVED GLOBAL STATE =====
-        const API_BASE = window.location.origin;
-        const ThoraxLabProject = {
-            // Core state
-            currentProject: null,
-            currentUser: null,
-            socket: null,
-            
-            // Data
-            discussions: [],
-            teamMembers: [],
-            userVotes: new Map(),
-            typingUsers: new Map(),
-            
-            // UI State
-            isEditingDescription: false,
-            activeDiscussion: null,
-            
-            // Initialize with better error handling
+    <script type="module">
+        // ============================================
+        // THORAXLAB PROJECT SYSTEM - COMPLETE REWRITE
+        // ============================================
+
+        // Import modules
+        import { StateManager } from './modules/state.js';
+        import { DOMRenderer } from './modules/renderer.js';
+        import { APIService } from './modules/api.js';
+        import { WebSocketService } from './modules/websocket.js';
+        import { DiscussionSystem } from './modules/discussions.js';
+        import { TeamManager } from './modules/team.js';
+        import { MetricsManager } from './modules/metrics.js';
+        import { NotificationSystem } from './modules/notifications.js';
+        import { ModalSystem } from './modules/modal.js';
+
+        // ==================== MAIN APPLICATION ====================
+        class ThoraxLabProject {
+            constructor() {
+                this.config = {
+                    API_BASE: window.location.origin,
+                    WEBSOCKET_URL: window.location.origin,
+                    STORAGE_KEYS: {
+                        USER: 'thoraxlab_user',
+                        SESSION: 'thoraxlab_session',
+                        PROJECT_CACHE: 'thoraxlab_project_cache'
+                    },
+                    CACHE: {
+                        TTL: 5 * 60 * 1000, // 5 minutes
+                        MAX_SIZE: 50 // max cached items
+                    },
+                    TIMING: {
+                        DEBOUNCE: 300,
+                        RETRY_DELAY: 1000,
+                        MAX_RETRIES: 3,
+                        HEARTBEAT: 30000 // 30 seconds
+                    }
+                };
+
+                // Initialize modules
+                this.state = new StateManager(this.config);
+                this.api = new APIService(this.config);
+                this.ws = new WebSocketService(this.config);
+                this.renderer = new DOMRenderer(this.state);
+                this.discussions = new DiscussionSystem(this.state, this.api, this.ws);
+                this.team = new TeamManager(this.state, this.api);
+                this.metrics = new MetricsManager(this.state);
+                this.notifications = new NotificationSystem();
+                this.modal = new ModalSystem();
+
+                // Current project
+                this.projectId = null;
+                this.projectData = null;
+
+                // Initialize
+                this.init();
+            }
+
             async init() {
-                console.log('🚀 ThoraxLab Project Page Initializing...');
-                
-                // Show skeleton loader
-                this.showSkeletonLoader();
-                
-                // Load user
-                await this.loadUser();
-                if (!this.currentUser) {
+                console.log('🚀 ThoraxLab Project System Initializing...');
+
+                // Check authentication
+                if (!await this.checkAuth()) {
                     window.location.href = 'login.html';
                     return;
                 }
-                
+
                 // Get project ID from URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const projectId = urlParams.get('id');
-                
-                if (!projectId) {
-                    this.showError('No project specified');
-                    window.location.href = 'index.html';
+                this.projectId = this.getProjectIdFromURL();
+                if (!this.projectId) {
+                    this.notifications.show('error', 'No Project', 'Project ID not found in URL');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
                     return;
                 }
-                
-                // Connect WebSocket with retry
-                this.connectSocket();
-                
-                // Load project data with retry
+
+                // Setup event listeners
+                this.setupEventListeners();
+
+                // Load project data
+                await this.loadProject();
+
+                // Initialize WebSocket
+                this.ws.connect(this.projectId);
+
+                // Start periodic updates
+                this.startPeriodicUpdates();
+
+                console.log('✅ Project system ready');
+            }
+
+            async checkAuth() {
                 try {
-                    await this.loadProjectWithRetry(projectId);
+                    const userData = localStorage.getItem(this.config.STORAGE_KEYS.USER);
+                    const sessionData = localStorage.getItem(this.config.STORAGE_KEYS.SESSION);
                     
-                    // Load discussions
-                    await this.loadDiscussions(projectId);
+                    if (!userData || !sessionData) {
+                        return false;
+                    }
+
+                    // Validate session
+                    const session = JSON.parse(sessionData);
+                    const currentUser = JSON.parse(userData);
                     
-                    // Update UI
-                    this.hideSkeletonLoader();
-                    this.renderProject();
-                    
-                    console.log('✅ Project page ready');
+                    this.state.setUser(currentUser);
+                    this.state.setSession(session);
+
+                    return true;
                 } catch (error) {
-                    console.error('Failed to initialize:', error);
-                    this.showError(`Could not load project: ${error.message}`);
-                    this.showErrorState();
+                    console.error('Auth check failed:', error);
+                    return false;
                 }
-            },
-            
-            // ===== IMPROVED USER MANAGEMENT =====
-            async loadUser() {
+            }
+
+            getProjectIdFromURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('id');
+            }
+
+            async loadProject() {
                 try {
-                    const userData = localStorage.getItem('thoraxlab_user');
-                    if (userData) {
-                        this.currentUser = JSON.parse(userData);
-                        this.updateUserUI();
-                        return;
+                    // Show loading
+                    this.showLoading('Loading project...');
+
+                    // Try cache first
+                    const cached = this.getCachedProject(this.projectId);
+                    if (cached) {
+                        this.projectData = cached;
+                        this.renderProject();
+                        this.notifications.show('info', 'Using cached data', 'Loading latest from server...');
                     }
+
+                    // Load from API
+                    const project = await this.api.getProject(this.projectId);
                     
-                    // Try to fetch from session
-                    const response = await fetch('/api/me');
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.user) {
-                            this.currentUser = data.user;
-                            localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
-                            this.updateUserUI();
-                        }
-                    }
-                } catch (error) {
-                    console.warn('Could not load user:', error);
-                }
-            },
-            
-            updateUserUI() {
-                const userInfo = document.getElementById('userInfo');
-                const userName = document.getElementById('userName');
-                
-                if (this.currentUser) {
-                    userInfo.classList.remove('hidden');
-                    userName.textContent = this.currentUser.name;
-                }
-            },
-            
-            // ===== IMPROVED WEB SOCKET =====
-            connectSocket() {
-                try {
-                    this.socket = io(API_BASE, {
-                        reconnection: true,
-                        reconnectionAttempts: 5,
-                        reconnectionDelay: 1000,
-                        timeout: 10000
-                    });
-                    
-                    this.socket.on('connect', () => {
-                        console.log('🔗 Connected to WebSocket');
+                    if (project) {
+                        this.projectData = project;
+                        this.state.setProject(project);
+                        this.cacheProject(project);
+                        this.renderProject();
                         
-                        // Join project room when project is loaded
-                        if (this.currentProject) {
-                            this.socket.emit('joinProject', this.currentProject.id);
-                        }
-                    });
-                    
-                    this.socket.on('disconnect', () => {
-                        console.log('🔌 Disconnected from WebSocket');
-                        this.showNotification('Connection lost. Reconnecting...', 'warning');
-                    });
-                    
-                    this.socket.on('reconnect', () => {
-                        console.log('✅ Reconnected to WebSocket');
-                        this.showNotification('Connection restored', 'success');
-                        
-                        // Rejoin project room
-                        if (this.currentProject) {
-                            this.socket.emit('joinProject', this.currentProject.id);
-                        }
-                    });
-                    
-                    // Listen for new discussions
-                    this.socket.on('discussionCreated', (discussion) => {
-                        if (discussion.projectId === this.currentProject?.id) {
-                            this.addDiscussion(discussion);
-                            this.showNotification(`New discussion: "${discussion.title}"`, 'info');
-                        }
-                    });
-                    
-                    // Listen for comments
-                    this.socket.on('commentAdded', (data) => {
-                        if (this.currentProject) {
-                            this.addCommentToDiscussion(data.discussionId, data.comment);
-                            if (data.comment.authorId !== this.currentUser?.id) {
-                                this.showNotification(`New comment from ${data.comment.author}`, 'info');
-                            }
-                        }
-                    });
-                    
-                    // Listen for votes
-                    this.socket.on('voteUpdate', (data) => {
-                        this.updateDiscussionVotes(data.discussionId, data.upvotes, data.downvotes);
-                    });
-                    
-                    // Listen for typing indicators
-                    this.socket.on('userTyping', (data) => {
-                        this.showTypingIndicator(data.discussionId, data.userName, data.isTyping);
-                    });
-                    
-                    this.socket.on('error', (data) => {
-                        this.showError(data.message || 'WebSocket error');
-                    });
-                    
-                } catch (error) {
-                    console.error('WebSocket connection failed:', error);
-                }
-            },
-            
-            // ===== IMPROVED PROJECT DATA LOADING =====
-            async loadProjectWithRetry(projectId, retries = 3) {
-                for (let i = 0; i < retries; i++) {
-                    try {
-                        return await this.loadProject(projectId);
-                    } catch (error) {
-                        if (i === retries - 1) throw error;
-                        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-                        console.log(`Retrying project load... (${i + 1}/${retries})`);
-                    }
-                }
-            },
-            
-            async loadProject(projectId) {
-                try {
-                    const response = await fetch(`${API_BASE}/api/projects/${projectId}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.currentProject = data.project;
-                        this.teamMembers = data.project.teamDetails || [];
-                        
-                        // Join project room via WebSocket
-                        if (this.socket) {
-                            this.socket.emit('joinProject', projectId);
-                        }
+                        // Load additional data
+                        await this.loadAdditionalData();
                     } else {
-                        throw new Error(data.error || 'Failed to load project');
+                        throw new Error('Project not found');
                     }
-                    
                 } catch (error) {
-                    console.error('Load project error:', error);
-                    throw error;
+                    console.error('Failed to load project:', error);
+                    this.notifications.show('error', 'Load Failed', 'Could not load project data');
+                    this.showErrorState();
+                } finally {
+                    this.hideLoading();
                 }
-            },
-            
-            async loadDiscussions(projectId) {
+            }
+
+            async loadAdditionalData() {
                 try {
-                    const response = await fetch(`${API_BASE}/api/projects/${projectId}/discussions`);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            this.discussions = data.discussions || [];
-                        }
+                    const [discussions, team, metrics] = await Promise.allSettled([
+                        this.discussions.load(this.projectId),
+                        this.team.load(this.projectId),
+                        this.metrics.load(this.projectId)
+                    ]);
+
+                    // Handle results
+                    if (discussions.status === 'fulfilled') {
+                        this.state.setDiscussions(discussions.value);
                     }
+
+                    if (team.status === 'fulfilled') {
+                        this.state.setTeam(team.value);
+                    }
+
+                    if (metrics.status === 'fulfilled') {
+                        this.state.setMetrics(metrics.value);
+                    }
+
+                    // Update UI
+                    this.renderer.updateDiscussions();
+                    this.renderer.updateTeam();
+                    this.renderer.updateMetrics();
+
                 } catch (error) {
-                    console.error('Load discussions error:', error);
-                    this.discussions = [];
+                    console.error('Failed to load additional data:', error);
                 }
-            },
-            
-            // ===== IMPROVED RENDERING =====
-            showSkeletonLoader() {
-                document.getElementById('projectLoading').classList.remove('hidden');
-                document.getElementById('projectContent').classList.add('hidden');
-            },
-            
-            hideSkeletonLoader() {
-                document.getElementById('projectLoading').classList.add('hidden');
-                document.getElementById('projectContent').classList.remove('hidden');
-            },
-            
+            }
+
             renderProject() {
-                if (!this.currentProject) return;
-                
-                const p = this.currentProject;
-                
-                // Update header
-                document.getElementById('projectTitle').textContent = p.title;
-                document.getElementById('projectSubtitle').textContent = p.description.substring(0, 100) + '...';
-                document.getElementById('statusText').textContent = 
-                    p.status === 'active' ? 'Active Research' : 
-                    p.status === 'planning' ? 'Planning Phase' : 'Completed';
-                document.getElementById('projectStatus').className = 
-                    `status-badge status-${p.status}`;
-                
-                // Update description
-                document.getElementById('projectDescription').textContent = p.description;
-                document.getElementById('editDescription').value = p.description;
-                
-                // Update tags
-                const tagsContainer = document.getElementById('projectTags');
-                tagsContainer.innerHTML = (p.tags || []).map(tag => 
-                    `<span class="tag">${this.escapeHtml(tag)}</span>`
-                ).join('');
-                
-                // Update metadata
-                document.getElementById('projectLead').textContent = p.lead || 'Lead Researcher';
-                document.getElementById('projectDate').textContent = 
-                    new Date(p.startDate || p.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                document.getElementById('projectConsensus').textContent = 
-                    `${p.consensusScore || 0}% consensus`;
-                document.getElementById('consensusScore').textContent = `${p.consensusScore || 0}%`;
-                
-                // Animate progress bar
-                setTimeout(() => {
-                    document.getElementById('consensusBar').style.width = `${p.consensusScore || 0}%`;
-                }, 300);
-                
-                // Update team
-                this.renderTeam();
-                
-                // Update stats
-                this.updateStats();
-                
+                if (!this.projectData) return;
+
+                // Render header
+                this.renderer.renderProjectHeader(this.projectData);
+
+                // Render overview
+                this.renderer.renderProjectOverview(this.projectData);
+
                 // Render discussions
-                this.renderDiscussions();
-            },
-            
-            renderTeam() {
-                const container = document.getElementById('teamContainer');
-                const countElement = document.getElementById('teamCount');
-                
-                if (this.teamMembers.length === 0) {
-                    container.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">
-                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                            <p>No team members yet</p>
-                        </div>
-                    `;
-                    countElement.textContent = '0 members';
-                    return;
+                this.renderer.renderDiscussionsSection();
+
+                // Render team
+                this.renderer.renderTeamSection();
+
+                // Render metrics
+                this.renderer.renderMetricsSection();
+
+                // Render quick actions
+                this.renderer.renderQuickActions();
+            }
+
+            getCachedProject(projectId) {
+                try {
+                    const cache = localStorage.getItem(this.config.STORAGE_KEYS.PROJECT_CACHE);
+                    if (!cache) return null;
+
+                    const cacheData = JSON.parse(cache);
+                    const cached = cacheData[projectId];
+
+                    if (!cached) return null;
+
+                    // Check if cache is expired
+                    if (Date.now() - cached.timestamp > this.config.CACHE.TTL) {
+                        delete cacheData[projectId];
+                        localStorage.setItem(this.config.STORAGE_KEYS.PROJECT_CACHE, JSON.stringify(cacheData));
+                        return null;
+                    }
+
+                    return cached.data;
+                } catch (error) {
+                    console.warn('Cache read failed:', error);
+                    return null;
                 }
-                
-                countElement.textContent = `${this.teamMembers.length} member${this.teamMembers.length !== 1 ? 's' : ''}`;
-                
-                container.innerHTML = this.teamMembers.map(member => `
-                    <div class="team-member">
-                        <div class="member-avatar">
-                            ${member.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div class="member-name">${this.escapeHtml(member.name.split(',')[0])}</div>
-                        <div class="member-role">${this.escapeHtml(member.role || 'Researcher')}</div>
-                        <div class="member-status"></div>
-                    </div>
-                `).join('');
-            },
-            
-            renderDiscussions() {
-                const container = document.getElementById('discussionsContainer');
-                const emptyState = document.getElementById('emptyDiscussions');
-                
-                if (this.discussions.length === 0) {
-                    container.classList.add('hidden');
-                    emptyState.classList.remove('hidden');
-                    return;
+            }
+
+            cacheProject(project) {
+                try {
+                    let cache = localStorage.getItem(this.config.STORAGE_KEYS.PROJECT_CACHE);
+                    cache = cache ? JSON.parse(cache) : {};
+
+                    // Limit cache size
+                    const keys = Object.keys(cache);
+                    if (keys.length >= this.config.CACHE.MAX_SIZE) {
+                        const oldestKey = keys.sort((a, b) => cache[a].timestamp - cache[b].timestamp)[0];
+                        delete cache[oldestKey];
+                    }
+
+                    cache[this.projectId] = {
+                        data: project,
+                        timestamp: Date.now()
+                    };
+
+                    localStorage.setItem(this.config.STORAGE_KEYS.PROJECT_CACHE, JSON.stringify(cache));
+                } catch (error) {
+                    console.warn('Cache write failed:', error);
                 }
+            }
+
+            setupEventListeners() {
+                // Window events
+                window.addEventListener('beforeunload', () => this.cleanup());
+                window.addEventListener('online', () => this.handleOnline());
+                window.addEventListener('offline', () => this.handleOffline());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    // Ctrl/Cmd + / to focus search
+                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                        e.preventDefault();
+                        this.focusSearch();
+                    }
+
+                    // Escape to close modals
+                    if (e.key === 'Escape') {
+                        this.modal.close();
+                    }
+
+                    // Ctrl/Cmd + N for new discussion
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        this.discussions.showCreateForm();
+                    }
+                });
+
+                // WebSocket events
+                this.ws.on('discussionCreated', (discussion) => {
+                    this.handleNewDiscussion(discussion);
+                });
+
+                this.ws.on('commentAdded', (data) => {
+                    this.handleNewComment(data);
+                });
+
+                this.ws.on('voteUpdated', (data) => {
+                    this.handleVoteUpdate(data);
+                });
+
+                this.ws.on('userJoined', (user) => {
+                    this.handleUserJoined(user);
+                });
+
+                this.ws.on('userLeft', (userId) => {
+                    this.handleUserLeft(userId);
+                });
+
+                this.ws.on('typing', (data) => {
+                    this.handleTyping(data);
+                });
+
+                // Polling for offline mode
+                this.startPolling();
+            }
+
+            startPeriodicUpdates() {
+                // Update metrics every minute
+                setInterval(async () => {
+                    if (this.projectId) {
+                        await this.metrics.refresh(this.projectId);
+                        this.renderer.updateMetrics();
+                    }
+                }, 60000);
+
+                // Heartbeat for WebSocket
+                setInterval(() => {
+                    if (this.ws.isConnected()) {
+                        this.ws.send('heartbeat', {});
+                    }
+                }, this.config.TIMING.HEARTBEAT);
+            }
+
+            startPolling() {
+                // Poll for updates when offline
+                setInterval(async () => {
+                    if (!navigator.onLine && this.projectId) {
+                        // Try to sync when back online
+                        await this.syncOfflineData();
+                    }
+                }, 30000); // Every 30 seconds
+            }
+
+            async syncOfflineData() {
+                // Sync offline changes when back online
+                const offlineChanges = this.state.getOfflineChanges();
                 
-                emptyState.classList.add('hidden');
-                container.classList.remove('hidden');
+                if (offlineChanges.length > 0 && navigator.onLine) {
+                    try {
+                        await this.api.syncOfflineData(this.projectId, offlineChanges);
+                        this.state.clearOfflineChanges();
+                        this.notifications.show('success', 'Sync Complete', 'Offline changes synced');
+                    } catch (error) {
+                        console.error('Sync failed:', error);
+                    }
+                }
+            }
+
+            handleNewDiscussion(discussion) {
+                if (discussion.projectId === this.projectId) {
+                    this.state.addDiscussion(discussion);
+                    this.renderer.updateDiscussions();
+                    this.renderer.updateMetrics();
+                    
+                    // Show notification if not current user
+                    if (discussion.authorId !== this.state.user?.id) {
+                        this.notifications.show('info', 'New Discussion', 
+                            `${discussion.author} started a discussion`);
+                    }
+                }
+            }
+
+            handleNewComment(data) {
+                this.state.addComment(data.discussionId, data.comment);
+                this.renderer.updateDiscussions();
+                this.renderer.updateMetrics();
+            }
+
+            handleVoteUpdate(data) {
+                this.state.updateVotes(data.discussionId, data.upvotes, data.downvotes);
+                this.renderer.updateDiscussions();
+                this.renderer.updateMetrics();
+            }
+
+            handleUserJoined(user) {
+                this.state.addTeamMember(user);
+                this.renderer.updateTeam();
+                this.renderer.updateMetrics();
+            }
+
+            handleUserLeft(userId) {
+                this.state.removeTeamMember(userId);
+                this.renderer.updateTeam();
+                this.renderer.updateMetrics();
+            }
+
+            handleTyping(data) {
+                this.renderer.showTypingIndicator(data.discussionId, data.userName, data.isTyping);
+            }
+
+            handleOnline() {
+                this.notifications.show('success', 'Back Online', 'Reconnected to server');
+                this.syncOfflineData();
+                this.ws.reconnect();
+            }
+
+            handleOffline() {
+                this.notifications.show('warning', 'Offline Mode', 'Working locally. Changes will sync when back online.');
+            }
+
+            focusSearch() {
+                const searchInput = document.querySelector('[data-search]');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+
+            showLoading(message) {
+                const overlay = document.getElementById('loadingOverlay');
+                const text = document.getElementById('loadingText');
                 
-                container.innerHTML = this.discussions.map(discussion => `
-                    <div class="discussion-item" data-discussion-id="${discussion.id}">
-                        <div class="discussion-header">
-                            <h4 class="discussion-title">${this.escapeHtml(discussion.title)}</h4>
-                            <div class="vote-controls">
-                                <button class="vote-btn ${this.userVotes.get(discussion.id) === 'up' ? 'active' : ''}" 
-                                        onclick="voteOnDiscussion('${discussion.id}', 'up')"
-                                        title="Upvote">
-                                    <i class="fas fa-chevron-up"></i>
-                                </button>
-                                <div class="vote-count">${discussion.upvotes - discussion.downvotes}</div>
-                                <button class="vote-btn ${this.userVotes.get(discussion.id) === 'down' ? 'active' : ''}" 
-                                        onclick="voteOnDiscussion('${discussion.id}', 'down')"
-                                        title="Downvote">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </div>
+                text.textContent = message;
+                overlay.classList.add('active');
+            }
+
+            hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.classList.remove('active');
+            }
+
+            showErrorState() {
+                const header = document.getElementById('projectHeader');
+                header.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-4 text-red-500">
+                            <i class="fas fa-exclamation-triangle"></i>
                         </div>
-                        
-                        <div class="discussion-content">
-                            ${this.escapeHtml(discussion.content)}
-                        </div>
-                        
-                        <div style="display: flex; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--text-light);">
-                            <span><i class="fas fa-user-md"></i> ${this.escapeHtml(discussion.author)}</span>
-                            <span><i class="fas fa-clock"></i> ${this.formatTimeAgo(discussion.createdAt)}</span>
-                            <span><i class="fas fa-comment"></i> ${discussion.comments?.length || 0} comments</span>
-                        </div>
-                        
-                        <!-- Typing indicator -->
-                        <div id="typing-${discussion.id}" class="hidden" style="margin-top: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-light); font-size: 0.875rem;">
-                                <div style="display: flex; gap: 0.125rem;">
-                                    <span style="width: 3px; height: 3px; background: var(--text-light); border-radius: 50%; animation: typing 1.4s infinite;"></span>
-                                    <span style="width: 3px; height: 3px; background: var(--text-light); border-radius: 50%; animation: typing 1.4s infinite 0.2s;"></span>
-                                    <span style="width: 3px; height: 3px; background: var(--text-light); border-radius: 50%; animation: typing 1.4s infinite 0.4s;"></span>
-                                </div>
-                                <span id="typing-user-${discussion.id}">Someone is typing...</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Comments -->
-                        <div class="comments-section">
-                            ${discussion.comments?.map(comment => `
-                                <div class="comment">
-                                    <div class="comment-header">
-                                        <div class="comment-author">
-                                            <div class="comment-avatar">
-                                                ${comment.author.charAt(0).toUpperCase()}
-                                            </div>
-                                            ${this.escapeHtml(comment.author)}
-                                        </div>
-                                        <div class="comment-time">
-                                            ${this.formatTimeAgo(comment.timestamp)}
-                                        </div>
-                                    </div>
-                                    <div class="comment-content">
-                                        ${this.escapeHtml(comment.content)}
-                                    </div>
-                                </div>
-                            `).join('') || ''}
-                            
-                            <!-- Add Comment Form -->
-                            <div class="comment-input-container">
-                                <input type="text" 
-                                       class="comment-input" 
-                                       placeholder="Add a comment..."
-                                       data-discussion="${discussion.id}"
-                                       oninput="showTyping('${discussion.id}')"
-                                       onkeypress="if(event.key === 'Enter') addComment('${discussion.id}', this.value)">
-                                <button class="comment-submit" 
-                                        onclick="addComment('${discussion.id}', this.previousElementSibling.value)"
-                                        disabled>
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <h2 class="text-2xl font-bold mb-2">Project Not Found</h2>
+                        <p class="text-gray-600 mb-4">The requested project could not be loaded.</p>
+                        <a href="index.html" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
                     </div>
-                `).join('');
-                
-                // Scroll to bottom of discussions
-                setTimeout(() => {
-                    container.scrollTop = container.scrollHeight;
-                }, 100);
-            },
-            
-            updateStats() {
-                if (!this.currentProject) return;
-                
-                document.getElementById('discussionCount').textContent = this.discussions.length;
-                
-                const totalComments = this.discussions.reduce((sum, d) => 
-                    sum + (d.comments?.length || 0), 0
-                );
-                document.getElementById('commentCount').textContent = totalComments;
-                
-                const totalVotes = this.discussions.reduce((sum, d) => 
-                    sum + (d.upvotes || 0) + (d.downvotes || 0), 0
-                );
-                document.getElementById('voteCount').textContent = totalVotes;
-                
-                document.getElementById('teamSize').textContent = this.teamMembers.length || 1;
-            },
-            
-            // ===== IMPROVED ACTIONS =====
+                `;
+            }
+
+            cleanup() {
+                this.ws.disconnect();
+                this.state.cleanup();
+                this.notifications.clearAll();
+            }
+
+            // Global methods
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem(this.config.STORAGE_KEYS.USER);
+                    localStorage.removeItem(this.config.STORAGE_KEYS.SESSION);
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        // ==================== MODULE IMPLEMENTATIONS ====================
+        // Note: These would be in separate files in production
+
+        // Module: State Manager
+        class StateManager {
+            constructor(config) {
+                this.config = config;
+                this.state = {
+                    user: null,
+                    session: null,
+                    project: null,
+                    discussions: [],
+                    team: [],
+                    metrics: {},
+                    offlineChanges: [],
+                    eventListeners: new Map()
+                };
+            }
+
+            setUser(user) {
+                this.state.user = user;
+                this.emit('userChanged', user);
+            }
+
+            setSession(session) {
+                this.state.session = session;
+                this.emit('sessionChanged', session);
+            }
+
+            setProject(project) {
+                this.state.project = project;
+                this.emit('projectChanged', project);
+            }
+
+            setDiscussions(discussions) {
+                this.state.discussions = discussions;
+                this.emit('discussionsChanged', discussions);
+            }
+
+            setTeam(team) {
+                this.state.team = team;
+                this.emit('teamChanged', team);
+            }
+
+            setMetrics(metrics) {
+                this.state.metrics = metrics;
+                this.emit('metricsChanged', metrics);
+            }
+
             addDiscussion(discussion) {
-                this.discussions.unshift(discussion);
-                this.renderDiscussions();
-                this.updateStats();
-            },
-            
-            addCommentToDiscussion(discussionId, comment) {
-                const discussion = this.discussions.find(d => d.id === discussionId);
+                this.state.discussions.unshift(discussion);
+                this.emit('discussionAdded', discussion);
+            }
+
+            addComment(discussionId, comment) {
+                const discussion = this.state.discussions.find(d => d.id === discussionId);
                 if (discussion) {
                     if (!discussion.comments) discussion.comments = [];
                     discussion.comments.push(comment);
-                    this.renderDiscussions();
-                    this.updateStats();
+                    this.emit('commentAdded', { discussionId, comment });
                 }
-            },
-            
-            updateDiscussionVotes(discussionId, upvotes, downvotes) {
-                const discussion = this.discussions.find(d => d.id === discussionId);
+            }
+
+            updateVotes(discussionId, upvotes, downvotes) {
+                const discussion = this.state.discussions.find(d => d.id === discussionId);
                 if (discussion) {
                     discussion.upvotes = upvotes;
                     discussion.downvotes = downvotes;
-                    this.renderDiscussions();
+                    this.emit('votesUpdated', { discussionId, upvotes, downvotes });
                 }
-            },
-            
-            showTypingIndicator(discussionId, userName, isTyping) {
-                const indicator = document.getElementById(`typing-${discussionId}`);
-                const userSpan = document.getElementById(`typing-user-${discussionId}`);
-                
-                if (indicator && userSpan) {
-                    if (isTyping && userName !== this.currentUser?.name) {
-                        userSpan.textContent = `${userName} is typing...`;
-                        indicator.classList.remove('hidden');
-                    } else {
-                        indicator.classList.add('hidden');
-                    }
+            }
+
+            addTeamMember(member) {
+                const exists = this.state.team.some(m => m.id === member.id);
+                if (!exists) {
+                    this.state.team.push(member);
+                    this.emit('teamMemberAdded', member);
                 }
-            },
-            
-            // ===== IMPROVED UI HELPERS =====
-            showNotification(message, type = 'info') {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.className = `notification ${type === 'error' ? 'notification-error' : 
-                                                    type === 'success' ? 'notification-success' : 
-                                                    type === 'warning' ? 'notification-warning' : ''}`;
-                notification.style.display = 'block';
-                
-                // Auto-hide after 5 seconds
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 5000);
-            },
-            
-            showError(message) {
-                this.showNotification(message, 'error');
-            },
-            
-            showErrorState() {
-                document.getElementById('projectLoading').innerHTML = `
-                    <div style="text-align: center;">
-                        <div style="font-size: 3rem; color: var(--error-red); margin-bottom: 1rem;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">Failed to Load Project</h3>
-                        <p style="color: var(--text-light); margin-bottom: 1.5rem;">
-                            The project could not be loaded. Please check your connection.
-                        </p>
-                        <button onclick="window.location.href='index.html'" class="btn btn-primary">
-                            Return to Dashboard
-                        </button>
-                    </div>
-                `;
-            },
-            
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            },
-            
-            formatTimeAgo(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffMins = Math.floor(diffMs / 60000);
-                const diffHours = Math.floor(diffMs / 3600000);
-                const diffDays = Math.floor(diffMs / 86400000);
-                
-                if (diffMins < 1) return 'just now';
-                if (diffMins < 60) return `${diffMins}m ago`;
-                if (diffHours < 24) return `${diffHours}h ago`;
-                if (diffDays < 7) return `${diffDays}d ago`;
-                
-                return date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
             }
-        };
-        
-        // ===== IMPROVED GLOBAL FUNCTIONS =====
-        window.toggleDiscussionForm = function() {
-            const form = document.getElementById('newDiscussionForm');
-            form.classList.toggle('hidden');
-            
-            if (!form.classList.contains('hidden')) {
-                document.getElementById('discussionTitle').focus();
+
+            removeTeamMember(userId) {
+                const index = this.state.team.findIndex(m => m.id === userId);
+                if (index > -1) {
+                    this.state.team.splice(index, 1);
+                    this.emit('teamMemberRemoved', userId);
+                }
             }
-        };
-        
-        window.toggleEditDescription = function() {
-            const view = document.getElementById('descriptionView');
-            const edit = document.getElementById('descriptionEdit');
-            const btn = document.getElementById('editDescBtn');
-            
-            if (view.classList.contains('hidden')) {
-                view.classList.remove('hidden');
-                edit.classList.add('hidden');
-                btn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-            } else {
-                view.classList.add('hidden');
-                edit.classList.remove('hidden');
-                btn.innerHTML = '<i class="fas fa-times"></i> Cancel';
-                document.getElementById('editDescription').focus();
+
+            addOfflineChange(change) {
+                this.state.offlineChanges.push(change);
             }
-        };
-        
-        window.saveDescription = async function() {
-            const newDescription = document.getElementById('editDescription').value.trim();
-            if (!newDescription) return;
-            
-            // In a real app, you would save to the server here
-            document.getElementById('projectDescription').textContent = newDescription;
-            toggleEditDescription();
-            ThoraxLabProject.showNotification('Description updated', 'success');
-        };
-        
-        window.createDiscussion = function() {
-            if (!ThoraxLabProject.currentProject || !ThoraxLabProject.currentUser) {
-                ThoraxLabProject.showError('You must be logged in to start a discussion');
-                return;
+
+            getOfflineChanges() {
+                return [...this.state.offlineChanges];
             }
-            
-            const title = document.getElementById('discussionTitle').value.trim();
-            const content = document.getElementById('discussionContent').value.trim();
-            
-            if (!title || !content) {
-                ThoraxLabProject.showError('Please provide both title and content');
-                return;
+
+            clearOfflineChanges() {
+                this.state.offlineChanges = [];
             }
-            
-            const discussion = {
-                projectId: ThoraxLabProject.currentProject.id,
-                title,
-                content,
-                author: ThoraxLabProject.currentUser.name,
-                authorId: ThoraxLabProject.currentUser.id,
-                tags: []
-            };
-            
-            // Send via WebSocket
-            if (ThoraxLabProject.socket) {
-                ThoraxLabProject.socket.emit('createDiscussion', {
-                    projectId: ThoraxLabProject.currentProject.id,
-                    discussion
-                });
-                
-                // Clear form
-                document.getElementById('discussionTitle').value = '';
-                document.getElementById('discussionContent').value = '';
-                toggleDiscussionForm();
-            } else {
-                ThoraxLabProject.showError('Not connected to server');
+
+            on(event, callback) {
+                if (!this.state.eventListeners.has(event)) {
+                    this.state.eventListeners.set(event, new Set());
+                }
+                this.state.eventListeners.get(event).add(callback);
             }
-        };
-        
-        window.voteOnDiscussion = function(discussionId, voteType) {
-            if (!ThoraxLabProject.socket || !ThoraxLabProject.currentUser) {
-                ThoraxLabProject.showError('You must be logged in to vote');
-                return;
+
+            off(event, callback) {
+                if (this.state.eventListeners.has(event)) {
+                    this.state.eventListeners.get(event).delete(callback);
+                }
             }
-            
-            // Update local state immediately for better UX
-            const currentVote = ThoraxLabProject.userVotes.get(discussionId);
-            if (currentVote === voteType) {
-                // Toggle off if clicking same vote
-                ThoraxLabProject.userVotes.delete(discussionId);
-            } else {
-                ThoraxLabProject.userVotes.set(discussionId, voteType);
+
+            emit(event, data) {
+                if (this.state.eventListeners.has(event)) {
+                    this.state.eventListeners.get(event).forEach(callback => {
+                        try {
+                            callback(data);
+                        } catch (error) {
+                            console.error(`Error in ${event} listener:`, error);
+                        }
+                    });
+                }
             }
-            
-            ThoraxLabProject.socket.emit('vote', { discussionId, voteType });
-        };
-        
-        window.showTyping = function(discussionId) {
-            if (!ThoraxLabProject.socket || !ThoraxLabProject.currentUser) return;
-            
-            ThoraxLabProject.socket.emit('typing', {
-                projectId: ThoraxLabProject.currentProject?.id,
-                discussionId,
-                isTyping: true
-            });
-            
-            clearTimeout(window.typingTimeout);
-            window.typingTimeout = setTimeout(() => {
-                ThoraxLabProject.socket.emit('typing', {
-                    projectId: ThoraxLabProject.currentProject?.id,
-                    discussionId,
-                    isTyping: false
-                });
-            }, 1000);
-        };
-        
-        window.addComment = function(discussionId, content) {
-            const input = document.querySelector(`[data-discussion="${discussionId}"] input`);
-            if (!content.trim() || !ThoraxLabProject.currentUser) return;
-            
-            const comment = {
-                author: ThoraxLabProject.currentUser.name,
-                authorId: ThoraxLabProject.currentUser.id,
-                content: content.trim()
-            };
-            
-            if (ThoraxLabProject.socket) {
-                ThoraxLabProject.socket.emit('addComment', { discussionId, comment });
-                if (input) input.value = '';
+
+            cleanup() {
+                this.state.eventListeners.clear();
             }
-        };
-        
-        window.shareProject = function() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                ThoraxLabProject.showNotification('Project link copied to clipboard!', 'success');
-            }).catch(() => {
-                // Fallback for browsers that don't support clipboard API
-                prompt('Copy this link to share:', url);
-            });
-        };
-        
-        window.exportProject = function() {
-            document.getElementById('exportModal').classList.remove('hidden');
-        };
-        
-        window.closeExportModal = function() {
-            document.getElementById('exportModal').classList.add('hidden');
-        };
-        
-        window.exportAsJSON = async function() {
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                const response = await fetch(`${API_BASE}/api/projects/${ThoraxLabProject.currentProject.id}/export?format=json`, {
+        }
+
+        // Module: API Service
+        class APIService {
+            constructor(config) {
+                this.config = config;
+                this.baseURL = config.API_BASE;
+            }
+
+            async request(endpoint, options = {}) {
+                const url = `${this.baseURL}${endpoint}`;
+                const defaultOptions = {
                     headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
+                        'Content-Type': 'application/json',
+                        ...this.getAuthHeaders(),
+                        ...options.headers
                     }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `thoraxlab-project-${ThoraxLabProject.currentProject.id}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
+                };
+
+                const config = { ...defaultOptions, ...options };
+
+                try {
+                    const response = await fetch(url, config);
                     
-                    ThoraxLabProject.showNotification('Project exported as JSON', 'success');
-                    closeExportModal();
-                }
-            } catch (error) {
-                console.error('Export error:', error);
-                ThoraxLabProject.showError('Failed to export project');
-            }
-        };
-        
-        window.exportAsCSV = async function() {
-            try {
-                const session = JSON.parse(localStorage.getItem('thoraxlab_session') || '{}');
-                const response = await fetch(`${API_BASE}/api/projects/${ThoraxLabProject.currentProject.id}/export?format=csv`, {
-                    headers: {
-                        'Authorization': `Bearer ${session.sessionId}`
+                    if (response.status === 401) {
+                        this.handleUnauthorized();
+                        throw new Error('Unauthorized');
                     }
-                });
-                
-                if (response.ok) {
-                    const csv = await response.text();
-                    const blob = new Blob([csv], { type: 'text/csv' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `thoraxlab-project-${ThoraxLabProject.currentProject.id}.csv`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    
-                    ThoraxLabProject.showNotification('Project exported as CSV', 'success');
-                    closeExportModal();
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    console.error(`API request failed: ${url}`, error);
+                    throw error;
                 }
-            } catch (error) {
-                console.error('Export error:', error);
-                ThoraxLabProject.showError('Failed to export project');
             }
-        };
-        
-        window.inviteToProject = function() {
-            const email = prompt('Enter email address to invite:');
-            if (email) {
-                ThoraxLabProject.showNotification(`Invitation sent to ${email}`, 'success');
+
+            getAuthHeaders() {
+                const session = localStorage.getItem(this.config.STORAGE_KEYS.SESSION);
+                if (session) {
+                    const sessionData = JSON.parse(session);
+                    return { 'Authorization': `Bearer ${sessionData.id}` };
+                }
+                return {};
             }
-        };
-        
-        window.requestToJoin = function() {
-            if (!ThoraxLabProject.currentUser) {
-                ThoraxLabProject.showError('Please log in to request to join');
-                return;
-            }
-            ThoraxLabProject.showNotification(`Join request sent for "${ThoraxLabProject.currentProject?.title}"`, 'success');
-        };
-        
-        window.logout = function() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('thoraxlab_user');
-                localStorage.removeItem('thoraxlab_session');
+
+            handleUnauthorized() {
+                localStorage.removeItem(this.config.STORAGE_KEYS.USER);
+                localStorage.removeItem(this.config.STORAGE_KEYS.SESSION);
                 window.location.href = 'login.html';
             }
-        };
-        
-        // ===== IMPROVED INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add focus-visible polyfill behavior
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Tab') {
-                    document.body.classList.add('keyboard-navigation');
+
+            async getProject(projectId) {
+                try {
+                    const data = await this.request(`/api/projects/${projectId}`);
+                    return data.success ? data.project : null;
+                } catch (error) {
+                    // Fallback to mock data for demo
+                    return this.getMockProject(projectId);
                 }
-            });
-            
-            document.addEventListener('mousedown', () => {
-                document.body.classList.remove('keyboard-navigation');
-            });
-            
-            // Initialize the app
-            ThoraxLabProject.init();
-            
-            // Add keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                // Ctrl/Cmd + / to focus search
-                if ((e.ctrlKey || e.metaKey) && e.key === '/') {
-                    e.preventDefault();
-                    const input = document.querySelector('.comment-input, [placeholder*="comment"]');
-                    if (input) input.focus();
-                }
-                
-                // Escape to close modals
-                if (e.key === 'Escape') {
-                    closeExportModal();
-                    const form = document.getElementById('newDiscussionForm');
-                    if (!form.classList.contains('hidden')) {
-                        toggleDiscussionForm();
-                    }
-                }
-            });
-        });
-        
-        // Handle modal clicks outside
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('exportModal');
-            if (event.target === modal) {
-                closeExportModal();
             }
+
+            getMockProject(projectId) {
+                // Mock data for demo purposes
+                return {
+                    id: projectId,
+                    title: 'Impact of New Treatment on COPD Outcomes',
+                    description: 'A comprehensive study evaluating the effects of novel bronchodilator therapy on COPD patient outcomes, including lung function, quality of life, and hospitalization rates.',
+                    status: 'active',
+                    tags: ['COPD', 'Clinical Trial', 'Bronchodilator', 'Pulmonary'],
+                    lead: 'Dr. Sarah Chen',
+                    startDate: '2024-01-15',
+                    consensusScore: 85,
+                    stats: {
+                        discussionCount: 24,
+                        commentCount: 187,
+                        voteCount: 342,
+                        teamSize: 8
+                    }
+                };
+            }
+
+            async syncOfflineData(projectId, changes) {
+                try {
+                    await this.request(`/api/projects/${projectId}/sync`, {
+                        method: 'POST',
+                        body: JSON.stringify({ changes })
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Sync failed:', error);
+                    return false;
+                }
+            }
+        }
+
+        // Module: WebSocket Service
+        class WebSocketService {
+            constructor(config) {
+                this.config = config;
+                this.socket = null;
+                this.listeners = new Map();
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 5;
+                this.isConnected = false;
+            }
+
+            connect(projectId) {
+                try {
+                    this.socket = io(this.config.WEBSOCKET_URL, {
+                        reconnection: true,
+                        reconnectionAttempts: this.maxReconnectAttempts,
+                        reconnectionDelay: 1000,
+                        timeout: 10000
+                    });
+
+                    this.socket.on('connect', () => {
+                        console.log('✅ WebSocket connected');
+                        this.isConnected = true;
+                        this.reconnectAttempts = 0;
+                        this.authenticate();
+                        this.joinProject(projectId);
+                        this.emit('connected');
+                    });
+
+                    this.socket.on('disconnect', () => {
+                        console.log('🔌 WebSocket disconnected');
+                        this.isConnected = false;
+                        this.emit('disconnected');
+                    });
+
+                    this.socket.on('reconnect', () => {
+                        console.log('🔄 WebSocket reconnected');
+                        this.authenticate();
+                        this.joinProject(projectId);
+                        this.emit('reconnected');
+                    });
+
+                    // Forward events
+                    const events = ['discussionCreated', 'commentAdded', 'voteUpdated', 
+                                   'userJoined', 'userLeft', 'typing', 'error'];
+                    
+                    events.forEach(event => {
+                        this.socket.on(event, (data) => {
+                            this.emit(event, data);
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('WebSocket connection failed:', error);
+                }
+            }
+
+            authenticate() {
+                const session = localStorage.getItem(this.config.STORAGE_KEYS.SESSION);
+                if (session) {
+                    const sessionData = JSON.parse(session);
+                    this.send('authenticate', { token: sessionData.id });
+                }
+            }
+
+            joinProject(projectId) {
+                if (this.isConnected && projectId) {
+                    this.send('joinProject', { projectId });
+                }
+            }
+
+            send(event, data) {
+                if (this.socket && this.isConnected) {
+                    this.socket.emit(event, data);
+                }
+            }
+
+            on(event, callback) {
+                if (!this.listeners.has(event)) {
+                    this.listeners.set(event, new Set());
+                }
+                this.listeners.get(event).add(callback);
+            }
+
+            off(event, callback) {
+                if (this.listeners.has(event)) {
+                    this.listeners.get(event).delete(callback);
+                }
+            }
+
+            emit(event, data) {
+                if (this.listeners.has(event)) {
+                    this.listeners.get(event).forEach(callback => {
+                        try {
+                            callback(data);
+                        } catch (error) {
+                            console.error(`Error in ${event} listener:`, error);
+                        }
+                    });
+                }
+            }
+
+            disconnect() {
+                if (this.socket) {
+                    this.socket.disconnect();
+                    this.socket = null;
+                }
+                this.isConnected = false;
+                this.listeners.clear();
+            }
+
+            reconnect() {
+                if (this.socket) {
+                    this.socket.connect();
+                }
+            }
+
+            isConnected() {
+                return this.isConnected;
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create global app instance
+            window.App = new ThoraxLabProject();
         });
     </script>
 </body>
