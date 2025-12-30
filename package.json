@@ -1,23 +1,22 @@
 {
   "name": "thoraxlab",
-  "version": "1.0.0",
-  "description": "Clinical innovation collaboration platform for Pneumology",
+  "version": "2.0.0",
+  "description": "Clinical Innovation Platform - Enterprise Edition",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
-    "railway": "node server.js"
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "sqlite3": "^5.1.6",
     "sqlite": "^5.1.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "ws": "^8.14.2",
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-  },
-  "engines": {
-    "node": ">=16.0.0"
   }
 }
