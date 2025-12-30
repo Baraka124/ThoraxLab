@@ -1,683 +1,419 @@
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const express = require('express');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+const { getDB } = require('./database');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const PORT = process.env.PORT || 3000;
 const app = express();
-const server = createServer(app);
+const PORT = process.env.PORT || 3000;
 
-// ==================== COLLABORATIVE INNOVATION ARCHITECTURE ====================
-class ThoraxLabPlatform {
-    constructor() {
-        this.innovations = new Map();
-        this.collaborations = new Map();
-        this.insights = new Map();
-        this.activities = [];
-        this.metrics = {
-            innovationVelocity: 0,
-            collaborationDensity: 0,
-            stakeholderDiversity: 0,
-            decisionQuality: 0
-        };
+// Middleware
+app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS middleware (if needed for future API calls)
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+// API Routes
+
+// 1. Get all projects with stats
+app.get('/api/projects', async (req, res) => {
+    try {
+        const db = await getDB();
+        
+        const projects = await db.all(`
+            SELECT p.*, 
+                   u.name as creator_name,
+                   COUNT(DISTINCT d.id) as discussion_count,
+                   COUNT(DISTINCT i.id) as interaction_count,
+                   SUM(CASE WHEN i.type = 'like' THEN 1 ELSE 0 END) as like_count,
+                   SUM(CASE WHEN i.type = 'comment' THEN 1 ELSE 0 END) as comment_count
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            LEFT JOIN discussions d ON p.id = d.project_id
+            LEFT JOIN interactions i ON p.id = i.project_id
+            GROUP BY p.id
+            ORDER BY p.updated_at DESC
+        `);
+        
+        // Calculate pulse score (simplified: based on recent activity)
+        const projectsWithPulse = projects.map(project => {
+            const baseScore = 50;
+            const activityBonus = Math.min(project.interaction_count * 2, 30);
+            const recencyBonus = project.discussion_count > 0 ? 20 : 0;
+            const pulse = baseScore + activityBonus + recencyBonus;
+            
+            return {
+                ...project,
+                pulse_score: Math.min(pulse, 100)
+            };
+        });
+        
+        res.json(projectsWithPulse);
+    } catch (error) {
+        console.error('Error fetching projects:', error);
+        res.status(500).json({ error: 'Failed to fetch projects' });
     }
+});
 
-    // Create collaborative innovation
-    createCollaborativeInnovation(data) {
-        const innovationId = uuidv4();
-        const now = new Date().toISOString();
+// 2. Get single project
+app.get('/api/projects/:id', async (req, res) => {
+    try {
+        const db = await getDB();
+        const { id } = req.params;
         
-        const innovation = {
-            id: innovationId,
-            title: data.title,
-            challenge: data.challenge,
-            hypothesis: data.hypothesis,
-            stage: data.stage || 'exploration',
-            
-            // Collaborative framework
-            collaborators: {
-                clinical: [],
-                technical: [],
-                research: [],
-                commercial: [],
-                patient: []
-            },
-            
-            // Knowledge framework
-            insights: [],
-            questions: [],
-            evidence: [],
-            assumptions: [],
-            
-            // Progress framework
-            milestones: [],
-            decisions: [],
-            risks: [],
-            opportunities: [],
-            
-            // Collaborative metrics
-            engagement: {
-                activeParticipants: 0,
-                contributionDistribution: {},
-                responseTime: 0
-            },
-            
-            createdAt: now,
-            updatedAt: now,
-            status: 'active'
-        };
+        const project = await db.get(`
+            SELECT p.*, u.name as creator_name
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            WHERE p.id = ?
+        `, [id]);
         
-        // Add initial collaborators if provided
-        if (data.collaborators) {
-            Object.keys(data.collaborators).forEach(role => {
-                if (innovation.collaborators[role]) {
-                    innovation.collaborators[role] = data.collaborators[role];
-                }
-            });
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
         }
         
-        this.innovations.set(innovationId, innovation);
+        // Get project stats
+        const stats = await db.get(`
+            SELECT 
+                COUNT(DISTINCT d.id) as discussion_count,
+                COUNT(DISTINCT i.id) as interaction_count,
+                SUM(CASE WHEN i.type = 'like' THEN 1 ELSE 0 END) as like_count,
+                SUM(CASE WHEN i.type = 'view' THEN 1 ELSE 0 END) as view_count
+            FROM projects p
+            LEFT JOIN discussions d ON p.id = d.project_id
+            LEFT JOIN interactions i ON p.id = i.project_id
+            WHERE p.id = ?
+            GROUP BY p.id
+        `, [id]);
         
-        // Create collaboration room
-        this.collaborations.set(innovationId, {
-            participants: new Map(),
-            activeDiscussions: [],
-            sharedResources: []
+        res.json({
+            ...project,
+            ...stats,
+            pulse_score: project.pulse_score || 50
         });
-        
-        this.recordActivity('innovation_created', {
-            innovationId,
-            title: innovation.title,
-            challenge: innovation.challenge
-        });
-        
-        this.updatePlatformMetrics();
-        
-        return innovation;
+    } catch (error) {
+        console.error('Error fetching project:', error);
+        res.status(500).json({ error: 'Failed to fetch project' });
     }
+});
 
-    // Add collaborative insight
-    addCollaborativeInsight(data) {
-        const insightId = uuidv4();
-        const now = new Date().toISOString();
+// 3. Create new project
+app.post('/api/projects', async (req, res) => {
+    try {
+        const { title, description, stage = 'ideation', department = 'Pneumology' } = req.body;
         
-        const insight = {
-            id: insightId,
-            innovationId: data.innovationId,
-            type: data.type, // 'observation', 'question', 'hypothesis', 'evidence', 'concern'
-            content: data.content,
-            contributor: data.contributor,
-            
-            // Context
-            context: data.context,
-            references: data.references || [],
-            supportingData: data.supportingData || [],
-            
-            // Collaborative attributes
-            perspectives: data.perspectives || [],
-            impactAreas: data.impactAreas || [],
-            confidence: data.confidence || 0.5,
-            
-            // Engagement
-            responses: [],
-            endorsements: [],
-            followUps: [],
-            
-            createdAt: now,
-            updatedAt: now
-        };
-        
-        this.insights.set(insightId, insight);
-        
-        const innovation = this.innovations.get(data.innovationId);
-        if (innovation) {
-            innovation.insights.push(insightId);
-            innovation.updatedAt = now;
-            
-            // Update engagement metrics
-            innovation.engagement.activeParticipants = 
-                this.calculateActiveParticipants(data.innovationId);
+        if (!title || !description) {
+            return res.status(400).json({ error: 'Title and description are required' });
         }
         
-        this.recordActivity('insight_shared', {
-            innovationId: data.innovationId,
-            insightId,
-            contributor: data.contributor.name,
-            type: data.type
-        });
+        const db = await getDB();
+        const projectId = uuidv4();
+        const timestamp = new Date().toISOString();
         
-        return insight;
-    }
-
-    // Collaborative decision making
-    makeCollaborativeDecision(data) {
-        const decisionId = uuidv4();
-        const now = new Date().toISOString();
-        
-        const decision = {
-            id: decisionId,
-            innovationId: data.innovationId,
-            context: data.context,
-            options: data.options,
-            recommendation: data.recommendation,
-            
-            // Decision framework
-            criteria: data.criteria || [],
-            tradeoffs: data.tradeoffs || [],
-            rationale: data.rationale,
-            
-            // Collaborative consensus
-            participants: data.participants || [],
-            consensus: this.calculateConsensus(data.participants),
-            dissentingViews: data.dissentingViews || [],
-            
-            // Implementation
-            actions: data.actions || [],
-            timeline: data.timeline,
-            owners: data.owners || [],
-            
-            recordedAt: now,
-            recordedBy: data.recordedBy
-        };
-        
-        const innovation = this.innovations.get(data.innovationId);
-        if (innovation) {
-            innovation.decisions.push(decision);
-            innovation.updatedAt = now;
+        // Get or create admin user
+        let admin = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
+        if (!admin) {
+            const adminId = uuidv4();
+            await db.run(
+                `INSERT INTO users (id, email, name, role, department) 
+                 VALUES (?, ?, ?, ?, ?)`,
+                [adminId, 'admin@thoraxlab.local', 'Digital Innovation Lead', 'admin', 'Pneumology']
+            );
+            admin = { id: adminId };
         }
         
-        this.recordActivity('decision_made', {
-            innovationId: data.innovationId,
-            decisionId,
-            consensus: decision.consensus,
-            impact: data.impact || 'medium'
+        await db.run(
+            `INSERT INTO projects (id, title, description, stage, department, created_by, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [projectId, title, description, stage, department, admin.id, timestamp, timestamp]
+        );
+        
+        // Add creator as project member
+        await db.run(
+            `INSERT INTO project_members (project_id, user_id, role) 
+             VALUES (?, ?, ?)`,
+            [projectId, admin.id, 'admin']
+        );
+        
+        // Record creation as interaction
+        await db.run(
+            `INSERT INTO interactions (project_id, user_id, type, content) 
+             VALUES (?, ?, ?, ?)`,
+            [projectId, admin.id, 'comment', 'Project created']
+        );
+        
+        res.json({ 
+            success: true, 
+            id: projectId,
+            message: 'Project created successfully'
         });
-        
-        this.updatePlatformMetrics();
-        
-        return decision;
+    } catch (error) {
+        console.error('Error creating project:', error);
+        res.status(500).json({ error: 'Failed to create project' });
     }
+});
 
-    // Calculate consensus among participants
-    calculateConsensus(participants) {
-        if (!participants || participants.length === 0) return 0;
+// 4. Get project discussions
+app.get('/api/projects/:id/discussions', async (req, res) => {
+    try {
+        const db = await getDB();
+        const { id } = req.params;
         
-        const agreementCount = participants.filter(p => p.agreement === 'agree').length;
-        return agreementCount / participants.length;
+        const discussions = await db.all(`
+            SELECT d.*, u.name as user_name
+            FROM discussions d
+            LEFT JOIN users u ON d.user_id = u.id
+            WHERE d.project_id = ?
+            ORDER BY d.created_at DESC
+        `, [id]);
+        
+        res.json(discussions);
+    } catch (error) {
+        console.error('Error fetching discussions:', error);
+        res.status(500).json({ error: 'Failed to fetch discussions' });
     }
+});
 
-    // Calculate active participants
-    calculateActiveParticipants(innovationId) {
-        const collaboration = this.collaborations.get(innovationId);
-        if (!collaboration) return 0;
+// 5. Create discussion
+app.post('/api/discussions', async (req, res) => {
+    try {
+        const { project_id, content, type = 'comment' } = req.body;
         
-        return collaboration.participants.size;
-    }
-
-    // Update platform-wide metrics
-    updatePlatformMetrics() {
-        const innovationCount = this.innovations.size;
-        let totalCollaborationDensity = 0;
-        let totalStakeholderDiversity = 0;
-        
-        this.innovations.forEach(innovation => {
-            // Calculate collaboration density
-            const collaboratorCount = Object.values(innovation.collaborators)
-                .flat().length;
-            totalCollaborationDensity += collaboratorCount;
-            
-            // Calculate stakeholder diversity
-            const activeRoles = Object.keys(innovation.collaborators)
-                .filter(role => innovation.collaborators[role].length > 0);
-            totalStakeholderDiversity += activeRoles.length / 5; // 5 possible roles
-        });
-        
-        this.metrics = {
-            activeInnovations: innovationCount,
-            collaborationDensity: innovationCount > 0 ? 
-                totalCollaborationDensity / innovationCount : 0,
-            stakeholderDiversity: innovationCount > 0 ? 
-                (totalStakeholderDiversity / innovationCount) * 100 : 0,
-            innovationVelocity: this.calculateInnovationVelocity()
-        };
-    }
-
-    calculateInnovationVelocity() {
-        // Calculate average time between significant milestones
-        return 0; // Implementation depends on actual data
-    }
-
-    // Record platform activity
-    recordActivity(type, data) {
-        const activity = {
-            id: uuidv4(),
-            type,
-            data,
-            timestamp: new Date().toISOString()
-        };
-        
-        this.activities.unshift(activity);
-        if (this.activities.length > 500) {
-            this.activities = this.activities.slice(0, 500);
+        if (!project_id || !content) {
+            return res.status(400).json({ error: 'Project ID and content are required' });
         }
-    }
-
-    // Query methods
-    getCollaborativePipeline() {
-        const pipeline = {
-            exploration: [],
-            development: [],
-            validation: [],
-            implementation: []
-        };
         
-        this.innovations.forEach(innovation => {
-            if (pipeline[innovation.stage]) {
-                pipeline[innovation.stage].push({
-                    ...innovation,
-                    collaboratorCount: this.calculateTotalCollaborators(innovation.id),
-                    insightCount: innovation.insights.length,
-                    decisionCount: innovation.decisions.length
-                });
-            }
+        const db = await getDB();
+        const timestamp = new Date().toISOString();
+        
+        // Get admin user for now (replace with auth later)
+        const admin = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
+        if (!admin) {
+            return res.status(500).json({ error: 'Admin user not found' });
+        }
+        
+        await db.run(
+            `INSERT INTO discussions (project_id, user_id, content, type, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [project_id, admin.id, content, type, timestamp, timestamp]
+        );
+        
+        // Record as interaction
+        await db.run(
+            `INSERT INTO interactions (project_id, user_id, type, content) 
+             VALUES (?, ?, ?, ?)`,
+            [project_id, admin.id, 'comment', 'Posted discussion']
+        );
+        
+        // Update project's last activity
+        await db.run(
+            `UPDATE projects SET updated_at = ? WHERE id = ?`,
+            [timestamp, project_id]
+        );
+        
+        res.json({ success: true, message: 'Discussion posted successfully' });
+    } catch (error) {
+        console.error('Error posting discussion:', error);
+        res.status(500).json({ error: 'Failed to post discussion' });
+    }
+});
+
+// 6. Record interaction (like, view, etc.)
+app.post('/api/interactions', async (req, res) => {
+    try {
+        const { project_id, discussion_id, type = 'like', content = '' } = req.body;
+        
+        if (!project_id) {
+            return res.status(400).json({ error: 'Project ID is required' });
+        }
+        
+        const db = await getDB();
+        const timestamp = new Date().toISOString();
+        
+        // Get admin user for now
+        const admin = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
+        if (!admin) {
+            return res.status(500).json({ error: 'Admin user not found' });
+        }
+        
+        await db.run(
+            `INSERT INTO interactions (project_id, discussion_id, user_id, type, content, created_at) 
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [project_id, discussion_id || null, admin.id, type, content, timestamp]
+        );
+        
+        // Update project's pulse score
+        await updatePulseScore(db, project_id);
+        
+        // Update project's last activity
+        await db.run(
+            `UPDATE projects SET updated_at = ? WHERE id = ?`,
+            [timestamp, project_id]
+        );
+        
+        res.json({ success: true, message: 'Interaction recorded' });
+    } catch (error) {
+        console.error('Error recording interaction:', error);
+        res.status(500).json({ error: 'Failed to record interaction' });
+    }
+});
+
+// 7. Get recent activities
+app.get('/api/activities', async (req, res) => {
+    try {
+        const db = await getDB();
+        
+        const activities = await db.all(`
+            SELECT 
+                i.*,
+                u.name as user_name,
+                p.title as project_title,
+                CASE 
+                    WHEN i.type = 'like' THEN 'liked'
+                    WHEN i.type = 'comment' THEN 'commented on'
+                    WHEN i.type = 'view' THEN 'viewed'
+                    ELSE 'interacted with'
+                END as action,
+                datetime(i.created_at) as timestamp
+            FROM interactions i
+            LEFT JOIN users u ON i.user_id = u.id
+            LEFT JOIN projects p ON i.project_id = p.id
+            ORDER BY i.created_at DESC
+            LIMIT 20
+        `);
+        
+        // Format for frontend
+        const formattedActivities = activities.map(activity => ({
+            user: activity.user_name || 'Clinician',
+            content: `${activity.action} ${activity.project_title}`,
+            timestamp: formatTimeAgo(activity.created_at)
+        }));
+        
+        res.json(formattedActivities);
+    } catch (error) {
+        console.error('Error fetching activities:', error);
+        res.status(500).json({ error: 'Failed to fetch activities' });
+    }
+});
+
+// 8. Get project stats
+app.get('/api/stats', async (req, res) => {
+    try {
+        const db = await getDB();
+        
+        const stats = await db.get(`
+            SELECT 
+                COUNT(DISTINCT p.id) as total_projects,
+                COUNT(DISTINCT CASE WHEN p.stage = 'active' THEN p.id END) as active_projects,
+                COUNT(DISTINCT i.id) as total_interactions,
+                COUNT(DISTINCT u.id) as total_users,
+                AVG(p.pulse_score) as avg_pulse_score
+            FROM projects p
+            LEFT JOIN interactions i ON p.id = i.project_id
+            LEFT JOIN users u ON p.created_by = u.id
+        `);
+        
+        res.json({
+            activeProjects: stats.active_projects || 0,
+            totalInteractions: stats.total_interactions || 0,
+            avgPulse: Math.round(stats.avg_pulse_score || 50),
+            clinicians: stats.total_users || 1
         });
-        
-        return pipeline;
+    } catch (error) {
+        console.error('Error fetching stats:', error);
+        res.status(500).json({ error: 'Failed to fetch stats' });
     }
+});
 
-    calculateTotalCollaborators(innovationId) {
-        const innovation = this.innovations.get(innovationId);
-        if (!innovation) return 0;
+// Helper function to update pulse score
+async function updatePulseScore(db, projectId) {
+    try {
+        // Calculate new pulse score based on recent interactions
+        const recentInteractions = await db.get(`
+            SELECT COUNT(*) as count,
+                   MAX(created_at) as last_interaction
+            FROM interactions 
+            WHERE project_id = ? 
+            AND created_at > datetime('now', '-7 days')
+        `, [projectId]);
         
-        return Object.values(innovation.collaborators)
-            .flat().length;
-    }
-
-    getInnovationCollaboration(innovationId) {
-        const innovation = this.innovations.get(innovationId);
-        if (!innovation) return null;
+        const interactionCount = recentInteractions?.count || 0;
+        const hasRecentActivity = recentInteractions?.last_interaction ? 
+            (new Date() - new Date(recentInteractions.last_interaction)) < 24 * 60 * 60 * 1000 : false;
         
-        const collaborationInsights = innovation.insights
-            .map(insightId => this.insights.get(insightId))
-            .filter(Boolean);
+        // Simple pulse calculation
+        let newPulse = 50; // Base
+        newPulse += Math.min(interactionCount * 3, 30); // Interaction bonus
+        newPulse += hasRecentActivity ? 20 : 0; // Recency bonus
         
-        return {
-            innovation,
-            insights: collaborationInsights,
-            activities: this.activities.filter(a => 
-                a.data.innovationId === innovationId
-            ).slice(0, 20),
-            collaborationHealth: {
-                diversityScore: this.calculateDiversityScore(innovation),
-                engagementLevel: this.calculateEngagementLevel(innovationId),
-                decisionClarity: this.calculateDecisionClarity(innovation),
-                knowledgeDepth: this.calculateKnowledgeDepth(innovationId)
-            }
-        };
-    }
-
-    calculateDiversityScore(innovation) {
-        const activeRoles = Object.keys(innovation.collaborators)
-            .filter(role => innovation.collaborators[role].length > 0);
-        return (activeRoles.length / 5) * 100;
-    }
-
-    calculateEngagementLevel(innovationId) {
-        const innovation = this.innovations.get(innovationId);
-        if (!innovation) return 0;
+        // Cap at 100
+        newPulse = Math.min(newPulse, 100);
         
-        const insightCount = innovation.insights.length;
-        const decisionCount = innovation.decisions.length;
-        const collaboratorCount = this.calculateTotalCollaborators(innovationId);
+        await db.run(
+            `UPDATE projects SET pulse_score = ? WHERE id = ?`,
+            [newPulse, projectId]
+        );
         
-        if (collaboratorCount === 0) return 0;
-        
-        return Math.min(100, (insightCount * 10) + (decisionCount * 20));
-    }
-
-    calculateDecisionClarity(innovation) {
-        if (!innovation.decisions || innovation.decisions.length === 0) return 0;
-        
-        const clearDecisions = innovation.decisions.filter(d => 
-            d.rationale && d.actions && d.actions.length > 0
-        ).length;
-        
-        return (clearDecisions / innovation.decisions.length) * 100;
-    }
-
-    calculateKnowledgeDepth(innovationId) {
-        const innovation = this.innovations.get(innovationId);
-        if (!innovation) return 0;
-        
-        const evidenceCount = innovation.insights.filter(insightId => {
-            const insight = this.insights.get(insightId);
-            return insight && insight.type === 'evidence' && insight.supportingData.length > 0;
-        }).length;
-        
-        return Math.min(100, evidenceCount * 15);
+        return newPulse;
+    } catch (error) {
+        console.error('Error updating pulse score:', error);
     }
 }
 
-// ==================== INITIALIZE THORAXLAB ====================
-const thoraxLab = new ThoraxLabPlatform();
-
-// Example collaborative innovation
-thoraxLab.createCollaborativeInnovation({
-    title: "Collaborative AI-Assisted Thoracic Diagnosis",
-    challenge: "Improving early detection accuracy through multi-disciplinary collaboration",
-    hypothesis: "Combining clinical expertise with AI pattern recognition can improve diagnostic accuracy by 40%",
-    stage: "development",
-    collaborators: {
-        clinical: [
-            { id: 'clinic_1', name: 'Dr. Sarah Miller', role: 'Thoracic Radiologist', expertise: ['CT Interpretation', 'Nodule Assessment'] }
-        ],
-        technical: [
-            { id: 'tech_1', name: 'Alex Chen', role: 'AI Research Lead', expertise: ['Deep Learning', 'Medical Imaging'] }
-        ]
-    }
-});
-
-// ==================== PLATFORM CONFIGURATION ====================
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "https://cdn.socket.io", "'unsafe-inline'"],
-            styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-            imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'", "ws:", "wss:", "https://cdn.socket.io"],
-            frameSrc: ["'self'"]
-        }
-    }
-}));
-
-app.use(cors());
-app.use(compression());
-app.use(express.json());
-app.use(express.static('public'));
-
-// ==================== COLLABORATIVE REAL-TIME ====================
-const io = new Server(server, {
-    cors: { origin: "*" },
-    transports: ['websocket', 'polling']
-});
-
-// Track collaborative sessions
-const collaborativeSessions = new Map();
-
-io.on('connection', (socket) => {
-    socket.on('join:collaboration', (data) => {
-        const { innovationId, participant } = data;
-        socket.join(`collaboration:${innovationId}`);
-        
-        if (!collaborativeSessions.has(innovationId)) {
-            collaborativeSessions.set(innovationId, new Map());
-        }
-        
-        collaborativeSessions.get(innovationId).set(socket.id, {
-            participant,
-            joinedAt: new Date().toISOString()
-        });
-        
-        socket.to(`collaboration:${innovationId}`).emit('collaborator:joined', {
-            participant,
-            activeCollaborators: collaborativeSessions.get(innovationId).size,
-            timestamp: new Date().toISOString()
-        });
-    });
+// Helper function to format time ago
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return 'Recently';
     
-    socket.on('share:insight', (data) => {
-        const { innovationId, insight } = data;
-        const savedInsight = thoraxLab.addCollaborativeInsight({
-            innovationId,
-            type: insight.type,
-            content: insight.content,
-            contributor: insight.contributor,
-            context: insight.context,
-            references: insight.references,
-            supportingData: insight.supportingData,
-            perspectives: insight.perspectives,
-            impactAreas: insight.impactAreas,
-            confidence: insight.confidence
-        });
-        
-        io.to(`collaboration:${innovationId}`).emit('insight:shared', {
-            insight: savedInsight,
-            innovationId,
-            timestamp: new Date().toISOString()
-        });
-    });
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
     
-    socket.on('make:decision', (data) => {
-        const { innovationId, decision } = data;
-        const savedDecision = thoraxLab.makeCollaborativeDecision({
-            innovationId,
-            context: decision.context,
-            options: decision.options,
-            recommendation: decision.recommendation,
-            criteria: decision.criteria,
-            tradeoffs: decision.tradeoffs,
-            rationale: decision.rationale,
-            participants: decision.participants,
-            dissentingViews: decision.dissentingViews,
-            actions: decision.actions,
-            timeline: decision.timeline,
-            owners: decision.owners,
-            recordedBy: decision.recordedBy
-        });
-        
-        io.to(`collaboration:${innovationId}`).emit('decision:made', {
-            decision: savedDecision,
-            innovationId,
-            timestamp: new Date().toISOString()
-        });
-    });
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
     
-    socket.on('disconnect', () => {
-        collaborativeSessions.forEach((sessions, innovationId) => {
-            if (sessions.has(socket.id)) {
-                sessions.delete(socket.id);
-                if (sessions.size === 0) {
-                    collaborativeSessions.delete(innovationId);
-                }
-            }
-        });
-    });
-});
+    return date.toLocaleDateString();
+}
 
-// ==================== COLLABORATIVE API ====================
-app.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
-        platform: 'ThoraxLab Collaborative Innovation',
-        timestamp: new Date().toISOString(),
-        metrics: thoraxLab.metrics
-    });
-});
-
-app.get('/api/innovations/pipeline', (req, res) => {
-    try {
-        const pipeline = thoraxLab.getCollaborativePipeline();
-        res.json({
-            success: true,
-            data: pipeline,
-            metrics: thoraxLab.metrics,
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to load innovation pipeline' });
-    }
-});
-
-app.post('/api/innovations', (req, res) => {
-    try {
-        const { title, challenge, hypothesis, stage, collaborators } = req.body;
-        
-        if (!title || !challenge || !hypothesis) {
-            return res.status(400).json({
-                success: false,
-                error: 'Title, challenge, and hypothesis are required'
-            });
-        }
-        
-        const innovation = thoraxLab.createCollaborativeInnovation({
-            title,
-            challenge,
-            hypothesis,
-            stage,
-            collaborators
-        });
-        
-        res.status(201).json({
-            success: true,
-            data: innovation,
-            message: 'Collaborative innovation started successfully'
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to create innovation' });
-    }
-});
-
-app.get('/api/innovations/:id/collaboration', (req, res) => {
-    try {
-        const collaboration = thoraxLab.getInnovationCollaboration(req.params.id);
-        
-        if (!collaboration) {
-            return res.status(404).json({ success: false, error: 'Innovation not found' });
-        }
-        
-        res.json({
-            success: true,
-            data: collaboration,
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to load collaboration' });
-    }
-});
-
-app.post('/api/insights', (req, res) => {
-    try {
-        const { innovationId, type, content, contributor, context, references, supportingData } = req.body;
-        
-        if (!innovationId || !type || !content || !contributor) {
-            return res.status(400).json({
-                success: false,
-                error: 'Missing required insight fields'
-            });
-        }
-        
-        const insight = thoraxLab.addCollaborativeInsight({
-            innovationId,
-            type,
-            content,
-            contributor,
-            context,
-            references,
-            supportingData
-        });
-        
-        res.status(201).json({
-            success: true,
-            data: insight,
-            message: 'Insight shared successfully'
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to share insight' });
-    }
-});
-
-app.post('/api/decisions', (req, res) => {
-    try {
-        const { innovationId, context, options, recommendation, rationale, participants, actions } = req.body;
-        
-        if (!innovationId || !context || !recommendation || !rationale) {
-            return res.status(400).json({
-                success: false,
-                error: 'Missing required decision fields'
-            });
-        }
-        
-        const decision = thoraxLab.makeCollaborativeDecision({
-            innovationId,
-            context,
-            options,
-            recommendation,
-            rationale,
-            participants,
-            actions
-        });
-        
-        res.status(201).json({
-            success: true,
-            data: decision,
-            message: 'Decision recorded successfully'
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to record decision' });
-    }
-});
-
-app.get('/api/metrics', (req, res) => {
-    try {
-        res.json({
-            success: true,
-            data: thoraxLab.metrics,
-            activities: thoraxLab.activities.slice(0, 50),
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to load metrics' });
-    }
-});
-
-// SPA fallback
-app.get('*', (req, res) => {
-    if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ success: false, error: 'API endpoint not found' });
-    }
+// Serve frontend routes
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Error handler
-app.use((err, req, res, next) => {
-    console.error('ThoraxLab error:', err);
-    res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-        timestamp: new Date().toISOString()
-    });
+app.get('/project', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'project.html'));
 });
 
-// ==================== START PLATFORM ====================
-server.listen(PORT, () => {
-    console.log(`
-🏥 THORAXLAB COLLABORATIVE INNOVATION
-=======================================
-📡 Platform running on port ${PORT}
-🎯 Collaborative Innovation Active
-
-🔬 PLATFORM STATUS:
-   • Active Innovations: ${thoraxLab.innovations.size}
-   • Collaborative Insights: ${thoraxLab.insights.size}
-   • Real-time Sessions: Ready
-   • Platform Metrics: Active
-
-🚀 READY FOR COLLABORATION:
-   • Multi-disciplinary framework
-   • Real-time knowledge sharing
-   • Evidence-based decision making
-   • Collaborative progress tracking
-
-🌟 Transforming healthcare through collaboration!
-    `);
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Initialize database and start server
+async function startServer() {
+    try {
+        // Initialize database
+        const db = await getDB();
+        console.log('✅ Database initialized');
+        
+        // Start server
+        app.listen(PORT, () => {
+            console.log(`🚀 ThoraxLab server running on port ${PORT}`);
+            console.log(`🌐 Open http://localhost:${PORT} in your browser`);
+        });
+    } catch (error) {
+        console.error('❌ Failed to start server:', error);
+        process.exit(1);
+    }
+}
+
+startServer();
