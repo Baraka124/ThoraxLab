@@ -7,7 +7,6 @@
     <style>
         /* ===== CSS RESET & VARIABLES ===== */
         :root {
-            /* Medical Enterprise Color Palette */
             --primary-900: #0A2463;
             --primary-800: #1A365D;
             --primary-700: #2D3748;
@@ -25,36 +24,30 @@
             --accent-amber: #F6AD55;
             --accent-red: #E53E3E;
             
-            /* Semantic Colors */
             --success: var(--accent-green);
             --warning: var(--accent-amber);
             --error: var(--accent-red);
             --info: var(--accent-blue);
             
-            /* Spacing System */
             --space-0: 0;
-            --space-1: 0.25rem;   /* 4px */
-            --space-2: 0.5rem;    /* 8px */
-            --space-3: 0.75rem;   /* 12px */
-            --space-4: 1rem;      /* 16px */
-            --space-5: 1.25rem;   /* 20px */
-            --space-6: 1.5rem;    /* 24px */
-            --space-8: 2rem;      /* 32px */
-            --space-10: 2.5rem;   /* 40px */
-            --space-12: 3rem;     /* 48px */
-            --space-16: 4rem;     /* 64px */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
             
-            /* Typography */
             --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --font-mono: 'SF Mono', Monaco, 'Cascadia Mono', 'Segoe UI Mono', monospace;
             
-            /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             
-            /* Borders */
             --radius-sm: 0.375rem;
             --radius-md: 0.5rem;
             --radius-lg: 0.75rem;
@@ -62,17 +55,9 @@
             --radius-2xl: 1.5rem;
             --radius-full: 9999px;
             
-            /* Transitions */
             --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
             --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Z-index */
-            --z-dropdown: 10;
-            --z-sticky: 20;
-            --z-modal: 30;
-            --z-popover: 40;
-            --z-tooltip: 50;
         }
         
         * {
@@ -107,12 +92,12 @@
             color: var(--primary-900);
         }
         
-        h1 { font-size: 2.5rem; }      /* 40px */
-        h2 { font-size: 2rem; }        /* 32px */
-        h3 { font-size: 1.5rem; }      /* 24px */
-        h4 { font-size: 1.25rem; }     /* 20px */
-        h5 { font-size: 1.125rem; }    /* 18px */
-        h6 { font-size: 1rem; }        /* 16px */
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+        h5 { font-size: 1.125rem; }
+        h6 { font-size: 1rem; }
         
         .text-display { font-size: 3rem; font-weight: 800; }
         .text-lead { font-size: 1.25rem; color: var(--primary-600); }
@@ -128,7 +113,7 @@
             gap: var(--space-2);
             font-family: var(--font-sans);
             font-weight: 600;
-            font-size: 0.9375rem; /* 15px */
+            font-size: 0.9375rem;
             line-height: 1;
             text-decoration: none;
             cursor: pointer;
@@ -138,7 +123,7 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            min-height: 44px; /* Accessibility minimum */
+            min-height: 44px;
             padding: var(--space-3) var(--space-6);
             border-radius: var(--radius-full);
             position: relative;
@@ -151,7 +136,6 @@
             pointer-events: none;
         }
         
-        /* Primary Button (Solid Oval) */
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-800) 0%, var(--accent-blue) 100%);
             color: white;
@@ -163,12 +147,6 @@
             box-shadow: var(--shadow-lg);
         }
         
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        /* Secondary Button (Outline Oval) */
         .btn-secondary {
             background: transparent;
             color: var(--primary-800);
@@ -181,7 +159,6 @@
             background: var(--primary-50);
         }
         
-        /* Tertiary Button (Text + Icon) */
         .btn-tertiary {
             background: transparent;
             color: var(--primary-800);
@@ -194,7 +171,6 @@
             background: var(--primary-100);
         }
         
-        /* Button Sizes */
         .btn-sm {
             padding: var(--space-2) var(--space-4);
             min-height: 36px;
@@ -207,7 +183,6 @@
             font-size: 1.0625rem;
         }
         
-        /* Button with Loading State */
         .btn-loading {
             position: relative;
             color: transparent !important;
@@ -285,7 +260,7 @@
             border-bottom: 1px solid var(--primary-200);
             position: sticky;
             top: 0;
-            z-index: var(--z-sticky);
+            z-index: 20;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
@@ -506,21 +481,6 @@
             font-weight: 500;
         }
         
-        .stat-trend {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-1);
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: var(--space-2);
-            padding: var(--space-1) var(--space-2);
-            border-radius: var(--radius-full);
-        }
-        
-        .trend-up { background: #D1FAE5; color: #065F46; }
-        .trend-down { background: #FEE2E2; color: #991B1B; }
-        .trend-neutral { background: #F3F4F6; color: #6B7280; }
-        
         /* ===== ACTIVITY FEED ===== */
         .activity-feed {
             max-height: 500px;
@@ -637,7 +597,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: var(--z-modal);
+            z-index: 30;
             padding: var(--space-4);
         }
         
@@ -743,7 +703,7 @@
             position: fixed;
             top: var(--space-4);
             right: var(--space-4);
-            z-index: var(--z-tooltip);
+            z-index: 50;
             display: flex;
             flex-direction: column;
             gap: var(--space-2);
@@ -906,7 +866,7 @@
             position: fixed;
             bottom: var(--space-4);
             right: var(--space-4);
-            z-index: var(--z-tooltip);
+            z-index: 40;
             display: flex;
             align-items: center;
             gap: var(--space-2);
@@ -943,7 +903,7 @@
     <header class="header">
         <div class="container">
             <div class="header-content flex items-center justify-between">
-                <a href="/" class="logo">
+                <a href="/" class="logo" id="homeLink">
                     <div class="logo-icon">TL</div>
                     <div class="logo-text">
                         <div class="logo-primary">ThoraxLab</div>
@@ -974,7 +934,7 @@
                         <h1>Innovation Dashboard</h1>
                         <p class="text-lead">Track, collaborate, and accelerate clinical projects</p>
                     </div>
-                    <button class="btn btn-primary btn-lg" onclick="openCreateProjectModal()">
+                    <button class="btn btn-primary btn-lg" id="createProjectBtnHeader">
                         <span>+</span>
                         <span>Create Project</span>
                     </button>
@@ -1007,26 +967,26 @@
                 <div class="lg:col-span-2">
                     <!-- Filter Tabs -->
                     <div class="filter-tabs" id="filterTabs">
-                        <button class="filter-tab active" onclick="filterProjects('all')">
+                        <button class="filter-tab active" data-filter="all">
                             <span>All</span>
                         </button>
-                        <button class="filter-tab" onclick="filterProjects('idea')">
+                        <button class="filter-tab" data-filter="idea">
                             <span>💡</span>
                             <span>Ideation</span>
                         </button>
-                        <button class="filter-tab" onclick="filterProjects('planning')">
+                        <button class="filter-tab" data-filter="planning">
                             <span>📋</span>
                             <span>Planning</span>
                         </button>
-                        <button class="filter-tab" onclick="filterProjects('active')">
+                        <button class="filter-tab" data-filter="active">
                             <span>⚡</span>
                             <span>Active</span>
                         </button>
-                        <button class="filter-tab" onclick="filterProjects('review')">
+                        <button class="filter-tab" data-filter="review">
                             <span>🔍</span>
                             <span>Review</span>
                         </button>
-                        <button class="filter-tab" onclick="filterProjects('completed')">
+                        <button class="filter-tab" data-filter="completed">
                             <span>✅</span>
                             <span>Completed</span>
                         </button>
@@ -1035,8 +995,6 @@
                     <!-- Projects Grid -->
                     <div class="grid md:grid-cols-2 gap-6" id="projectsGrid">
                         <!-- Projects will be loaded here -->
-                        <div class="skeleton" style="height: 300px;"></div>
-                        <div class="skeleton" style="height: 300px;"></div>
                     </div>
                 </div>
                 
@@ -1049,13 +1007,6 @@
                         <div class="card-body">
                             <div class="activity-feed" id="activityFeed">
                                 <!-- Activity items will be loaded here -->
-                                <div class="flex items-start gap-3">
-                                    <div class="skeleton skeleton-circle"></div>
-                                    <div style="flex: 1;">
-                                        <div class="skeleton skeleton-text" style="width: 80%;"></div>
-                                        <div class="skeleton skeleton-text" style="width: 60%;"></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1067,15 +1018,15 @@
                         </div>
                         <div class="card-body">
                             <div class="flex flex-col gap-3">
-                                <button class="btn btn-secondary" onclick="openCreateProjectModal()">
+                                <button class="btn btn-secondary" id="newProjectBtn">
                                     <span>📋</span>
                                     <span>New Project</span>
                                 </button>
-                                <button class="btn btn-tertiary" onclick="exportData()">
+                                <button class="btn btn-tertiary" id="exportBtn">
                                     <span>📊</span>
                                     <span>Export Analytics</span>
                                 </button>
-                                <button class="btn btn-tertiary" onclick="refreshData()">
+                                <button class="btn btn-tertiary" id="refreshBtn">
                                     <span>🔄</span>
                                     <span>Refresh Data</span>
                                 </button>
@@ -1093,7 +1044,7 @@
             <div class="modal-header">
                 <h3>Start New Project</h3>
             </div>
-            <form id="projectForm" onsubmit="createProject(event)">
+            <form id="projectForm">
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label" for="projectTitle">Project Title</label>
@@ -1133,10 +1084,10 @@
                 
                 <div class="modal-footer">
                     <div class="flex justify-end gap-3">
-                        <button type="button" class="btn btn-secondary" onclick="closeCreateProjectModal()">
+                        <button type="button" class="btn btn-secondary" id="cancelProjectBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary" id="createProjectBtn">
+                        <button type="submit" class="btn btn-primary" id="submitProjectBtn">
                             Create Project
                         </button>
                     </div>
@@ -1158,10 +1109,44 @@
         let stats = {};
         let currentFilter = 'all';
         
+        // ===== DOM ELEMENTS =====
+        const elements = {
+            // Buttons
+            createProjectBtnHeader: document.getElementById('createProjectBtnHeader'),
+            newProjectBtn: document.getElementById('newProjectBtn'),
+            exportBtn: document.getElementById('exportBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            cancelProjectBtn: document.getElementById('cancelProjectBtn'),
+            submitProjectBtn: document.getElementById('submitProjectBtn'),
+            
+            // Modals
+            createProjectModal: document.getElementById('createProjectModal'),
+            
+            // Forms
+            projectForm: document.getElementById('projectForm'),
+            
+            // Containers
+            projectsGrid: document.getElementById('projectsGrid'),
+            activityFeed: document.getElementById('activityFeed'),
+            filterTabs: document.getElementById('filterTabs'),
+            statsGrid: document.getElementById('statsGrid'),
+            
+            // Stats
+            statActiveProjects: document.getElementById('statActiveProjects'),
+            statAvgPulse: document.getElementById('statAvgPulse'),
+            statTotalInteractions: document.getElementById('statTotalInteractions'),
+            statTeamMembers: document.getElementById('statTeamMembers')
+        };
+        
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 ThoraxLab Dashboard Initializing...');
+            
             // Initialize WebSocket
             initWebSocket();
+            
+            // Setup event listeners
+            setupEventListeners();
             
             // Load initial data
             await Promise.all([
@@ -1171,8 +1156,42 @@
             ]);
             
             // Setup periodic refresh
-            setInterval(loadStats, 30000); // Every 30 seconds
+            setInterval(loadStats, 30000);
+            
+            console.log('✅ ThoraxLab Dashboard Ready');
         });
+        
+        // ===== EVENT LISTENERS SETUP =====
+        function setupEventListeners() {
+            // Modal buttons
+            elements.createProjectBtnHeader.addEventListener('click', openCreateProjectModal);
+            elements.newProjectBtn.addEventListener('click', openCreateProjectModal);
+            elements.cancelProjectBtn.addEventListener('click', closeCreateProjectModal);
+            
+            // Form submission
+            elements.projectForm.addEventListener('submit', handleProjectFormSubmit);
+            
+            // Action buttons
+            elements.exportBtn.addEventListener('click', handleExport);
+            elements.refreshBtn.addEventListener('click', handleRefresh);
+            
+            // Filter tabs
+            elements.filterTabs.addEventListener('click', handleFilterTabClick);
+            
+            // Modal close on outside click
+            elements.createProjectModal.addEventListener('click', (e) => {
+                if (e.target === elements.createProjectModal) {
+                    closeCreateProjectModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeCreateProjectModal();
+                }
+            });
+        }
         
         // ===== WEBSOCKET MANAGEMENT =====
         function initWebSocket() {
@@ -1288,6 +1307,7 @@
             } catch (error) {
                 console.error('Error loading projects:', error);
                 showToast('Failed to load projects', 'error');
+                renderErrorState('projectsGrid', 'Failed to load projects');
             }
         }
         
@@ -1318,11 +1338,12 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    activities = result.data.slice(0, 10); // Get first 10 projects as activity
+                    activities = result.data.slice(0, 10);
                     renderActivities();
                 }
             } catch (error) {
                 console.error('Error loading activities:', error);
+                renderErrorState('activityFeed', 'Failed to load activities');
             }
         }
         
@@ -1342,7 +1363,7 @@
         
         // ===== RENDERING =====
         function renderProjects() {
-            const container = document.getElementById('projectsGrid');
+            const container = elements.projectsGrid;
             const filteredProjects = currentFilter === 'all' 
                 ? projects 
                 : projects.filter(p => p.stage === currentFilter);
@@ -1358,15 +1379,32 @@
                                 : `No projects in ${currentFilter} stage.`}
                         </div>
                         ${currentFilter !== 'all' ? 
-                            `<button class="btn btn-primary" onclick="filterProjects('all')">View All Projects</button>` : 
-                            `<button class="btn btn-primary" onclick="openCreateProjectModal()">Create Project</button>`}
+                            `<button class="btn btn-primary" data-action="showAll">View All Projects</button>` : 
+                            `<button class="btn btn-primary" data-action="createProject">Create Project</button>`}
                     </div>
                 `;
+                
+                // Add event listeners to empty state buttons
+                setTimeout(() => {
+                    const showAllBtn = container.querySelector('[data-action="showAll"]');
+                    const createProjectBtn = container.querySelector('[data-action="createProject"]');
+                    
+                    if (showAllBtn) {
+                        showAllBtn.addEventListener('click', () => {
+                            setFilter('all');
+                        });
+                    }
+                    
+                    if (createProjectBtn) {
+                        createProjectBtn.addEventListener('click', openCreateProjectModal);
+                    }
+                }, 100);
+                
                 return;
             }
             
             container.innerHTML = filteredProjects.map(project => `
-                <div class="project-card card">
+                <div class="project-card card" data-project-id="${project.id}">
                     <div class="card-body">
                         <div class="flex items-start justify-between gap-4">
                             <div>
@@ -1380,7 +1418,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <button class="btn btn-tertiary btn-sm" onclick="viewProject('${project.id}')">
+                            <button class="btn btn-tertiary btn-sm view-project-btn" data-project-id="${project.id}">
                                 <span>👁️</span>
                                 <span>View</span>
                             </button>
@@ -1415,11 +1453,11 @@
                                 Updated ${formatTimeAgo(project.updated_at)}
                             </div>
                             <div class="flex gap-2">
-                                <button class="btn btn-tertiary btn-sm" onclick="likeProject('${project.id}', event)">
+                                <button class="btn btn-tertiary btn-sm like-project-btn" data-project-id="${project.id}">
                                     <span>👍</span>
                                     <span>${project.interaction_count || 0}</span>
                                 </button>
-                                <button class="btn btn-secondary btn-sm" onclick="viewProject('${project.id}')">
+                                <button class="btn btn-secondary btn-sm engage-project-btn" data-project-id="${project.id}">
                                     <span>💬</span>
                                     <span>Engage</span>
                                 </button>
@@ -1428,10 +1466,34 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Add event listeners to project buttons
+            setTimeout(() => {
+                document.querySelectorAll('.view-project-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const projectId = e.currentTarget.getAttribute('data-project-id');
+                        viewProject(projectId);
+                    });
+                });
+                
+                document.querySelectorAll('.like-project-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const projectId = e.currentTarget.getAttribute('data-project-id');
+                        likeProject(projectId);
+                    });
+                });
+                
+                document.querySelectorAll('.engage-project-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const projectId = e.currentTarget.getAttribute('data-project-id');
+                        viewProject(projectId);
+                    });
+                });
+            }, 100);
         }
         
         function renderActivities() {
-            const container = document.getElementById('activityFeed');
+            const container = elements.activityFeed;
             
             if (activities.length === 0) {
                 container.innerHTML = `
@@ -1467,35 +1529,83 @@
         }
         
         function renderStats() {
-            document.getElementById('statActiveProjects').textContent = stats.active_projects || 0;
-            document.getElementById('statAvgPulse').textContent = stats.avg_pulse || 0;
-            document.getElementById('statTotalInteractions').textContent = stats.total_interactions || 0;
-            document.getElementById('statTeamMembers').textContent = stats.total_users || 1;
+            elements.statActiveProjects.textContent = stats.active_projects || 0;
+            elements.statAvgPulse.textContent = stats.avg_pulse || 0;
+            elements.statTotalInteractions.textContent = stats.total_interactions || 0;
+            elements.statTeamMembers.textContent = stats.total_users || 1;
         }
         
-        // ===== PROJECT FILTERING =====
-        function filterProjects(stage) {
-            currentFilter = stage;
+        function renderErrorState(containerId, message) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <div class="empty-title">Error</div>
+                        <div class="empty-description">${message}</div>
+                        <button class="btn btn-primary" data-action="retry">Retry</button>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    const retryBtn = container.querySelector('[data-action="retry"]');
+                    if (retryBtn) {
+                        retryBtn.addEventListener('click', () => {
+                            if (containerId === 'projectsGrid') loadProjects();
+                            if (containerId === 'activityFeed') loadActivities();
+                        });
+                    }
+                }, 100);
+            }
+        }
+        
+        // ===== EVENT HANDLERS =====
+        function handleFilterTabClick(e) {
+            const tab = e.target.closest('.filter-tab');
+            if (!tab) return;
+            
+            const filter = tab.getAttribute('data-filter');
+            setFilter(filter);
+        }
+        
+        function handleProjectFormSubmit(e) {
+            e.preventDefault();
+            createProject();
+        }
+        
+        function handleExport() {
+            exportData();
+        }
+        
+        function handleRefresh() {
+            refreshData();
+        }
+        
+        // ===== FILTER FUNCTIONS =====
+        function setFilter(filter) {
+            currentFilter = filter;
             
             // Update active tab
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            event.target.classList.add('active');
+            
+            const activeTab = document.querySelector(`.filter-tab[data-filter="${filter}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
             
             renderProjects();
         }
         
         // ===== PROJECT ACTIONS =====
-        async function createProject(event) {
-            event.preventDefault();
-            
+        async function createProject() {
             const title = document.getElementById('projectTitle').value.trim();
             const description = document.getElementById('projectDescription').value.trim();
             const stage = document.getElementById('projectStage').value;
             const department = document.getElementById('projectDepartment').value;
             
-            const btn = document.getElementById('createProjectBtn');
+            const btn = elements.submitProjectBtn;
             const originalText = btn.innerHTML;
             btn.classList.add('btn-loading');
             btn.disabled = true;
@@ -1522,7 +1632,7 @@
                     closeCreateProjectModal();
                     
                     // Clear form
-                    document.getElementById('projectForm').reset();
+                    elements.projectForm.reset();
                     
                     // Add to projects list immediately
                     projects.unshift(result.data);
@@ -1544,9 +1654,7 @@
             }
         }
         
-        async function likeProject(projectId, event) {
-            event.stopPropagation();
-            
+        async function likeProject(projectId) {
             try {
                 const response = await fetch(`${API_BASE}/api/interactions`, {
                     method: 'POST',
@@ -1586,13 +1694,13 @@
         
         // ===== MODAL FUNCTIONS =====
         function openCreateProjectModal() {
-            document.getElementById('createProjectModal').classList.add('active');
+            elements.createProjectModal.classList.add('active');
             document.getElementById('projectTitle').focus();
         }
         
         function closeCreateProjectModal() {
-            document.getElementById('createProjectModal').classList.remove('active');
-            document.getElementById('projectForm').reset();
+            elements.createProjectModal.classList.remove('active');
+            elements.projectForm.reset();
         }
         
         // ===== NAVIGATION =====
@@ -1690,10 +1798,16 @@
                     <div class="toast-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     <div class="toast-message">${message}</div>
                 </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+                <button class="toast-close">&times;</button>
             `;
             
             container.appendChild(toast);
+            
+            // Add close button listener
+            const closeBtn = toast.querySelector('.toast-close');
+            closeBtn.addEventListener('click', () => {
+                toast.remove();
+            });
             
             // Auto-remove after 5 seconds
             setTimeout(() => {
@@ -1717,20 +1831,6 @@
                 showToast('Data refreshed', 'success');
             });
         }
-        
-        // Close modal on outside click
-        document.getElementById('createProjectModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                closeCreateProjectModal();
-            }
-        });
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeCreateProjectModal();
-            }
-        });
     </script>
 </body>
 </html>
