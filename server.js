@@ -1153,42 +1153,47 @@ function setupRoutes() {
 
 // ===== STARTUP =====
 async function initialize() {
-  console.log(`
-  🚀 THORAXLAB CLINICAL-INDUSTRY INNOVATION PLATFORM v2.0
-  ═══════════════════════════════════════════════════════════
-  Initializing...
-  Environment: ${NODE_ENV}
-  Port: ${PORT}
-  Public Directory: ${PUBLIC_DIR}
-  `);
-  
-  try {
-    // Setup database
-    console.log('💾 Initializing database...');
-    await database.connect();
+    console.log(`
+    🚀 THORAXLAB CLINICAL-INDUSTRY INNOVATION PLATFORM v2.0
+    ═══════════════════════════════════════════════════════════
+    Initializing...
+    Environment: ${NODE_ENV}
+    Port: ${PORT}
+    Public Directory: ${PUBLIC_DIR}
+    `);
     
-    // Setup middleware
-    console.log('🔧 Setting up middleware...');
-    setupMiddleware();
-    
-    // Setup routes
-    console.log('🛣️  Setting up routes...');
-    setupRoutes();
-    
-    // Setup WebSocket
-    console.log('🔗 Setting up WebSocket...');
-    setupWebSocket();
-    
-    // Start server
-    startServer();
-    
-    // Schedule maintenance
-    scheduleMaintenance();
-    
-  } catch (error) {
-    console.error('❌ Initialization failed:', error);
-    process.exit(1);
-  }
+    try {
+        // Setup database FIRST
+        console.log('💾 Initializing database...');
+        try {
+            await database.connect();
+            console.log('✅ Database connected');
+        } catch (dbError) {
+            console.error('❌ Database connection failed:', dbError);
+            // Continue anyway for now
+        }
+        
+        // Setup middleware
+        console.log('🔧 Setting up middleware...');
+        setupMiddleware();
+        
+        // Setup routes
+        console.log('🛣️  Setting up routes...');
+        setupRoutes();
+        
+        // Setup WebSocket
+        console.log('🔗 Setting up WebSocket...');
+        setupWebSocket();
+        
+        // Start server
+        startServer();
+        
+        console.log('✅ Platform initialization complete');
+        
+    } catch (error) {
+        console.error('❌ Initialization failed:', error);
+        process.exit(1);
+    }
 }
 
 function startServer() {
