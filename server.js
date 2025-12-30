@@ -11,17 +11,14 @@ const PORT = process.env.PORT || 3000;
 
 // Security & Performance
 app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            scriptSrc: ["'self'"],
-            scriptSrcAttr: ["'self'"],
-            imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'", "ws:", "wss:"],
-            fontSrc: ["'self'", "data:"],
-        }
-    }
+    contentSecurityPolicy: false, // Disable CSP completely
+    frameguard: { action: 'deny' },
+    hsts: { maxAge: 31536000, includeSubDomains: true },
+    noSniff: true,
+    xssFilter: true,
+    hidePoweredBy: true,
+    ieNoOpen: true,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 app.use(compression());
 app.use(express.static('public', {
