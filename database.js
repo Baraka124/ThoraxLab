@@ -34,6 +34,16 @@ class ThoraxLabDatabase {
         }
     }
 
+    async checkConnection() {
+        try {
+            if (!this.db) await this.connect();
+            await this.db.get('SELECT 1');
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
     async initialize() {
         // Enable database optimizations
         await this.db.exec('PRAGMA journal_mode = WAL');
@@ -644,127 +654,514 @@ class ThoraxLabDatabase {
         }
     }
     
-    // ===== PROJECT PULSE CALCULATION =====
+    // ===== PROJECT OPERATIONS =====
     
-    async calculateProjectPulse(projectId) {
-        try {
-            const db = await this.connect();
-            
-            // Get data from last 7 days
-            const weekAgo = new Date();
-            weekAgo.setDate(weekAgo.getDate() - 7);
-            
-            const stats = await db.get(`
-                SELECT 
-                    -- Engagement (40% weight)
-                    COUNT(DISTINCT i.id) as total_interactions_7d,
-                    COUNT(DISTINCT i.user_id) as unique_users_7d,
-                    COUNT(DISTINCT c.id) as comments_7d,
-                    SUM(CASE WHEN i.action LIKE 'comment_%' THEN 1 ELSE 0 END) as comment_actions,
-                    
-                    -- Velocity (30% weight)
-                    COUNT(DISTINCT d.id) as decisions_7d,
-                    COUNT(DISTINCT CASE WHEN d.status = 'approved' THEN d.id END) as decisions_resolved_7d,
-                    COUNT(DISTINCT te.id) as timeline_events_7d,
-                    
-                    -- Diversity (20% weight)
-                    COUNT(DISTINCT CASE WHEN u.role = 'clinician' THEN u.id END) as clinicians_7d,
-                    COUNT(DISTINCT CASE WHEN u.role = 'industry' THEN u.id END) as industry_7d,
-                    COUNT(DISTINCT CASE WHEN u.role = 'public' THEN u.id END) as public_7d,
-                    
-                    -- Recency (10% weight)
-                    MAX(i.created_at) as last_interaction_at,
-                    JULIANDAY('now') - JULIANDAY(MIN(i.created_at)) as days_active_7d
-                    
-                FROM projects p
-                LEFT JOIN interactions i ON p.id = i.project_id 
-                    AND i.created_at > datetime(?)
-                LEFT JOIN comments c ON p.id = c.project_id 
-                    AND c.created_at > datetime(?)
-                LEFT JOIN decisions d ON p.id = d.project_id 
-                    AND d.created_at > datetime(?)
-                LEFT JOIN timeline_events te ON p.id = te.project_id 
-                    AND te.created_at > datetime(?)
-                LEFT JOIN users u ON i.user_id = u.id
-                WHERE p.id = ?
-                GROUP BY p.id
-            `, [
-                weekAgo.toISOString(), weekAgo.toISOString(), 
-                weekAgo.toISOString(), weekAgo.toISOString(),
-                projectId
-            ]);
-            
-            if (!stats) return { pulse: 50, velocity: 50, engagement: 50 };
-            
-            // Calculate scores
-            let engagementScore = 50;
-            let velocityScore = 50;
-            let pulseScore = 50;
-            
-            // Engagement calculation (0-40 points)
-            if (stats.total_interactions_7d > 0) {
-                engagementScore += Math.min(stats.total_interactions_7d * 0.2, 15);
-                engagementScore += Math.min(stats.comments_7d * 0.5, 10);
-                engagementScore += Math.min(stats.unique_users_7d * 2, 10);
-                engagementScore = Math.min(engagementScore, 90);
-            }
-            
-            // Velocity calculation (0-30 points)
-            if (stats.decisions_7d > 0) {
-                velocityScore += Math.min(stats.decisions_7d * 1.5, 10);
-                velocityScore += Math.min(stats.decisions_resolved_7d * 2, 10);
-                velocityScore += Math.min(stats.timeline_events_7d * 0.5, 5);
-                velocityScore = Math.min(velocityScore, 80);
-            }
-            
-            // Diversity bonus (0-20 points)
-            let diversityBonus = 0;
-            if (stats.clinicians_7d > 0) diversityBonus += 5;
-            if (stats.industry_7d > 0) diversityBonus += 5;
-            if (stats.public_7d > 0) diversityBonus += 5;
-            if (stats.unique_users_7d >= 3) diversityBonus += 5;
-            
-            // Recency bonus (0-10 points)
-            let recencyBonus = 0;
-            if (stats.last_interaction_at) {
-                const lastInteraction = new Date(stats.last_interaction_at);
-                const hoursSince = (new Date() - lastInteraction) / (1000 * 60 * 60);
-                
-                if (hoursSince < 1) recencyBonus = 10;
-                else if (hoursSince < 6) recencyBonus = 8;
-                else if (hoursSince < 24) recencyBonus = 5;
-                else if (hoursSince < 72) recencyBonus = 2;
-            }
-            
-            // Calculate final pulse score
-            pulseScore = engagementScore + velocityScore + diversityBonus + recencyBonus;
-            pulseScore = Math.max(0, Math.min(100, Math.round(pulseScore)));
-            
-            // Update project scores
-            await db.run(
-                `UPDATE projects 
-                 SET pulse_score = ?, 
-                     velocity_score = ?,
-                     engagement_score = ?,
-                     updated_at = CURRENT_TIMESTAMP,
-                     last_activity_at = CURRENT_TIMESTAMP
-                 WHERE id = ?`,
-                [pulseScore, Math.round(velocityScore), Math.round(engagementScore), projectId]
-            );
-            
-            return {
-                pulse: pulseScore,
-                velocity: Math.round(velocityScore),
-                engagement: Math.round(engagementScore)
-            };
-            
-        } catch (error) {
-            console.error('Pulse calculation error:', error);
-            return { pulse: 50, velocity: 50, engagement: 50 };
-        }
+    async createProject(data) {
+        const db = await this.connect();
+        const projectId = `proj_${uuidv4()}`;
+        const now = new Date().toISOString();
+        
+        await db.run(
+            `INSERT INTO projects (
+                id, title, description, type, created_by, 
+                created_at, updated_at, last_activity_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [projectId, data.title, data.description, data.type || 'clinical', 
+             data.createdBy, now, now, now]
+        );
+        
+        await db.run(
+            `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
+            [projectId, data.createdBy, 'owner']
+        );
+        
+        const project = await db.get(`
+            SELECT p.*, u.name as creator_name, u.avatar_color as creator_color
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            WHERE p.id = ?
+        `, [projectId]);
+        
+        return project;
     }
     
-    // ===== RECORD INTERACTIONS =====
+    async getProject(projectId) {
+        const db = await this.connect();
+        
+        const project = await db.get(`
+            SELECT 
+                p.*,
+                u.name as creator_name,
+                u.avatar_color as creator_color,
+                (SELECT COUNT(*) FROM project_members pm WHERE pm.project_id = p.id) as team_size,
+                (SELECT COUNT(*) FROM comments c WHERE c.project_id = p.id) as comment_count,
+                (SELECT COUNT(*) FROM decisions d WHERE d.project_id = p.id AND d.status = 'pending') as pending_decisions
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            WHERE p.id = ?
+        `, [projectId]);
+        
+        return project;
+    }
+    
+    async getAllProjects(status = 'active', limit = 50, offset = 0) {
+        const db = await this.connect();
+        
+        const projects = await db.all(`
+            SELECT 
+                p.*,
+                u.name as creator_name,
+                u.avatar_color as creator_color,
+                COUNT(DISTINCT pm.user_id) as team_size,
+                COUNT(DISTINCT c.id) as comment_count,
+                COUNT(DISTINCT d.id) as decision_count
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            LEFT JOIN project_members pm ON p.id = pm.project_id
+            LEFT JOIN comments c ON p.id = c.project_id
+            LEFT JOIN decisions d ON p.id = d.project_id
+            WHERE p.status = ?
+            GROUP BY p.id
+            ORDER BY p.last_activity_at DESC
+            LIMIT ? OFFSET ?
+        `, [status, parseInt(limit), parseInt(offset)]);
+        
+        return projects;
+    }
+    
+    async getUserProjects(userId) {
+        const db = await this.connect();
+        
+        return await db.all(`
+            SELECT 
+                p.*,
+                u.name as creator_name,
+                u.avatar_color as creator_color,
+                pm.role as user_role,
+                (SELECT COUNT(*) FROM project_members pm2 WHERE pm2.project_id = p.id) as team_size,
+                (SELECT COUNT(*) FROM comments c WHERE c.project_id = p.id) as comment_count,
+                (SELECT COUNT(*) FROM decisions d WHERE d.project_id = p.id AND d.status = 'pending') as pending_decisions
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            LEFT JOIN project_members pm ON p.id = pm.project_id AND pm.user_id = ?
+            WHERE p.status = 'active' AND pm.user_id = ?
+            ORDER BY p.last_activity_at DESC
+            LIMIT 50
+        `, [userId, userId]);
+    }
+    
+    async updateProject(projectId, updates) {
+        const db = await this.connect();
+        
+        const allowedFields = ['title', 'description', 'type', 'status', 'phase', 'target_date', 'tags'];
+        const updateFields = [];
+        const updateValues = [];
+        
+        Object.keys(updates).forEach(key => {
+            if (allowedFields.includes(key)) {
+                updateFields.push(`${key} = ?`);
+                updateValues.push(updates[key]);
+            }
+        });
+        
+        if (updateFields.length === 0) {
+            throw new Error('No valid fields to update');
+        }
+        
+        updateFields.push('updated_at = CURRENT_TIMESTAMP');
+        updateValues.push(projectId);
+        
+        await db.run(
+            `UPDATE projects SET ${updateFields.join(', ')} WHERE id = ?`,
+            updateValues
+        );
+        
+        return await this.getProject(projectId);
+    }
+    
+    async isProjectMember(projectId, userId) {
+        const db = await this.connect();
+        
+        const member = await db.get(
+            'SELECT * FROM project_members WHERE project_id = ? AND user_id = ?',
+            [projectId, userId]
+        );
+        
+        return !!member;
+    }
+    
+    async incrementProjectCounter(projectId, field) {
+        const db = await this.connect();
+        
+        await db.run(
+            `UPDATE projects SET ${field} = ${field} + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+            [projectId]
+        );
+    }
+    
+    // ===== USER OPERATIONS =====
+    
+    async createUser(email, name, role = 'clinician') {
+        const db = await this.connect();
+        const userId = `user_${uuidv4()}`;
+        
+        const avatarColors = ['#0C7C59', '#D35400', '#7B68EE', '#1A365D', '#8B5CF6', '#2D9CDB', '#27AE60'];
+        const randomColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+        
+        await db.run(
+            `INSERT INTO users (id, email, name, role, avatar_color, status) 
+             VALUES (?, ?, ?, ?, ?, 'online')`,
+            [userId, email, name, role, randomColor]
+        );
+        
+        return await this.getUser(userId);
+    }
+    
+    async getUser(userId) {
+        const db = await this.connect();
+        
+        const user = await db.get(
+            'SELECT * FROM users WHERE id = ?',
+            [userId]
+        );
+        
+        return user;
+    }
+    
+    async getUserByEmail(email) {
+        const db = await this.connect();
+        
+        const user = await db.get(
+            'SELECT * FROM users WHERE email = ?',
+            [email]
+        );
+        
+        return user;
+    }
+    
+    async getUserProfile(userId) {
+        const db = await this.connect();
+        
+        const user = await db.get(`
+            SELECT 
+                u.*,
+                COUNT(DISTINCT pm.project_id) as project_count,
+                COUNT(DISTINCT c.id) as comment_count,
+                COUNT(DISTINCT d.id) as decision_count
+            FROM users u
+            LEFT JOIN project_members pm ON u.id = pm.user_id
+            LEFT JOIN comments c ON u.id = c.user_id
+            LEFT JOIN decisions d ON u.id = d.created_by
+            WHERE u.id = ?
+            GROUP BY u.id
+        `, [userId]);
+        
+        return user;
+    }
+    
+    async updateUserStatus(userId, status) {
+        const db = await this.connect();
+        
+        await db.run(
+            'UPDATE users SET status = ?, last_active = CURRENT_TIMESTAMP WHERE id = ?',
+            [status, userId]
+        );
+    }
+    
+    async updateAllUsersStatus(status) {
+        const db = await this.connect();
+        
+        await db.run(
+            'UPDATE users SET status = ?',
+            [status]
+        );
+    }
+    
+    async getOnlineUsers() {
+        const db = await this.connect();
+        
+        return await db.all(`
+            SELECT 
+                u.id,
+                u.name,
+                u.role,
+                u.avatar_color,
+                u.institution,
+                u.specialty,
+                u.last_active,
+                COUNT(DISTINCT pm.project_id) as project_count,
+                (SELECT COUNT(*) FROM comments c 
+                 WHERE c.user_id = u.id AND c.created_at > datetime('now', '-1 day')) as comments_today
+            FROM users u
+            LEFT JOIN project_members pm ON u.id = pm.user_id
+            WHERE u.status = 'online'
+            GROUP BY u.id
+            ORDER BY u.last_active DESC
+            LIMIT 20
+        `);
+    }
+    
+    // ===== COMMENT OPERATIONS =====
+    
+    async createComment(data) {
+        const db = await this.connect();
+        const commentId = `comment_${uuidv4()}`;
+        const now = new Date().toISOString();
+        
+        await db.run(
+            `INSERT INTO comments (id, project_id, user_id, parent_id, content, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [commentId, data.projectId, data.userId, data.parentId, data.content, now, now]
+        );
+        
+        const comment = await db.get(`
+            SELECT 
+                c.*,
+                u.name as user_name,
+                u.role as user_role,
+                u.avatar_color,
+                0 as likes,
+                0 as user_reacted,
+                0 as reply_count
+            FROM comments c
+            LEFT JOIN users u ON c.user_id = u.id
+            WHERE c.id = ?
+        `, [commentId]);
+        
+        return comment;
+    }
+    
+    async getComment(commentId) {
+        const db = await this.connect();
+        
+        const comment = await db.get(
+            'SELECT * FROM comments WHERE id = ?',
+            [commentId]
+        );
+        
+        return comment;
+    }
+    
+    async getProjectComments(projectId, limit = 100, offset = 0, parentId = null, userId = '') {
+        const db = await this.connect();
+        
+        const whereClause = parentId ? 'c.project_id = ? AND c.parent_id = ?' : 'c.project_id = ? AND c.parent_id IS NULL';
+        const params = parentId ? [projectId, parentId, parseInt(limit), parseInt(offset), userId] 
+                              : [projectId, parseInt(limit), parseInt(offset), userId];
+        
+        const comments = await db.all(`
+            SELECT 
+                c.*,
+                u.name as user_name,
+                u.role as user_role,
+                u.avatar_color,
+                (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id) as likes,
+                (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id AND cr.user_id = ?) as user_reacted,
+                (SELECT COUNT(*) FROM comments child WHERE child.parent_id = c.id) as reply_count
+            FROM comments c
+            LEFT JOIN users u ON c.user_id = u.id
+            WHERE ${whereClause}
+            ORDER BY c.is_pinned DESC, c.created_at DESC
+            LIMIT ? OFFSET ?
+        `, params);
+        
+        return comments;
+    }
+    
+    async toggleCommentReaction(commentId, userId, reaction = 'like') {
+        const db = await this.connect();
+        
+        const existingReaction = await db.get(
+            'SELECT * FROM comment_reactions WHERE comment_id = ? AND user_id = ? AND reaction = ?',
+            [commentId, userId, reaction]
+        );
+        
+        if (existingReaction) {
+            await db.run(
+                'DELETE FROM comment_reactions WHERE comment_id = ? AND user_id = ? AND reaction = ?',
+                [commentId, userId, reaction]
+            );
+            
+            await db.run(
+                'UPDATE comments SET likes = likes - 1 WHERE id = ?',
+                [commentId]
+            );
+        } else {
+            await db.run(
+                `INSERT INTO comment_reactions (comment_id, user_id, reaction) VALUES (?, ?, ?)`,
+                [commentId, userId, reaction]
+            );
+            
+            await db.run(
+                'UPDATE comments SET likes = likes + 1 WHERE id = ?',
+                [commentId]
+            );
+        }
+        
+        const comment = await db.get(`
+            SELECT 
+                c.*,
+                u.name as user_name,
+                u.role as user_role,
+                u.avatar_color,
+                (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id) as likes,
+                (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id AND cr.user_id = ?) as user_reacted
+            FROM comments c
+            LEFT JOIN users u ON c.user_id = u.id
+            WHERE c.id = ?
+        `, [userId, commentId]);
+        
+        return { comment, action: existingReaction ? 'removed' : 'added' };
+    }
+    
+    // ===== TEAM OPERATIONS =====
+    
+    async getProjectTeam(projectId) {
+        const db = await this.connect();
+        
+        return await db.all(`
+            SELECT 
+                u.id,
+                u.name,
+                u.role,
+                u.avatar_color,
+                u.institution,
+                u.specialty,
+                pm.role as project_role,
+                pm.joined_at,
+                pm.last_active as project_last_active,
+                CASE 
+                    WHEN u.last_active > datetime('now', '-5 minutes') THEN 'online'
+                    WHEN u.last_active > datetime('now', '-30 minutes') THEN 'away'
+                    ELSE 'offline'
+                END as status,
+                (SELECT COUNT(*) FROM comments c WHERE c.user_id = u.id AND c.project_id = ?) as project_comments,
+                (SELECT COUNT(*) FROM decisions d WHERE d.created_by = u.id AND d.project_id = ?) as project_decisions
+            FROM project_members pm
+            LEFT JOIN users u ON pm.user_id = u.id
+            WHERE pm.project_id = ?
+            ORDER BY 
+                CASE pm.role 
+                    WHEN 'owner' THEN 1
+                    WHEN 'admin' THEN 2
+                    WHEN 'lead' THEN 3
+                    ELSE 4
+                END,
+                pm.joined_at
+        `, [projectId, projectId, projectId]);
+    }
+    
+    async addProjectMember(projectId, userId, role = 'contributor') {
+        const db = await this.connect();
+        
+        const existingMember = await db.get(
+            'SELECT * FROM project_members WHERE project_id = ? AND user_id = ?',
+            [projectId, userId]
+        );
+        
+        if (existingMember) {
+            throw new Error('Already a member');
+        }
+        
+        await db.run(
+            `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
+            [projectId, userId, role]
+        );
+        
+        await db.run(
+            `UPDATE projects SET total_members = total_members + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+            [projectId]
+        );
+        
+        return true;
+    }
+    
+    // ===== TIMELINE OPERATIONS =====
+    
+    async addTimelineEvent(projectId, eventType, description, userId = null, entityType = null, entityId = null, metadata = {}) {
+        const db = await this.connect();
+        
+        const eventId = uuidv4();
+        
+        await db.run(
+            `INSERT INTO timeline_events (id, project_id, event_type, description, user_id, entity_type, entity_id, metadata) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [eventId, projectId, eventType, description, userId, entityType, entityId, JSON.stringify(metadata)]
+        );
+        
+        return eventId;
+    }
+    
+    async getProjectTimeline(projectId, limit = 50, offset = 0) {
+        const db = await this.connect();
+        
+        return await db.all(`
+            SELECT 
+                te.*,
+                u.name as user_name,
+                u.avatar_color,
+                p.title as project_title
+            FROM timeline_events te
+            LEFT JOIN users u ON te.user_id = u.id
+            LEFT JOIN projects p ON te.project_id = p.id
+            WHERE te.project_id = ?
+            ORDER BY te.created_at DESC
+            LIMIT ? OFFSET ?
+        `, [projectId, parseInt(limit), parseInt(offset)]);
+    }
+    
+    async getRecentActivity(limit = 20) {
+        const db = await this.connect();
+        
+        return await db.all(`
+            SELECT 
+                te.*,
+                u.name as user_name,
+                u.avatar_color,
+                p.title as project_title
+            FROM timeline_events te
+            LEFT JOIN users u ON te.user_id = u.id
+            LEFT JOIN projects p ON te.project_id = p.id
+            WHERE te.created_at > datetime('now', '-7 days')
+            ORDER BY te.created_at DESC
+            LIMIT ?
+        `, [limit]);
+    }
+    
+    // ===== DECISION OPERATIONS =====
+    
+    async getProjectDecisions(projectId, status = null, limit = 100, offset = 0) {
+        const db = await this.connect();
+        
+        let query = `
+            SELECT 
+                d.*,
+                u.name as creator_name,
+                u.avatar_color as creator_color,
+                a.name as assigned_to_name,
+                (SELECT COUNT(*) FROM decision_votes dv WHERE dv.decision_id = d.id AND dv.vote = 'approve') as approve_count,
+                (SELECT COUNT(*) FROM decision_votes dv WHERE dv.decision_id = d.id AND dv.vote = 'reject') as reject_count,
+                (SELECT COUNT(*) FROM decision_votes dv WHERE dv.decision_id = d.id AND dv.vote = 'abstain') as abstain_count
+            FROM decisions d
+            LEFT JOIN users u ON d.created_by = u.id
+            LEFT JOIN users a ON d.assigned_to = a.id
+            WHERE d.project_id = ?
+        `;
+        
+        const params = [projectId];
+        
+        if (status) {
+            query += ' AND d.status = ?';
+            params.push(status);
+        }
+        
+        query += ' ORDER BY d.priority DESC, d.created_at DESC LIMIT ? OFFSET ?';
+        params.push(parseInt(limit), parseInt(offset));
+        
+        return await db.all(query, params);
+    }
+    
+    // ===== INTERACTION OPERATIONS =====
     
     async recordInteraction(projectId, userId, action, entityType = null, entityId = null, metadata = {}) {
         try {
@@ -792,160 +1189,10 @@ class ThoraxLabDatabase {
                 [userId]
             );
             
-            // Recalculate project pulse
-            await this.calculateProjectPulse(projectId);
-            
             return true;
         } catch (error) {
             console.error('Interaction recording error:', error);
             return false;
-        }
-    }
-    
-    // ===== TIMELINE EVENTS =====
-    
-    async addTimelineEvent(projectId, eventType, description, userId = null, entityType = null, entityId = null, metadata = {}) {
-        try {
-            const db = await this.connect();
-            
-            const eventId = uuidv4();
-            
-            await db.run(
-                `INSERT INTO timeline_events (id, project_id, event_type, description, user_id, entity_type, entity_id, metadata) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                [eventId, projectId, eventType, description, userId, entityType, entityId, JSON.stringify(metadata)]
-            );
-            
-            return eventId;
-        } catch (error) {
-            console.error('Timeline event error:', error);
-            return null;
-        }
-    }
-    
-    // ===== GETTER METHODS =====
-    
-    async getUserProjects(userId) {
-        const db = await this.connect();
-        
-        return await db.all(`
-            SELECT 
-                p.*,
-                u.name as creator_name,
-                u.avatar_color as creator_color,
-                pm.role as user_role,
-                (SELECT COUNT(*) FROM project_members pm2 WHERE pm2.project_id = p.id) as team_size,
-                (SELECT COUNT(*) FROM comments c WHERE c.project_id = p.id) as comment_count,
-                (SELECT COUNT(*) FROM decisions d WHERE d.project_id = p.id AND d.status = 'pending') as pending_decisions,
-                (SELECT COUNT(*) FROM timeline_events te WHERE te.project_id = p.id 
-                 AND te.created_at > datetime('now', '-7 days')) as recent_activity
-            FROM projects p
-            LEFT JOIN users u ON p.created_by = u.id
-            LEFT JOIN project_members pm ON p.id = pm.project_id AND pm.user_id = ?
-            WHERE p.status = 'active' AND pm.user_id = ?
-            ORDER BY p.last_activity_at DESC
-            LIMIT 50
-        `, [userId, userId]);
-    }
-    
-    async getProjectAnalytics(projectId) {
-        const db = await this.connect();
-        
-        return await db.get(`
-            SELECT 
-                -- Basic info
-                p.*,
-                u.name as creator_name,
-                u.avatar_color as creator_color,
-                
-                -- Team stats
-                (SELECT COUNT(*) FROM project_members pm WHERE pm.project_id = p.id) as team_size,
-                (SELECT COUNT(*) FROM project_members pm 
-                 LEFT JOIN users u ON pm.user_id = u.id 
-                 WHERE pm.project_id = p.id AND u.status = 'online') as online_members,
-                
-                -- Engagement stats
-                (SELECT COUNT(*) FROM comments c WHERE c.project_id = p.id) as total_comments,
-                (SELECT COUNT(*) FROM comments c WHERE c.project_id = p.id 
-                 AND c.created_at > datetime('now', '-7 days')) as comments_7d,
-                
-                -- Decision stats
-                (SELECT COUNT(*) FROM decisions d WHERE d.project_id = p.id) as total_decisions,
-                (SELECT COUNT(*) FROM decisions d WHERE d.project_id = p.id AND d.status = 'pending') as pending_decisions,
-                (SELECT COUNT(*) FROM decisions d WHERE d.project_id = p.id AND d.status = 'approved') as approved_decisions,
-                
-                -- Activity stats
-                (SELECT COUNT(*) FROM timeline_events te WHERE te.project_id = p.id) as timeline_events,
-                (SELECT COUNT(*) FROM timeline_events te WHERE te.project_id = p.id 
-                 AND te.created_at > datetime('now', '-1 day')) as today_events,
-                
-                -- Interaction trends
-                (SELECT COUNT(*) FROM interactions i WHERE i.project_id = p.id 
-                 AND i.created_at > datetime('now', '-1 day')) as interactions_today,
-                (SELECT COUNT(*) FROM interactions i WHERE i.project_id = p.id 
-                 AND i.created_at > datetime('now', '-7 days')) as interactions_7d
-                
-            FROM projects p
-            LEFT JOIN users u ON p.created_by = u.id
-            WHERE p.id = ?
-        `, [projectId]);
-    }
-    
-    async getRecentActivity(limit = 20) {
-        const db = await this.connect();
-        
-        return await db.all(`
-            SELECT 
-                te.*,
-                u.name as user_name,
-                u.avatar_color,
-                p.title as project_title
-            FROM timeline_events te
-            LEFT JOIN users u ON te.user_id = u.id
-            LEFT JOIN projects p ON te.project_id = p.id
-            WHERE te.created_at > datetime('now', '-7 days')
-            ORDER BY te.created_at DESC
-            LIMIT ?
-        `, [limit]);
-    }
-    
-    async getOnlineUsers() {
-        const db = await this.connect();
-        
-        return await db.all(`
-            SELECT 
-                u.id,
-                u.name,
-                u.role,
-                u.avatar_color,
-                u.institution,
-                u.specialty,
-                u.last_active,
-                COUNT(DISTINCT pm.project_id) as project_count,
-                (SELECT COUNT(*) FROM comments c 
-                 WHERE c.user_id = u.id AND c.created_at > datetime('now', '-1 day')) as comments_today
-            FROM users u
-            LEFT JOIN project_members pm ON u.id = pm.user_id
-            WHERE u.status = 'online'
-            GROUP BY u.id
-            ORDER BY u.last_active DESC
-            LIMIT 20
-        `);
-    }
-    
-    // ===== CLEANUP METHODS =====
-    
-    async close() {
-        if (this.db) {
-            // Update all online users to away before closing
-            await this.db.run(
-                `UPDATE users SET status = 'away' WHERE status = 'online'`
-            );
-            
-            await this.db.close();
-            this.db = null;
-            this.connected = false;
-            console.log('🔌 Database connection closed');
         }
     }
     
@@ -967,15 +1214,6 @@ class ThoraxLabDatabase {
                     END
             `);
             
-            // Recalculate pulse for active projects
-            const activeProjects = await db.all(
-                `SELECT id FROM projects WHERE status = 'active' AND last_activity_at > datetime('now', '-7 days')`
-            );
-            
-            for (const project of activeProjects) {
-                await this.calculateProjectPulse(project.id);
-            }
-            
             // Update platform metrics
             await this.updatePlatformMetrics();
             
@@ -990,10 +1228,24 @@ class ThoraxLabDatabase {
             console.error('Maintenance error:', error);
         }
     }
+    
+    async close() {
+        if (this.db) {
+            // Update all online users to away before closing
+            await this.db.run(
+                `UPDATE users SET status = 'away' WHERE status = 'online'`
+            );
+            
+            await this.db.close();
+            this.db = null;
+            this.connected = false;
+            console.log('🔌 Database connection closed');
+        }
+    }
 }
 
 // Create singleton instance
 const database = new ThoraxLabDatabase();
 
 // Export both the class and instance
-module.exports = { ThoraxLabDatabase, database }; 
+module.exports = { ThoraxLabDatabase, database };
