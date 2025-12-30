@@ -37,7 +37,20 @@ const config = {
 };
 
 // ==================== MIDDLEWARE ====================
-app.use(helmet());
+// UPDATE THIS LINE ONLY - Add CSP configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],  // Allow inline scripts
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'"],
+    },
+  },
+}));
+
 app.use(compression());
 app.use(cors({
   origin: true,
