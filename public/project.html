@@ -3,812 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project | ThoraxLab Innovation Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Project Collaboration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        /* ==================== PROJECT COLLABORATION STYLES ==================== */
         :root {
-            --innovation-blue: #0066CC;
-            --innovation-blue-dark: #004D99;
-            --innovation-blue-light: #E6F2FF;
-            --innovation-green: #00A86B;
-            --innovation-purple: #8A2BE2;
-            
-            --text-dark: #1A202C;
-            --text-medium: #4A5568;
-            --text-light: #718096;
-            --background-gray: #F7FAFC;
-            --card-white: #FFFFFF;
-            --border-subtle: #E2E8F0;
-            
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
+            --primary: #0066CC;
+            --bg: #F7FAFC;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            --text: #1A202C;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--background-gray);
-            color: var(--text-dark);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
+            background: var(--bg);
+            color: var(--text);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 0 var(--space-lg);
+            padding: 0 20px;
         }
 
-        /* ==================== HEADER ==================== */
         .header {
-            background: var(--card-white);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: var(--space-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: var(--primary);
+            color: white;
+            padding: 16px 0;
+            margin-bottom: 32px;
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: var(--space-lg);
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
+        .back-btn {
+            color: white;
             text-decoration: none;
-            color: var(--innovation-blue);
-            font-weight: 800;
-            font-size: 1.25rem;
-        }
-
-        /* ==================== PROJECT HEADER ==================== */
-        .project-header {
-            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-blue-dark));
-            color: white;
-            padding: var(--space-2xl) 0;
-            margin-bottom: var(--space-xl);
-        }
-
-        .project-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: var(--space-md);
-        }
-
-        .project-description {
-            font-size: 1.125rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin-bottom: var(--space-lg);
-        }
-
-        .project-problem {
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 3px solid white;
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin: var(--space-lg) 0;
-        }
-
-        .project-stats {
-            display: flex;
-            gap: var(--space-xl);
-            flex-wrap: wrap;
-            margin-top: var(--space-lg);
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xs);
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-
-        .stat-value {
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
-        /* ==================== LAYOUT ==================== */
-        .project-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: var(--space-xl);
-            margin-bottom: var(--space-2xl);
-        }
-
-        /* ==================== DISCUSSIONS ==================== */
-        .discussions-section {
-            margin-bottom: var(--space-2xl);
-        }
-
-        .discussion-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-subtle);
-            padding: var(--space-xl);
-            margin-bottom: var(--space-lg);
-            transition: all 0.2s;
-        }
-
-        .discussion-card:hover {
-            border-color: var(--innovation-blue);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
-
-        .discussion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: var(--space-md);
-        }
-
-        .discussion-author {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-green));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .author-name {
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .author-role {
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .discussion-time {
-            font-size: 0.75rem;
-            color: var(--text-light);
-        }
-
-        .discussion-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: var(--space-md);
-        }
-
-        .discussion-content {
-            color: var(--text-medium);
-            line-height: 1.6;
-            margin-bottom: var(--space-lg);
-        }
-
-        .discussion-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-xs);
-            margin-bottom: var(--space-lg);
-        }
-
-        .discussion-tag {
-            background: var(--innovation-blue-light);
-            color: var(--innovation-blue);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
             font-weight: 500;
         }
 
-        /* ==================== COMMENTS ==================== */
-        .comments-section {
-            margin-top: var(--space-xl);
-            padding-top: var(--space-xl);
-            border-top: 1px solid var(--border-subtle);
+        .project-header {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
         }
 
-        .comment-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
-        }
-
-        .comment-item {
-            display: flex;
-            gap: var(--space-md);
-        }
-
-        .comment-avatar {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-purple));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        .comment-content {
-            flex: 1;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xs);
-        }
-
-        .comment-author {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--text-dark);
-        }
-
-        .comment-text {
-            font-size: 0.9375rem;
-            color: var(--text-medium);
-            line-height: 1.5;
-        }
-
-        /* ==================== SIDEBAR ==================== */
-        .sidebar-section {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-subtle);
-            padding: var(--space-xl);
-            margin-bottom: var(--space-lg);
-        }
-
-        .sidebar-title {
-            font-size: 1.125rem;
+        .project-title {
+            font-size: 32px;
             font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: var(--space-lg);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
+            margin-bottom: 16px;
         }
 
-        .stakeholder-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
+        .project-description {
+            line-height: 1.6;
+            margin-bottom: 24px;
         }
 
-        .stakeholder-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
+        .discussions {
+            margin-bottom: 40px;
         }
 
-        .stakeholder-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-green));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .discussion-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .discussion-title {
+            font-size: 20px;
             font-weight: 600;
+            margin-bottom: 12px;
         }
 
-        .stakeholder-info {
-            flex: 1;
+        .discussion-content {
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        .stakeholder-name {
-            font-weight: 600;
-            color: var(--text-dark);
+        .comment-form {
+            margin-top: 20px;
         }
 
-        .stakeholder-role {
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        /* ==================== FORMS ==================== */
-        .form-group {
-            margin-bottom: var(--space-lg);
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: var(--space-sm);
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 0.9375rem;
-        }
-
-        .form-input, .form-textarea {
+        .comment-input {
             width: 100%;
-            padding: 0.875rem var(--space-md);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
             font-family: inherit;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            background: var(--card-white);
         }
 
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--innovation-blue);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        /* ==================== BUTTONS ==================== */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.875rem;
-            border: 2px solid transparent;
             cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
             font-family: inherit;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-green));
+            background: var(--primary);
             color: white;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.2);
-        }
-
-        .btn-secondary {
-            background: var(--card-white);
-            border-color: var(--border-subtle);
-            color: var(--text-dark);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--background-gray);
-            border-color: var(--innovation-blue);
-        }
-
-        /* ==================== MODALS ==================== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: var(--space-lg);
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--card-white);
-            border-radius: var(--radius-xl);
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-        }
-
-        @keyframes modalSlideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            padding: var(--space-xl);
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: var(--space-xs);
-            border-radius: var(--radius-sm);
-        }
-
-        .modal-body {
-            padding: var(--space-xl);
-        }
-
-        .modal-footer {
-            padding: var(--space-xl);
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            gap: var(--space-md);
-            justify-content: flex-end;
-        }
-
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 1024px) {
-            .project-layout {
-                grid-template-columns: 1fr;
-                gap: var(--space-lg);
-            }
-            
-            .project-title {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 var(--space-md);
-            }
-            
-            .project-stats {
-                gap: var(--space-lg);
-            }
-            
-            .discussion-header {
-                flex-direction: column;
-                gap: var(--space-sm);
-            }
+        .btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="/" class="logo">
-                    <i class="fas fa-lightbulb"></i>
-                    ThoraxLab
-                </a>
-                
-                <div style="display: flex; align-items: center; gap: var(--space-md);">
-                    <a href="/" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to Innovations
-                    </a>
-                    <button id="newDiscussionBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> New Discussion
-                    </button>
-                </div>
+                <a href="/" class="back-btn">← Back to Projects</a>
+                <button id="newDiscussionBtn" class="btn">New Discussion</button>
             </div>
         </div>
     </header>
 
-    <!-- Project Header -->
-    <div class="project-header">
-        <div class="container">
-            <h1 class="project-title" id="projectTitle">Loading Innovation Project...</h1>
-            <p class="project-description" id="projectDescription"></p>
-            
-            <div class="project-problem" id="projectProblem"></div>
-            
-            <div class="project-stats">
-                <div class="stat-item">
-                    <div class="stat-label">Stage</div>
-                    <div class="stat-value" id="projectStage">Loading...</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Discussions</div>
-                    <div class="stat-value" id="discussionsCount">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Comments</div>
-                    <div class="stat-value" id="commentsCount">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Collaborators</div>
-                    <div class="stat-value" id="collaboratorsCount">0</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Content -->
     <main class="container">
-        <div class="project-layout">
-            <!-- Main Column -->
-            <div>
-                <!-- Discussions -->
-                <div class="discussions-section">
-                    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin-bottom: var(--space-xl);">
-                        <i class="fas fa-comments" style="color: var(--innovation-blue);"></i>
-                        Innovation Discussions
-                    </h2>
-                    
-                    <div id="discussionsContainer">
-                        <div style="text-align: center; padding: var(--space-2xl); color: var(--text-light);">
-                            <i class="fas fa-spinner fa-spin"></i> Loading discussions...
-                        </div>
-                    </div>
-                </div>
+        <div class="project-header">
+            <h1 id="projectTitle" class="project-title">Loading...</h1>
+            <p id="projectDescription" class="project-description"></p>
+        </div>
 
-                <!-- Comment Form -->
-                <div style="background: var(--card-white); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); padding: var(--space-xl);">
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text-dark); margin-bottom: var(--space-lg);">
-                        <i class="fas fa-comment"></i> Add General Comment
-                    </h3>
-                    <form id="generalCommentForm">
-                        <div class="form-group">
-                            <textarea id="generalComment" 
-                                      class="form-textarea" 
-                                      placeholder="Add a comment to this innovation project..."></textarea>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane"></i> Post Comment
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Sidebar Column -->
-            <div>
-                <!-- Stakeholders -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">
-                        <i class="fas fa-users"></i>
-                        Collaborators
-                    </h3>
-                    <div class="stakeholder-list" id="stakeholdersContainer">
-                        <div style="text-align: center; padding: var(--space-md); color: var(--text-light);">
-                            <i class="fas fa-spinner fa-spin"></i> Loading collaborators...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Info -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">
-                        <i class="fas fa-info-circle"></i>
-                        Project Info
-                    </h3>
-                    <div id="projectInfo">
-                        <div style="margin-bottom: var(--space-md);">
-                            <div style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 2px;">Created</div>
-                            <div style="font-weight: 600;" id="projectCreated">Loading...</div>
-                        </div>
-                        <div style="margin-bottom: var(--space-md);">
-                            <div style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 2px;">Last Updated</div>
-                            <div style="font-weight: 600;" id="projectUpdated">Loading...</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 2px;">Tags</div>
-                            <div id="projectTags" style="display: flex; flex-wrap: wrap; gap: var(--space-xs);"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">
-                        <i class="fas fa-bolt"></i>
-                        Quick Actions
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
-                        <button class="btn btn-primary" id="inviteCollaboratorBtn">
-                            <i class="fas fa-user-plus"></i> Invite Collaborator
-                        </button>
-                        <button class="btn btn-secondary" id="shareProjectBtn">
-                            <i class="fas fa-share-alt"></i> Share Project
-                        </button>
-                        <button class="btn btn-secondary" id="viewActivityBtn">
-                            <i class="fas fa-history"></i> View Activity
-                        </button>
-                    </div>
-                </div>
+        <div class="discussions">
+            <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">Discussions</h2>
+            <div id="discussionsContainer">
+                <!-- Discussions loaded here -->
             </div>
         </div>
     </main>
 
-    <!-- Modals -->
-    <!-- New Discussion Modal -->
-    <div id="newDiscussionModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Start New Discussion</h2>
-                <button class="modal-close" id="closeDiscussionModal">&times;</button>
-            </div>
-            <form id="newDiscussionForm">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">Discussion Title *</label>
-                        <input type="text" 
-                               id="discussionTitle" 
-                               class="form-input" 
-                               required
-                               placeholder="e.g., Regulatory Pathway Discussion">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Content *</label>
-                        <textarea id="discussionContent" 
-                                  class="form-textarea" 
-                                  required
-                                  placeholder="What would you like to discuss?"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Tags (comma separated)</label>
-                        <input type="text" 
-                               id="discussionTags" 
-                               class="form-input" 
-                               placeholder="e.g., regulatory, clinical, technical">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelDiscussion">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Start Discussion
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        class ProjectCollaboration {
+        class ProjectPage {
             constructor() {
                 this.API_BASE = window.location.origin;
-                this.projectId = this.getProjectId();
-                this.currentUser = null;
-                this.project = null;
-                this.socket = null;
+                this.projectId = new URLSearchParams(window.location.search).get('id');
+                this.currentUser = { 
+                    id: 'user_' + Date.now(),
+                    name: 'Contributor',
+                    type: 'collaborator' 
+                };
+                
+                if (!this.projectId) {
+                    window.location.href = '/';
+                    return;
+                }
+                
                 this.init();
             }
 
-            init() {
-                if (!this.projectId) {
-                    this.showError('No project specified');
-                    setTimeout(() => window.location.href = '/', 2000);
-                    return;
-                }
-
+            async init() {
+                await this.loadProject();
                 this.setupEventListeners();
-                this.loadProject();
                 this.initSocket();
-                this.loadCurrentUser();
-            }
-
-            getProjectId() {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('id');
-            }
-
-            setupEventListeners() {
-                // New discussion
-                document.getElementById('newDiscussionBtn')?.addEventListener('click', () => {
-                    if (!this.currentUser) {
-                        this.showNotification('Join First', 'Please join the platform to start discussions', 'warning');
-                        return;
-                    }
-                    this.showModal('newDiscussion');
-                });
-
-                document.getElementById('closeDiscussionModal')?.addEventListener('click', () => this.hideModal());
-                document.getElementById('cancelDiscussion')?.addEventListener('click', () => this.hideModal());
-                document.getElementById('newDiscussionForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.createDiscussion();
-                });
-
-                // General comment
-                document.getElementById('generalCommentForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.addGeneralComment();
-                });
-
-                // Quick actions
-                document.getElementById('inviteCollaboratorBtn')?.addEventListener('click', () => {
-                    this.showNotification('Coming Soon', 'Invite feature coming soon!', 'info');
-                });
-
-                document.getElementById('shareProjectBtn')?.addEventListener('click', () => {
-                    navigator.clipboard.writeText(window.location.href).then(() => {
-                        this.showNotification('Link Copied', 'Project link copied to clipboard', 'success');
-                    });
-                });
-
-                document.getElementById('viewActivityBtn')?.addEventListener('click', () => {
-                    this.showNotification('Coming Soon', 'Activity view coming soon!', 'info');
-                });
-
-                // Modal backdrop
-                document.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal-overlay')) {
-                        this.hideModal();
-                    }
-                });
-
-                // Escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        this.hideModal();
-                    }
-                });
             }
 
             async loadProject() {
                 try {
                     const response = await fetch(`${this.API_BASE}/api/projects/${this.projectId}`);
-                    
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            this.showError('Project not found');
-                            setTimeout(() => window.location.href = '/', 2000);
-                        }
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
                     const data = await response.json();
                     
                     if (data.success) {
@@ -817,220 +179,104 @@
                     }
                 } catch (error) {
                     console.error('Failed to load project:', error);
-                    this.showError('Failed to load project');
                 }
             }
 
             renderProject() {
-                if (!this.project) return;
-
-                // Update header
                 document.getElementById('projectTitle').textContent = this.project.title;
                 document.getElementById('projectDescription').textContent = this.project.description;
-                document.getElementById('projectProblem').innerHTML = `
-                    <strong>Problem:</strong> ${this.escapeHtml(this.project.problem)}
-                `;
-                document.getElementById('projectStage').textContent = 
-                    this.project.stage.charAt(0).toUpperCase() + this.project.stage.slice(1);
-
-                // Update stats
-                document.getElementById('discussionsCount').textContent = this.project.discussions?.length || 0;
-                document.getElementById('commentsCount').textContent = this.project.metrics?.comments || 0;
-                document.getElementById('collaboratorsCount').textContent = this.project.stakeholders?.length || 0;
-
-                // Update project info
-                document.getElementById('projectCreated').textContent = 
-                    new Date(this.project.createdAt).toLocaleDateString();
-                document.getElementById('projectUpdated').textContent = 
-                    new Date(this.project.updatedAt).toLocaleDateString();
-
-                // Render tags
-                const tagsContainer = document.getElementById('projectTags');
-                if (this.project.tags && this.project.tags.length > 0) {
-                    tagsContainer.innerHTML = this.project.tags.map(tag => `
-                        <span style="background: var(--innovation-blue-light); color: var(--innovation-blue); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-size: 0.75rem;">
-                            ${this.escapeHtml(tag)}
-                        </span>
-                    `).join('');
-                } else {
-                    tagsContainer.innerHTML = '<span style="color: var(--text-light); font-size: 0.875rem;">No tags yet</span>';
-                }
-
-                // Render stakeholders
-                this.renderStakeholders();
-
-                // Render discussions
+                
                 this.renderDiscussions();
-            }
-
-            renderStakeholders() {
-                const container = document.getElementById('stakeholdersContainer');
-                if (!container || !this.project.stakeholders) return;
-
-                container.innerHTML = this.project.stakeholders.map(stakeholder => `
-                    <div class="stakeholder-item">
-                        <div class="stakeholder-avatar">
-                            ${this.getInitials(stakeholder.name)}
-                        </div>
-                        <div class="stakeholder-info">
-                            <div class="stakeholder-name">${this.escapeHtml(stakeholder.name)}</div>
-                            <div class="stakeholder-role">${this.escapeHtml(stakeholder.role)} • ${this.escapeHtml(stakeholder.organization)}</div>
-                        </div>
-                    </div>
-                `).join('');
             }
 
             renderDiscussions() {
                 const container = document.getElementById('discussionsContainer');
-                if (!container) return;
-
-                if (!this.project.discussions || this.project.discussions.length === 0) {
+                
+                if (!this.project.discussions || !this.project.discussions.length) {
                     container.innerHTML = `
-                        <div style="text-align: center; padding: var(--space-2xl);">
-                            <i class="fas fa-comments" style="font-size: 3rem; color: var(--text-light); margin-bottom: var(--space-md);"></i>
-                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-dark); margin-bottom: var(--space-sm);">
-                                No Discussions Yet
-                            </h3>
-                            <p style="color: var(--text-medium); margin-bottom: var(--space-lg);">
-                                Start the first discussion to collaborate with the team.
-                            </p>
-                            <button class="btn btn-primary" id="startFirstDiscussion">
-                                <i class="fas fa-plus"></i> Start First Discussion
-                            </button>
+                        <div style="text-align: center; padding: 40px; color: #718096;">
+                            No discussions yet. Start the first one!
                         </div>
                     `;
-
-                    document.getElementById('startFirstDiscussion')?.addEventListener('click', () => {
-                        this.showModal('newDiscussion');
-                    });
                     return;
                 }
 
                 container.innerHTML = this.project.discussions.map(discussion => `
                     <div class="discussion-card">
-                        <div class="discussion-header">
-                            <div class="discussion-author">
-                                <div class="author-avatar">${this.getInitials(discussion.author.name)}</div>
-                                <div>
-                                    <div class="author-name">${this.escapeHtml(discussion.author.name)}</div>
-                                    <div class="author-role">${this.escapeHtml(discussion.author.type)}</div>
-                                </div>
-                            </div>
-                            <div class="discussion-time">${this.formatTimeAgo(discussion.createdAt)}</div>
-                        </div>
-                        
                         <h3 class="discussion-title">${this.escapeHtml(discussion.title)}</h3>
                         <p class="discussion-content">${this.escapeHtml(discussion.content)}</p>
                         
-                        ${discussion.tags && discussion.tags.length > 0 ? `
-                            <div class="discussion-tags">
-                                ${discussion.tags.map(tag => `
-                                    <span class="discussion-tag">${this.escapeHtml(tag)}</span>
+                        ${discussion.fullComments && discussion.fullComments.length ? `
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                                <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">
+                                    Comments (${discussion.fullComments.length})
+                                </h4>
+                                ${discussion.fullComments.map(comment => `
+                                    <div style="margin-bottom: 12px; padding: 12px; background: #F7FAFC; border-radius: 8px;">
+                                        <div style="font-weight: 500; margin-bottom: 4px;">
+                                            ${this.escapeHtml(comment.author.name)}:
+                                        </div>
+                                        <div>${this.escapeHtml(comment.content)}</div>
+                                    </div>
                                 `).join('')}
                             </div>
                         ` : ''}
                         
-                        ${discussion.fullComments && discussion.fullComments.length > 0 ? `
-                            <div class="comments-section">
-                                <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-dark); margin-bottom: var(--space-lg);">
-                                    Comments (${discussion.fullComments.length})
-                                </h4>
-                                <div class="comment-list">
-                                    ${discussion.fullComments.map(comment => `
-                                        <div class="comment-item">
-                                            <div class="comment-avatar">${this.getInitials(comment.author.name)}</div>
-                                            <div class="comment-content">
-                                                <div class="comment-header">
-                                                    <div class="comment-author">${this.escapeHtml(comment.author.name)}</div>
-                                                    <div style="font-size: 0.75rem; color: var(--text-light);">
-                                                        ${this.formatTimeAgo(comment.createdAt)}
-                                                    </div>
-                                                </div>
-                                                <div class="comment-text">${this.escapeHtml(comment.content)}</div>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        <form class="comment-form" data-discussion-id="${discussion.id}" style="margin-top: var(--space-lg);">
-                            <div style="display: flex; gap: var(--space-sm);">
-                                <input type="text" 
-                                       class="form-input" 
-                                       placeholder="Add a comment..."
-                                       required
-                                       style="flex: 1;">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
+                        <form class="comment-form" data-discussion-id="${discussion.id}">
+                            <input type="text" class="comment-input" placeholder="Add a comment..." required>
+                            <button type="submit" class="btn">Post Comment</button>
                         </form>
                     </div>
                 `).join('');
 
-                // Add event listeners to comment forms
-                document.querySelectorAll('.comment-form').forEach(form => {
-                    form.addEventListener('submit', (e) => {
+                container.querySelectorAll('.comment-form').forEach(form => {
+                    form.addEventListener('submit', async (e) => {
                         e.preventDefault();
                         const discussionId = form.dataset.discussionId;
-                        const input = form.querySelector('input');
+                        const input = form.querySelector('.comment-input');
                         const content = input.value.trim();
                         
-                        if (content && this.currentUser) {
-                            this.addComment(discussionId, content);
+                        if (content) {
+                            await this.addComment(discussionId, content);
                             input.value = '';
-                        } else if (!this.currentUser) {
-                            this.showNotification('Join First', 'Please join the platform to comment', 'warning');
                         }
                     });
                 });
             }
 
+            setupEventListeners() {
+                document.getElementById('newDiscussionBtn').addEventListener('click', () => {
+                    this.createDiscussion();
+                });
+            }
+
             async createDiscussion() {
-                const title = document.getElementById('discussionTitle').value.trim();
-                const content = document.getElementById('discussionContent').value.trim();
-                const tags = document.getElementById('discussionTags').value.split(',').map(t => t.trim()).filter(t => t);
-
-                if (!title || !content) {
-                    this.showNotification('Missing Fields', 'Title and content are required', 'warning');
-                    return;
-                }
-
+                const title = prompt('Discussion title:');
+                const content = prompt('Discussion content:');
+                
+                if (!title || !content) return;
+                
                 try {
-                    const response = await fetch(`${this.API_BASE}/api/discussions`, {
+                    await fetch(`${this.API_BASE}/api/discussions`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             projectId: this.projectId,
                             title,
                             content,
-                            author: this.currentUser,
-                            tags
+                            author: this.currentUser
                         })
                     });
-
-                    if (!response.ok) throw new Error('Create discussion failed');
-
-                    const data = await response.json();
                     
-                    if (data.success) {
-                        this.hideModal();
-                        this.showNotification('Success!', 'Discussion started', 'success');
-                        this.loadProject();
-                        
-                        // Reset form
-                        document.getElementById('newDiscussionForm').reset();
-                    }
+                    this.loadProject();
                 } catch (error) {
                     console.error('Create discussion error:', error);
-                    this.showNotification('Error', 'Failed to create discussion', 'error');
                 }
             }
 
             async addComment(discussionId, content) {
                 try {
-                    const response = await fetch(`${this.API_BASE}/api/comments`, {
+                    await fetch(`${this.API_BASE}/api/comments`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -1039,193 +285,34 @@
                             author: this.currentUser
                         })
                     });
-
-                    if (!response.ok) throw new Error('Add comment failed');
-
-                    const data = await response.json();
                     
-                    if (data.success) {
-                        this.loadProject();
-                    }
+                    this.loadProject();
                 } catch (error) {
                     console.error('Add comment error:', error);
-                    this.showNotification('Error', 'Failed to add comment', 'error');
-                }
-            }
-
-            async addGeneralComment() {
-                const content = document.getElementById('generalComment').value.trim();
-                
-                if (!content) {
-                    this.showNotification('Empty Comment', 'Please enter a comment', 'warning');
-                    return;
-                }
-
-                if (!this.currentUser) {
-                    this.showNotification('Join First', 'Please join the platform to comment', 'warning');
-                    return;
-                }
-
-                // For now, we'll create a discussion for general comments
-                try {
-                    await this.createDiscussion({
-                        title: 'General Comment',
-                        content,
-                        tags: ['comment']
-                    });
-
-                    document.getElementById('generalComment').value = '';
-                } catch (error) {
-                    console.error('Add general comment error:', error);
-                }
-            }
-
-            loadCurrentUser() {
-                // Try to load from localStorage or session
-                const userData = localStorage.getItem('thoraxlab_user');
-                if (userData) {
-                    try {
-                        this.currentUser = JSON.parse(userData);
-                    } catch (e) {
-                        console.error('Failed to parse user data:', e);
-                    }
                 }
             }
 
             initSocket() {
-                this.socket = io(this.API_BASE);
+                const socket = io();
+                socket.emit('join:project', this.projectId);
                 
-                this.socket.on('connect', () => {
-                    this.socket.emit('join:project', this.projectId);
+                socket.on('discussion:created', () => {
+                    this.loadProject();
                 });
                 
-                this.socket.on('discussion:created', (discussion) => {
-                    if (discussion.projectId === this.projectId) {
-                        this.loadProject();
-                    }
+                socket.on('comment:added', () => {
+                    this.loadProject();
                 });
-                
-                this.socket.on('comment:added', (data) => {
-                    // Check if comment belongs to current project
-                    if (this.project && this.project.discussions) {
-                        const discussion = this.project.discussions.find(d => d.id === data.discussionId);
-                        if (discussion) {
-                            this.loadProject();
-                        }
-                    }
-                });
-            }
-
-            showModal(modalType) {
-                const modal = document.getElementById(`${modalType}Modal`);
-                if (modal) {
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                }
-            }
-
-            hideModal() {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-                document.body.style.overflow = '';
-            }
-
-            showNotification(title, message, type = 'info') {
-                // Create notification element
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: var(--card-white);
-                    border-left: 4px solid ${type === 'success' ? 'var(--innovation-green)' : type === 'warning' ? 'var(--innovation-orange)' : 'var(--innovation-blue)'};
-                    border-radius: var(--radius-md);
-                    padding: var(--space-md) var(--space-lg);
-                    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease;
-                `;
-                
-                notification.innerHTML = `
-                    <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 4px;">${this.escapeHtml(title)}</div>
-                    <div style="font-size: 0.9375rem; color: var(--text-medium);">${this.escapeHtml(message)}</div>
-                `;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease';
-                    setTimeout(() => notification.remove(), 300);
-                }, 5000);
-            }
-
-            showError(message) {
-                const container = document.querySelector('.container');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: var(--space-2xl);">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--innovation-red); margin-bottom: var(--space-md);"></i>
-                            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin-bottom: var(--space-sm);">
-                                ${this.escapeHtml(message)}
-                            </h2>
-                            <p style="color: var(--text-medium);">
-                                Redirecting to home page...
-                            </p>
-                        </div>
-                    `;
-                }
-            }
-
-            // Utility methods
-            getInitials(name) {
-                if (!name) return '??';
-                return name.split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
             }
 
             escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            formatTimeAgo(timestamp) {
-                try {
-                    const date = new Date(timestamp);
-                    const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMs / 3600000);
-                    const diffDays = Math.floor(diffMs / 86400000);
-                    
-                    if (diffMins < 60) return `${diffMins}m ago`;
-                    if (diffHours < 24) return `${diffHours}h ago`;
-                    if (diffDays < 7) return `${diffDays}d ago`;
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                } catch {
-                    return 'Recently';
-                }
+                return text.replace(/[&<>"']/g, match => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                })[match]);
             }
         }
 
-        // Add CSS for slide out animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            window.projectCollaboration = new ProjectCollaboration();
-        });
+        window.projectPage = new ProjectPage();
     </script>
 </body>
 </html>
