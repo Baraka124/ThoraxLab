@@ -19,164 +19,217 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const app = express();
 const server = createServer(app);
 
-// ==================== CONFIGURATION ====================
-const config = {
-  app: {
-    name: 'ThoraxLab Research Platform',
-    version: '4.0.0'
-  },
-  security: {
-    sessionDuration: 7 * 24 * 60 * 60 * 1000, // 7 days
-    maxLoginAttempts: 5
-  },
-  storage: {
-    dataPath: path.join(__dirname, 'data'),
-    ensureExists: true
-  }
+// ==================== FIXED CSP CONFIGURATION ====================
+// Allow Font Awesome and other necessary resources
+const cspDirectives = {
+  defaultSrc: ["'self'"],
+  scriptSrc: [
+    "'self'",
+    "'unsafe-inline'",  // Allow inline scripts (for demo)
+    "'unsafe-eval'"     // Allow eval for development
+  ],
+  styleSrc: [
+    "'self'",
+    "'unsafe-inline'",  // Allow inline styles
+    "https://fonts.googleapis.com",
+    "https://cdnjs.cloudflare.com"
+  ],
+  fontSrc: [
+    "'self'",
+    "data:",
+    "https://fonts.gstatic.com",
+    "https://cdnjs.cloudflare.com"
+  ],
+  imgSrc: [
+    "'self'",
+    "data:",
+    "blob:",
+    "https:"
+  ],
+  connectSrc: [
+    "'self'",
+    `ws://localhost:${PORT}`,
+    `ws://127.0.0.1:${PORT}`
+  ],
+  frameSrc: ["'self'"],
+  objectSrc: ["'none'"],
+  mediaSrc: ["'self'"],
+  manifestSrc: ["'self'"]
 };
 
-// ==================== DATA SERVICE ====================
-class ThoraxLabDataService {
+if (NODE_ENV === 'development') {
+  // Relax CSP for development
+  cspDirectives.connectSrc.push("ws://*");
+  cspDirectives.scriptSrc.push("'unsafe-eval'");
+}
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: cspDirectives,
+    reportOnly: false
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+// ==================== MIDDLEWARE ====================
+app.use(compression());
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static files - serve from public directory
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  }
+}));
+
+// Request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url} ${req.ip}`);
+  next();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+const sessions = new Map();
+
+function createSession(userId) {
+  const sessionId = `session-${uuidv4()}`;
+  const expiresAt = new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)); // 7 days
+  
+  const session = {
+    id: sessionId,
+    userId,
+    createdAt: new Date().toISOString(),
+    expiresAt: expiresAt.toISOString(),
+    lastActivity: new Date().toISOString(),
+    userAgent: 'unknown'
+  };
+  
+  sessions.set(sessionId, session);
+  return session;
+}
+
+function validateSession(sessionId) {
+  if (!sessionId) return null;
+  
+  const session = sessions.get(sessionId);
+  if (!session) return null;
+  
+  // Check expiration
+  if (new Date(session.expiresAt) < new Date()) {
+    sessions.delete(sessionId);
+    return null;
+  }
+  
+  // Update last activity
+  session.lastActivity = new Date().toISOString();
+  sessions.set(sessionId, session);
+  
+  return session;
+}
+
+// ==================== SIMPLE DATA STORAGE ====================
+class DataStore {
   constructor() {
-    this.data = {
-      users: {},
-      projects: {},
-      discussions: {},
-      votes: {},
-      comments: {},
-      teamMembers: {},
-      analytics: {
-        platformStats: {
-          totalProjects: 0,
-          activeProjects: 0,
-          totalUsers: 0,
-          totalDiscussions: 0,
-          totalComments: 0,
-          consensusScore: 75,
-          engagementRate: 45
-        }
-      },
-      activityLog: []
-    };
-  }
-
-  async initialize() {
-    console.log('🚀 Initializing ThoraxLab Data Service...');
+    this.users = new Map();
+    this.projects = new Map();
+    this.discussions = new Map();
+    this.comments = new Map();
+    this.votes = new Map();
     
-    try {
-      // Ensure data directory exists
-      await fs.mkdir(config.storage.dataPath, { recursive: true });
-      
-      // Load existing data or create default
-      await this.loadData();
-      
-      // Initialize default admin if none exists
-      await this.ensureDefaultAdmin();
-      
-      console.log('✅ Data service initialized');
-      console.log(`📊 Stats: ${Object.keys(this.data.users).length} users, ${Object.keys(this.data.projects).length} projects`);
-      
-      return true;
-    } catch (error) {
-      console.error('❌ Data service init error:', error);
-      return false;
-    }
+    // Create default admin
+    this.initializeDefaultData();
   }
-
-  async loadData() {
-    const files = [
-      { name: 'users', key: 'users' },
-      { name: 'projects', key: 'projects' },
-      { name: 'discussions', key: 'discussions' },
-      { name: 'comments', key: 'comments' },
-      { name: 'votes', key: 'votes' },
-      { name: 'team', key: 'teamMembers' },
-      { name: 'analytics', key: 'analytics' },
-      { name: 'activity', key: 'activityLog' }
-    ];
-
-    for (const file of files) {
-      const filePath = path.join(config.storage.dataPath, `${file.name}.json`);
-      try {
-        const content = await fs.readFile(filePath, 'utf8');
-        this.data[file.key] = JSON.parse(content);
-        console.log(`✅ Loaded ${file.name}`);
-      } catch (error) {
-        if (error.code === 'ENOENT') {
-          console.log(`📝 Creating default ${file.name} data`);
-          this.data[file.key] = file.key === 'analytics' ? {
-            platformStats: {
-              totalProjects: 0,
-              activeProjects: 0,
-              totalUsers: 0,
-              totalDiscussions: 0,
-              totalComments: 0,
-              consensusScore: 75,
-              engagementRate: 45
-            }
-          } : {};
-        } else {
-          throw error;
-        }
-      }
-    }
-  }
-
-  async saveData(key) {
-    if (!key) {
-      // Save all
-      const savePromises = Object.keys(this.data).map(k => this.saveData(k));
-      await Promise.all(savePromises);
-      return;
-    }
-
-    const fileMap = {
-      users: 'users.json',
-      projects: 'projects.json',
-      discussions: 'discussions.json',
-      comments: 'comments.json',
-      votes: 'votes.json',
-      teamMembers: 'team.json',
-      analytics: 'analytics.json',
-      activityLog: 'activity.json'
-    };
-
-    const fileName = fileMap[key];
-    if (!fileName) return;
-
-    const filePath = path.join(config.storage.dataPath, fileName);
-    await fs.writeFile(filePath, JSON.stringify(this.data[key], null, 2));
-    console.log(`💾 Saved ${key}`);
-  }
-
-  async ensureDefaultAdmin() {
+  
+  initializeDefaultData() {
+    // Default admin user
     const adminId = 'admin-' + Date.now();
-    if (!this.data.users[adminId]) {
-      this.data.users[adminId] = {
+    this.users.set(adminId, {
+      id: adminId,
+      name: 'Platform Admin',
+      email: 'admin@thoraxlab.org',
+      institution: 'ThoraxLab HQ',
+      role: 'administrator',
+      specialty: 'platform_management',
+      impactScore: 1000,
+      isAdmin: true,
+      createdAt: new Date().toISOString(),
+      lastActivity: new Date().toISOString(),
+      projects: [],
+      discussions: [],
+      preferences: {
+        notifications: true,
+        theme: 'medical-blue'
+      }
+    });
+    
+    // Create a sample project
+    const projectId = 'project-' + Date.now();
+    this.projects.set(projectId, {
+      id: projectId,
+      title: 'Welcome to ThoraxLab',
+      description: 'This is a sample project to demonstrate the ThoraxLab platform features.',
+      status: 'active',
+      lead: {
         id: adminId,
-        name: 'Platform Administrator',
+        name: 'Platform Admin',
+        email: 'admin@thoraxlab.org'
+      },
+      team: [{
+        id: adminId,
+        name: 'Platform Admin',
         email: 'admin@thoraxlab.org',
-        institution: 'ThoraxLab HQ',
-        role: 'administrator',
-        specialty: 'platform_management',
-        impactScore: 1000,
-        isAdmin: true,
-        createdAt: new Date().toISOString(),
-        lastActivity: new Date().toISOString(),
-        projects: [],
-        discussions: [],
-        preferences: {
-          notifications: true,
-          theme: 'medical-blue'
-        }
-      };
-      await this.saveData('users');
-      console.log('👑 Created default administrator');
-    }
+        role: 'lead',
+        joinedAt: new Date().toISOString()
+      }],
+      objectives: [
+        'Explore platform features',
+        'Learn how to create discussions',
+        'Understand consensus building'
+      ],
+      methodology: 'Demonstration of research collaboration platform',
+      timeline: {
+        startDate: new Date().toISOString(),
+        estimatedDuration: 'Ongoing',
+        milestones: [],
+        progress: 100
+      },
+      metrics: {
+        consensus: 85,
+        engagement: 50,
+        discussions: 1,
+        comments: 0,
+        votes: 0
+      },
+      settings: {
+        isPublic: true,
+        allowComments: true,
+        allowVoting: true,
+        requireApproval: false
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+    
+    // Add project to admin
+    const admin = this.users.get(adminId);
+    admin.projects.push(projectId);
+    
+    console.log('✅ Initialized default data');
   }
-
-  // ==================== USER MANAGEMENT ====================
-  async createUser(userData) {
+  
+  // User methods
+  createUser(userData) {
     const userId = `user-${uuidv4()}`;
     const now = new Date().toISOString();
     
@@ -188,7 +241,7 @@ class ThoraxLabDataService {
       role: 'clinician',
       specialty: userData.specialty || 'pulmonology',
       impactScore: 100,
-      isAdmin: false,
+      isAdmin: userData.email === 'admin' || userData.email.includes('@thoraxlab.org'),
       createdAt: now,
       lastActivity: now,
       projects: [],
@@ -200,50 +253,34 @@ class ThoraxLabDataService {
         theme: 'medical-blue'
       }
     };
-
-    // Special handling for admin
-    if (user.email === 'admin' || user.email.includes('@thoraxlab.org')) {
-      user.role = 'administrator';
-      user.impactScore = 1000;
-      user.isAdmin = true;
-    }
-
-    this.data.users[userId] = user;
-    this.data.analytics.platformStats.totalUsers = Object.keys(this.data.users).length;
     
-    // Log activity
-    this.logActivity(userId, 'user_registered', {
-      institution: user.institution
-    });
-
-    await this.saveData(['users', 'analytics', 'activityLog']);
-    
+    this.users.set(userId, user);
     return user;
   }
-
-  async updateUserActivity(userId) {
-    const user = this.data.users[userId];
-    if (user) {
-      user.lastActivity = new Date().toISOString();
-      await this.saveData('users');
+  
+  findUserByEmail(email) {
+    const normalizedEmail = email.trim().toLowerCase();
+    for (const [_, user] of this.users) {
+      if (user.email === normalizedEmail) {
+        return user;
+      }
     }
+    return null;
   }
-
-  // ==================== PROJECT MANAGEMENT ====================
-  async createProject(projectData, userId) {
+  
+  // Project methods
+  createProject(projectData, userId) {
     const projectId = `project-${uuidv4()}`;
     const now = new Date().toISOString();
-    const user = this.data.users[userId];
+    const user = this.users.get(userId);
     
-    if (!user) {
-      throw new Error('User not found');
-    }
-
+    if (!user) throw new Error('User not found');
+    
     const project = {
       id: projectId,
       title: projectData.title.trim(),
       description: projectData.description.trim(),
-      status: 'planning',
+      status: projectData.status || 'planning',
       lead: {
         id: userId,
         name: user.name,
@@ -256,8 +293,12 @@ class ThoraxLabDataService {
         role: 'lead',
         joinedAt: now
       }],
-      objectives: projectData.objectives || ['Define research objectives', 'Establish methodology'],
-      methodology: projectData.methodology || 'Mixed methods research',
+      objectives: projectData.objectives || [
+        'Define research objectives',
+        'Establish methodology',
+        'Assemble research team'
+      ],
+      methodology: projectData.methodology || 'To be determined',
       timeline: {
         startDate: now,
         estimatedDuration: '6 months',
@@ -280,578 +321,117 @@ class ThoraxLabDataService {
       createdAt: now,
       updatedAt: now
     };
-
-    this.data.projects[projectId] = project;
     
-    // Add project to user
+    this.projects.set(projectId, project);
     user.projects.push(projectId);
     
-    // Update analytics
-    this.data.analytics.platformStats.totalProjects = Object.keys(this.data.projects).length;
-    this.data.analytics.platformStats.activeProjects = Object.values(this.data.projects)
-      .filter(p => p.status === 'active').length;
-
-    // Log activity
-    this.logActivity(userId, 'project_created', {
-      projectId,
-      projectTitle: project.title
-    });
-
-    await this.saveData(['projects', 'users', 'analytics', 'activityLog']);
-    
     return project;
   }
-
-  async getProject(projectId) {
-    const project = this.data.projects[projectId];
-    if (!project) return null;
-
-    // Enhance with real-time data
-    const enhancedProject = { ...project };
-    
-    // Get discussions count
-    const discussions = Object.values(this.data.discussions)
-      .filter(d => d.projectId === projectId);
-    enhancedProject.metrics.discussions = discussions.length;
-    
-    // Get comments count
-    const comments = Object.values(this.data.comments)
-      .filter(c => discussions.some(d => d.id === c.discussionId));
-    enhancedProject.metrics.comments = comments.length;
-    
-    // Calculate consensus (average of discussion consensus)
-    if (discussions.length > 0) {
-      const totalConsensus = discussions.reduce((sum, d) => sum + (d.consensus || 0), 0);
-      enhancedProject.metrics.consensus = Math.round(totalConsensus / discussions.length);
-    }
-    
-    // Calculate engagement (discussions + comments + votes)
-    const votes = Object.values(this.data.votes)
-      .filter(v => discussions.some(d => d.id === v.discussionId));
-    enhancedProject.metrics.votes = votes.length;
-    enhancedProject.metrics.engagement = discussions.length + comments.length + votes.length;
-    
-    return enhancedProject;
+  
+  getProject(projectId) {
+    return this.projects.get(projectId);
   }
-
-  async updateProject(projectId, updates, userId) {
-    const project = this.data.projects[projectId];
-    if (!project) {
-      throw new Error('Project not found');
-    }
-
-    // Check permissions
-    const user = this.data.users[userId];
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const isLead = project.lead.id === userId;
-    const isTeamMember = project.team.some(member => member.id === userId);
-    const isAdmin = user.isAdmin;
-
-    if (!isLead && !isAdmin) {
-      throw new Error('Insufficient permissions');
-    }
-
-    // Apply updates
-    if (updates.title !== undefined) project.title = updates.title.trim();
-    if (updates.description !== undefined) project.description = updates.description.trim();
-    if (updates.status !== undefined) project.status = updates.status;
-    if (updates.objectives !== undefined) project.objectives = updates.objectives;
-    if (updates.methodology !== undefined) project.methodology = updates.methodology;
-    
-    // Update timeline if provided
-    if (updates.timeline) {
-      project.timeline = { ...project.timeline, ...updates.timeline };
-    }
-    
-    // Update metrics if provided
-    if (updates.metrics) {
-      project.metrics = { ...project.metrics, ...updates.metrics };
-    }
-    
-    // Update settings if provided
-    if (updates.settings) {
-      project.settings = { ...project.settings, ...updates.settings };
-    }
-    
-    project.updatedAt = new Date().toISOString();
-
-    // Log activity
-    this.logActivity(userId, 'project_updated', {
-      projectId,
-      changes: Object.keys(updates)
-    });
-
-    await this.saveData(['projects', 'activityLog']);
-    
-    return project;
-  }
-
-  // ==================== DISCUSSION MANAGEMENT ====================
-  async createDiscussion(discussionData, userId, projectId) {
-    const discussionId = `discussion-${uuidv4()}`;
-    const now = new Date().toISOString();
-    const user = this.data.users[userId];
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const project = this.data.projects[projectId];
-    if (!project) {
-      throw new Error('Project not found');
-    }
-
-    // Check if user is in project team
-    const isTeamMember = project.team.some(member => member.id === userId);
-    if (!isTeamMember) {
-      throw new Error('Only team members can create discussions');
-    }
-
-    const discussion = {
-      id: discussionId,
-      projectId,
-      title: discussionData.title.trim(),
-      content: discussionData.content.trim(),
-      author: {
-        id: userId,
-        name: user.name,
-        email: user.email
-      },
-      tags: discussionData.tags || ['general'],
-      status: 'open',
-      metrics: {
-        upvotes: 0,
-        downvotes: 0,
-        comments: 0,
-        consensus: 50 // Starting consensus
-      },
-      settings: {
-        allowComments: true,
-        allowVoting: true,
-        isPinned: false
-      },
-      createdAt: now,
-      updatedAt: now
-    };
-
-    this.data.discussions[discussionId] = discussion;
-    
-    // Update user's discussions
-    user.discussions.push(discussionId);
-    
-    // Update project metrics
-    project.metrics.discussions = (project.metrics.discussions || 0) + 1;
-    project.updatedAt = now;
-    
-    // Update platform analytics
-    this.data.analytics.platformStats.totalDiscussions = 
-      Object.keys(this.data.discussions).length;
-
-    // Log activity
-    this.logActivity(userId, 'discussion_created', {
-      projectId,
-      discussionId,
-      discussionTitle: discussion.title
-    });
-
-    await this.saveData(['discussions', 'users', 'projects', 'analytics', 'activityLog']);
-    
-    return discussion;
-  }
-
-  // ==================== COMMENT MANAGEMENT ====================
-  async createComment(commentData, userId, discussionId) {
-    const commentId = `comment-${uuidv4()}`;
-    const now = new Date().toISOString();
-    const user = this.data.users[userId];
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const discussion = this.data.discussions[discussionId];
-    if (!discussion) {
-      throw new Error('Discussion not found');
-    }
-
-    const project = this.data.projects[discussion.projectId];
-    if (!project) {
-      throw new Error('Project not found');
-    }
-
-    // Check if user is in project team
-    const isTeamMember = project.team.some(member => member.id === userId);
-    if (!isTeamMember && !discussion.settings.allowComments) {
-      throw new Error('Only team members can comment');
-    }
-
-    const comment = {
-      id: commentId,
-      discussionId,
-      projectId: discussion.projectId,
-      content: commentData.content.trim(),
-      author: {
-        id: userId,
-        name: user.name,
-        email: user.email
-      },
-      parentId: commentData.parentId, // For threaded comments
-      isEdited: false,
-      reactions: {},
-      createdAt: now,
-      updatedAt: now
-    };
-
-    this.data.comments[commentId] = comment;
-    
-    // Update discussion metrics
-    discussion.metrics.comments = (discussion.metrics.comments || 0) + 1;
-    discussion.updatedAt = now;
-    
-    // Update user's comments
-    user.comments.push(commentId);
-    
-    // Update project metrics
-    project.metrics.comments = (project.metrics.comments || 0) + 1;
-    project.updatedAt = now;
-    
-    // Update platform analytics
-    this.data.analytics.platformStats.totalComments = 
-      Object.keys(this.data.comments).length;
-
-    // Log activity
-    this.logActivity(userId, 'comment_created', {
-      projectId: discussion.projectId,
-      discussionId,
-      commentId
-    });
-
-    await this.saveData(['comments', 'discussions', 'users', 'projects', 'analytics', 'activityLog']);
-    
-    return comment;
-  }
-
-  // ==================== VOTE MANAGEMENT ====================
-  async castVote(voteData, userId) {
-    const voteId = `vote-${uuidv4()}`;
-    const now = new Date().toISOString();
-    const user = this.data.users[userId];
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const discussion = this.data.discussions[voteData.discussionId];
-    if (!discussion) {
-      throw new Error('Discussion not found');
-    }
-
-    const project = this.data.projects[discussion.projectId];
-    if (!project) {
-      throw new Error('Project not found');
-    }
-
-    // Check if user is in project team
-    const isTeamMember = project.team.some(member => member.id === userId);
-    if (!isTeamMember && !discussion.settings.allowVoting) {
-      throw new Error('Only team members can vote');
-    }
-
-    // Check for existing vote
-    const existingVote = Object.values(this.data.votes).find(v => 
-      v.discussionId === voteData.discussionId && v.userId === userId
-    );
-
-    let vote;
-    if (existingVote) {
-      // Update existing vote
-      const oldType = existingVote.type;
-      existingVote.type = voteData.type;
-      existingVote.updatedAt = now;
-      vote = existingVote;
-      
-      // Adjust discussion metrics
-      if (oldType === 'upvote' && voteData.type === 'downvote') {
-        discussion.metrics.upvotes = Math.max(0, discussion.metrics.upvotes - 1);
-        discussion.metrics.downvotes = (discussion.metrics.downvotes || 0) + 1;
-      } else if (oldType === 'downvote' && voteData.type === 'upvote') {
-        discussion.metrics.downvotes = Math.max(0, discussion.metrics.downvotes - 1);
-        discussion.metrics.upvotes = (discussion.metrics.upvotes || 0) + 1;
+  
+  getProjectsForUser(userId) {
+    const userProjects = [];
+    for (const [_, project] of this.projects) {
+      if (project.team.some(member => member.id === userId)) {
+        userProjects.push(project);
       }
-    } else {
-      // Create new vote
-      vote = {
-        id: voteId,
-        discussionId: voteData.discussionId,
-        projectId: discussion.projectId,
-        userId,
-        type: voteData.type,
-        createdAt: now,
-        updatedAt: now
-      };
-      
-      this.data.votes[voteId] = vote;
-      
-      // Update discussion metrics
-      if (voteData.type === 'upvote') {
-        discussion.metrics.upvotes = (discussion.metrics.upvotes || 0) + 1;
-      } else if (voteData.type === 'downvote') {
-        discussion.metrics.downvotes = (discussion.metrics.downvotes || 0) + 1;
-      }
-      
-      // Update user's votes
-      user.votes.push(voteId);
     }
-    
-    // Update discussion consensus
-    const totalVotes = (discussion.metrics.upvotes || 0) + (discussion.metrics.downvotes || 0);
-    if (totalVotes > 0) {
-      discussion.metrics.consensus = Math.round(
-        (discussion.metrics.upvotes / totalVotes) * 100
-      );
-    }
-    
-    discussion.updatedAt = now;
-    
-    // Update project metrics
-    project.metrics.votes = (project.metrics.votes || 0) + 1;
-    project.updatedAt = now;
-
-    // Log activity
-    this.logActivity(userId, 'vote_cast', {
-      projectId: discussion.projectId,
-      discussionId: voteData.discussionId,
-      voteType: voteData.type
-    });
-
-    await this.saveData(['votes', 'discussions', 'users', 'projects', 'activityLog']);
-    
-    return vote;
-  }
-
-  // ==================== TEAM MANAGEMENT ====================
-  async addTeamMember(projectId, userId, newMemberData) {
-    const project = this.data.projects[projectId];
-    if (!project) {
-      throw new Error('Project not found');
-    }
-
-    const user = this.data.users[userId];
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Check permissions (only lead or admin can add members)
-    const isLead = project.lead.id === userId;
-    const isAdmin = user.isAdmin;
-    
-    if (!isLead && !isAdmin) {
-      throw new Error('Only project lead or admin can add team members');
-    }
-
-    // Check if new member exists
-    let newMember = Object.values(this.data.users).find(u => 
-      u.email === newMemberData.email.trim().toLowerCase()
-    );
-
-    if (!newMember) {
-      // Create new user
-      newMember = await this.createUser({
-        name: newMemberData.name,
-        email: newMemberData.email,
-        institution: newMemberData.institution || project.lead.institution,
-        specialty: newMemberData.specialty || 'clinician'
-      });
-    }
-
-    // Check if already in team
-    const isAlreadyMember = project.team.some(member => member.id === newMember.id);
-    if (isAlreadyMember) {
-      throw new Error('User is already a team member');
-    }
-
-    // Add to team
-    project.team.push({
-      id: newMember.id,
-      name: newMember.name,
-      email: newMember.email,
-      role: newMemberData.role || 'researcher',
-      joinedAt: new Date().toISOString()
-    });
-
-    project.updatedAt = new Date().toISOString();
-
-    // Log activity
-    this.logActivity(userId, 'team_member_added', {
-      projectId,
-      memberId: newMember.id,
-      memberName: newMember.name
-    });
-
-    await this.saveData(['projects', 'activityLog']);
-    
-    return project.team;
-  }
-
-  // ==================== ANALYTICS & ACTIVITY ====================
-  logActivity(userId, action, details = {}) {
-    const activity = {
-      id: `activity-${uuidv4()}`,
-      userId,
-      action,
-      timestamp: new Date().toISOString(),
-      details,
-      ipAddress: '127.0.0.1' // In production, get from request
-    };
-
-    this.data.activityLog.unshift(activity);
-    
-    // Keep only last 1000 activities
-    if (this.data.activityLog.length > 1000) {
-      this.data.activityLog = this.data.activityLog.slice(0, 1000);
-    }
-    
-    return activity;
-  }
-
-  async getPlatformStats() {
-    const stats = { ...this.data.analytics.platformStats };
-    
-    // Calculate engagement rate
-    const totalInteractions = stats.totalDiscussions + stats.totalComments;
-    const totalPossibleInteractions = stats.totalUsers * 10; // Rough estimate
-    if (totalPossibleInteractions > 0) {
-      stats.engagementRate = Math.round((totalInteractions / totalPossibleInteractions) * 100);
-    }
-    
-    return stats;
-  }
-
-  async getUserAnalytics(userId) {
-    const user = this.data.users[userId];
-    if (!user) return null;
-
-    const userProjects = Object.values(this.data.projects)
-      .filter(p => p.team.some(m => m.id === userId));
-    
-    const userDiscussions = Object.values(this.data.discussions)
-      .filter(d => d.author.id === userId);
-    
-    const userComments = Object.values(this.data.comments)
-      .filter(c => c.author.id === userId);
-
-    return {
-      userImpact: user.impactScore,
-      projectCount: userProjects.length,
-      discussionCount: userDiscussions.length,
-      commentCount: userComments.length,
-      voteCount: user.votes?.length || 0,
-      activityTrend: 'increasing', // Would calculate from activity log
-      collaborationScore: Math.round((userProjects.length + userDiscussions.length) / 2)
-    };
+    return userProjects;
   }
 }
 
-// ==================== MIDDLEWARE ====================
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'", "ws://localhost:" + PORT],
-    },
-  },
-}));
-
-app.use(compression());
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
-
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static('public'));
-
-// Request logging
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
-  next();
-});
-
-// ==================== SOCKET.IO ====================
-const io = new Server(server, {
-  cors: {
-    origin: true,
-    credentials: true
-  }
-});
-
-// ==================== INITIALIZE SERVICES ====================
-const dataService = new ThoraxLabDataService();
+// Initialize data store
+const dataStore = new DataStore();
 
 // ==================== AUTHENTICATION MIDDLEWARE ====================
-const sessions = new Map();
-
 async function authenticate(req, res, next) {
   try {
-    const sessionId = req.cookies?.sessionId || 
-                     req.headers.authorization?.replace('Bearer ', '');
+    // Get session ID from cookie or Authorization header
+    let sessionId = req.cookies?.sessionId;
+    
+    // Also check Authorization header
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      sessionId = authHeader.substring(7);
+    }
+    
+    console.log('Auth check:', { 
+      hasCookie: !!req.cookies?.sessionId, 
+      hasAuthHeader: !!authHeader,
+      sessionId: sessionId?.substring(0, 20) + '...'
+    });
     
     if (!sessionId) {
       return res.status(401).json({
         success: false,
-        error: 'Authentication required'
+        error: 'Authentication required',
+        details: 'No valid session found'
       });
     }
-
-    const session = sessions.get(sessionId);
-    if (!session) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid session'
-      });
-    }
-
-    // Check expiration
-    if (new Date(session.expiresAt) < new Date()) {
-      sessions.delete(sessionId);
-      return res.status(401).json({
-        success: false,
-        error: 'Session expired'
-      });
-    }
-
-    // Update last activity
-    session.lastActivity = new Date().toISOString();
     
-    // Get user
-    const user = dataService.data.users[session.userId];
+    const session = validateSession(sessionId);
+    if (!session) {
+      res.clearCookie('sessionId');
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid or expired session',
+        details: 'Please login again'
+      });
+    }
+    
+    const user = dataStore.users.get(session.userId);
     if (!user) {
       sessions.delete(sessionId);
+      res.clearCookie('sessionId');
       return res.status(401).json({
         success: false,
-        error: 'User not found'
+        error: 'User not found',
+        details: 'User account no longer exists'
       });
     }
-
+    
+    // Update user activity
+    user.lastActivity = new Date().toISOString();
+    
+    // Attach to request
     req.user = user;
     req.session = session;
     next();
+    
   } catch (error) {
-    console.error('Auth error:', error);
+    console.error('Auth middleware error:', error);
     res.status(500).json({
       success: false,
-      error: 'Authentication failed'
+      error: 'Authentication failed',
+      details: error.message
     });
   }
 }
+
+// ==================== SOCKET.IO SETUP ====================
+const io = new Server(server, {
+  cors: {
+    origin: true,
+    credentials: true
+  },
+  transports: ['websocket', 'polling']
+});
+
+io.on('connection', (socket) => {
+  console.log('🔌 Socket connected:', socket.id);
+  
+  socket.on('join:project', (projectId) => {
+    socket.join(`project:${projectId}`);
+    console.log(`Socket ${socket.id} joined project ${projectId}`);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('🔌 Socket disconnected:', socket.id);
+  });
+});
 
 // ==================== API ROUTES ====================
 
@@ -859,32 +439,23 @@ async function authenticate(req, res, next) {
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    service: config.app.name,
-    version: config.app.version,
+    service: 'ThoraxLab Platform',
+    version: '4.0.0',
     timestamp: new Date().toISOString(),
-    status: 'operational'
-  });
-});
-
-// Status endpoint
-app.get('/api/status', (req, res) => {
-  res.json({
-    success: true,
-    status: 'online',
-    service: config.app.name,
-    timestamp: new Date().toISOString(),
+    status: 'operational',
     stats: {
-      users: Object.keys(dataService.data.users).length,
-      projects: Object.keys(dataService.data.projects).length,
-      discussions: Object.keys(dataService.data.discussions).length,
-      uptime: process.uptime()
+      users: dataStore.users.size,
+      projects: dataStore.projects.size,
+      sessions: sessions.size
     }
   });
 });
 
-// ==================== AUTHENTICATION ====================
-app.post('/api/login', async (req, res) => {
+// Login endpoint
+app.post('/api/login', (req, res) => {
   try {
+    console.log('Login attempt:', req.body);
+    
     const { name, email, institution } = req.body;
     
     if (!name || !email) {
@@ -893,51 +464,34 @@ app.post('/api/login', async (req, res) => {
         error: 'Name and email are required'
       });
     }
-
+    
     // Find existing user or create new
-    const existingUser = Object.values(dataService.data.users).find(u => 
-      u.email.toLowerCase() === email.toLowerCase().trim()
-    );
-
-    let user;
-    if (existingUser) {
-      user = existingUser;
-      // Update user info
-      user.name = name.trim();
-      user.institution = institution || user.institution;
-      user.lastActivity = new Date().toISOString();
-    } else {
-      // Create new user
-      user = await dataService.createUser({
+    let user = dataStore.findUserByEmail(email);
+    if (!user) {
+      user = dataStore.createUser({
         name: name.trim(),
         email: email.trim(),
         institution: institution || 'Medical Center'
       });
+      console.log('Created new user:', user.id);
+    } else {
+      console.log('Found existing user:', user.id);
     }
-
-    // Create session
-    const sessionId = `session-${uuidv4()}`;
-    const expiresAt = new Date(Date.now() + config.security.sessionDuration);
     
-    sessions.set(sessionId, {
-      id: sessionId,
-      userId: user.id,
-      createdAt: new Date().toISOString(),
-      expiresAt: expiresAt.toISOString(),
-      lastActivity: new Date().toISOString()
-    });
-
-    // Update user activity
-    await dataService.updateUserActivity(user.id);
-
+    // Create session
+    const session = createSession(user.id);
+    
     // Set cookie
-    res.cookie('sessionId', sessionId, {
+    res.cookie('sessionId', session.id, {
       httpOnly: true,
       secure: NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: config.security.sessionDuration
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/'
     });
-
+    
+    console.log('Login successful for:', user.name);
+    
     res.json({
       success: true,
       user: {
@@ -950,11 +504,11 @@ app.post('/api/login', async (req, res) => {
         isAdmin: user.isAdmin
       },
       session: {
-        id: sessionId,
-        expiresAt: expiresAt.toISOString()
+        id: session.id,
+        expiresAt: session.expiresAt
       }
     });
-
+    
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({
@@ -965,7 +519,8 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.post('/api/logout', authenticate, (req, res) => {
+// Logout endpoint
+app.post('/api/logout', (req, res) => {
   try {
     const sessionId = req.cookies?.sessionId || 
                      req.headers.authorization?.replace('Bearer ', '');
@@ -988,45 +543,54 @@ app.post('/api/logout', authenticate, (req, res) => {
   }
 });
 
+// Get current user
 app.get('/api/me', authenticate, (req, res) => {
-  res.json({
-    success: true,
-    user: {
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
-      institution: req.user.institution,
-      role: req.user.role,
-      impactScore: req.user.impactScore,
-      isAdmin: req.user.isAdmin,
-      preferences: req.user.preferences
-    }
-  });
-});
-
-// ==================== PROJECTS API ====================
-app.get('/api/projects', authenticate, async (req, res) => {
   try {
     const user = req.user;
-    const userProjects = Object.values(dataService.data.projects)
-      .filter(project => project.team.some(member => member.id === user.id))
-      .map(project => ({
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        status: project.status,
-        lead: project.lead.name,
-        leadId: project.lead.id,
-        metrics: project.metrics,
-        team: project.team,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }));
-
+    
     res.json({
       success: true,
-      projects: userProjects,
-      count: userProjects.length
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        institution: user.institution,
+        role: user.role,
+        impactScore: user.impactScore,
+        isAdmin: user.isAdmin,
+        projectCount: user.projects?.length || 0
+      }
+    });
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get user info'
+    });
+  }
+});
+
+// Get all projects for user
+app.get('/api/projects', authenticate, (req, res) => {
+  try {
+    const user = req.user;
+    const projects = dataStore.getProjectsForUser(user.id);
+    
+    res.json({
+      success: true,
+      projects: projects.map(p => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        status: p.status,
+        lead: p.lead.name,
+        leadId: p.lead.id,
+        teamCount: p.team.length,
+        metrics: p.metrics,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt
+      })),
+      count: projects.length
     });
   } catch (error) {
     console.error('Get projects error:', error);
@@ -1037,9 +601,10 @@ app.get('/api/projects', authenticate, async (req, res) => {
   }
 });
 
-app.post('/api/projects', authenticate, async (req, res) => {
+// Create new project
+app.post('/api/projects', authenticate, (req, res) => {
   try {
-    const { title, description, objectives, methodology } = req.body;
+    const { title, description } = req.body;
     const user = req.user;
     
     if (!title || !description) {
@@ -1048,14 +613,20 @@ app.post('/api/projects', authenticate, async (req, res) => {
         error: 'Title and description are required'
       });
     }
-
-    const project = await dataService.createProject({
+    
+    const project = dataStore.createProject({
       title,
       description,
-      objectives,
-      methodology
+      status: 'planning'
     }, user.id);
-
+    
+    // Emit real-time event
+    io.emit('project:created', {
+      projectId: project.id,
+      userId: user.id,
+      title: project.title
+    });
+    
     res.status(201).json({
       success: true,
       project,
@@ -1071,20 +642,20 @@ app.post('/api/projects', authenticate, async (req, res) => {
   }
 });
 
-app.get('/api/projects/:id', authenticate, async (req, res) => {
+// Get single project
+app.get('/api/projects/:id', authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const user = req.user;
     
-    const project = await dataService.getProject(id);
-    
+    const project = dataStore.getProject(id);
     if (!project) {
       return res.status(404).json({
         success: false,
         error: 'Project not found'
       });
     }
-
+    
     // Check if user has access
     const hasAccess = project.team.some(member => member.id === user.id) || user.isAdmin;
     if (!hasAccess) {
@@ -1093,7 +664,7 @@ app.get('/api/projects/:id', authenticate, async (req, res) => {
         error: 'Access denied'
       });
     }
-
+    
     res.json({
       success: true,
       project
@@ -1107,13 +678,46 @@ app.get('/api/projects/:id', authenticate, async (req, res) => {
   }
 });
 
-app.put('/api/projects/:id', authenticate, async (req, res) => {
+// Update project
+app.put('/api/projects/:id', authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
     const user = req.user;
     
-    const project = await dataService.updateProject(id, updates, user.id);
+    const project = dataStore.getProject(id);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        error: 'Project not found'
+      });
+    }
+    
+    // Check permissions
+    const isLead = project.lead.id === user.id;
+    const isAdmin = user.isAdmin;
+    
+    if (!isLead && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        error: 'Insufficient permissions'
+      });
+    }
+    
+    // Apply updates
+    if (updates.title !== undefined) project.title = updates.title.trim();
+    if (updates.description !== undefined) project.description = updates.description.trim();
+    if (updates.status !== undefined) project.status = updates.status;
+    if (updates.objectives !== undefined) project.objectives = updates.objectives;
+    if (updates.methodology !== undefined) project.methodology = updates.methodology;
+    
+    project.updatedAt = new Date().toISOString();
+    
+    // Emit update
+    io.to(`project:${id}`).emit('project:updated', {
+      projectId: id,
+      updates: Object.keys(updates)
+    });
     
     res.json({
       success: true,
@@ -1130,196 +734,20 @@ app.put('/api/projects/:id', authenticate, async (req, res) => {
   }
 });
 
-// ==================== DISCUSSIONS API ====================
-app.get('/api/projects/:id/discussions', authenticate, async (req, res) => {
+// Get project team
+app.get('/api/projects/:id/team', authenticate, (req, res) => {
   try {
     const { id } = req.params;
     const user = req.user;
     
-    // Check access
-    const project = dataService.data.projects[id];
+    const project = dataStore.getProject(id);
     if (!project) {
       return res.status(404).json({
         success: false,
         error: 'Project not found'
       });
     }
-
-    const hasAccess = project.team.some(member => member.id === user.id) || user.isAdmin;
-    if (!hasAccess) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access denied'
-      });
-    }
-
-    const discussions = Object.values(dataService.data.discussions)
-      .filter(d => d.projectId === id)
-      .map(discussion => {
-        // Get comments for each discussion
-        const comments = Object.values(dataService.data.comments)
-          .filter(c => c.discussionId === discussion.id)
-          .map(comment => ({
-            id: comment.id,
-            content: comment.content,
-            author: comment.author,
-            createdAt: comment.createdAt,
-            isEdited: comment.isEdited
-          }));
-
-        return {
-          ...discussion,
-          comments,
-          commentCount: comments.length
-        };
-      });
-
-    res.json({
-      success: true,
-      discussions,
-      count: discussions.length
-    });
-  } catch (error) {
-    console.error('Get discussions error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to load discussions'
-    });
-  }
-});
-
-app.post('/api/projects/:id/discussions', authenticate, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, content, tags } = req.body;
-    const user = req.user;
     
-    if (!title || !content) {
-      return res.status(400).json({
-        success: false,
-        error: 'Title and content are required'
-      });
-    }
-
-    const discussion = await dataService.createDiscussion({
-      title,
-      content,
-      tags
-    }, user.id, id);
-
-    // Emit real-time event
-    io.to(`project:${id}`).emit('discussion:created', discussion);
-
-    res.status(201).json({
-      success: true,
-      discussion,
-      message: 'Discussion created successfully'
-    });
-  } catch (error) {
-    console.error('Create discussion error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create discussion',
-      details: error.message
-    });
-  }
-});
-
-// ==================== COMMENTS API ====================
-app.post('/api/discussions/:id/comments', authenticate, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { content, parentId } = req.body;
-    const user = req.user;
-    
-    if (!content) {
-      return res.status(400).json({
-        success: false,
-        error: 'Comment content is required'
-      });
-    }
-
-    const comment = await dataService.createComment({
-      content,
-      parentId
-    }, user.id, id);
-
-    // Emit real-time event
-    const discussion = dataService.data.discussions[id];
-    if (discussion) {
-      io.to(`discussion:${id}`).emit('comment:created', comment);
-    }
-
-    res.status(201).json({
-      success: true,
-      comment,
-      message: 'Comment added successfully'
-    });
-  } catch (error) {
-    console.error('Create comment error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to add comment',
-      details: error.message
-    });
-  }
-});
-
-// ==================== VOTES API ====================
-app.post('/api/discussions/:id/vote', authenticate, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { type } = req.body;
-    const user = req.user;
-    
-    if (!type || !['upvote', 'downvote'].includes(type)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Valid vote type is required'
-      });
-    }
-
-    const vote = await dataService.castVote({
-      discussionId: id,
-      type
-    }, user.id);
-
-    // Emit real-time event
-    io.to(`discussion:${id}`).emit('vote:updated', {
-      discussionId: id,
-      metrics: dataService.data.discussions[id]?.metrics,
-      vote
-    });
-
-    res.json({
-      success: true,
-      vote,
-      message: 'Vote recorded successfully'
-    });
-  } catch (error) {
-    console.error('Vote error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to record vote',
-      details: error.message
-    });
-  }
-});
-
-// ==================== TEAM API ====================
-app.get('/api/projects/:id/team', authenticate, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = req.user;
-    
-    const project = dataService.data.projects[id];
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        error: 'Project not found'
-      });
-    }
-
     // Check access
     const hasAccess = project.team.some(member => member.id === user.id) || user.isAdmin;
     if (!hasAccess) {
@@ -1328,19 +756,18 @@ app.get('/api/projects/:id/team', authenticate, async (req, res) => {
         error: 'Access denied'
       });
     }
-
+    
     // Enhance team data with user details
     const enhancedTeam = project.team.map(member => {
-      const userData = dataService.data.users[member.id];
+      const userData = dataStore.users.get(member.id);
       return {
         ...member,
         specialty: userData?.specialty,
         impactScore: userData?.impactScore,
-        lastActivity: userData?.lastActivity,
-        isOnline: false // Would track via WebSocket
+        lastActivity: userData?.lastActivity
       };
     });
-
+    
     res.json({
       success: true,
       team: enhancedTeam,
@@ -1355,58 +782,103 @@ app.get('/api/projects/:id/team', authenticate, async (req, res) => {
   }
 });
 
-app.post('/api/projects/:id/team', authenticate, async (req, res) => {
+// Get project discussions (placeholder)
+app.get('/api/projects/:id/discussions', authenticate, (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role, institution } = req.body;
     const user = req.user;
     
-    if (!name || !email) {
-      return res.status(400).json({
+    const project = dataStore.getProject(id);
+    if (!project) {
+      return res.status(404).json({
         success: false,
-        error: 'Name and email are required'
+        error: 'Project not found'
       });
     }
-
-    const team = await dataService.addTeamMember(id, user.id, {
-      name,
-      email,
-      role,
-      institution
-    });
-
+    
+    // Check access
+    const hasAccess = project.team.some(member => member.id === user.id) || user.isAdmin;
+    if (!hasAccess) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied'
+      });
+    }
+    
+    // Return empty array for now (discussions feature coming soon)
     res.json({
       success: true,
-      team,
-      message: 'Team member added successfully'
+      discussions: [],
+      count: 0
     });
   } catch (error) {
-    console.error('Add team member error:', error);
+    console.error('Get discussions error:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to add team member',
-      details: error.message
+      error: 'Failed to load discussions'
     });
   }
 });
 
-// ==================== ANALYTICS API ====================
-app.get('/api/analytics/platform', authenticate, async (req, res) => {
+// Create discussion (placeholder)
+app.post('/api/projects/:id/discussions', authenticate, (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const user = req.user;
+    
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        error: 'Title and content are required'
+      });
+    }
+    
+    // Return placeholder response
+    res.status(201).json({
+      success: true,
+      discussion: {
+        id: `discussion-${uuidv4()}`,
+        title,
+        content,
+        author: {
+          id: user.id,
+          name: user.name
+        },
+        createdAt: new Date().toISOString()
+      },
+      message: 'Discussion created (feature coming soon)'
+    });
+  } catch (error) {
+    console.error('Create discussion error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create discussion'
+    });
+  }
+});
+
+// Get analytics
+app.get('/api/analytics', authenticate, (req, res) => {
   try {
     const user = req.user;
     
-    if (!user.isAdmin) {
-      return res.status(403).json({
-        success: false,
-        error: 'Admin access required'
-      });
-    }
-
-    const stats = await dataService.getPlatformStats();
+    const userProjects = dataStore.getProjectsForUser(user.id);
     
     res.json({
       success: true,
-      analytics: stats
+      analytics: {
+        user: {
+          projectCount: userProjects.length,
+          impactScore: user.impactScore,
+          role: user.role
+        },
+        platform: {
+          totalUsers: dataStore.users.size,
+          totalProjects: dataStore.projects.size,
+          activeProjects: Array.from(dataStore.projects.values()).filter(p => p.status === 'active').length
+        }
+      }
     });
   } catch (error) {
     console.error('Get analytics error:', error);
@@ -1417,154 +889,33 @@ app.get('/api/analytics/platform', authenticate, async (req, res) => {
   }
 });
 
-app.get('/api/analytics/user', authenticate, async (req, res) => {
-  try {
-    const user = req.user;
-    
-    const analytics = await dataService.getUserAnalytics(user.id);
-    
-    res.json({
-      success: true,
-      analytics
-    });
-  } catch (error) {
-    console.error('Get user analytics error:', error);
-    res.status(500).json({
+// ==================== SPA FALLBACK ====================
+// This must be AFTER all API routes but BEFORE error handlers
+app.get('*', (req, res) => {
+  // Don't serve HTML for API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({
       success: false,
-      error: 'Failed to load user analytics'
+      error: 'API endpoint not found',
+      path: req.path
     });
   }
+  
+  // Serve the SPA
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/api/analytics/projects/:id', authenticate, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = req.user;
-    
-    const project = dataService.data.projects[id];
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        error: 'Project not found'
-      });
-    }
-
-    // Check access
-    const hasAccess = project.team.some(member => member.id === user.id) || user.isAdmin;
-    if (!hasAccess) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access denied'
-      });
-    }
-
-    // Get discussions for this project
-    const discussions = Object.values(dataService.data.discussions)
-      .filter(d => d.projectId === id);
-    
-    // Get comments for these discussions
-    const comments = Object.values(dataService.data.comments)
-      .filter(c => discussions.some(d => d.id === c.discussionId));
-    
-    // Get votes for these discussions
-    const votes = Object.values(dataService.data.votes)
-      .filter(v => discussions.some(d => d.id === v.discussionId));
-
-    const analytics = {
-      projectMetrics: project.metrics,
-      discussionStats: {
-        total: discussions.length,
-        byStatus: {
-          open: discussions.filter(d => d.status === 'open').length,
-          closed: discussions.filter(d => d.status === 'closed').length,
-          resolved: discussions.filter(d => d.status === 'resolved').length
-        },
-        averageConsensus: discussions.length > 0 
-          ? Math.round(discussions.reduce((sum, d) => sum + (d.metrics.consensus || 0), 0) / discussions.length)
-          : 0
-      },
-      engagement: {
-        comments: comments.length,
-        votes: votes.length,
-        uniqueParticipants: new Set([
-          ...discussions.map(d => d.author.id),
-          ...comments.map(c => c.author.id),
-          ...votes.map(v => v.userId)
-        ]).size
-      },
-      teamActivity: project.team.map(member => {
-        const memberDiscussions = discussions.filter(d => d.author.id === member.id).length;
-        const memberComments = comments.filter(c => c.author.id === member.id).length;
-        const memberVotes = votes.filter(v => v.userId === member.id).length;
-        
-        return {
-          id: member.id,
-          name: member.name,
-          role: member.role,
-          discussions: memberDiscussions,
-          comments: memberComments,
-          votes: memberVotes,
-          totalActivity: memberDiscussions + memberComments + memberVotes
-        };
-      })
-    };
-
-    res.json({
-      success: true,
-      analytics
-    });
-  } catch (error) {
-    console.error('Get project analytics error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to load project analytics'
-    });
-  }
-});
-
-// ==================== SOCKET.IO EVENTS ====================
-io.on('connection', (socket) => {
-  console.log('🔌 Socket connected:', socket.id);
-  
-  socket.on('join:project', (projectId) => {
-    socket.join(`project:${projectId}`);
-    console.log(`Socket ${socket.id} joined project ${projectId}`);
-  });
-  
-  socket.on('join:discussion', (discussionId) => {
-    socket.join(`discussion:${discussionId}`);
-    console.log(`Socket ${socket.id} joined discussion ${discussionId}`);
-  });
-  
-  socket.on('typing:start', (data) => {
-    socket.to(`discussion:${data.discussionId}`).emit('user:typing', {
-      userId: data.userId,
-      userName: data.userName,
-      discussionId: data.discussionId
-    });
-  });
-  
-  socket.on('typing:stop', (data) => {
-    socket.to(`discussion:${data.discussionId}`).emit('user:stopped-typing', {
-      userId: data.userId,
-      discussionId: data.discussionId
-    });
-  });
-  
-  socket.on('disconnect', () => {
-    console.log('🔌 Socket disconnected:', socket.id);
-  });
-});
-
-// ==================== ERROR HANDLING ====================
-app.use((req, res) => {
+// ==================== ERROR HANDLERS ====================
+// 404 handler for API routes
+app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
-    error: 'Endpoint not found',
+    error: 'API endpoint not found',
     path: req.originalUrl
   });
 });
 
+// Global error handler
 app.use((err, req, res, next) => {
   console.error('🔥 Server error:', err);
   res.status(500).json({
@@ -1575,50 +926,35 @@ app.use((err, req, res, next) => {
 });
 
 // ==================== START SERVER ====================
-async function startServer() {
-  try {
-    // Initialize data service
-    const initialized = await dataService.initialize();
-    if (!initialized) {
-      console.error('💥 Failed to initialize data service');
-      process.exit(1);
-    }
-    
-    // Start server
-    server.listen(PORT, '0.0.0.0', () => {
-      console.log(`
-🎯 THORAXLAB RESEARCH PLATFORM v${config.app.version}
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`
+🎯 THORAXLAB RESEARCH PLATFORM v4.0.0
 ===============================================
 🌐 Server URL: http://localhost:${PORT}
 🚀 Health Check: http://localhost:${PORT}/health
-📊 API Status: http://localhost:${PORT}/api/status
+📊 API Status: http://localhost:${PORT}/api/me
 👥 Dashboard: http://localhost:${PORT}/
 
-📈 PLATFORM STATISTICS:
-   • Users: ${Object.keys(dataService.data.users).length}
-   • Projects: ${Object.keys(dataService.data.projects).length}
-   • Discussions: ${Object.keys(dataService.data.discussions).length}
-   • Comments: ${Object.keys(dataService.data.comments).length}
-
-🔧 AVAILABLE ENDPOINTS:
-   ✅ Authentication (/api/login, /api/logout, /api/me)
-   ✅ Projects CRUD (/api/projects)
-   ✅ Discussions & Comments (/api/projects/:id/discussions)
-   ✅ Voting System (/api/discussions/:id/vote)
-   ✅ Team Management (/api/projects/:id/team)
-   ✅ Analytics (/api/analytics/*)
+🔧 FEATURES:
+   ✅ Fixed CSP for Font Awesome
+   ✅ Session-based authentication
+   ✅ Project management
    ✅ Real-time WebSocket support
+   ✅ In-memory data storage
+   ✅ CORS enabled for development
 
-📁 Data stored in: ${config.storage.dataPath}
+📈 STATISTICS:
+   • Users: ${dataStore.users.size}
+   • Projects: ${dataStore.projects.size}
+   • Active Sessions: ${sessions.size}
+
+🔐 TEST CREDENTIALS:
+   • Admin: Name="Admin", Email="admin"
+   • Any name/email will work
 
 💡 Server started on port ${PORT}
-      `);
-    });
-  } catch (error) {
-    console.error('💥 Failed to start server:', error);
-    process.exit(1);
-  }
-}
+`);
+});
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -1636,6 +972,3 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
-
-// Start the server
-startServer().catch(console.error);
