@@ -4,552 +4,650 @@ const { v4: uuidv4 } = require('uuid');
 const WebSocket = require('ws');
 const helmet = require('helmet');
 const compression = require('compression');
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const { database } = require('./database');
 
 // ===== CONFIGURATION =====
 const PORT = process.env.PORT || 3000;
-const DB_PATH = './thoraxlab.db';
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // ===== EXPRESS SERVER =====
 const app = express();
 const server = require('http').createServer(app);
 
 // ===== WEB SOCKET SERVER =====
-const wss = new WebSocket.Server({ server });
-const connectedClients = new Map();
+const wss = new WebSocket.Server({ 
+    server,
+    perMessageDeflate: {
+        zlibDeflateOptions: {
+            chunkSize: 1024,
+            memLevel: 7,
+            level: 3
+        },
+        zlibInflateOptions: {
+            chunkSize: 10 * 1024
+        },
+        clientNoContextTakeover: true,
+        serverNoContextTakeover: true,
+        serverMaxWindowBits: 10,
+        concurrencyLimit: 10,
+        threshold: 1024
+    }
+});
 
-// ===== DATABASE =====
-let db = null;
+// ===== CLIENT MANAGEMENT =====
+class ClientManager {
+    constructor() {
+        this.clients = new Map();
+        this.projectSubscriptions = new Map();
+        this.userSessions = new Map();
+    }
 
-// ===== INITIALIZATION =====
-async function initialize() {
-    console.log(`
-    🚀 THORAXLAB CLINICAL-INDUSTRY INNOVATION PLATFORM
-    ════════════════════════════════════════════════════
-    Initializing...
-    `);
-    
-    await initializeDatabase();
-    setupMiddleware();
-    setupRoutes();
-    setupWebSocket();
-    startServer();
-}
-
-// ===== DATABASE FUNCTIONS =====
-async function getDatabase() {
-    if (!db) {
-        console.log('📊 Connecting to database...');
-        db = await open({
-            filename: DB_PATH,
-            driver: sqlite3.Database
+    addClient(ws, clientId) {
+        this.clients.set(clientId, {
+            id: clientId,
+            ws,
+            userId: null,
+            projects: new Set(),
+            lastPing: Date.now(),
+            isAlive: true
         });
-        await setupDatabase();
+        
+        // Setup heartbeat
+        ws.on('pong', () => {
+            const client = this.clients.get(clientId);
+            if (client) {
+                client.lastPing = Date.now();
+                client.isAlive = true;
+            }
+        });
+        
+        return clientId;
     }
-    return db;
-}
 
-async function setupDatabase() {
-    console.log('🛠️  Setting up database schema...');
-    
-    await db.exec('PRAGMA journal_mode = WAL');
-    await db.exec('PRAGMA foreign_keys = ON');
-    
-    // Users table
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            email TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            role TEXT CHECK(role IN ('clinician', 'industry', 'public')) DEFAULT 'clinician',
-            avatar_color TEXT DEFAULT '#0C7C59',
-            institution TEXT,
-            specialty TEXT,
-            status TEXT DEFAULT 'offline',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `);
-    
-    // Projects table
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS projects (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            description TEXT NOT NULL,
-            type TEXT CHECK(type IN ('clinical', 'industry', 'collaborative')) DEFAULT 'clinical',
-            status TEXT CHECK(status IN ('active', 'planning', 'review', 'completed')) DEFAULT 'active',
-            created_by TEXT NOT NULL,
-            pulse_score INTEGER DEFAULT 50,
-            velocity INTEGER DEFAULT 50,
-            total_interactions INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES users(id)
-        );
-    `);
-    
-    // Project members
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS project_members (
-            project_id TEXT NOT NULL,
-            user_id TEXT NOT NULL,
-            role TEXT DEFAULT 'contributor',
-            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (project_id, user_id),
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
-    `);
-    
-    // Comments
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS comments (
-            id TEXT PRIMARY KEY,
-            project_id TEXT NOT NULL,
-            user_id TEXT NOT NULL,
-            content TEXT NOT NULL,
-            likes INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Comment reactions
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS comment_reactions (
-            comment_id TEXT NOT NULL,
-            user_id TEXT NOT NULL,
-            reaction TEXT CHECK(reaction IN ('like')) DEFAULT 'like',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (comment_id, user_id),
-            FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Decisions
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS decisions (
-            id TEXT PRIMARY KEY,
-            project_id TEXT NOT NULL,
-            title TEXT NOT NULL,
-            description TEXT,
-            status TEXT CHECK(status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
-            created_by TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            resolved_at TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (created_by) REFERENCES users(id)
-        );
-    `);
-    
-    // Timeline events
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS timeline_events (
-            id TEXT PRIMARY KEY,
-            project_id TEXT NOT NULL,
-            event_type TEXT NOT NULL,
-            description TEXT NOT NULL,
-            user_id TEXT,
-            metadata TEXT DEFAULT '{}',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Interactions
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS interactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            project_id TEXT NOT NULL,
-            user_id TEXT NOT NULL,
-            interaction_type TEXT CHECK(interaction_type IN ('view', 'comment', 'like', 'decision', 'join')) NOT NULL,
-            metadata TEXT DEFAULT '{}',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Create indexes
-    await db.exec(`
-        CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
-        CREATE INDEX IF NOT EXISTS idx_projects_created_at ON projects(created_at);
-        CREATE INDEX IF NOT EXISTS idx_comments_project ON comments(project_id);
-        CREATE INDEX IF NOT EXISTS idx_decisions_project_status ON decisions(project_id, status);
-        CREATE INDEX IF NOT EXISTS idx_timeline_project ON timeline_events(project_id);
-        CREATE INDEX IF NOT EXISTS idx_interactions_project ON interactions(project_id);
-    `);
-    
-    // Create default admin user
-    const adminExists = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
-    if (!adminExists) {
-        await db.run(
-            `INSERT INTO users (id, email, name, role, avatar_color, institution, specialty) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [uuidv4(), 'admin@thoraxlab.local', 'System Admin', 'clinician', '#1A365D', 'ThoraxLab', 'Platform Administration']
-        );
-        console.log('👑 Created default admin user');
-    }
-    
-    // Create sample data if empty
-    const projectCount = await db.get('SELECT COUNT(*) as count FROM projects');
-    if (projectCount.count === 0) {
-        await createSampleData();
-    }
-    
-    console.log('✅ Database setup complete');
-}
-
-async function createSampleData() {
-    console.log('📝 Creating sample data...');
-    
-    // Create sample users
-    const users = [
-        { id: uuidv4(), email: 'dr.chen@hospital.edu', name: 'Dr. Sarah Chen', role: 'clinician', avatar_color: '#0C7C59', institution: 'University Medical Center', specialty: 'Pulmonology' },
-        { id: uuidv4(), email: 'm.wang@medtech.com', name: 'Michael Wang', role: 'industry', avatar_color: '#D35400', institution: 'MedTech Solutions', specialty: 'AI Engineering' },
-        { id: uuidv4(), email: 'rajesh@research.org', name: 'Dr. Rajesh Kumar', role: 'clinician', avatar_color: '#7B68EE', institution: 'Research Institute', specialty: 'Data Science' },
-        { id: uuidv4(), email: 'lisa@patient.org', name: 'Lisa Williams', role: 'public', avatar_color: '#8B5CF6', institution: 'Patient Advocacy', specialty: 'Patient Experience' }
-    ];
-    
-    for (const user of users) {
-        await db.run(
-            `INSERT INTO users (id, email, name, role, avatar_color, institution, specialty, last_seen) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now', '-1 hour'))`,
-            [user.id, user.email, user.name, user.role, user.avatar_color, user.institution, user.specialty]
-        );
-    }
-    
-    // Create sample project
-    const projectId = `proj_${uuidv4()}`;
-    const now = new Date().toISOString();
-    
-    await db.run(
-        `INSERT INTO projects (id, title, description, type, created_by, pulse_score, velocity, total_interactions, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [projectId, 'AI-Powered COPD Early Detection', 
-         'Developing machine learning algorithms to detect COPD patterns from chest X-rays 6-12 months earlier than current methods.', 
-         'clinical', users[0].id, 84, 85, 156, now, now]
-    );
-    
-    // Add project members
-    for (const user of users) {
-        await db.run(
-            `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
-            [projectId, user.id, user.id === users[0].id ? 'admin' : 'contributor']
-        );
-    }
-    
-    // Create sample comments
-    const comments = [
-        { id: `comment_${uuidv4()}`, project_id: projectId, user_id: users[0].id, content: 'Latest algorithm shows 94% accuracy on test set. False positives reduced by 32%.', likes: 12 },
-        { id: `comment_${uuidv4()}`, project_id: projectId, user_id: users[1].id, content: 'Great progress! Should discuss deployment timeline for Q2 pilot.', likes: 8 },
-        { id: `comment_${uuidv4()}`, project_id: projectId, user_id: users[2].id, content: 'Uploaded latest dataset with 5,000 additional annotated scans. Training completes Friday.', likes: 15 }
-    ];
-    
-    for (const comment of comments) {
-        await db.run(
-            `INSERT INTO comments (id, project_id, user_id, content, likes, created_at) 
-             VALUES (?, ?, ?, ?, ?, datetime('now', '-${Math.floor(Math.random() * 3)} days'))`,
-            [comment.id, comment.project_id, comment.user_id, comment.content, comment.likes]
-        );
-    }
-    
-    // Create sample decisions
-    const decisions = [
-        { id: `decision_${uuidv4()}`, project_id: projectId, title: 'Finalize patient inclusion criteria', description: 'Need final criteria for clinical validation study.', created_by: users[0].id },
-        { id: `decision_${uuidv4()}`, project_id: projectId, title: 'Approve prototype budget', description: 'Budget approval for prototype development.', created_by: users[1].id }
-    ];
-    
-    for (const decision of decisions) {
-        await db.run(
-            `INSERT INTO decisions (id, project_id, title, description, created_by, created_at) 
-             VALUES (?, ?, ?, ?, ?, datetime('now', '-${Math.floor(Math.random() * 2)} days'))`,
-            [decision.id, decision.project_id, decision.title, decision.description, decision.created_by]
-        );
-    }
-    
-    console.log('✅ Sample data created');
-}
-
-async function calculatePulseScore(projectId) {
-    try {
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        
-        const stats = await db.get(`
-            SELECT 
-                COUNT(DISTINCT i.id) as interactions_7d,
-                COUNT(DISTINCT i.user_id) as unique_users_7d,
-                COUNT(DISTINCT c.id) as comments_7d,
-                COUNT(DISTINCT d.id) as decisions_7d,
-                MAX(i.created_at) as last_interaction_at
-            FROM projects p
-            LEFT JOIN interactions i ON p.id = i.project_id AND i.created_at > datetime(?)
-            LEFT JOIN comments c ON p.id = c.project_id AND c.created_at > datetime(?)
-            LEFT JOIN decisions d ON p.id = d.project_id AND d.created_at > datetime(?)
-            WHERE p.id = ?
-            GROUP BY p.id
-        `, [weekAgo.toISOString(), weekAgo.toISOString(), weekAgo.toISOString(), projectId]);
-        
-        if (!stats) return 50;
-        
-        let score = 50;
-        score += Math.min((stats.interactions_7d || 0) * 1.5, 20);
-        score += Math.min((stats.comments_7d || 0) * 3, 15);
-        score += Math.min((stats.decisions_7d || 0) * 4, 15);
-        score += Math.min((stats.unique_users_7d || 0) * 5, 10);
-        
-        if (stats.last_interaction_at) {
-            const lastInteraction = new Date(stats.last_interaction_at);
-            const hoursSince = (new Date() - lastInteraction) / (1000 * 60 * 60);
-            if (hoursSince < 1) score += 10;
-            else if (hoursSince < 24) score += 8;
-            else if (hoursSince < 72) score += 5;
-            else if (hoursSince < 168) score += 2;
+    removeClient(clientId) {
+        const client = this.clients.get(clientId);
+        if (client && client.userId) {
+            this.removeUserFromProjects(client.userId, client.projects);
         }
+        this.clients.delete(clientId);
         
-        return Math.max(0, Math.min(100, Math.round(score)));
-    } catch (error) {
-        console.error('Pulse calculation error:', error);
-        return 50;
+        // Clean up project subscriptions
+        this.projectSubscriptions.forEach((users, projectId) => {
+            users.delete(clientId);
+            if (users.size === 0) {
+                this.projectSubscriptions.delete(projectId);
+            }
+        });
+    }
+
+    authenticateClient(clientId, userId) {
+        const client = this.clients.get(clientId);
+        if (client) {
+            client.userId = userId;
+            this.userSessions.set(userId, clientId);
+            
+            // Update user status in database
+            database.recordInteraction('system', userId, 'user_login', null, null, {
+                clientId,
+                timestamp: new Date().toISOString()
+            }).catch(console.error);
+        }
+    }
+
+    subscribeToProject(clientId, projectId) {
+        const client = this.clients.get(clientId);
+        if (client) {
+            client.projects.add(projectId);
+            
+            if (!this.projectSubscriptions.has(projectId)) {
+                this.projectSubscriptions.set(projectId, new Set());
+            }
+            this.projectSubscriptions.get(projectId).add(clientId);
+            
+            // Record subscription
+            database.recordInteraction(projectId, client.userId, 'project_subscribe')
+                .catch(console.error);
+        }
+    }
+
+    unsubscribeFromProject(clientId, projectId) {
+        const client = this.clients.get(clientId);
+        if (client) {
+            client.projects.delete(projectId);
+            
+            const projectSubs = this.projectSubscriptions.get(projectId);
+            if (projectSubs) {
+                projectSubs.delete(clientId);
+                if (projectSubs.size === 0) {
+                    this.projectSubscriptions.delete(projectId);
+                }
+            }
+        }
+    }
+
+    getProjectSubscribers(projectId) {
+        return Array.from(this.projectSubscriptions.get(projectId) || []);
+    }
+
+    broadcastToProject(projectId, message, excludeClientId = null) {
+        const subscribers = this.getProjectSubscribers(projectId);
+        
+        subscribers.forEach(clientId => {
+            if (clientId !== excludeClientId) {
+                this.sendToClient(clientId, message);
+            }
+        });
+    }
+
+    sendToClient(clientId, message) {
+        const client = this.clients.get(clientId);
+        if (client && client.ws.readyState === WebSocket.OPEN) {
+            try {
+                client.ws.send(JSON.stringify(message));
+            } catch (error) {
+                console.error(`Error sending to client ${clientId}:`, error);
+            }
+        }
+    }
+
+    sendToUser(userId, message) {
+        const clientId = this.userSessions.get(userId);
+        if (clientId) {
+            this.sendToClient(clientId, message);
+        }
+    }
+
+    removeUserFromProjects(userId, projects) {
+        projects.forEach(projectId => {
+            const projectSubs = this.projectSubscriptions.get(projectId);
+            if (projectSubs) {
+                // Find client IDs for this user in this project
+                for (const clientId of projectSubs) {
+                    const client = this.clients.get(clientId);
+                    if (client && client.userId === userId) {
+                        projectSubs.delete(clientId);
+                    }
+                }
+                if (projectSubs.size === 0) {
+                    this.projectSubscriptions.delete(projectId);
+                }
+            }
+        });
+    }
+
+    checkHeartbeats() {
+        const now = Date.now();
+        const TIMEOUT = 30000; // 30 seconds
+        
+        for (const [clientId, client] of this.clients.entries()) {
+            if (now - client.lastPing > TIMEOUT) {
+                console.log(`Client ${clientId} heartbeat timeout`);
+                client.ws.terminate();
+                this.removeClient(clientId);
+            } else if (!client.isAlive) {
+                client.isAlive = false;
+                client.ws.ping();
+            }
+        }
+    }
+
+    getStats() {
+        return {
+            totalClients: this.clients.size,
+            authenticatedClients: Array.from(this.clients.values()).filter(c => c.userId).length,
+            projectSubscriptions: this.projectSubscriptions.size,
+            userSessions: this.userSessions.size
+        };
     }
 }
 
-async function recordInteraction(projectId, userId, interactionType, metadata = {}) {
-    try {
-        await db.run(
-            `INSERT INTO interactions (project_id, user_id, interaction_type, metadata) 
-             VALUES (?, ?, ?, ?)`,
-            [projectId, userId, interactionType, JSON.stringify(metadata)]
-        );
-        
-        await db.run(
-            `UPDATE projects SET total_interactions = total_interactions + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-            [projectId]
-        );
-        
-        const newPulse = await calculatePulseScore(projectId);
-        await db.run(
-            `UPDATE projects SET pulse_score = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-            [newPulse, projectId]
-        );
-        
-        return newPulse;
-    } catch (error) {
-        console.error('Interaction recording error:', error);
-        throw error;
-    }
-}
-
-async function addTimelineEvent(projectId, eventType, description, userId = null, metadata = {}) {
-    try {
-        await db.run(
-            `INSERT INTO timeline_events (id, project_id, event_type, description, user_id, metadata) 
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [uuidv4(), projectId, eventType, description, userId, JSON.stringify(metadata)]
-        );
-    } catch (error) {
-        console.error('Timeline event error:', error);
-    }
-}
+const clientManager = new ClientManager();
 
 // ===== MIDDLEWARE =====
 function setupMiddleware() {
-    // Security
+    // Security headers
     app.use(helmet({
-        contentSecurityPolicy: false,
-        crossOriginEmbedderPolicy: false
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+                fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+                connectSrc: ["'self'", "ws:", "wss:"],
+                imgSrc: ["'self'", "data:", "https:"]
+            }
+        },
+        crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: { policy: "cross-origin" }
     }));
     
     // Compression
-    app.use(compression());
+    app.use(compression({
+        level: 6,
+        threshold: 1024
+    }));
+    
+    // CORS
+    app.use(cors({
+        origin: NODE_ENV === 'development' ? true : [/\.thoraxlab\.com$/, 'http://localhost:3000'],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-User-ID', 'X-Session-ID']
+    }));
+    
+    // Rate limiting
+    const apiLimiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Limit each IP to 100 requests per windowMs
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: 'Too many requests from this IP, please try again later.'
+    });
+    
+    // Apply rate limiting to API routes
+    app.use('/api/', apiLimiter);
     
     // Body parsing
-    app.use(express.json({ limit: '10mb' }));
-    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    app.use(express.json({ 
+        limit: '10mb',
+        verify: (req, res, buf) => {
+            req.rawBody = buf;
+        }
+    }));
     
-    // Static files from public folder
+    app.use(express.urlencoded({ 
+        extended: true, 
+        limit: '10mb',
+        parameterLimit: 100
+    }));
+    
+    // Static files
     app.use(express.static(PUBLIC_DIR, {
-        maxAge: '1h',
+        maxAge: NODE_ENV === 'production' ? '1h' : '0',
         setHeaders: (res, filePath) => {
             if (path.extname(filePath) === '.html') {
-                res.setHeader('Cache-Control', 'no-cache');
+                res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+                res.setHeader('Pragma', 'no-cache');
+                res.setHeader('Expires', '0');
             }
         }
     }));
     
-    console.log('✅ Middleware setup complete');
+    // Request logging
+    app.use((req, res, next) => {
+        const start = Date.now();
+        res.on('finish', () => {
+            const duration = Date.now() - start;
+            console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`);
+        });
+        next();
+    });
+    
+    // Error handling middleware
+    app.use((err, req, res, next) => {
+        console.error('Server error:', err.stack);
+        res.status(err.status || 500).json({
+            error: NODE_ENV === 'production' ? 'Internal server error' : err.message,
+            timestamp: new Date().toISOString()
+        });
+    });
 }
 
-// ===== WEB SOCKET =====
+// ===== WEB SOCKET HANDLING =====
 function setupWebSocket() {
     wss.on('connection', (ws, req) => {
         const clientId = uuidv4();
-        const clientInfo = {
-            id: clientId,
-            ws: ws,
-            userId: null,
-            projectSubscriptions: new Set()
-        };
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         
-        connectedClients.set(clientId, clientInfo);
+        console.log(`🔗 New WebSocket connection: ${clientId} from ${ip}`);
         
+        clientManager.addClient(ws, clientId);
+        
+        // Send welcome message
+        ws.send(JSON.stringify({
+            type: 'connected',
+            clientId,
+            timestamp: new Date().toISOString(),
+            platform: 'ThoraxLab 2.0'
+        }));
+        
+        // Handle incoming messages
         ws.on('message', async (data) => {
             try {
                 const message = JSON.parse(data.toString());
                 await handleWebSocketMessage(clientId, message);
             } catch (error) {
-                console.error('WebSocket message error:', error);
+                console.error(`WebSocket message error from ${clientId}:`, error);
+                ws.send(JSON.stringify({
+                    type: 'error',
+                    error: 'Invalid message format',
+                    timestamp: new Date().toISOString()
+                }));
             }
         });
         
-        ws.on('close', () => {
-            connectedClients.delete(clientId);
+        // Handle client disconnect
+        ws.on('close', (code, reason) => {
+            console.log(`🔌 WebSocket disconnected: ${clientId} (${code}) ${reason}`);
+            clientManager.removeClient(clientId);
         });
         
-        ws.send(JSON.stringify({
-            type: 'connected',
-            clientId: clientId,
-            timestamp: new Date().toISOString()
-        }));
+        // Handle errors
+        ws.on('error', (error) => {
+            console.error(`WebSocket error for ${clientId}:`, error);
+            clientManager.removeClient(clientId);
+        });
     });
+    
+    // Heartbeat interval
+    setInterval(() => {
+        clientManager.checkHeartbeats();
+    }, 10000);
+    
+    // Broadcast platform status updates
+    setInterval(async () => {
+        try {
+            const platformStatus = await database.getPlatformStatus();
+            broadcastPlatformStatus(platformStatus);
+        } catch (error) {
+            console.error('Platform status broadcast error:', error);
+        }
+    }, 30000); // Every 30 seconds
     
     console.log('✅ WebSocket server ready');
 }
 
 async function handleWebSocketMessage(clientId, message) {
-    const client = connectedClients.get(clientId);
+    const client = clientManager.clients.get(clientId);
     if (!client) return;
     
-    switch (message.type) {
-        case 'authenticate':
-            client.userId = message.userId;
-            break;
-            
-        case 'subscribe_project':
-            if (message.projectId) {
-                client.projectSubscriptions.add(message.projectId);
-            }
-            break;
-            
-        case 'unsubscribe_project':
-            if (message.projectId) {
-                client.projectSubscriptions.delete(message.projectId);
-            }
-            break;
-            
-        case 'comment_added':
-            broadcastToProject(message.projectId, {
-                type: 'comment_added',
-                comment: message.comment,
-                timestamp: new Date().toISOString()
-            });
-            break;
-            
-        case 'project_updated':
-            broadcastToProject(message.projectId, {
-                type: 'project_updated',
-                project: message.project,
-                timestamp: new Date().toISOString()
-            });
-            break;
-            
-        case 'heartbeat':
-            client.ws.send(JSON.stringify({
-                type: 'heartbeat_ack',
-                timestamp: Date.now()
-            }));
-            break;
+    try {
+        switch (message.type) {
+            case 'authenticate':
+                if (message.userId && message.token) {
+                    clientManager.authenticateClient(clientId, message.userId);
+                    
+                    clientManager.sendToClient(clientId, {
+                        type: 'authenticated',
+                        userId: message.userId,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Send current platform status
+                    const platformStatus = await database.getPlatformStatus();
+                    clientManager.sendToClient(clientId, {
+                        type: 'platform_status',
+                        ...platformStatus
+                    });
+                }
+                break;
+                
+            case 'subscribe_project':
+                if (message.projectId && client.userId) {
+                    clientManager.subscribeToProject(clientId, message.projectId);
+                    
+                    clientManager.sendToClient(clientId, {
+                        type: 'subscribed',
+                        projectId: message.projectId,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                break;
+                
+            case 'unsubscribe_project':
+                if (message.projectId) {
+                    clientManager.unsubscribeFromProject(clientId, message.projectId);
+                }
+                break;
+                
+            case 'heartbeat':
+                client.lastPing = Date.now();
+                client.isAlive = true;
+                clientManager.sendToClient(clientId, {
+                    type: 'heartbeat_ack',
+                    timestamp: Date.now()
+                });
+                break;
+                
+            case 'cursor_move':
+                if (message.projectId && client.userId) {
+                    clientManager.broadcastToProject(message.projectId, {
+                        type: 'user_cursor',
+                        userId: client.userId,
+                        projectId: message.projectId,
+                        position: message.position,
+                        timestamp: Date.now()
+                    }, clientId);
+                }
+                break;
+                
+            case 'typing_indicator':
+                if (message.projectId && client.userId) {
+                    clientManager.broadcastToProject(message.projectId, {
+                        type: 'user_typing',
+                        userId: client.userId,
+                        projectId: message.projectId,
+                        isTyping: message.isTyping,
+                        timestamp: Date.now()
+                    }, clientId);
+                }
+                break;
+                
+            case 'comment_added':
+                if (message.comment && message.comment.projectId) {
+                    // Forward to other subscribers
+                    clientManager.broadcastToProject(message.comment.projectId, {
+                        type: 'comment_added',
+                        comment: message.comment,
+                        timestamp: new Date().toISOString()
+                    }, clientId);
+                    
+                    // Record interaction
+                    await database.recordInteraction(
+                        message.comment.projectId,
+                        client.userId,
+                        'comment_create',
+                        'comment',
+                        message.comment.id
+                    );
+                }
+                break;
+                
+            case 'comment_updated':
+                if (message.comment && message.comment.projectId) {
+                    clientManager.broadcastToProject(message.comment.projectId, {
+                        type: 'comment_updated',
+                        comment: message.comment,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                break;
+                
+            case 'decision_updated':
+                if (message.decision && message.decision.projectId) {
+                    clientManager.broadcastToProject(message.decision.projectId, {
+                        type: 'decision_updated',
+                        decision: message.decision,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                break;
+                
+            case 'project_updated':
+                if (message.project && message.project.id) {
+                    clientManager.broadcastToProject(message.project.id, {
+                        type: 'project_updated',
+                        project: message.project,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                break;
+                
+            case 'user_status':
+                if (message.userId && message.status) {
+                    // Broadcast to all projects this user is subscribed to
+                    client.projects.forEach(projectId => {
+                        clientManager.broadcastToProject(projectId, {
+                            type: 'user_status_changed',
+                            userId: message.userId,
+                            status: message.status,
+                            timestamp: new Date().toISOString()
+                        });
+                    });
+                }
+                break;
+                
+            default:
+                console.log(`Unknown message type from ${clientId}:`, message.type);
+        }
+    } catch (error) {
+        console.error(`Error handling message from ${clientId}:`, error);
+        clientManager.sendToClient(clientId, {
+            type: 'error',
+            error: 'Failed to process message',
+            timestamp: new Date().toISOString()
+        });
     }
 }
 
-function broadcastToProject(projectId, message) {
-    connectedClients.forEach(client => {
-        if (client.ws.readyState === WebSocket.OPEN && 
-            client.projectSubscriptions.has(projectId)) {
-            client.ws.send(JSON.stringify(message));
+function broadcastPlatformStatus(status) {
+    const message = {
+        type: 'platform_status',
+        ...status,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Send to all authenticated clients
+    for (const [clientId, client] of clientManager.clients.entries()) {
+        if (client.userId) {
+            clientManager.sendToClient(clientId, message);
         }
-    });
+    }
 }
 
 // ===== API ROUTES =====
 function setupRoutes() {
-    // Health check
+    // Health check endpoint
     app.get('/api/health', (req, res) => {
+        const dbStatus = database.connected ? 'connected' : 'disconnected';
+        
         res.json({
             status: 'healthy',
             timestamp: new Date().toISOString(),
             version: '2.0.0',
-            clients: connectedClients.size,
-            uptime: process.uptime()
+            environment: NODE_ENV,
+            database: dbStatus,
+            websocket: {
+                clients: clientManager.getStats().totalClients,
+                authenticated: clientManager.getStats().authenticatedClients
+            },
+            uptime: process.uptime(),
+            memory: process.memoryUsage()
         });
+    });
+    
+    // Get platform status
+    app.get('/api/platform/status', async (req, res) => {
+        try {
+            const status = await database.getPlatformStatus();
+            res.json(status);
+        } catch (error) {
+            console.error('Platform status error:', error);
+            res.status(500).json({ 
+                error: 'Failed to get platform status',
+                timestamp: new Date().toISOString()
+            });
+        }
     });
     
     // Get all projects
     app.get('/api/projects', async (req, res) => {
         try {
-            const database = await getDatabase();
-            const projects = await database.all(`
-                SELECT 
-                    p.*,
-                    u.name as creator_name,
-                    u.avatar_color as creator_color,
-                    COUNT(DISTINCT pm.user_id) as team_size,
-                    COUNT(DISTINCT c.id) as comment_count,
-                    COUNT(DISTINCT d.id) as decision_count
-                FROM projects p
-                LEFT JOIN users u ON p.created_by = u.id
-                LEFT JOIN project_members pm ON p.id = pm.project_id
-                LEFT JOIN comments c ON p.id = c.project_id
-                LEFT JOIN decisions d ON p.id = d.project_id
-                WHERE p.status = 'active'
-                GROUP BY p.id
-                ORDER BY p.updated_at DESC
-                LIMIT 100
-            `);
+            const { status = 'active', limit = 50, offset = 0 } = req.query;
+            const userId = req.headers['x-user-id'];
+            
+            let projects;
+            if (userId) {
+                projects = await database.getUserProjects(userId);
+            } else {
+                const db = await database.connect();
+                projects = await db.all(`
+                    SELECT 
+                        p.*,
+                        u.name as creator_name,
+                        u.avatar_color as creator_color,
+                        COUNT(DISTINCT pm.user_id) as team_size,
+                        COUNT(DISTINCT c.id) as comment_count,
+                        COUNT(DISTINCT d.id) as decision_count
+                    FROM projects p
+                    LEFT JOIN users u ON p.created_by = u.id
+                    LEFT JOIN project_members pm ON p.id = pm.project_id
+                    LEFT JOIN comments c ON p.id = c.project_id
+                    LEFT JOIN decisions d ON p.id = d.project_id
+                    WHERE p.status = ?
+                    GROUP BY p.id
+                    ORDER BY p.last_activity_at DESC
+                    LIMIT ? OFFSET ?
+                `, [status, parseInt(limit), parseInt(offset)]);
+            }
             
             res.json(projects);
         } catch (error) {
             console.error('Projects fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch projects' });
+            res.status(500).json({ 
+                error: 'Failed to fetch projects',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
     // Get single project
     app.get('/api/projects/:id', async (req, res) => {
         try {
-            const database = await getDatabase();
             const projectId = req.params.id;
+            const userId = req.headers['x-user-id'] || 'anonymous';
             
-            const project = await database.get(`
-                SELECT 
-                    p.*,
-                    u.name as creator_name,
-                    u.avatar_color as creator_color,
-                    u.institution as creator_institution
-                FROM projects p
-                LEFT JOIN users u ON p.created_by = u.id
-                WHERE p.id = ?
-            `, [projectId]);
+            const project = await database.getProjectAnalytics(projectId);
             
             if (!project) {
-                return res.status(404).json({ error: 'Project not found' });
+                return res.status(404).json({ 
+                    error: 'Project not found',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const userId = req.headers['x-user-id'] || 'anonymous';
-            await recordInteraction(projectId, userId, 'view', { source: 'api' });
+            // Record view interaction
+            await database.recordInteraction(
+                projectId, 
+                userId, 
+                'project_view',
+                'project',
+                projectId,
+                { source: 'api' }
+            );
+            
+            // Add timeline event for view (if authenticated user)
+            if (userId !== 'anonymous') {
+                await database.addTimelineEvent(
+                    projectId,
+                    'project_viewed',
+                    `Project viewed by user`,
+                    userId,
+                    'project',
+                    projectId
+                );
+            }
             
             res.json(project);
         } catch (error) {
             console.error('Project fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch project' });
+            res.status(500).json({ 
+                error: 'Failed to fetch project',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
@@ -559,45 +657,83 @@ function setupRoutes() {
             const { title, description, type = 'clinical', createdBy } = req.body;
             
             if (!title || !description || !createdBy) {
-                return res.status(400).json({ error: 'Missing required fields' });
+                return res.status(400).json({ 
+                    error: 'Missing required fields: title, description, createdBy',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const database = await getDatabase();
+            if (title.length > 200) {
+                return res.status(400).json({ 
+                    error: 'Title too long (max 200 characters)',
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            if (description.length > 5000) {
+                return res.status(400).json({ 
+                    error: 'Description too long (max 5000 characters)',
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            const db = await database.connect();
             const projectId = `proj_${uuidv4()}`;
             const now = new Date().toISOString();
             
-            await database.run(
-                `INSERT INTO projects (id, title, description, type, created_by, created_at, updated_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [projectId, title, description, type, createdBy, now, now]
+            await db.run(
+                `INSERT INTO projects (id, title, description, type, created_by, created_at, updated_at, last_activity_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [projectId, title, description, type, createdBy, now, now, now]
             );
             
-            await database.run(
+            await db.run(
                 `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
-                [projectId, createdBy, 'admin']
+                [projectId, createdBy, 'owner']
             );
             
-            await recordInteraction(projectId, createdBy, 'join', { role: 'admin' });
+            await database.recordInteraction(
+                projectId, 
+                createdBy, 
+                'project_create',
+                'project',
+                projectId,
+                { role: 'owner' }
+            );
             
-            await addTimelineEvent(projectId, 'project_created', `Project "${title}" created`, createdBy);
+            await database.addTimelineEvent(
+                projectId,
+                'project_created',
+                `Project "${title}" created`,
+                createdBy,
+                'project',
+                projectId
+            );
             
-            const project = await database.get(`
+            const project = await db.get(`
                 SELECT p.*, u.name as creator_name, u.avatar_color as creator_color
                 FROM projects p
                 LEFT JOIN users u ON p.created_by = u.id
                 WHERE p.id = ?
             `, [projectId]);
             
-            broadcastToProject(projectId, {
+            // Broadcast project creation
+            clientManager.broadcastToProject(projectId, {
                 type: 'project_created',
                 project: project,
                 timestamp: now
             });
             
-            res.json(project);
+            // Update platform metrics
+            await database.updatePlatformMetrics();
+            
+            res.status(201).json(project);
         } catch (error) {
             console.error('Project creation error:', error);
-            res.status(500).json({ error: 'Failed to create project' });
+            res.status(500).json({ 
+                error: 'Failed to create project',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
@@ -606,44 +742,82 @@ function setupRoutes() {
         try {
             const projectId = req.params.id;
             const updates = req.body;
+            const userId = req.headers['x-user-id'];
             
             if (!updates || Object.keys(updates).length === 0) {
-                return res.status(400).json({ error: 'No updates provided' });
+                return res.status(400).json({ 
+                    error: 'No updates provided',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const database = await getDatabase();
+            const db = await database.connect();
+            
+            // Check if user is project member
+            const isMember = await db.get(
+                'SELECT role FROM project_members WHERE project_id = ? AND user_id = ?',
+                [projectId, userId]
+            );
+            
+            if (!isMember && userId !== 'system') {
+                return res.status(403).json({ 
+                    error: 'Not authorized to update project',
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            const allowedFields = ['title', 'description', 'type', 'status', 'phase', 'target_date', 'tags'];
             const updateFields = [];
             const updateValues = [];
             
             Object.keys(updates).forEach(key => {
-                if (['title', 'description', 'type', 'status'].includes(key)) {
+                if (allowedFields.includes(key)) {
                     updateFields.push(`${key} = ?`);
                     updateValues.push(updates[key]);
                 }
             });
             
             if (updateFields.length === 0) {
-                return res.status(400).json({ error: 'No valid fields to update' });
+                return res.status(400).json({ 
+                    error: 'No valid fields to update',
+                    timestamp: new Date().toISOString()
+                });
             }
             
             updateValues.push(projectId);
             
-            await database.run(
+            await db.run(
                 `UPDATE projects SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
                 updateValues
             );
             
-            const project = await database.get(`
+            const project = await db.get(`
                 SELECT p.*, u.name as creator_name, u.avatar_color as creator_color
                 FROM projects p
                 LEFT JOIN users u ON p.created_by = u.id
                 WHERE p.id = ?
             `, [projectId]);
             
-            const userId = req.headers['x-user-id'] || 'system';
-            await addTimelineEvent(projectId, 'project_updated', 'Project details updated', userId);
+            await database.addTimelineEvent(
+                projectId,
+                'project_updated',
+                'Project details updated',
+                userId,
+                'project',
+                projectId,
+                { updates: Object.keys(updates) }
+            );
             
-            broadcastToProject(projectId, {
+            await database.recordInteraction(
+                projectId,
+                userId,
+                'project_update',
+                'project',
+                projectId,
+                { fields: updateFields }
+            );
+            
+            clientManager.broadcastToProject(projectId, {
                 type: 'project_updated',
                 project: project,
                 timestamp: new Date().toISOString()
@@ -652,85 +826,129 @@ function setupRoutes() {
             res.json(project);
         } catch (error) {
             console.error('Project update error:', error);
-            res.status(500).json({ error: 'Failed to update project' });
+            res.status(500).json({ 
+                error: 'Failed to update project',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
     // Get project comments
     app.get('/api/projects/:id/comments', async (req, res) => {
         try {
-            const database = await getDatabase();
             const projectId = req.params.id;
+            const { limit = 100, offset = 0, parent_id = null } = req.query;
+            const userId = req.headers['x-user-id'] || '';
             
-            const comments = await database.all(`
+            const db = await database.connect();
+            
+            const comments = await db.all(`
                 SELECT 
                     c.*,
                     u.name as user_name,
                     u.role as user_role,
                     u.avatar_color,
                     (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id) as likes,
-                    (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id AND cr.user_id = ?) as user_reacted
+                    (SELECT COUNT(*) FROM comment_reactions cr WHERE cr.comment_id = c.id AND cr.user_id = ?) as user_reacted,
+                    (SELECT COUNT(*) FROM comments child WHERE child.parent_id = c.id) as reply_count
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
-                WHERE c.project_id = ?
-                ORDER BY c.created_at DESC
-                LIMIT 100
-            `, [req.headers['x-user-id'] || '', projectId]);
+                WHERE c.project_id = ? AND c.parent_id IS NULL
+                ORDER BY c.is_pinned DESC, c.created_at DESC
+                LIMIT ? OFFSET ?
+            `, [userId, projectId, parseInt(limit), parseInt(offset)]);
             
             res.json(comments);
         } catch (error) {
             console.error('Comments fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch comments' });
+            res.status(500).json({ 
+                error: 'Failed to fetch comments',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
     // Add comment
     app.post('/api/comments', async (req, res) => {
         try {
-            const { projectId, content, userId } = req.body;
+            const { projectId, content, userId, parentId = null } = req.body;
             
             if (!projectId || !content || !userId) {
-                return res.status(400).json({ error: 'Missing required fields' });
+                return res.status(400).json({ 
+                    error: 'Missing required fields: projectId, content, userId',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const database = await getDatabase();
+            if (content.length > 10000) {
+                return res.status(400).json({ 
+                    error: 'Comment too long (max 10000 characters)',
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            const db = await database.connect();
             const commentId = `comment_${uuidv4()}`;
             const now = new Date().toISOString();
             
-            await database.run(
-                `INSERT INTO comments (id, project_id, user_id, content, created_at, updated_at) 
-                 VALUES (?, ?, ?, ?, ?, ?)`,
-                [commentId, projectId, userId, content, now, now]
+            await db.run(
+                `INSERT INTO comments (id, project_id, user_id, parent_id, content, created_at, updated_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [commentId, projectId, userId, parentId, content, now, now]
             );
             
-            await recordInteraction(projectId, userId, 'comment', { commentId });
+            await database.recordInteraction(
+                projectId, 
+                userId, 
+                'comment_create',
+                'comment',
+                commentId,
+                { parentId, contentLength: content.length }
+            );
             
-            const user = await database.get('SELECT name FROM users WHERE id = ?', [userId]);
-            await addTimelineEvent(projectId, 'comment_added', `${user?.name || 'User'} commented`, userId);
+            const user = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
+            await database.addTimelineEvent(
+                projectId,
+                'comment_added',
+                `${user?.name || 'User'} commented`,
+                userId,
+                'comment',
+                commentId
+            );
             
-            const comment = await database.get(`
+            const comment = await db.get(`
                 SELECT 
                     c.*,
                     u.name as user_name,
                     u.role as user_role,
                     u.avatar_color,
                     0 as likes,
-                    0 as user_reacted
+                    0 as user_reacted,
+                    0 as reply_count
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 WHERE c.id = ?
             `, [commentId]);
             
-            broadcastToProject(projectId, {
+            // Update project comment count
+            await db.run(
+                `UPDATE projects SET total_comments = total_comments + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+                [projectId]
+            );
+            
+            clientManager.broadcastToProject(projectId, {
                 type: 'comment_added',
                 comment: comment,
                 timestamp: now
             });
             
-            res.json(comment);
+            res.status(201).json(comment);
         } catch (error) {
             console.error('Comment creation error:', error);
-            res.status(500).json({ error: 'Failed to create comment' });
+            res.status(500).json({ 
+                error: 'Failed to create comment',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
@@ -741,44 +959,80 @@ function setupRoutes() {
             const { userId, reaction = 'like' } = req.body;
             
             if (!userId) {
-                return res.status(400).json({ error: 'User ID required' });
+                return res.status(400).json({ 
+                    error: 'User ID required',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const database = await getDatabase();
+            const db = await database.connect();
             
-            const existingReaction = await database.get(
-                'SELECT * FROM comment_reactions WHERE comment_id = ? AND user_id = ?',
-                [commentId, userId]
+            // Get comment details
+            const comment = await db.get(
+                'SELECT project_id, user_id FROM comments WHERE id = ?',
+                [commentId]
+            );
+            
+            if (!comment) {
+                return res.status(404).json({ 
+                    error: 'Comment not found',
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            const existingReaction = await db.get(
+                'SELECT * FROM comment_reactions WHERE comment_id = ? AND user_id = ? AND reaction = ?',
+                [commentId, userId, reaction]
             );
             
             if (existingReaction) {
-                await database.run(
-                    'DELETE FROM comment_reactions WHERE comment_id = ? AND user_id = ?',
-                    [commentId, userId]
+                // Remove reaction
+                await db.run(
+                    'DELETE FROM comment_reactions WHERE comment_id = ? AND user_id = ? AND reaction = ?',
+                    [commentId, userId, reaction]
                 );
                 
-                await database.run(
+                await db.run(
                     'UPDATE comments SET likes = likes - 1 WHERE id = ?',
                     [commentId]
                 );
             } else {
-                await database.run(
+                // Add reaction
+                await db.run(
                     `INSERT INTO comment_reactions (comment_id, user_id, reaction) VALUES (?, ?, ?)`,
                     [commentId, userId, reaction]
                 );
                 
-                await database.run(
+                await db.run(
                     'UPDATE comments SET likes = likes + 1 WHERE id = ?',
                     [commentId]
                 );
                 
-                const comment = await database.get('SELECT project_id FROM comments WHERE id = ?', [commentId]);
-                if (comment) {
-                    await recordInteraction(comment.project_id, userId, 'like', { commentId });
+                await database.recordInteraction(
+                    comment.project_id,
+                    userId,
+                    'comment_like',
+                    'comment',
+                    commentId,
+                    { reaction }
+                );
+                
+                // Add timeline event for reaction
+                if (comment.user_id !== userId) {
+                    const reactingUser = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
+                    await database.addTimelineEvent(
+                        comment.project_id,
+                        'comment_reacted',
+                        `${reactingUser?.name || 'User'} reacted to a comment`,
+                        userId,
+                        'comment',
+                        commentId,
+                        { reaction }
+                    );
                 }
             }
             
-            const updatedComment = await database.get(`
+            const updatedComment = await db.get(`
                 SELECT 
                     c.*,
                     u.name as user_name,
@@ -791,52 +1045,70 @@ function setupRoutes() {
                 WHERE c.id = ?
             `, [userId, commentId]);
             
-            if (commentId) {
-                broadcastToProject(commentId, {
-                    type: 'comment_updated',
-                    comment: updatedComment,
-                    timestamp: new Date().toISOString()
-                });
-            }
+            clientManager.broadcastToProject(comment.project_id, {
+                type: 'comment_updated',
+                comment: updatedComment,
+                timestamp: new Date().toISOString()
+            });
             
             res.json(updatedComment);
         } catch (error) {
             console.error('Comment reaction error:', error);
-            res.status(500).json({ error: 'Failed to update reaction' });
+            res.status(500).json({ 
+                error: 'Failed to update reaction',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
     // Get project team
     app.get('/api/projects/:id/team', async (req, res) => {
         try {
-            const database = await getDatabase();
             const projectId = req.params.id;
             
-            const team = await database.all(`
-                SELECT 
-                    u.id,
-                    u.name,
-                    u.role,
-                    u.avatar_color,
-                    u.institution,
-                    u.specialty,
-                    pm.role as project_role,
-                    pm.joined_at,
-                    CASE 
-                        WHEN u.last_seen > datetime('now', '-5 minutes') THEN 'online'
-                        WHEN u.last_seen > datetime('now', '-1 hour') THEN 'away'
-                        ELSE 'offline'
-                    END as status
-                FROM project_members pm
-                LEFT JOIN users u ON pm.user_id = u.id
-                WHERE pm.project_id = ?
-                ORDER BY pm.joined_at
-            `, [projectId]);
+            const team = await database.getProjectAnalytics(projectId).then(async (project) => {
+                if (!project) return [];
+                
+                const db = await database.connect();
+                return await db.all(`
+                    SELECT 
+                        u.id,
+                        u.name,
+                        u.role,
+                        u.avatar_color,
+                        u.institution,
+                        u.specialty,
+                        pm.role as project_role,
+                        pm.joined_at,
+                        pm.last_active as project_last_active,
+                        CASE 
+                            WHEN u.last_active > datetime('now', '-5 minutes') THEN 'online'
+                            WHEN u.last_active > datetime('now', '-1 hour') THEN 'away'
+                            ELSE 'offline'
+                        END as status,
+                        (SELECT COUNT(*) FROM comments c WHERE c.user_id = u.id AND c.project_id = ?) as project_comments,
+                        (SELECT COUNT(*) FROM decisions d WHERE d.created_by = u.id AND d.project_id = ?) as project_decisions
+                    FROM project_members pm
+                    LEFT JOIN users u ON pm.user_id = u.id
+                    WHERE pm.project_id = ?
+                    ORDER BY 
+                        CASE pm.role 
+                            WHEN 'owner' THEN 1
+                            WHEN 'admin' THEN 2
+                            WHEN 'lead' THEN 3
+                            ELSE 4
+                        END,
+                        pm.joined_at
+                `, [projectId, projectId, projectId]);
+            });
             
             res.json(team);
         } catch (error) {
             console.error('Team fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch team' });
+            res.status(500).json({ 
+                error: 'Failed to fetch team',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
@@ -847,32 +1119,59 @@ function setupRoutes() {
             const { userId, role = 'contributor' } = req.body;
             
             if (!userId) {
-                return res.status(400).json({ error: 'User ID required' });
+                return res.status(400).json({ 
+                    error: 'User ID required',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const database = await getDatabase();
+            const db = await database.connect();
             
-            const existingMember = await database.get(
+            const existingMember = await db.get(
                 'SELECT * FROM project_members WHERE project_id = ? AND user_id = ?',
                 [projectId, userId]
             );
             
             if (existingMember) {
-                return res.status(400).json({ error: 'Already a member' });
+                return res.status(400).json({ 
+                    error: 'Already a member',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            await database.run(
+            await db.run(
                 `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
                 [projectId, userId, role]
             );
             
-            await recordInteraction(projectId, userId, 'join', { role });
+            await database.recordInteraction(
+                projectId, 
+                userId, 
+                'project_join',
+                'project',
+                projectId,
+                { role }
+            );
             
-            const user = await database.get('SELECT name FROM users WHERE id = ?', [userId]);
-            const project = await database.get('SELECT title FROM projects WHERE id = ?', [projectId]);
-            await addTimelineEvent(projectId, 'member_joined', `${user?.name || 'User'} joined`, userId);
+            // Update project member count
+            await db.run(
+                `UPDATE projects SET total_members = total_members + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+                [projectId]
+            );
             
-            const team = await database.all(`
+            const user = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
+            const project = await db.get('SELECT title FROM projects WHERE id = ?', [projectId]);
+            
+            await database.addTimelineEvent(
+                projectId,
+                'member_joined',
+                `${user?.name || 'User'} joined the project`,
+                userId,
+                'user',
+                userId
+            );
+            
+            const team = await db.all(`
                 SELECT 
                     u.id,
                     u.name,
@@ -887,7 +1186,7 @@ function setupRoutes() {
                 ORDER BY pm.joined_at
             `, [projectId]);
             
-            broadcastToProject(projectId, {
+            clientManager.broadcastToProject(projectId, {
                 type: 'team_updated',
                 team: team,
                 timestamp: new Date().toISOString()
@@ -900,215 +1199,229 @@ function setupRoutes() {
             });
         } catch (error) {
             console.error('Join project error:', error);
-            res.status(500).json({ error: 'Failed to join project' });
+            res.status(500).json({ 
+                error: 'Failed to join project',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
     // Get project timeline
     app.get('/api/projects/:id/timeline', async (req, res) => {
         try {
-            const database = await getDatabase();
             const projectId = req.params.id;
+            const { limit = 50, offset = 0 } = req.query;
             
-            const timeline = await database.all(`
+            const db = await database.connect();
+            
+            const timeline = await db.all(`
                 SELECT 
                     te.*,
                     u.name as user_name,
-                    u.avatar_color
+                    u.avatar_color,
+                    p.title as project_title
                 FROM timeline_events te
                 LEFT JOIN users u ON te.user_id = u.id
+                LEFT JOIN projects p ON te.project_id = p.id
                 WHERE te.project_id = ?
                 ORDER BY te.created_at DESC
-                LIMIT 50
-            `, [projectId]);
+                LIMIT ? OFFSET ?
+            `, [projectId, parseInt(limit), parseInt(offset)]);
             
             res.json(timeline);
         } catch (error) {
             console.error('Timeline fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch timeline' });
+            res.status(500).json({ 
+                error: 'Failed to fetch timeline',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
     // Get project decisions
     app.get('/api/projects/:id/decisions', async (req, res) => {
         try {
-            const database = await getDatabase();
             const projectId = req.params.id;
+            const { status, limit = 100, offset = 0 } = req.query;
             
-            const decisions = await database.all(`
+            const db = await database.connect();
+            
+            let query = `
                 SELECT 
                     d.*,
                     u.name as creator_name,
-                    u.avatar_color as creator_color
+                    u.avatar_color as creator_color,
+                    a.name as assigned_to_name,
+                    (SELECT COUNT(*) FROM decision_votes dv WHERE dv.decision_id = d.id AND dv.vote = 'approve') as approve_count,
+                    (SELECT COUNT(*) FROM decision_votes dv WHERE dv.decision_id = d.id AND dv.vote = 'reject') as reject_count,
+                    (SELECT COUNT(*) FROM decision_votes dv WHERE dv.decision_id = d.id AND dv.vote = 'abstain') as abstain_count
                 FROM decisions d
                 LEFT JOIN users u ON d.created_by = u.id
+                LEFT JOIN users a ON d.assigned_to = a.id
                 WHERE d.project_id = ?
-                ORDER BY 
-                    CASE d.status 
-                        WHEN 'pending' THEN 1
-                        WHEN 'approved' THEN 2
-                        WHEN 'rejected' THEN 3
-                    END,
-                    d.created_at DESC
-            `, [projectId]);
+            `;
+            
+            const params = [projectId];
+            
+            if (status) {
+                query += ' AND d.status = ?';
+                params.push(status);
+            }
+            
+            query += ' ORDER BY d.priority DESC, d.created_at DESC LIMIT ? OFFSET ?';
+            params.push(parseInt(limit), parseInt(offset));
+            
+            const decisions = await db.all(query, params);
             
             res.json(decisions);
         } catch (error) {
             console.error('Decisions fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch decisions' });
-        }
-    });
-    
-    // Get velocity
-    app.get('/api/velocity', async (req, res) => {
-        try {
-            const database = await getDatabase();
-            
-            const overallVelocity = await database.get(`
-                SELECT 
-                    ROUND(AVG(pulse_score), 1) as avg_pulse,
-                    COUNT(*) as total_projects,
-                    SUM(total_interactions) as total_interactions,
-                    COUNT(DISTINCT (SELECT user_id FROM project_members WHERE project_id = p.id)) as total_users
-                FROM projects p
-                WHERE p.status = 'active'
-            `);
-            
-            res.json({
-                score: overallVelocity.avg_pulse || 75,
-                metrics: overallVelocity
+            res.status(500).json({ 
+                error: 'Failed to fetch decisions',
+                timestamp: new Date().toISOString()
             });
-        } catch (error) {
-            console.error('Velocity fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch velocity' });
         }
     });
     
-    // Get contributors
-    app.get('/api/contributors', async (req, res) => {
+    // Get online users
+    app.get('/api/users/online', async (req, res) => {
         try {
-            const database = await getDatabase();
-            
-            const contributors = await database.all(`
-                SELECT 
-                    u.id,
-                    u.name,
-                    u.role,
-                    u.avatar_color,
-                    u.institution,
-                    COUNT(DISTINCT pm.project_id) as project_count,
-                    COUNT(DISTINCT c.id) as comment_count,
-                    u.last_seen,
-                    CASE 
-                        WHEN u.last_seen > datetime('now', '-5 minutes') THEN 'online'
-                        WHEN u.last_seen > datetime('now', '-1 hour') THEN 'away'
-                        ELSE 'offline'
-                    END as status
-                FROM users u
-                LEFT JOIN project_members pm ON u.id = pm.user_id
-                LEFT JOIN comments c ON u.id = c.user_id AND c.created_at > datetime('now', '-7 days')
-                WHERE u.last_seen > datetime('now', '-1 day')
-                GROUP BY u.id
-                ORDER BY u.last_seen DESC
-                LIMIT 12
-            `);
-            
-            res.json(contributors.map(c => ({
-                initials: c.name.split(' ').map(n => n[0]).join('').toUpperCase(),
-                name: c.name,
-                role: c.role,
-                status: c.status
-            })));
+            const users = await database.getOnlineUsers();
+            res.json(users);
         } catch (error) {
-            console.error('Contributors fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch contributors' });
+            console.error('Online users fetch error:', error);
+            res.status(500).json({ 
+                error: 'Failed to fetch online users',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
-    // Get activities
-    app.get('/api/activities', async (req, res) => {
+    // Get recent activity
+    app.get('/api/activity/recent', async (req, res) => {
         try {
-            const database = await getDatabase();
-            
-            const activities = await database.all(`
-                SELECT 
-                    'PROJECT' as type,
-                    'New project: ' || p.title as content,
-                    p.created_at as timestamp
-                FROM projects p
-                WHERE p.created_at > datetime('now', '-7 days')
-                
-                UNION ALL
-                
-                SELECT 
-                    'COMMENT' as type,
-                    'New comment by ' || u.name as content,
-                    c.created_at as timestamp
-                FROM comments c
-                LEFT JOIN users u ON c.user_id = u.id
-                WHERE c.created_at > datetime('now', '-2 days')
-                
-                UNION ALL
-                
-                SELECT 
-                    'DECISION' as type,
-                    'Decision: ' || d.title as content,
-                    d.created_at as timestamp
-                FROM decisions d
-                WHERE d.status = 'pending' AND d.created_at > datetime('now', '-3 days')
-                
-                ORDER BY timestamp DESC
-                LIMIT 10
-            `);
-            
-            res.json(activities);
+            const { limit = 20 } = req.query;
+            const activity = await database.getRecentActivity(parseInt(limit));
+            res.json(activity);
         } catch (error) {
-            console.error('Activities fetch error:', error);
-            res.status(500).json({ error: 'Failed to fetch activities' });
+            console.error('Recent activity fetch error:', error);
+            res.status(500).json({ 
+                error: 'Failed to fetch recent activity',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
-    // User login
+    // User login/registration
     app.post('/api/auth/login', async (req, res) => {
         try {
             const { email, name, role = 'clinician' } = req.body;
             
             if (!email || !name) {
-                return res.status(400).json({ error: 'Email and name required' });
+                return res.status(400).json({ 
+                    error: 'Email and name required',
+                    timestamp: new Date().toISOString()
+                });
             }
             
-            const database = await getDatabase();
+            const db = await database.connect();
             
-            let user = await database.get('SELECT * FROM users WHERE email = ?', [email]);
+            let user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
             
             if (!user) {
                 const userId = `user_${uuidv4()}`;
-                const avatarColors = ['#0C7C59', '#D35400', '#7B68EE', '#1A365D', '#8B5CF6'];
+                const avatarColors = ['#0C7C59', '#D35400', '#7B68EE', '#1A365D', '#8B5CF6', '#2D9CDB', '#27AE60'];
                 const randomColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
                 
-                await database.run(
-                    `INSERT INTO users (id, email, name, role, avatar_color, last_seen) 
+                await db.run(
+                    `INSERT INTO users (id, email, name, role, avatar_color, last_active) 
                      VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
                     [userId, email, name, role, randomColor]
                 );
                 
-                user = await database.get('SELECT * FROM users WHERE id = ?', [userId]);
+                user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
+                
+                // Add timeline event for new user
+                await database.addTimelineEvent(
+                    'system',
+                    'user_registered',
+                    `New user registered: ${name} (${role})`,
+                    userId,
+                    'user',
+                    userId
+                );
             } else {
-                await database.run(
-                    'UPDATE users SET last_seen = CURRENT_TIMESTAMP WHERE id = ?',
+                await db.run(
+                    'UPDATE users SET last_active = CURRENT_TIMESTAMP, status = "online" WHERE id = ?',
                     [user.id]
                 );
             }
             
+            // Remove sensitive data
             const { ...userData } = user;
+            
+            // Record login
+            await database.recordInteraction(
+                'system',
+                user.id,
+                'user_login',
+                'user',
+                user.id,
+                { method: 'email', timestamp: new Date().toISOString() }
+            );
             
             res.json({
                 user: userData,
-                token: `demo_token_${user.id}`
+                token: `demo_token_${user.id}_${Date.now()}`,
+                expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
             });
         } catch (error) {
             console.error('Login error:', error);
-            res.status(500).json({ error: 'Failed to authenticate' });
+            res.status(500).json({ 
+                error: 'Failed to authenticate',
+                timestamp: new Date().toISOString()
+            });
+        }
+    });
+    
+    // User profile
+    app.get('/api/users/:id', async (req, res) => {
+        try {
+            const userId = req.params.id;
+            
+            const db = await database.connect();
+            
+            const user = await db.get(`
+                SELECT 
+                    u.*,
+                    COUNT(DISTINCT pm.project_id) as project_count,
+                    COUNT(DISTINCT c.id) as comment_count,
+                    COUNT(DISTINCT d.id) as decision_count
+                FROM users u
+                LEFT JOIN project_members pm ON u.id = pm.user_id
+                LEFT JOIN comments c ON u.id = c.user_id
+                LEFT JOIN decisions d ON u.id = d.created_by
+                WHERE u.id = ?
+                GROUP BY u.id
+            `, [userId]);
+            
+            if (!user) {
+                return res.status(404).json({ 
+                    error: 'User not found',
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            // Remove sensitive data
+            const { ...userData } = user;
+            
+            res.json(userData);
+        } catch (error) {
+            console.error('User fetch error:', error);
+            res.status(500).json({ 
+                error: 'Failed to fetch user',
+                timestamp: new Date().toISOString()
+            });
         }
     });
     
@@ -1117,6 +1430,7 @@ function setupRoutes() {
         res.sendFile(path.join(PUBLIC_DIR, 'project.html'));
     });
     
+    // Catch-all route for SPA
     app.get('*', (req, res) => {
         res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
     });
@@ -1124,79 +1438,127 @@ function setupRoutes() {
     console.log('✅ API routes setup complete');
 }
 
-// ===== START SERVER =====
-async function startServer() {
+// ===== STARTUP =====
+async function initialize() {
+    console.log(`
+    🚀 THORAXLAB CLINICAL-INDUSTRY INNOVATION PLATFORM v2.0
+    ═══════════════════════════════════════════════════════════
+    Initializing...
+    Environment: ${NODE_ENV}
+    Port: ${PORT}
+    Public Directory: ${PUBLIC_DIR}
+    `);
+    
+    try {
+        // Connect to database
+        await database.connect();
+        
+        // Setup middleware
+        setupMiddleware();
+        
+        // Setup routes
+        setupRoutes();
+        
+        // Setup WebSocket
+        setupWebSocket();
+        
+        // Start server
+        startServer();
+        
+        // Schedule maintenance
+        scheduleMaintenance();
+        
+    } catch (error) {
+        console.error('❌ Initialization failed:', error);
+        process.exit(1);
+    }
+}
+
+function startServer() {
     server.listen(PORT, () => {
         console.log(`
-        ════════════════════════════════════════════════════
-        🚀 THORAXLAB PLATFORM READY
+        ═══════════════════════════════════════════════════════════
+        🎉 THORAXLAB PLATFORM READY
         📍 Port: ${PORT}
-        🌐 WebSocket: Active
+        🌐 WebSocket: Active (${wss.options.port})
         💾 Database: Connected
         📁 Public Folder: ${PUBLIC_DIR}
         🔗 URL: http://localhost:${PORT}
-        ════════════════════════════════════════════════════
+        🏷️  Version: 2.0.0
+        ═══════════════════════════════════════════════════════════
         `);
     });
     
-    // Periodic maintenance
-    setInterval(async () => {
-        try {
-            const database = await getDatabase();
-            
-            // Update user status
-            await database.run(
-                `UPDATE users SET status = 
-                    CASE 
-                        WHEN last_seen > datetime('now', '-5 minutes') THEN 'online'
-                        WHEN last_seen > datetime('now', '-1 hour') THEN 'away'
-                        ELSE 'offline'
-                    END`
-            );
-            
-            // Recalculate pulse scores
-            const activeProjects = await database.all(
-                'SELECT id FROM projects WHERE status = "active" AND updated_at > datetime("now", "-1 day")'
-            );
-            
-            for (const project of activeProjects) {
-                const newPulse = await calculatePulseScore(project.id);
-                await database.run(
-                    'UPDATE projects SET pulse_score = ? WHERE id = ?',
-                    [newPulse, project.id]
-                );
-            }
-            
-        } catch (error) {
-            console.error('Maintenance error:', error);
+    // Handle server errors
+    server.on('error', (error) => {
+        console.error('❌ Server error:', error);
+        if (error.code === 'EADDRINUSE') {
+            console.log(`Port ${PORT} is already in use. Trying ${parseInt(PORT) + 1}...`);
+            server.listen(parseInt(PORT) + 1);
         }
-    }, 300000); // Every 5 minutes
+    });
 }
 
-// ===== INITIALIZE DATABASE =====
-async function initializeDatabase() {
-    await getDatabase();
+function scheduleMaintenance() {
+    // Run maintenance every hour
+    setInterval(async () => {
+        try {
+            await database.performMaintenance();
+        } catch (error) {
+            console.error('Scheduled maintenance error:', error);
+        }
+    }, 60 * 60 * 1000); // 1 hour
+    
+    // Initial maintenance after 5 minutes
+    setTimeout(async () => {
+        try {
+            await database.performMaintenance();
+        } catch (error) {
+            console.error('Initial maintenance error:', error);
+        }
+    }, 5 * 60 * 1000);
 }
 
 // ===== GRACEFUL SHUTDOWN =====
-process.on('SIGTERM', async () => {
-    console.log('SIGTERM received. Shutting down gracefully...');
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+async function gracefulShutdown() {
+    console.log('🚦 Received shutdown signal. Shutting down gracefully...');
     
-    connectedClients.forEach(client => {
-        if (client.ws.readyState === WebSocket.OPEN) {
-            client.ws.close();
-        }
-    });
-    
-    if (db) {
-        await db.close();
+    try {
+        // Close all WebSocket connections
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.close(1001, 'Server shutting down');
+            }
+        });
+        
+        // Close database connection
+        await database.close();
+        
+        // Close HTTP server
+        server.close(() => {
+            console.log('✅ Server shutdown complete');
+            process.exit(0);
+        });
+        
+        // Force exit after 10 seconds
+        setTimeout(() => {
+            console.warn('⚠️  Forcing shutdown after timeout');
+            process.exit(1);
+        }, 10000);
+        
+    } catch (error) {
+        console.error('Shutdown error:', error);
+        process.exit(1);
     }
-    
-    server.close(() => {
-        console.log('Server shutdown complete');
-        process.exit(0);
-    });
+}
+
+// ===== START APPLICATION =====
+initialize().catch((error) => {
+    console.error('Fatal initialization error:', error);
+    process.exit(1);
 });
 
-// ===== START THE APPLICATION =====
-initialize().catch(console.error);
+module.exports = { app, server, wss, clientManager, database };
