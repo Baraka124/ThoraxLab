@@ -8,6 +8,11 @@
     <!-- Import FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         /* ===== COMPLETE DESIGN SYSTEM ===== */
         :root {
@@ -36,6 +41,12 @@
             --neutral-50: #F9FAFB;
             --white: #FFFFFF;
             
+            /* Status Colors */
+            --status-excellent: #10B981;
+            --status-good: #3B82F6;
+            --status-fair: #F59E0B;
+            --status-needs-attention: #EF4444;
+            
             /* Spacing */
             --space-xs: 0.5rem;
             --space-sm: 0.75rem;
@@ -43,21 +54,43 @@
             --space-lg: 1.5rem;
             --space-xl: 2rem;
             --space-2xl: 3rem;
+            --space-3xl: 4rem;
             
             /* Typography */
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
             
             /* Effects */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            
+            --glow-sm: 0 0 20px rgba(12, 124, 89, 0.1);
+            --glow-md: 0 0 40px rgba(12, 124, 89, 0.2);
+            --glow-lg: 0 0 60px rgba(12, 124, 89, 0.3);
             
             --radius-sm: 0.375rem;
             --radius-md: 0.5rem;
             --radius-lg: 0.75rem;
             --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
             --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Z-index layers */
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal-backdrop: 1040;
+            --z-modal: 1050;
+            --z-popover: 1060;
+            --z-tooltip: 1070;
         }
         
         /* ===== BASE STYLES ===== */
@@ -71,6 +104,7 @@
             font-size: 16px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
         }
         
         body {
@@ -80,79 +114,281 @@
             color: var(--neutral-800);
             background: linear-gradient(135deg, #0A1929 0%, #1A365D 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        /* ===== COMMAND HEADER ===== */
+        /* ===== ENHANCED COMMAND HEADER ===== */
         .command-header {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, rgba(10, 25, 41, 0.98) 0%, rgba(26, 54, 93, 0.98) 100%);
+            backdrop-filter: blur(40px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: var(--z-sticky);
+            height: 94px;
+            padding: 0;
+            box-shadow: var(--shadow-xl);
         }
         
         .header-container {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
             padding: 0 var(--space-xl);
-            height: 64px;
-            display: flex;
+            height: 100%;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
             align-items: center;
-            justify-content: space-between;
             gap: var(--space-xl);
         }
         
-        .logo {
+        /* ===== NEW LOGO DESIGN ===== */
+        .logo-container {
+            position: relative;
             display: flex;
             align-items: center;
             gap: var(--space-md);
             text-decoration: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-xl);
+            transition: all var(--transition-base);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            min-width: 240px;
+        }
+        
+        .logo-container:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
         }
         
         .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
-            border-radius: 8px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 50%, var(--public-accent) 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-weight: 700;
-            font-size: 1rem;
-            box-shadow: var(--shadow-md);
+            font-weight: 900;
+            font-size: 1.75rem;
+            box-shadow: 
+                var(--shadow-lg),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
         }
         
         .logo-text {
             display: flex;
             flex-direction: column;
+            gap: var(--space-xs);
+            flex: 1;
         }
         
         .logo-primary {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--white) 0%, #A5B4FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            line-height: 1;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
         }
         
-        .logo-subtitle {
-            font-size: 0.75rem;
+        .logo-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 0.875rem;
+        }
+        
+        .status-label {
             color: rgba(255, 255, 255, 0.6);
             font-weight: 500;
+        }
+        
+        .status-value {
+            font-weight: 700;
+            color: var(--white);
+            background: var(--status-good);
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-full);
+            min-width: 36px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .status-value.excellent { background: var(--status-excellent); }
+        .status-value.good { background: var(--status-good); }
+        .status-value.fair { background: var(--status-fair); }
+        .status-value.needs-attention { background: var(--status-needs-attention); }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-good);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.excellent { background: var(--status-excellent); }
+        .status-indicator.good { background: var(--status-good); }
+        .status-indicator.fair { background: var(--status-fair); }
+        .status-indicator.needs-attention { background: var(--status-needs-attention); }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        /* ===== LOGO DROPDOWN ===== */
+        .logo-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 320px;
+            background: rgba(10, 25, 41, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: 
+                var(--shadow-2xl),
+                0 0 60px rgba(12, 124, 89, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all var(--transition-base);
+            z-index: var(--z-dropdown);
+        }
+        
+        .logo-container:hover .logo-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         
-        /* Quick Actions */
+        .dropdown-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .dropdown-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .dropdown-stat {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .dropdown-health {
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .health-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .health-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blocked-red) 0%, var(--attention-amber) 30%, var(--velocity-green) 100%);
+            border-radius: var(--radius-full);
+            transition: width 1s ease-out;
+        }
+        
+        .health-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* ===== QUICK ACTIONS ===== */
         .quick-actions {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            gap: var(--space-md);
             flex: 1;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 var(--space-xl);
         }
         
@@ -163,80 +399,160 @@
         
         .search-input {
             width: 100%;
-            padding: var(--space-sm) var(--space-md) var(--space-sm) 2.75rem;
+            padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
             background: rgba(255, 255, 255, 0.07);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-full);
             color: var(--white);
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
+            font-size: 0.9375rem;
+            transition: all var(--transition-fast);
+            font-family: var(--font-sans);
         }
         
         .search-input:focus {
             outline: none;
             background: rgba(255, 255, 255, 0.1);
             border-color: var(--primary-light);
-            box-shadow: 0 0 0 2px rgba(45, 74, 140, 0.2);
+            box-shadow: 
+                0 0 0 2px rgba(45, 74, 140, 0.2),
+                var(--shadow-md);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
         
         .search-icon {
             position: absolute;
-            left: 0.75rem;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
             color: rgba(255, 255, 255, 0.4);
+            font-size: 1rem;
         }
         
-        /* User Context */
-        .user-context {
+        .quick-action-button {
+            padding: var(--space-sm) var(--space-lg);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-full);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
             display: flex;
             align-items: center;
             gap: var(--space-sm);
+            text-decoration: none;
+        }
+        
+        .quick-action-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        /* ===== USER CONTEXT ===== */
+        .user-context {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
         }
         
         .user-badge {
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-sm);
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
             background: rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-full);
             border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all var(--transition-fast);
+        }
+        
+        .user-badge:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
         }
         
         .user-role {
             font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.125rem 0.5rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
             border-radius: var(--radius-full);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         
         .role-clinician {
-            background: var(--clinical-accent);
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, #0A7C59 100%);
             color: var(--white);
         }
         
         .role-industry {
-            background: var(--industry-accent);
+            background: linear-gradient(135deg, var(--industry-accent) 0%, #B45300 100%);
             color: var(--white);
         }
         
         .role-public {
-            background: var(--public-accent);
+            background: linear-gradient(135deg, var(--public-accent) 0%, #6A5ACD 100%);
             color: var(--white);
+        }
+        
+        .user-name {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .notification-button {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .notification-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--white);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background: var(--blocked-red);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            animation: pulse 2s infinite;
         }
         
         /* ===== INNOVATION HUB ===== */
         .innovation-hub {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
             padding: var(--space-xl);
             display: grid;
-            grid-template-columns: 280px 1fr 380px;
+            grid-template-columns: 300px 1fr 380px;
             gap: var(--space-xl);
-            min-height: calc(100vh - 64px);
+            min-height: calc(100vh - 94px);
         }
         
         /* ===== STATUS PANEL ===== */
@@ -249,9 +565,17 @@
         .velocity-meter {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(10px);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .velocity-meter:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(255, 255, 255, 0.15);
         }
         
         .velocity-header {
@@ -269,23 +593,42 @@
             letter-spacing: 0.05em;
         }
         
+        .velocity-live {
+            font-size: 0.75rem;
+            color: var(--velocity-green);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .velocity-live::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--velocity-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
         .velocity-value {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 800;
             color: var(--white);
             line-height: 1;
             margin-bottom: var(--space-xs);
+            text-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
         }
         
         .velocity-label {
-            font-size: 0.75rem;
+            font-size: 0.875rem;
             color: rgba(255, 255, 255, 0.6);
             margin-bottom: var(--space-lg);
         }
         
         .velocity-bar {
             width: 100%;
-            height: 6px;
+            height: 8px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-full);
             overflow: hidden;
@@ -296,15 +639,31 @@
             height: 100%;
             background: linear-gradient(90deg, var(--blocked-red) 0%, var(--attention-amber) 30%, var(--velocity-green) 100%);
             border-radius: var(--radius-full);
+            transition: width 1s ease-out;
+        }
+        
+        .velocity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
         }
         
         .innovation-stream {
             flex: 1;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(10px);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .innovation-stream:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(255, 255, 255, 0.15);
         }
         
         .stream-title {
@@ -314,6 +673,20 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stream-refresh {
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .stream-refresh:hover {
+            color: var(--white);
+            transform: rotate(180deg);
         }
         
         .stream-list {
@@ -323,33 +696,43 @@
         }
         
         .stream-item {
-            padding: var(--space-md);
+            padding: var(--space-lg);
             background: rgba(255, 255, 255, 0.04);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             border: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-base);
         }
         
         .stream-item:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.1);
-            transform: translateX(4px);
+            transform: translateX(8px);
         }
         
         .stream-item-type {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             color: rgba(255, 255, 255, 0.6);
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
         }
         
         .stream-item-content {
             color: var(--white);
-            font-size: 0.875rem;
-            line-height: 1.4;
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        .stream-item-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: var(--space-xs);
         }
         
         /* ===== INNOVATION CANVAS ===== */
@@ -371,70 +754,82 @@
         }
         
         .mission-title {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--white);
-            line-height: 1.2;
-            margin-bottom: var(--space-sm);
+            line-height: 1.1;
+            margin-bottom: var(--space-md);
             background: linear-gradient(135deg, var(--white) 0%, #A5B4FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.025em;
         }
         
         .mission-subtitle {
-            font-size: 1rem;
+            font-size: 1.125rem;
             color: rgba(255, 255, 255, 0.7);
-            line-height: 1.5;
+            line-height: 1.6;
+            max-width: 800px;
         }
         
         .create-portal {
-            background: rgba(255, 255, 255, 0.04);
-            border: 2px dashed rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-base);
             min-width: 280px;
+            backdrop-filter: blur(20px);
         }
         
         .create-portal:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
         }
         
         .portal-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto var(--space-md);
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--space-lg);
             background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
+            box-shadow: var(--shadow-lg);
         }
         
         .portal-title {
-            font-size: 1.125rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--white);
             margin-bottom: var(--space-xs);
         }
         
         .portal-description {
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             color: rgba(255, 255, 255, 0.6);
-            line-height: 1.4;
+            line-height: 1.5;
+        }
+        
+        .portal-hint {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: var(--space-sm);
+            font-style: italic;
         }
         
         .innovation-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: var(--space-xl);
             margin-top: var(--space-xl);
         }
@@ -443,27 +838,44 @@
         .project-node {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
+            border-radius: var(--radius-2xl);
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all var(--transition-base);
             position: relative;
+            backdrop-filter: blur(20px);
         }
         
         .project-node:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-xl);
         }
         
+        .node-status {
+            position: absolute;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--velocity-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        
+        .node-status.excellent { background: var(--status-excellent); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+        .node-status.good { background: var(--status-good); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .node-status.fair { background: var(--status-fair); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+        .node-status.needs-attention { background: var(--status-needs-attention); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+        
         .node-header {
-            padding: var(--space-xl);
+            padding: var(--space-2xl);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             position: relative;
         }
         
         .node-title {
-            font-size: 1.125rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--white);
             line-height: 1.3;
@@ -473,14 +885,14 @@
         .node-context {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-md);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
         
         .context-badge {
             font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.75rem;
+            font-weight: 700;
+            padding: 0.375rem 0.875rem;
             border-radius: var(--radius-full);
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -498,10 +910,24 @@
             border: 1px solid rgba(211, 84, 0, 0.3);
         }
         
+        .context-collaborative {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--decision-purple);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .node-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
         .node-description {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 0.875rem;
-            line-height: 1.5;
+            font-size: 0.9375rem;
+            line-height: 1.6;
             margin-bottom: var(--space-lg);
         }
         
@@ -509,7 +935,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: var(--space-md);
-            padding: var(--space-md);
+            padding: var(--space-lg);
             background: rgba(255, 255, 255, 0.02);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -523,8 +949,8 @@
         }
         
         .metric-value {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             color: var(--white);
         }
         
@@ -537,8 +963,8 @@
         
         .node-actions {
             display: flex;
-            gap: var(--space-xs);
-            padding: var(--space-md);
+            gap: var(--space-sm);
+            padding: var(--space-lg);
             background: rgba(255, 255, 255, 0.02);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -546,23 +972,28 @@
         .node-action {
             flex: 1;
             text-align: center;
-            padding: var(--space-sm);
+            padding: var(--space-md);
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             color: rgba(255, 255, 255, 0.8);
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-fast);
             border: none;
             outline: none;
             font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
         }
         
         .node-action:hover {
             background: rgba(255, 255, 255, 0.08);
             color: var(--white);
+            transform: translateY(-1px);
         }
         
         /* ===== COLLABORATION PANEL ===== */
@@ -575,9 +1006,17 @@
         .contributors-widget {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(10px);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .contributors-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(255, 255, 255, 0.15);
         }
         
         .contributors-header {
@@ -599,14 +1038,14 @@
             font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.6);
             background: rgba(255, 255, 255, 0.08);
-            padding: 0.125rem 0.5rem;
+            padding: 0.25rem 0.75rem;
             border-radius: var(--radius-full);
         }
         
         .contributors-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-md);
+            gap: var(--space-lg);
         }
         
         .contributor {
@@ -614,16 +1053,24 @@
         }
         
         .contributor-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--white);
-            font-size: 0.875rem;
-            margin: 0 auto var(--space-xs);
+            font-size: 1rem;
+            margin: 0 auto var(--space-sm);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .contributor-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
         }
         
         .contributor-clinical {
@@ -638,15 +1085,27 @@
             background: linear-gradient(135deg, var(--public-accent) 0%, #6A5ACD 100%);
         }
         
+        .contributor-status {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--velocity-green);
+            border: 2px solid rgba(10, 25, 41, 0.95);
+        }
+        
         .contributor-name {
-            font-size: 0.75rem;
+            font-size: 0.8125rem;
             color: var(--white);
             text-align: center;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 0.125rem;
         }
         
         .contributor-role {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             color: rgba(255, 255, 255, 0.5);
             text-align: center;
             text-transform: uppercase;
@@ -656,9 +1115,17 @@
         .decision-queue {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(10px);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .decision-queue:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(255, 255, 255, 0.15);
         }
         
         .queue-header {
@@ -676,6 +1143,11 @@
             letter-spacing: 0.05em;
         }
         
+        .queue-count {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
         .queue-list {
             display: flex;
             flex-direction: column;
@@ -683,58 +1155,74 @@
         }
         
         .queue-item {
-            padding: var(--space-md);
+            padding: var(--space-lg);
             background: rgba(255, 255, 255, 0.04);
-            border-radius: var(--radius-lg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-base);
         }
         
         .queue-item:hover {
             background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(4px);
         }
         
         .queue-item-content {
             color: var(--white);
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             line-height: 1.4;
             margin-bottom: var(--space-xs);
+            font-weight: 500;
         }
         
         .queue-item-project {
             font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
         }
         
+        .queue-item-priority {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: var(--space-sm);
+        }
+        
+        .priority-high { background: rgba(239, 68, 68, 0.2); color: var(--blocked-red); }
+        .priority-medium { background: rgba(245, 158, 11, 0.2); color: var(--attention-amber); }
+        .priority-low { background: rgba(59, 130, 246, 0.2); color: var(--status-good); }
+        
         /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
             .innovation-hub {
-                grid-template-columns: 240px 1fr;
+                grid-template-columns: 280px 1fr;
             }
             
             .collaboration-panel {
-                display: none;
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-xl);
+            }
+            
+            .contributors-widget,
+            .decision-queue {
+                height: 100%;
             }
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .innovation-hub {
                 grid-template-columns: 1fr;
-                padding: var(--space-md);
-            }
-            
-            .status-panel {
-                display: none;
-            }
-            
-            .header-container {
-                padding: 0 var(--space-md);
-            }
-            
-            .quick-actions {
-                display: none;
+                padding: var(--space-lg);
             }
             
             .canvas-header {
@@ -742,7 +1230,66 @@
             }
             
             .create-portal {
-                min-width: 100%;
+                width: 100%;
+            }
+            
+            .collaboration-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 var(--space-md);
+                grid-template-columns: 1fr;
+                height: auto;
+                padding: var(--space-md);
+                gap: var(--space-md);
+            }
+            
+            .logo-container {
+                min-width: auto;
+                justify-content: center;
+            }
+            
+            .quick-actions {
+                display: none;
+            }
+            
+            .user-context {
+                justify-content: center;
+            }
+            
+            .innovation-hub {
+                padding: var(--space-md);
+            }
+            
+            .innovation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .mission-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-sm);
+            }
+            
+            .logo-text {
+                align-items: center;
+            }
+            
+            .node-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .node-actions {
+                flex-direction: column;
             }
         }
         
@@ -756,9 +1303,13 @@
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         /* ===== TOAST NOTIFICATIONS ===== */
@@ -766,16 +1317,16 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 2000;
+            z-index: var(--z-tooltip);
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
         
         .toast {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 25, 41, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: var(--radius-lg);
             padding: var(--space-md) var(--space-lg);
             color: var(--white);
@@ -785,6 +1336,23 @@
             min-width: 300px;
             max-width: 400px;
             animation: slideIn 0.3s ease-out;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--velocity-green);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--blocked-red);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--attention-amber);
+        }
+        
+        .toast.info {
+            border-left: 4px solid var(--status-good);
         }
         
         @keyframes slideIn {
@@ -801,39 +1369,118 @@
         /* ===== EMPTY STATES ===== */
         .empty-state {
             text-align: center;
-            padding: var(--space-2xl);
+            padding: var(--space-3xl);
             color: rgba(255, 255, 255, 0.5);
         }
         
         .empty-icon {
-            font-size: 3rem;
-            margin-bottom: var(--space-md);
+            font-size: 4rem;
+            margin-bottom: var(--space-lg);
             opacity: 0.3;
         }
         
         .empty-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             margin-bottom: var(--space-sm);
+            color: rgba(255, 255, 255, 0.8);
         }
         
         .empty-description {
-            font-size: 0.875rem;
-            line-height: 1.5;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        /* ===== SCROLLBAR STYLING ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* ===== SELECTION ===== */
+        ::selection {
+            background: rgba(12, 124, 89, 0.3);
+            color: var(--white);
+        }
+        
+        /* ===== FOCUS STATES ===== */
+        :focus-visible {
+            outline: 2px solid var(--clinical-accent);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
-    <!-- Command Header -->
+    <!-- Enhanced Command Header -->
     <header class="command-header">
         <div class="header-container">
-            <!-- Logo -->
-            <a href="/" class="logo">
-                <div class="logo-icon">TL</div>
+            <!-- Logo as Identity System -->
+            <div class="logo-container" id="logoContainer">
+                <div class="logo-icon">
+                    <i class="fas fa-lungs"></i>
+                </div>
                 <div class="logo-text">
                     <div class="logo-primary">ThoraxLab</div>
-                    <div class="logo-subtitle">CLINICAL-INDUSTRY INNOVATION</div>
+                    <div class="logo-status">
+                        <span class="status-label">Pulse:</span>
+                        <span class="status-value" id="globalPulse">87</span>
+                        <span class="status-indicator" id="globalPulseIndicator"></span>
+                    </div>
                 </div>
-            </a>
+                
+                <!-- Platform Stats Dropdown -->
+                <div class="logo-dropdown" id="logoDropdown">
+                    <div class="dropdown-header">
+                        <div class="dropdown-title">Platform Status</div>
+                        <div class="dropdown-time" id="platformUpdateTime">Just now</div>
+                    </div>
+                    
+                    <div class="dropdown-stats">
+                        <div class="dropdown-stat">
+                            <div class="stat-value" id="statActiveProjects">12</div>
+                            <div class="stat-label">Active Projects</div>
+                        </div>
+                        <div class="dropdown-stat">
+                            <div class="stat-value" id="statOnlineUsers">8</div>
+                            <div class="stat-label">Online Now</div>
+                        </div>
+                        <div class="dropdown-stat">
+                            <div class="stat-value" id="statInteractions">1.2k</div>
+                            <div class="stat-label">Interactions</div>
+                        </div>
+                        <div class="dropdown-stat">
+                            <div class="stat-value" id="statDecisions">24</div>
+                            <div class="stat-label">Decisions</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown-health">
+                        <div class="health-title">Platform Health</div>
+                        <div class="health-bar">
+                            <div class="health-fill" id="healthFill" style="width: 87%"></div>
+                        </div>
+                        <div class="health-labels">
+                            <span>Needs Attention</span>
+                            <span id="healthStatusText">Excellent</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <!-- Quick Actions -->
             <div class="quick-actions">
@@ -841,8 +1488,11 @@
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" class="search-input" placeholder="Search projects, decisions, contributors...">
                 </div>
-                <button class="node-action" id="quickFilterBtn">
+                <button class="quick-action-button" id="quickFilterBtn">
                     <i class="fas fa-filter"></i> Filter
+                </button>
+                <button class="quick-action-button" id="quickCreateBtn">
+                    <i class="fas fa-plus"></i> New
                 </button>
             </div>
             
@@ -850,11 +1500,12 @@
             <div class="user-context">
                 <div class="user-badge">
                     <div class="user-role role-clinician" id="userRole">Clinician</div>
-                    <span id="userName" style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem;">Dr. Sarah Chen</span>
+                    <span class="user-name" id="userName">Dr. Sarah Chen</span>
                 </div>
-                <button class="node-action" style="width: auto; padding: 0.5rem;" id="notificationsBtn">
+                <div class="notification-button" id="notificationsBtn">
                     <i class="fas fa-bell"></i>
-                </button>
+                    <span class="notification-badge" id="notificationCount">3</span>
+                </div>
             </div>
         </div>
     </header>
@@ -867,23 +1518,26 @@
             <div class="velocity-meter">
                 <div class="velocity-header">
                     <div class="velocity-title">Innovation Velocity</div>
-                    <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Live</div>
+                    <div class="velocity-live">Live</div>
                 </div>
                 <div class="velocity-value" id="velocityValue">87</div>
                 <div class="velocity-label">Cross-role collaboration score</div>
                 <div class="velocity-bar">
                     <div class="velocity-fill" id="velocityFill" style="width: 87%"></div>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-top: var(--space-md);">
-                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Stuck</span>
-                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Moving</span>
-                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Fast</span>
+                <div class="velocity-scale">
+                    <span>Stuck</span>
+                    <span>Moving</span>
+                    <span>Fast</span>
                 </div>
             </div>
             
             <!-- Innovation Stream -->
             <div class="innovation-stream">
-                <div class="stream-title">Innovation Stream</div>
+                <div class="stream-title">
+                    <span>Innovation Stream</span>
+                    <i class="fas fa-sync-alt stream-refresh" id="refreshStream"></i>
+                </div>
                 <div class="stream-list" id="innovationStream">
                     <!-- Dynamic content -->
                 </div>
@@ -905,12 +1559,13 @@
                 <!-- Create Project Portal -->
                 <div class="create-portal" id="createProjectPortal">
                     <div class="portal-icon">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-rocket"></i>
                     </div>
-                    <div class="portal-title">Start New Project</div>
+                    <div class="portal-title">Launch New Project</div>
                     <div class="portal-description">
                         Define a clinical challenge. Invite industry partners. Track progress in real-time.
                     </div>
+                    <div class="portal-hint">Ctrl/Cmd + N to create</div>
                 </div>
             </div>
             
@@ -937,7 +1592,7 @@
             <div class="decision-queue">
                 <div class="queue-header">
                     <div class="queue-title">Decision Queue</div>
-                    <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);" id="decisionCount">0 pending</div>
+                    <div class="queue-count" id="decisionCount">0 pending</div>
                 </div>
                 <div class="queue-list" id="decisionQueue">
                     <!-- Dynamic content -->
@@ -950,45 +1605,65 @@
     <div class="toast-container" id="toastContainer"></div>
     
     <!-- Create Project Modal -->
-    <div id="createModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 3000; align-items: center; justify-content: center; padding: var(--space-xl);">
-        <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 500px; backdrop-filter: blur(20px);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
-                <h2 style="color: white; font-size: 1.5rem; font-weight: 700;">Create New Project</h2>
-                <button onclick="closeCreateModal()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); font-size: 1.5rem; cursor: pointer;">&times;</button>
+    <div id="createModal" class="hidden-modal">
+        <div class="modal-backdrop" onclick="closeCreateModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Launch New Project</h2>
+                <button class="modal-close" onclick="closeCreateModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <form id="projectForm" style="display: flex; flex-direction: column; gap: var(--space-lg);">
-                <div>
-                    <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Project Title</label>
-                    <input type="text" id="projectTitle" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem;" placeholder="e.g., AI-Powered COPD Detection">
+            <form id="projectForm">
+                <div class="form-group">
+                    <label for="projectTitle">Project Title</label>
+                    <input type="text" id="projectTitle" required 
+                           placeholder="e.g., AI-Powered COPD Detection">
                 </div>
                 
-                <div>
-                    <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Description</label>
-                    <textarea id="projectDescription" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem; min-height: 120px; resize: vertical;" placeholder="Describe the clinical challenge and innovation approach..."></textarea>
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" required 
+                              placeholder="Describe the clinical challenge and innovation approach..."></textarea>
                 </div>
                 
-                <div>
-                    <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Project Type</label>
-                    <select id="projectType" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem;">
-                        <option value="">Select project type...</option>
-                        <option value="clinical">Clinical Led</option>
-                        <option value="industry">Industry Led</option>
-                        <option value="collaborative">Joint Collaboration</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectType">Project Type</label>
+                        <select id="projectType" required>
+                            <option value="">Select project type...</option>
+                            <option value="clinical">Clinical Led</option>
+                            <option value="industry">Industry Led</option>
+                            <option value="collaborative">Joint Collaboration</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectPhase">Initial Phase</label>
+                        <select id="projectPhase" required>
+                            <option value="discovery">Discovery</option>
+                            <option value="design">Design</option>
+                            <option value="development">Development</option>
+                            <option value="testing">Testing</option>
+                            <option value="deployment">Deployment</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <div style="display: flex; gap: var(--space-md); margin-top: var(--space-xl);">
-                    <button type="button" onclick="closeCreateModal()" style="flex: 1; padding: var(--space-md); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-md); color: white; font-size: 0.875rem; font-weight: 600; cursor: pointer;">Cancel</button>
-                    <button type="submit" style="flex: 1; padding: var(--space-md); background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%); border: none; border-radius: var(--radius-md); color: white; font-size: 0.875rem; font-weight: 600; cursor: pointer;">Create Project</button>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-rocket"></i> Launch Project
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // ===== THORAXLAB CORE APPLICATION =====
-        class ThoraxLab {
+        // ===== THORAXLAB PLATFORM v2.0 =====
+        class ThoraxLabPlatform {
             constructor() {
                 this.baseUrl = window.location.origin;
                 this.user = null;
@@ -998,51 +1673,89 @@
                 this.decisions = [];
                 this.ws = null;
                 this.isConnected = false;
+                this.platformStatus = null;
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 5;
+                
+                // WebSocket event handlers
+                this.wsHandlers = {
+                    connected: this.handleConnected.bind(this),
+                    authenticated: this.handleAuthenticated.bind(this),
+                    platform_status: this.handlePlatformStatus.bind(this),
+                    project_created: this.handleProjectCreated.bind(this),
+                    project_updated: this.handleProjectUpdated.bind(this),
+                    comment_added: this.handleCommentAdded.bind(this),
+                    comment_updated: this.handleCommentUpdated.bind(this),
+                    decision_updated: this.handleDecisionUpdated.bind(this),
+                    team_updated: this.handleTeamUpdated.bind(this),
+                    user_cursor: this.handleUserCursor.bind(this),
+                    user_typing: this.handleUserTyping.bind(this),
+                    user_status_changed: this.handleUserStatusChanged.bind(this),
+                    heartbeat_ack: this.handleHeartbeatAck.bind(this),
+                    error: this.handleError.bind(this)
+                };
                 
                 this.init();
             }
             
             async init() {
-                console.log('🚀 ThoraxLab Innovation Platform v2.0');
+                console.log('🚀 ThoraxLab Platform v2.0');
                 
-                // Load user session
-                await this.loadUserSession();
+                // Initialize modules
+                await this.initUserSession();
+                await this.initWebSocket();
+                await this.loadInitialData();
+                this.initEventListeners();
+                this.startHeartbeat();
+                this.startStatusUpdates();
                 
-                // Initialize WebSocket
-                this.initWebSocket();
-                
-                // Load all data
-                await this.loadAllData();
-                
-                // Set up event listeners
-                this.setupEventListeners();
-                
-                // Show welcome
-                this.showToast('Welcome to ThoraxLab Innovation Platform', 'info');
+                this.showToast('ThoraxLab Platform Ready', 'success');
             }
             
-            async loadUserSession() {
+            // ===== USER SESSION =====
+            async initUserSession() {
                 try {
-                    // In production, this would be from your auth system
+                    // Try to load from localStorage
+                    const savedUser = localStorage.getItem('thoraxlab_user');
+                    const savedToken = localStorage.getItem('thoraxlab_token');
+                    
+                    if (savedUser && savedToken) {
+                        this.user = JSON.parse(savedUser);
+                        this.updateUserInterface();
+                        return;
+                    }
+                    
+                    // Create demo user
                     this.user = {
-                        id: 'user_001',
+                        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                         name: 'Dr. Sarah Chen',
                         role: 'clinician',
                         email: 'sarah.chen@hospital.edu',
                         institution: 'University Medical Center',
-                        avatar: 'SC'
+                        avatar: 'SC',
+                        projectRole: 'Clinical Lead'
                     };
                     
-                    document.getElementById('userName').textContent = this.user.name;
-                    document.getElementById('userRole').textContent = this.user.role.charAt(0).toUpperCase() + this.user.role.slice(1);
-                    document.getElementById('userRole').className = `user-role role-${this.user.role}`;
+                    localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                    localStorage.setItem('thoraxlab_token', `demo_token_${this.user.id}`);
+                    
+                    this.updateUserInterface();
                     
                 } catch (error) {
-                    console.error('Failed to load user session:', error);
-                    this.showToast('Failed to load user session', 'error');
+                    console.error('User session init error:', error);
+                    this.showToast('Failed to initialize user session', 'error');
                 }
             }
             
+            updateUserInterface() {
+                if (!this.user) return;
+                
+                document.getElementById('userName').textContent = this.user.name;
+                document.getElementById('userRole').textContent = this.user.role.charAt(0).toUpperCase() + this.user.role.slice(1);
+                document.getElementById('userRole').className = `user-role role-${this.user.role}`;
+            }
+            
+            // ===== WEBSOCKET CONNECTION =====
             initWebSocket() {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 const wsUrl = `${protocol}//${window.location.host}`;
@@ -1052,79 +1765,192 @@
                 this.ws.onopen = () => {
                     console.log('🔗 WebSocket connected');
                     this.isConnected = true;
-                    this.showToast('Connected to real-time updates', 'success');
+                    this.reconnectAttempts = 0;
                     
-                    // Subscribe to updates
-                    this.ws.send(JSON.stringify({
-                        type: 'subscribe',
+                    // Send authentication
+                    this.sendWebSocketMessage({
+                        type: 'authenticate',
                         userId: this.user.id,
-                        channels: ['projects', 'activities', 'decisions']
-                    }));
+                        token: localStorage.getItem('thoraxlab_token')
+                    });
+                    
+                    this.showToast('Connected to real-time updates', 'success');
                 };
                 
                 this.ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    this.handleWebSocketMessage(data);
+                    try {
+                        const data = JSON.parse(event.data);
+                        this.handleWebSocketMessage(data);
+                    } catch (error) {
+                        console.error('WebSocket message parse error:', error);
+                    }
                 };
                 
                 this.ws.onclose = () => {
                     console.log('🔌 WebSocket disconnected');
                     this.isConnected = false;
-                    
-                    // Try to reconnect
-                    setTimeout(() => this.initWebSocket(), 3000);
+                    this.handleReconnection();
                 };
                 
                 this.ws.onerror = (error) => {
                     console.error('WebSocket error:', error);
-                    this.showToast('Connection error - using fallback updates', 'warning');
+                    this.showToast('Connection error', 'warning');
                 };
             }
             
-            handleWebSocketMessage(data) {
-                switch (data.type) {
-                    case 'project_updated':
-                        this.updateProject(data.project);
-                        break;
-                    case 'activity_added':
-                        this.addActivity(data.activity);
-                        break;
-                    case 'decision_updated':
-                        this.updateDecision(data.decision);
-                        break;
-                    case 'user_online':
-                        this.updateOnlineUsers(data.users);
-                        break;
-                    case 'velocity_update':
-                        this.updateVelocity(data.velocity);
-                        break;
+            sendWebSocketMessage(message) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify(message));
+                } else {
+                    console.warn('WebSocket not connected, cannot send:', message);
                 }
             }
             
-            async loadAllData() {
+            handleWebSocketMessage(data) {
+                const handler = this.wsHandlers[data.type];
+                if (handler) {
+                    handler(data);
+                } else {
+                    console.warn('Unhandled WebSocket message type:', data.type);
+                }
+            }
+            
+            handleConnected(data) {
+                console.log('WebSocket connection established:', data.clientId);
+            }
+            
+            handleAuthenticated(data) {
+                console.log('Authenticated:', data.userId);
+            }
+            
+            handlePlatformStatus(data) {
+                this.platformStatus = data;
+                this.updatePlatformStatusUI(data);
+            }
+            
+            handleProjectCreated(data) {
+                this.projects.unshift(data.project);
+                this.renderProjects();
+                this.showToast(`New project: ${data.project.title}`, 'info');
+            }
+            
+            handleProjectUpdated(data) {
+                const index = this.projects.findIndex(p => p.id === data.project.id);
+                if (index > -1) {
+                    this.projects[index] = data.project;
+                    this.renderProjects();
+                }
+            }
+            
+            handleCommentAdded(data) {
+                this.addActivity({
+                    type: 'COMMENT',
+                    content: `New comment: ${data.comment.content.substring(0, 100)}...`,
+                    timestamp: data.timestamp
+                });
+            }
+            
+            handleCommentUpdated(data) {
+                // Update comment in UI if needed
+            }
+            
+            handleDecisionUpdated(data) {
+                this.decisions = this.decisions.filter(d => d.id !== data.decision.id);
+                this.decisions.unshift(data.decision);
+                this.renderDecisions();
+            }
+            
+            handleTeamUpdated(data) {
+                this.contributors = data.team.slice(0, 6);
+                this.renderContributors();
+            }
+            
+            handleUserCursor(data) {
+                // Update cursor position in UI
+            }
+            
+            handleUserTyping(data) {
+                // Show typing indicator
+            }
+            
+            handleUserStatusChanged(data) {
+                // Update user status in UI
+            }
+            
+            handleHeartbeatAck(data) {
+                // Update last heartbeat time
+            }
+            
+            handleError(data) {
+                this.showToast(data.error || 'WebSocket error', 'error');
+            }
+            
+            handleReconnection() {
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                    this.reconnectAttempts++;
+                    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+                    
+                    console.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+                    
+                    setTimeout(() => {
+                        this.initWebSocket();
+                    }, delay);
+                } else {
+                    this.showToast('Connection lost. Please refresh the page.', 'error');
+                }
+            }
+            
+            // ===== HEARTBEAT =====
+            startHeartbeat() {
+                setInterval(() => {
+                    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                        this.sendWebSocketMessage({
+                            type: 'heartbeat',
+                            timestamp: Date.now()
+                        });
+                    }
+                }, 30000); // Every 30 seconds
+            }
+            
+            // ===== DATA LOADING =====
+            async loadInitialData() {
                 try {
                     await Promise.all([
                         this.loadProjects(),
                         this.loadActivities(),
                         this.loadContributors(),
                         this.loadDecisions(),
-                        this.loadVelocity()
+                        this.loadPlatformStatus()
                     ]);
                 } catch (error) {
-                    console.error('Failed to load data:', error);
-                    this.showToast('Failed to load data', 'error');
+                    console.error('Failed to load initial data:', error);
+                    this.loadMockData();
+                }
+            }
+            
+            async loadPlatformStatus() {
+                try {
+                    const response = await fetch('/api/platform/status');
+                    if (!response.ok) throw new Error('Failed to fetch platform status');
+                    
+                    this.platformStatus = await response.json();
+                    this.updatePlatformStatusUI(this.platformStatus);
+                } catch (error) {
+                    console.warn('Using mock platform status');
+                    this.platformStatus = this.getMockPlatformStatus();
+                    this.updatePlatformStatusUI(this.platformStatus);
                 }
             }
             
             async loadProjects() {
                 try {
-                    const response = await fetch(`${this.baseUrl}/api/projects`);
+                    const response = await fetch('/api/projects');
                     if (!response.ok) throw new Error('Failed to fetch projects');
                     
                     this.projects = await response.json();
                     this.renderProjects();
                 } catch (error) {
-                    console.warn('Using mock projects data');
+                    console.warn('Using mock projects');
                     this.projects = this.getMockProjects();
                     this.renderProjects();
                 }
@@ -1132,13 +1958,13 @@
             
             async loadActivities() {
                 try {
-                    const response = await fetch(`${this.baseUrl}/api/activities`);
+                    const response = await fetch('/api/activity/recent');
                     if (!response.ok) throw new Error('Failed to fetch activities');
                     
                     this.activities = await response.json();
                     this.renderActivities();
                 } catch (error) {
-                    console.warn('Using mock activities data');
+                    console.warn('Using mock activities');
                     this.activities = this.getMockActivities();
                     this.renderActivities();
                 }
@@ -1146,13 +1972,13 @@
             
             async loadContributors() {
                 try {
-                    const response = await fetch(`${this.baseUrl}/api/contributors`);
+                    const response = await fetch('/api/users/online');
                     if (!response.ok) throw new Error('Failed to fetch contributors');
                     
                     this.contributors = await response.json();
                     this.renderContributors();
                 } catch (error) {
-                    console.warn('Using mock contributors data');
+                    console.warn('Using mock contributors');
                     this.contributors = this.getMockContributors();
                     this.renderContributors();
                 }
@@ -1160,106 +1986,114 @@
             
             async loadDecisions() {
                 try {
-                    const response = await fetch(`${this.baseUrl}/api/decisions/pending`);
+                    const response = await fetch('/api/decisions/pending');
                     if (!response.ok) throw new Error('Failed to fetch decisions');
                     
                     this.decisions = await response.json();
                     this.renderDecisions();
                 } catch (error) {
-                    console.warn('Using mock decisions data');
+                    console.warn('Using mock decisions');
                     this.decisions = this.getMockDecisions();
                     this.renderDecisions();
                 }
             }
             
-            async loadVelocity() {
-                try {
-                    const response = await fetch(`${this.baseUrl}/api/velocity`);
-                    if (!response.ok) throw new Error('Failed to fetch velocity');
-                    
-                    const data = await response.json();
-                    this.updateVelocity(data.score);
-                } catch (error) {
-                    console.warn('Using mock velocity data');
-                    this.updateVelocity(87);
-                }
-            }
-            
-            updateVelocity(score) {
-                const velocityValue = document.getElementById('velocityValue');
-                const velocityFill = document.getElementById('velocityFill');
+            // ===== UI UPDATES =====
+            updatePlatformStatusUI(status) {
+                if (!status) return;
                 
-                velocityValue.textContent = score;
-                velocityFill.style.width = `${score}%`;
+                // Update pulse in header
+                const pulseElement = document.getElementById('globalPulse');
+                const pulseIndicator = document.getElementById('globalPulseIndicator');
                 
-                // Pulse animation
-                velocityValue.classList.add('pulse');
-                setTimeout(() => velocityValue.classList.remove('pulse'), 2000);
+                pulseElement.textContent = status.health_score;
+                pulseElement.className = `status-value ${status.status}`;
+                pulseIndicator.className = `status-indicator ${status.status}`;
+                
+                // Update dropdown stats
+                document.getElementById('statActiveProjects').textContent = status.active_projects;
+                document.getElementById('statOnlineUsers').textContent = status.online_users;
+                document.getElementById('statInteractions').textContent = this.formatNumber(status.total_interactions);
+                document.getElementById('statDecisions').textContent = status.pending_decisions;
+                document.getElementById('platformUpdateTime').textContent = 'Just now';
+                document.getElementById('healthFill').style.width = `${status.health_score}%`;
+                document.getElementById('healthStatusText').textContent = 
+                    status.status.charAt(0).toUpperCase() + status.status.slice(1).replace('_', ' ');
+                
+                // Update velocity meter
+                document.getElementById('velocityValue').textContent = status.pulse_score;
+                document.getElementById('velocityFill').style.width = `${status.pulse_score}%`;
             }
             
             renderProjects() {
                 const grid = document.getElementById('innovationGrid');
                 
-                if (this.projects.length === 0) {
+                if (!this.projects || this.projects.length === 0) {
                     grid.innerHTML = `
                         <div class="empty-state" style="grid-column: 1 / -1;">
                             <div class="empty-icon">💡</div>
                             <div class="empty-title">No Projects Yet</div>
-                            <div class="empty-description">Start the first innovation project by clicking "Start New Project"</div>
+                            <div class="empty-description">Start the first innovation project by clicking "Launch New Project"</div>
                         </div>
                     `;
                     return;
                 }
                 
-                grid.innerHTML = this.projects.map(project => `
-                    <div class="project-node" data-project-id="${project.id}">
-                        <div class="node-header">
-                            <h3 class="node-title">${project.title}</h3>
-                            <div class="node-context">
-                                <span class="context-badge context-${project.type}">
-                                    ${project.type === 'clinical' ? 'Clinical Led' : project.type === 'industry' ? 'Industry Led' : 'Joint Collaboration'}
-                                </span>
-                                <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">
-                                    ${this.formatDate(project.createdAt)}
-                                </span>
+                grid.innerHTML = this.projects.map(project => {
+                    const status = this.getProjectStatus(project.pulse_score);
+                    const formattedDate = this.formatRelativeTime(project.created_at);
+                    
+                    return `
+                        <div class="project-node" data-project-id="${project.id}">
+                            <div class="node-status ${status}"></div>
+                            <div class="node-header">
+                                <h3 class="node-title">${this.escapeHtml(project.title)}</h3>
+                                <div class="node-context">
+                                    <span class="context-badge context-${project.type}">
+                                        ${this.getProjectTypeLabel(project.type)}
+                                    </span>
+                                    <div class="node-time">
+                                        <i class="far fa-clock"></i> ${formattedDate}
+                                    </div>
+                                </div>
+                                <p class="node-description">${this.escapeHtml(project.description.substring(0, 150))}${project.description.length > 150 ? '...' : ''}</p>
                             </div>
-                            <p class="node-description">${project.description}</p>
+                            
+                            <div class="node-metrics">
+                                <div class="node-metric">
+                                    <div class="metric-value">${project.pulse_score || 75}</div>
+                                    <div class="metric-label">Pulse</div>
+                                </div>
+                                <div class="node-metric">
+                                    <div class="metric-value">${project.team_size || 3}</div>
+                                    <div class="metric-label">Team</div>
+                                </div>
+                                <div class="node-metric">
+                                    <div class="metric-value">${project.pending_decisions || 0}</div>
+                                    <div class="metric-label">Decisions</div>
+                                </div>
+                            </div>
+                            
+                            <div class="node-actions">
+                                <button class="node-action" onclick="window.viewProject('${project.id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="node-action" onclick="window.joinProject('${project.id}')">
+                                    <i class="fas fa-plus"></i> Join
+                                </button>
+                                <button class="node-action" onclick="window.discussProject('${project.id}')">
+                                    <i class="fas fa-comment"></i> Discuss
+                                </button>
+                            </div>
                         </div>
-                        
-                        <div class="node-metrics">
-                            <div class="node-metric">
-                                <div class="metric-value">${project.velocity || 75}</div>
-                                <div class="metric-label">Velocity</div>
-                            </div>
-                            <div class="node-metric">
-                                <div class="metric-value">${project.contributors || 3}</div>
-                                <div class="metric-label">Contributors</div>
-                            </div>
-                            <div class="node-metric">
-                                <div class="metric-value">${project.decisions || 2}</div>
-                                <div class="metric-label">Decisions</div>
-                            </div>
-                        </div>
-                        
-                        <div class="node-actions">
-                            <button class="node-action" onclick="window.viewProject('${project.id}')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                            <button class="node-action" onclick="window.joinProject('${project.id}')">
-                                <i class="fas fa-plus"></i> Join
-                            </button>
-                            <button class="node-action" onclick="window.discussProject('${project.id}')">
-                                <i class="fas fa-comment"></i> Discuss
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
             renderActivities() {
                 const stream = document.getElementById('innovationStream');
                 
-                if (this.activities.length === 0) {
+                if (!this.activities || this.activities.length === 0) {
                     stream.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">📝</div>
@@ -1272,8 +2106,11 @@
                 
                 stream.innerHTML = this.activities.map(activity => `
                     <div class="stream-item">
-                        <div class="stream-item-type">${activity.type}</div>
-                        <div class="stream-item-content">${activity.content}</div>
+                        <div class="stream-item-type">
+                            <i class="fas fa-${this.getActivityIcon(activity.type)}"></i> ${activity.type}
+                        </div>
+                        <div class="stream-item-content">${this.escapeHtml(activity.content)}</div>
+                        <div class="stream-item-time">${this.formatRelativeTime(activity.timestamp)}</div>
                     </div>
                 `).join('');
             }
@@ -1284,24 +2121,31 @@
                 
                 count.textContent = `${this.contributors.length} online`;
                 
-                grid.innerHTML = this.contributors.map(contributor => `
-                    <div class="contributor">
-                        <div class="contributor-avatar contributor-${contributor.role}">
-                            ${contributor.initials}
+                grid.innerHTML = this.contributors.map(contributor => {
+                    const initials = contributor.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    const firstName = contributor.name.split(' ')[0];
+                    
+                    return `
+                        <div class="contributor">
+                            <div class="contributor-avatar contributor-${contributor.role}" title="${contributor.name}">
+                                ${initials}
+                                <div class="contributor-status"></div>
+                            </div>
+                            <div class="contributor-name">${firstName}</div>
+                            <div class="contributor-role">${contributor.role}</div>
                         </div>
-                        <div class="contributor-name">${contributor.name.split(' ')[0]}</div>
-                        <div class="contributor-role">${contributor.role}</div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
             renderDecisions() {
                 const queue = document.getElementById('decisionQueue');
                 const count = document.getElementById('decisionCount');
                 
-                count.textContent = `${this.decisions.length} pending`;
+                const pendingDecisions = this.decisions.filter(d => d.status === 'pending');
+                count.textContent = `${pendingDecisions.length} pending`;
                 
-                if (this.decisions.length === 0) {
+                if (pendingDecisions.length === 0) {
                     queue.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">✅</div>
@@ -1312,22 +2156,17 @@
                     return;
                 }
                 
-                queue.innerHTML = this.decisions.map(decision => `
+                queue.innerHTML = pendingDecisions.map(decision => `
                     <div class="queue-item" onclick="window.viewDecision('${decision.id}')">
-                        <div class="queue-item-content">${decision.content}</div>
-                        <div class="queue-item-project">${decision.project}</div>
+                        <div class="queue-item-content">${this.escapeHtml(decision.title)}</div>
+                        <div class="queue-item-project">
+                            <i class="fas fa-project-diagram"></i> ${decision.project_title || 'Project'}
+                            <span class="queue-item-priority priority-${decision.priority || 'medium'}">
+                                ${decision.priority || 'medium'}
+                            </span>
+                        </div>
                     </div>
                 `).join('');
-            }
-            
-            updateProject(project) {
-                const index = this.projects.findIndex(p => p.id === project.id);
-                if (index >= 0) {
-                    this.projects[index] = project;
-                } else {
-                    this.projects.unshift(project);
-                }
-                this.renderProjects();
             }
             
             addActivity(activity) {
@@ -1336,105 +2175,206 @@
                 this.renderActivities();
             }
             
-            updateDecision(decision) {
-                const index = this.decisions.findIndex(d => d.id === decision.id);
-                if (index >= 0) {
-                    this.decisions[index] = decision;
-                } else {
-                    this.decisions.unshift(decision);
-                }
-                this.renderDecisions();
-            }
-            
-            updateOnlineUsers(users) {
-                this.contributors = users;
-                this.renderContributors();
-            }
-            
-            async createProject(projectData) {
-                try {
-                    const response = await fetch(`${this.baseUrl}/api/projects`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(projectData)
-                    });
-                    
-                    if (!response.ok) throw new Error('Failed to create project');
-                    
-                    const project = await response.json();
-                    this.showToast('Project created successfully', 'success');
-                    
-                    // Add to local list
-                    this.projects.unshift(project);
-                    this.renderProjects();
-                    
-                    return project;
-                } catch (error) {
-                    console.error('Failed to create project:', error);
-                    this.showToast('Failed to create project', 'error');
-                    throw error;
-                }
-            }
-            
-            setupEventListeners() {
+            // ===== EVENT LISTENERS =====
+            initEventListeners() {
                 // Create project portal
                 document.getElementById('createProjectPortal').addEventListener('click', () => {
                     this.openCreateModal();
                 });
                 
-                // Project form submission
-                document.getElementById('projectForm').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const title = document.getElementById('projectTitle').value.trim();
-                    const description = document.getElementById('projectDescription').value.trim();
-                    const type = document.getElementById('projectType').value;
-                    
-                    if (!title || !description || !type) {
-                        this.showToast('Please fill in all fields', 'warning');
-                        return;
-                    }
-                    
-                    try {
-                        await this.createProject({
-                            title,
-                            description,
-                            type,
-                            createdBy: this.user.id
-                        });
-                        
-                        this.closeCreateModal();
-                        document.getElementById('projectForm').reset();
-                    } catch (error) {
-                        // Error already handled
-                    }
+                // Quick create button
+                document.getElementById('quickCreateBtn').addEventListener('click', () => {
+                    this.openCreateModal();
                 });
                 
-                // Search
+                // Quick filter button
+                document.getElementById('quickFilterBtn').addEventListener('click', () => {
+                    this.showFilterPanel();
+                });
+                
+                // Notifications button
+                document.getElementById('notificationsBtn').addEventListener('click', () => {
+                    this.showNotifications();
+                });
+                
+                // Refresh stream
+                document.getElementById('refreshStream').addEventListener('click', () => {
+                    this.refreshActivities();
+                });
+                
+                // Search input
                 const searchInput = document.querySelector('.search-input');
                 searchInput.addEventListener('input', this.debounce((e) => {
                     this.searchProjects(e.target.value);
                 }, 300));
                 
-                // Quick filter
-                document.getElementById('quickFilterBtn').addEventListener('click', () => {
-                    this.showFilterPanel();
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        this.openCreateModal();
+                    }
+                    
+                    if (e.key === 'Escape') {
+                        this.closeCreateModal();
+                    }
+                    
+                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                        e.preventDefault();
+                        searchInput.focus();
+                    }
                 });
                 
-                // Notifications
-                document.getElementById('notificationsBtn').addEventListener('click', () => {
-                    this.showNotifications();
-                });
+                // Project form submission
+                const projectForm = document.getElementById('projectForm');
+                if (projectForm) {
+                    projectForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        await this.createProject();
+                    });
+                }
             }
             
+            // ===== PROJECT CREATION =====
             openCreateModal() {
-                document.getElementById('createModal').style.display = 'flex';
+                const modal = document.getElementById('createModal');
+                if (modal) {
+                    modal.classList.remove('hidden-modal');
+                    modal.classList.add('visible-modal');
+                }
             }
             
             closeCreateModal() {
-                document.getElementById('createModal').style.display = 'none';
+                const modal = document.getElementById('createModal');
+                if (modal) {
+                    modal.classList.remove('visible-modal');
+                    modal.classList.add('hidden-modal');
+                }
+            }
+            
+            async createProject() {
+                const title = document.getElementById('projectTitle')?.value.trim();
+                const description = document.getElementById('projectDescription')?.value.trim();
+                const type = document.getElementById('projectType')?.value;
+                const phase = document.getElementById('projectPhase')?.value;
+                
+                if (!title || !description || !type || !phase) {
+                    this.showToast('Please fill in all fields', 'warning');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/projects', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title,
+                            description,
+                            type,
+                            createdBy: this.user.id
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to create project');
+                    
+                    const project = await response.json();
+                    
+                    this.showToast('Project created successfully', 'success');
+                    this.closeCreateModal();
+                    
+                    // Reset form
+                    const form = document.getElementById('projectForm');
+                    if (form) form.reset();
+                    
+                } catch (error) {
+                    console.error('Project creation error:', error);
+                    this.showToast('Failed to create project', 'error');
+                }
+            }
+            
+            // ===== UTILITY METHODS =====
+            getProjectStatus(pulseScore) {
+                if (pulseScore >= 80) return 'excellent';
+                if (pulseScore >= 60) return 'good';
+                if (pulseScore >= 40) return 'fair';
+                return 'needs_attention';
+            }
+            
+            getProjectTypeLabel(type) {
+                const labels = {
+                    clinical: 'Clinical Led',
+                    industry: 'Industry Led',
+                    collaborative: 'Joint Collaboration'
+                };
+                return labels[type] || 'Collaboration';
+            }
+            
+            getActivityIcon(type) {
+                const icons = {
+                    PROJECT: 'rocket',
+                    COMMENT: 'comment',
+                    DECISION: 'gavel',
+                    MEETING: 'video',
+                    MILESTONE: 'flag',
+                    FILE: 'paperclip'
+                };
+                return icons[type] || 'bell';
+            }
+            
+            formatRelativeTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffMins < 1) return 'just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays < 7) return `${diffDays}d ago`;
+                if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+            
+            formatNumber(num) {
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+                return num.toString();
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+            
+            // ===== UI ACTIONS =====
+            showFilterPanel() {
+                this.showToast('Filter functionality coming soon', 'info');
+            }
+            
+            showNotifications() {
+                this.showToast('Notifications panel coming soon', 'info');
+            }
+            
+            refreshActivities() {
+                this.loadActivities();
+                this.showToast('Activity stream refreshed', 'success');
             }
             
             searchProjects(query) {
@@ -1469,18 +2409,20 @@
                 this.projects = tempProjects;
             }
             
-            showFilterPanel() {
-                this.showToast('Filter functionality coming soon', 'info');
+            startStatusUpdates() {
+                // Update platform status every 30 seconds
+                setInterval(async () => {
+                    if (this.isConnected) {
+                        await this.loadPlatformStatus();
+                    }
+                }, 30000);
             }
             
-            showNotifications() {
-                this.showToast('Notifications panel coming soon', 'info');
-            }
-            
+            // ===== TOAST NOTIFICATIONS =====
             showToast(message, type = 'info') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
-                toast.className = 'toast';
+                toast.className = `toast ${type}`;
                 
                 const icons = {
                     success: '✅',
@@ -1490,14 +2432,14 @@
                 };
                 
                 toast.innerHTML = `
-                    <div>${icons[type] || icons.info}</div>
-                    <div style="flex: 1;">${message}</div>
-                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer;">&times;</button>
+                    <div style="font-size: 1.25rem;">${icons[type] || icons.info}</div>
+                    <div style="flex: 1; font-size: 0.9375rem;">${message}</div>
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer; font-size: 1.25rem; padding: 0;">&times;</button>
                 `;
                 
                 container.appendChild(toast);
                 
-                // Auto-remove
+                // Auto-remove after 5 seconds
                 setTimeout(() => {
                     if (toast.parentElement) {
                         toast.remove();
@@ -1505,32 +2447,39 @@
                 }, 5000);
             }
             
-            debounce(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
+            // ===== MOCK DATA (for development) =====
+            loadMockData() {
+                this.projects = this.getMockProjects();
+                this.activities = this.getMockActivities();
+                this.contributors = this.getMockContributors();
+                this.decisions = this.getMockDecisions();
+                this.platformStatus = this.getMockPlatformStatus();
+                
+                this.renderProjects();
+                this.renderActivities();
+                this.renderContributors();
+                this.renderDecisions();
+                this.updatePlatformStatusUI(this.platformStatus);
+            }
+            
+            getMockPlatformStatus() {
+                return {
+                    health_score: 87,
+                    pulse_score: 87,
+                    velocity_score: 85,
+                    engagement_score: 89,
+                    active_projects: 12,
+                    active_projects_now: 3,
+                    online_users: 8,
+                    total_users: 24,
+                    total_interactions: 1245,
+                    pending_decisions: 8,
+                    comments_today: 24,
+                    updated_at: new Date().toISOString(),
+                    status: 'excellent'
                 };
             }
             
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                
-                if (diffDays === 0) return 'Today';
-                if (diffDays === 1) return 'Yesterday';
-                if (diffDays < 7) return `${diffDays} days ago`;
-                if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }
-            
-            // Mock data generators (for development)
             getMockProjects() {
                 return [
                     {
@@ -1538,30 +2487,30 @@
                         title: 'AI-Powered COPD Detection',
                         description: 'Machine learning algorithms for early COPD detection from chest X-rays. Collaboration with MedTech Solutions.',
                         type: 'clinical',
-                        velocity: 85,
-                        contributors: 6,
-                        decisions: 3,
-                        createdAt: new Date(Date.now() - 86400000).toISOString() // 1 day ago
+                        pulse_score: 87,
+                        team_size: 6,
+                        pending_decisions: 3,
+                        created_at: new Date(Date.now() - 86400000).toISOString()
                     },
                     {
                         id: 'proj_002',
                         title: 'Remote Spirometry Monitoring',
                         description: 'Mobile application with Bluetooth spirometer for asthma patients. Industry partner: HealthTech Innovations.',
                         type: 'industry',
-                        velocity: 72,
-                        contributors: 8,
-                        decisions: 5,
-                        createdAt: new Date(Date.now() - 172800000).toISOString() // 2 days ago
+                        pulse_score: 76,
+                        team_size: 8,
+                        pending_decisions: 5,
+                        created_at: new Date(Date.now() - 172800000).toISOString()
                     },
                     {
                         id: 'proj_003',
                         title: 'Smart Inhaler Compliance',
                         description: 'IoT-enabled inhaler with adherence tracking and clinical dashboard integration.',
                         type: 'collaborative',
-                        velocity: 91,
-                        contributors: 5,
-                        decisions: 2,
-                        createdAt: new Date(Date.now() - 259200000).toISOString() // 3 days ago
+                        pulse_score: 92,
+                        team_size: 5,
+                        pending_decisions: 2,
+                        created_at: new Date(Date.now() - 259200000).toISOString()
                     }
                 ];
             }
@@ -1570,35 +2519,40 @@
                 return [
                     {
                         type: 'DECISION',
-                        content: 'Technical specification approved for Smart Inhaler project'
+                        content: 'Technical specification approved for Smart Inhaler project',
+                        timestamp: new Date(Date.now() - 3600000).toISOString()
                     },
                     {
-                        type: 'CONTRIBUTION',
-                        content: 'Dr. Sarah Chen provided clinical insights on remote monitoring protocol'
+                        type: 'COMMENT',
+                        content: 'Dr. Sarah Chen provided clinical insights on remote monitoring protocol',
+                        timestamp: new Date(Date.now() - 7200000).toISOString()
                     },
                     {
-                        type: 'MEETING',
-                        content: 'Weekly sync replaced with async decision thread (3 hours saved)'
+                        type: 'PROJECT',
+                        content: 'New project launched: AI-Powered Lung Cancer Screening',
+                        timestamp: new Date(Date.now() - 10800000).toISOString()
                     },
                     {
-                        type: 'PROGRESS',
-                        content: 'COPD detection algorithm reached 94% accuracy in validation tests'
+                        type: 'MILESTONE',
+                        content: 'COPD detection algorithm reached 94% accuracy in validation tests',
+                        timestamp: new Date(Date.now() - 14400000).toISOString()
                     },
                     {
                         type: 'DECISION',
-                        content: 'Patient consent forms approved by ethics committee'
+                        content: 'Patient consent forms approved by ethics committee',
+                        timestamp: new Date(Date.now() - 18000000).toISOString()
                     }
                 ];
             }
             
             getMockContributors() {
                 return [
-                    { initials: 'SC', name: 'Dr. Sarah Chen', role: 'clinical' },
-                    { initials: 'MW', name: 'Dr. Michael Wang', role: 'clinical' },
-                    { initials: 'RJ', name: 'Rajesh Kumar', role: 'industry' },
-                    { initials: 'TL', name: 'Tech Lead', role: 'industry' },
-                    { initials: 'LW', name: 'Lisa Williams', role: 'public' },
-                    { initials: 'PT', name: 'Pharma Team', role: 'industry' }
+                    { name: 'Dr. Sarah Chen', role: 'clinician' },
+                    { name: 'Michael Wang', role: 'industry' },
+                    { name: 'Dr. Rajesh Kumar', role: 'clinician' },
+                    { name: 'Lisa Williams', role: 'public' },
+                    { name: 'Alex Rodriguez', role: 'industry' },
+                    { name: 'Dr. James Wilson', role: 'clinician' }
                 ];
             }
             
@@ -1606,18 +2560,24 @@
                 return [
                     {
                         id: 'dec_001',
-                        content: 'Finalize patient inclusion criteria for clinical trial',
-                        project: 'AI-Powered COPD Detection'
+                        title: 'Finalize patient inclusion criteria for clinical trial',
+                        project_title: 'AI-Powered COPD Detection',
+                        priority: 'high',
+                        status: 'pending'
                     },
                     {
                         id: 'dec_002',
-                        content: 'Approve budget allocation for prototype development',
-                        project: 'Remote Spirometry Monitoring'
+                        title: 'Approve budget allocation for prototype development',
+                        project_title: 'Remote Spirometry Monitoring',
+                        priority: 'medium',
+                        status: 'pending'
                     },
                     {
                         id: 'dec_003',
-                        content: 'Select manufacturing partner for device production',
-                        project: 'Smart Inhaler Compliance'
+                        title: 'Select manufacturing partner for device production',
+                        project_title: 'Smart Inhaler Compliance',
+                        priority: 'high',
+                        status: 'pending'
                     }
                 ];
             }
@@ -1629,28 +2589,179 @@
         }
         
         function joinProject(projectId) {
-            window.app.showToast('Joining project...', 'info');
+            window.platform.showToast('Joining project...', 'info');
             // API call to join project
         }
         
         function discussProject(projectId) {
-            window.app.showToast('Opening discussion...', 'info');
-            // Navigate to discussion
+            window.platform.showToast('Opening discussion...', 'info');
         }
         
         function viewDecision(decisionId) {
-            window.app.showToast('Viewing decision...', 'info');
-            // Navigate to decision
+            window.platform.showToast('Viewing decision...', 'info');
         }
         
         function closeCreateModal() {
-            window.app.closeCreateModal();
+            window.platform.closeCreateModal();
         }
         
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            window.app = new ThoraxLab();
+            window.platform = new ThoraxLabPlatform();
         });
     </script>
+    
+    <style>
+        /* Modal Styles */
+        .hidden-modal {
+            display: none;
+        }
+        
+        .visible-modal {
+            display: block;
+        }
+        
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: var(--z-modal-backdrop);
+        }
+        
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            width: 90%;
+            max-width: 500px;
+            z-index: var(--z-modal);
+            box-shadow: var(--shadow-2xl);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .modal-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .modal-close:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--space-xs);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 1rem;
+            font-family: var(--font-sans);
+            transition: all var(--transition-fast);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(45, 74, 140, 0.2);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+            flex: 1;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            font-family: var(--font-sans);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </body>
 </html>
