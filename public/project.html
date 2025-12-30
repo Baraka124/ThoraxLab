@@ -3,43 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details | ThoraxLab</title>
+    <title>Project | ThoraxLab</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* ===== PROFESSIONAL MEDICAL DESIGN SYSTEM ===== */
+        /* ===== PROJECT DESIGN SYSTEM ===== */
         :root {
-            /* Premium Medical Color Palette */
-            --primary-dark: #0D1B2A;
-            --primary-main: #1B3A4B;
-            --primary-light: #2D5367;
-            --primary-soft: #41697D;
-            
-            --secondary-blue: #2D9CDB;
-            --secondary-teal: #2B9F9F;
-            --accent-green: #27AE60;
-            --accent-amber: #F39C12;
-            --accent-red: #E74C3C;
+            /* Color Palette */
+            --primary-dark: #0A1929;
+            --primary-main: #1A365D;
+            --primary-light: #2D4A8C;
+            --clinical-accent: #0C7C59;
+            --industry-accent: #D35400;
+            --public-accent: #7B68EE;
+            --decision-purple: #8B5CF6;
+            --velocity-green: #10B981;
+            --attention-amber: #F59E0B;
+            --blocked-red: #EF4444;
             
             /* Neutrals */
-            --neutral-900: #1C1C1E;
-            --neutral-800: #2C2C2E;
-            --neutral-700: #3A3A3C;
-            --neutral-600: #48484A;
-            --neutral-500: #636366;
-            --neutral-400: #8E8E93;
-            --neutral-300: #C7C7CC;
-            --neutral-200: #E5E5EA;
-            --neutral-100: #F2F2F7;
-            --neutral-50: #FAFAFA;
+            --neutral-900: #111827;
+            --neutral-800: #1F2937;
+            --neutral-700: #374151;
+            --neutral-600: #4B5563;
+            --neutral-500: #6B7280;
+            --neutral-400: #9CA3AF;
+            --neutral-300: #D1D5DB;
+            --neutral-200: #E5E7EB;
+            --neutral-100: #F3F4F6;
+            --neutral-50: #F9FAFB;
+            --white: #FFFFFF;
             
-            /* Semantic */
-            --success: #27AE60;
-            --warning: #F39C12;
-            --error: #E74C3C;
-            --info: #2D9CDB;
-            
-            /* Spacing Scale */
-            --space-3xs: 0.125rem;
-            --space-2xs: 0.25rem;
+            /* Spacing */
             --space-xs: 0.5rem;
             --space-sm: 0.75rem;
             --space-md: 1rem;
@@ -47,35 +44,32 @@
             --space-xl: 2rem;
             --space-2xl: 3rem;
             --space-3xl: 4rem;
-            --space-4xl: 6rem;
             
             /* Typography */
-            --font-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-            --font-mono: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
             
-            /* Shadows - Premium */
-            --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
-            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.16);
-            --shadow-xl: 0 24px 72px rgba(0, 0, 0, 0.2);
+            /* Effects */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             
-            /* Borders */
-            --radius-xs: 4px;
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-2xl: 24px;
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
             --radius-full: 9999px;
             
             /* Transitions */
-            --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* ===== RESET & BASE ===== */
+        /* ===== BASE RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -89,411 +83,317 @@
         }
         
         body {
-            font-family: var(--font-primary);
+            font-family: var(--font-sans);
             font-weight: 400;
             line-height: 1.5;
             color: var(--neutral-800);
-            background: var(--neutral-50);
+            background: linear-gradient(135deg, #0A1929 0%, #1A365D 100%);
             min-height: 100vh;
         }
         
-        /* ===== PREMIUM HEADER ===== */
-        .header {
-            background: rgba(255, 255, 255, 0.92);
+        /* ===== PROJECT HEADER ===== */
+        .project-header {
+            background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             position: sticky;
             top: 0;
-            z-index: 200;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+            z-index: 1000;
         }
         
         .header-container {
-            max-width: 1440px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 0 var(--space-xl);
-            height: 72px;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: var(--space-xl);
         }
         
-        /* Logo */
-        .logo {
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+        }
+        
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(-2px);
+        }
+        
+        .project-title-header {
             display: flex;
             align-items: center;
             gap: var(--space-md);
-            text-decoration: none;
         }
         
-        .logo-icon {
+        .project-icon {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--primary-main) 0%, var(--secondary-blue) 100%);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--white);
             font-weight: 700;
             font-size: 1rem;
         }
         
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .logo-primary {
+        .project-title-text h1 {
             font-size: 1.25rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.2;
         }
         
-        /* Breadcrumb */
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            font-size: 0.875rem;
-            color: var(--neutral-500);
+        .project-title-text p {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
         }
         
-        .breadcrumb a {
-            color: var(--neutral-600);
-            text-decoration: none;
-            transition: color var(--transition-fast);
-        }
-        
-        .breadcrumb a:hover {
-            color: var(--primary-main);
-        }
-        
-        .breadcrumb-separator {
-            opacity: 0.5;
-        }
-        
-        /* Header Actions */
         .header-actions {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
+            gap: var(--space-sm);
         }
         
-        /* ===== BUTTON SYSTEM ===== */
-        .btn {
-            display: inline-flex;
+        .action-button {
+            display: flex;
             align-items: center;
-            justify-content: center;
             gap: var(--space-xs);
-            font-family: var(--font-primary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            line-height: 1;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            outline: none;
-            transition: all var(--transition-base);
-            user-select: none;
+            padding: var(--space-sm) var(--space-lg);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: var(--radius-full);
-            position: relative;
-            overflow: hidden;
-            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
         }
         
-        .btn-sm {
-            height: 36px;
-            padding: 0 var(--space-lg);
+        .action-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
         }
         
-        .btn-md {
-            height: 44px;
-            padding: 0 var(--space-xl);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-main) 0%, var(--secondary-blue) 100%);
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
+        .action-button.primary {
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
+            border: none;
+            color: var(--white);
+            font-weight: 600;
             box-shadow: var(--shadow-md);
         }
         
-        .btn-secondary {
-            background: white;
-            color: var(--primary-main);
-            border: 1.5px solid var(--neutral-300);
-            box-shadow: var(--shadow-xs);
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--primary-main);
-            background: var(--neutral-50);
+        .action-button.primary:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn-tertiary {
-            background: transparent;
-            color: var(--neutral-700);
-            padding: 0 var(--space-md);
-        }
-        
-        .btn-tertiary:hover {
-            color: var(--primary-main);
-            background: var(--neutral-100);
-        }
-        
-        /* ===== MAIN LAYOUT ===== */
-        .main-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: var(--space-2xl) var(--space-xl);
-        }
-        
-        /* ===== PROJECT HEADER - PREMIUM ===== */
-        .project-header {
-            background: white;
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--neutral-200);
-            box-shadow: var(--shadow-sm);
-            padding: var(--space-2xl);
-            margin-bottom: var(--space-2xl);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .project-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-main) 0%, var(--secondary-blue) 100%);
-        }
-        
-        .project-header-content {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: var(--space-2xl);
-        }
-        
-        @media (max-width: 1024px) {
-            .project-header-content {
-                grid-template-columns: 1fr;
-                gap: var(--space-xl);
-            }
-        }
-        
-        /* Project Info */
-        .project-info {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-lg);
-        }
-        
-        .project-title-section {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: var(--space-lg);
-        }
-        
-        .project-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--neutral-900);
-            line-height: 1.2;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .project-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-lg);
-        }
-        
-        .project-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2xs);
-            padding: var(--space-xs) var(--space-md);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-        
-        .tag-department {
-            background: var(--neutral-100);
-            color: var(--neutral-700);
-        }
-        
-        .tag-stage {
-            background: rgba(45, 156, 219, 0.1);
-            color: var(--secondary-blue);
-        }
-        
-        .tag-high-priority {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--accent-red);
-        }
-        
-        .project-description {
-            color: var(--neutral-700);
-            font-size: 1.125rem;
-            line-height: 1.6;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .project-stats {
-            display: flex;
-            gap: var(--space-2xl);
-        }
-        
-        .project-stat {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-2xs);
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neutral-900);
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--neutral-500);
-            font-weight: 500;
-        }
-        
-        /* Pulse Card */
-        .pulse-card {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            color: white;
-            width: 320px;
             box-shadow: var(--shadow-lg);
         }
         
-        @media (max-width: 1024px) {
-            .pulse-card {
-                width: 100%;
-            }
-        }
-        
-        .pulse-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .pulse-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .pulse-value {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: var(--space-xs);
-        }
-        
-        .pulse-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .pulse-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            margin-bottom: var(--space-md);
-        }
-        
-        .pulse-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #FF6B6B 0%, #FFD93D 50%, #6BCF7F 100%);
-            border-radius: var(--radius-full);
-        }
-        
-        .pulse-metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-md);
-            margin-top: var(--space-lg);
-        }
-        
-        .pulse-metric {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-2xs);
-        }
-        
-        .metric-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-        
-        .metric-label {
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-        
         /* ===== MAIN PROJECT LAYOUT ===== */
-        .project-layout {
+        .project-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: var(--space-xl);
             display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: var(--space-2xl);
+            grid-template-columns: 1fr 400px;
+            gap: var(--space-xl);
+            min-height: calc(100vh - 64px);
         }
         
         @media (max-width: 1200px) {
-            .project-layout {
+            .project-container {
                 grid-template-columns: 1fr;
             }
         }
         
-        /* ===== DISCUSSION SECTION ===== */
-        .discussion-section {
+        /* ===== PROJECT MAIN CONTENT ===== */
+        .project-main {
             display: flex;
             flex-direction: column;
             gap: var(--space-xl);
         }
         
-        /* New Comment */
-        .new-comment-card {
-            background: white;
+        /* Project Overview */
+        .project-overview {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--neutral-200);
-            box-shadow: var(--shadow-sm);
-            padding: var(--space-xl);
+            padding: var(--space-2xl);
+            backdrop-filter: blur(10px);
         }
         
-        .new-comment-header {
+        .overview-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .overview-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .project-context {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .context-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .context-clinical {
+            background: rgba(12, 124, 89, 0.2);
+            color: var(--clinical-accent);
+            border: 1px solid rgba(12, 124, 89, 0.3);
+        }
+        
+        .context-industry {
+            background: rgba(211, 84, 0, 0.2);
+            color: var(--industry-accent);
+            border: 1px solid rgba(211, 84, 0, 0.3);
+        }
+        
+        .context-collaborative {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--decision-purple);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .project-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        /* Progress Metrics */
+        .progress-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin: var(--space-xl) 0;
+        }
+        
+        @media (max-width: 768px) {
+            .progress-metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .progress-metric {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .metric-trend {
+            font-size: 0.75rem;
+            margin-top: var(--space-xs);
+        }
+        
+        .trend-up {
+            color: var(--velocity-green);
+        }
+        
+        .trend-down {
+            color: var(--blocked-red);
+        }
+        
+        /* Discussion Section */
+        .discussion-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            backdrop-filter: blur(10px);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        
+        .section-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        /* New Comment */
+        .new-comment {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .comment-header {
             display: flex;
             align-items: center;
             gap: var(--space-md);
@@ -501,37 +401,49 @@
         }
         
         .user-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-main) 0%, var(--secondary-blue) 100%);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--white);
             font-weight: 600;
             font-size: 1rem;
+        }
+        
+        .user-info h4 {
+            color: var(--white);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.125rem;
+        }
+        
+        .user-info p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
         }
         
         .comment-input {
             width: 100%;
             min-height: 120px;
             padding: var(--space-lg);
-            font-family: var(--font-primary);
-            font-size: 1rem;
-            color: var(--neutral-900);
-            background: var(--neutral-50);
-            border: 1.5px solid var(--neutral-300);
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: var(--radius-lg);
+            color: var(--white);
+            font-size: 1rem;
+            font-family: var(--font-sans);
             resize: vertical;
             transition: all var(--transition-fast);
         }
         
         .comment-input:focus {
             outline: none;
-            border-color: var(--secondary-blue);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(45, 156, 219, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(45, 74, 140, 0.2);
         }
         
         .comment-actions {
@@ -550,65 +462,60 @@
             width: 36px;
             height: 36px;
             border-radius: var(--radius-md);
-            background: var(--neutral-100);
-            border: 1px solid var(--neutral-300);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--neutral-600);
+            color: rgba(255, 255, 255, 0.6);
             cursor: pointer;
             transition: all var(--transition-fast);
         }
         
         .tool-button:hover {
-            background: var(--neutral-200);
-            color: var(--neutral-900);
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .comment-submit {
+            padding: var(--space-sm) var(--space-xl);
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
+            border: none;
+            border-radius: var(--radius-full);
+            color: var(--white);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .comment-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         
         /* Comments List */
-        .comments-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-xl);
-        }
-        
-        .comments-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--neutral-900);
-        }
-        
-        .comments-count {
-            font-size: 0.875rem;
-            color: var(--neutral-500);
-            background: var(--neutral-100);
-            padding: var(--space-xs) var(--space-md);
-            border-radius: var(--radius-full);
-        }
-        
         .comments-list {
             display: flex;
             flex-direction: column;
             gap: var(--space-xl);
         }
         
-        /* Comment Card */
         .comment-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--neutral-200);
-            box-shadow: var(--shadow-xs);
             padding: var(--space-xl);
-            transition: all var(--transition-base);
+            transition: all var(--transition-fast);
         }
         
         .comment-card:hover {
-            border-color: var(--neutral-300);
-            box-shadow: var(--shadow-sm);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
         }
         
-        .comment-header {
+        .comment-card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -621,40 +528,38 @@
             gap: var(--space-md);
         }
         
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-2xs);
-        }
-        
-        .user-name {
+        .comment-user-info h4 {
+            color: var(--white);
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--neutral-900);
+            margin-bottom: 0.125rem;
         }
         
-        .user-role {
+        .comment-user-info p {
+            color: rgba(255, 255, 255, 0.6);
             font-size: 0.75rem;
-            color: var(--neutral-500);
-            font-weight: 500;
         }
         
         .comment-time {
             font-size: 0.75rem;
-            color: var(--neutral-400);
+            color: rgba(255, 255, 255, 0.4);
         }
         
         .comment-content {
-            color: var(--neutral-700);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.9375rem;
             line-height: 1.6;
             margin-bottom: var(--space-lg);
+            white-space: pre-wrap;
+            word-break: break-word;
         }
         
-        .comment-actions-bar {
+        .comment-actions-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .comment-reactions {
@@ -665,42 +570,130 @@
         .reaction-button {
             display: flex;
             align-items: center;
-            gap: var(--space-2xs);
-            background: none;
-            border: none;
-            color: var(--neutral-500);
-            font-size: 0.875rem;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-full);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-weight: 500;
             cursor: pointer;
-            padding: var(--space-2xs) var(--space-xs);
-            border-radius: var(--radius-md);
             transition: all var(--transition-fast);
         }
         
         .reaction-button:hover {
-            background: var(--neutral-100);
-            color: var(--neutral-700);
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--white);
         }
         
         .reaction-button.active {
-            background: rgba(45, 156, 219, 0.1);
-            color: var(--secondary-blue);
-            font-weight: 600;
+            background: rgba(45, 156, 219, 0.2);
+            border-color: rgba(45, 156, 219, 0.3);
+            color: #2D9CDB;
         }
         
-        /* ===== SIDEBAR ===== */
+        .comment-options {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        /* ===== PROJECT SIDEBAR ===== */
         .project-sidebar {
             display: flex;
             flex-direction: column;
             gap: var(--space-xl);
         }
         
+        /* Pulse Card */
+        .pulse-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            backdrop-filter: blur(10px);
+        }
+        
+        .pulse-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .pulse-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .pulse-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+            text-align: center;
+        }
+        
+        .pulse-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .pulse-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-md);
+        }
+        
+        .pulse-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blocked-red) 0%, var(--attention-amber) 30%, var(--velocity-green) 100%);
+            border-radius: var(--radius-full);
+            transition: width 1s ease-out;
+        }
+        
+        .pulse-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        .pulse-metric {
+            text-align: center;
+        }
+        
+        .breakdown-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .breakdown-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
         /* Team Card */
         .team-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--neutral-200);
-            box-shadow: var(--shadow-xs);
             padding: var(--space-xl);
+            backdrop-filter: blur(10px);
         }
         
         .team-header {
@@ -711,16 +704,18 @@
         }
         
         .team-title {
-            font-size: 1.125rem;
+            font-size: 0.875rem;
             font-weight: 600;
-            color: var(--neutral-900);
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .team-count {
             font-size: 0.75rem;
-            color: var(--neutral-500);
-            background: var(--neutral-100);
-            padding: var(--space-2xs) var(--space-sm);
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.125rem 0.5rem;
             border-radius: var(--radius-full);
         }
         
@@ -740,19 +735,47 @@
         }
         
         .team-member:hover {
-            background: var(--neutral-100);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .member-info {
+            flex: 1;
+        }
+        
+        .member-name {
+            font-size: 0.875rem;
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.125rem;
+        }
+        
+        .member-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
         }
         
         .member-status {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            margin-left: auto;
         }
         
         .status-online {
-            background: var(--success);
-            box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+            background: var(--velocity-green);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
         }
         
         .status-offline {
@@ -760,100 +783,17 @@
         }
         
         .status-away {
-            background: var(--warning);
-            box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
-        }
-        
-        /* Progress Card */
-        .progress-card {
-            background: white;
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--neutral-200);
-            box-shadow: var(--shadow-xs);
-            padding: var(--space-xl);
-        }
-        
-        .progress-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .progress-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--neutral-900);
-        }
-        
-        .progress-stages {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-lg);
-        }
-        
-        .progress-stage {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-        
-        .stage-indicator {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-        
-        .stage-completed {
-            background: var(--success);
-            color: white;
-        }
-        
-        .stage-current {
-            background: var(--secondary-blue);
-            color: white;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .stage-upcoming {
-            background: var(--neutral-200);
-            color: var(--neutral-500);
-        }
-        
-        .stage-info {
-            flex: 1;
-        }
-        
-        .stage-name {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--neutral-900);
-            margin-bottom: var(--space-2xs);
-        }
-        
-        .stage-date {
-            font-size: 0.75rem;
-            color: var(--neutral-500);
+            background: var(--attention-amber);
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
         }
         
         /* Timeline Card */
         .timeline-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--neutral-200);
-            box-shadow: var(--shadow-xs);
             padding: var(--space-xl);
+            backdrop-filter: blur(10px);
         }
         
         .timeline-header {
@@ -864,9 +804,11 @@
         }
         
         .timeline-title {
-            font-size: 1.125rem;
+            font-size: 0.875rem;
             font-weight: 600;
-            color: var(--neutral-900);
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .timeline-list {
@@ -879,8 +821,8 @@
             display: flex;
             gap: var(--space-md);
             padding-bottom: var(--space-lg);
-            border-left: 2px solid var(--neutral-200);
-            margin-left: 15px;
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            margin-left: 7px;
             position: relative;
         }
         
@@ -894,892 +836,1401 @@
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            background: var(--neutral-300);
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .timeline-content {
             flex: 1;
-            margin-left: var(--space-md);
         }
         
         .timeline-event {
             font-size: 0.875rem;
-            color: var(--neutral-700);
+            color: rgba(255, 255, 255, 0.9);
             line-height: 1.4;
-            margin-bottom: var(--space-2xs);
+            margin-bottom: var(--space-xs);
         }
         
         .timeline-time {
             font-size: 0.75rem;
-            color: var(--neutral-500);
+            color: rgba(255, 255, 255, 0.5);
         }
         
-        /* ===== MODALS ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: var(--space-lg);
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal {
-            background: white;
+        /* Decisions Card */
+        .decisions-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-xl);
-            animation: slideUp 0.3s ease-out;
+            padding: var(--space-xl);
+            backdrop-filter: blur(10px);
         }
         
-        @keyframes slideUp {
-            from { transform: translateY(40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .decisions-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
         }
         
-        /* ===== RESPONSIVE ===== */
+        .decisions-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .decisions-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        
+        .decision-item {
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+        
+        .decision-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        
+        .decision-content {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            line-height: 1.4;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .decision-status {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--attention-amber);
+        }
+        
+        .status-approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--velocity-green);
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
             .header-container {
-                padding: 0 var(--space-lg);
-                height: 64px;
+                padding: 0 var(--space-md);
             }
             
-            .main-container {
-                padding: var(--space-xl) var(--space-lg);
+            .project-container {
+                padding: var(--space-md);
             }
             
-            .project-header {
-                padding: var(--space-xl);
-            }
-            
-            .project-title {
-                font-size: 1.5rem;
-            }
-            
-            .project-stats {
-                flex-wrap: wrap;
+            .overview-header {
+                flex-direction: column;
                 gap: var(--space-lg);
             }
-        }
-        
-        @media (max-width: 480px) {
-            .breadcrumb {
-                display: none;
-            }
             
-            .project-title-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .comment-actions {
-                flex-direction: column;
-                align-items: stretch;
-                gap: var(--space-md);
+            .progress-metrics {
+                grid-template-columns: 1fr;
             }
         }
         
-        /* ===== UTILITIES ===== */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .hidden { display: none; }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: var(--space-sm); }
-        .gap-4 { gap: var(--space-lg); }
-        .mt-4 { margin-top: var(--space-lg); }
-        .mb-4 { margin-bottom: var(--space-lg); }
+        /* ===== UTILITY CLASSES ===== */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-2xl);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .empty-description {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        /* ===== TOAST NOTIFICATIONS ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
+    <!-- Project Header -->
+    <header class="project-header">
         <div class="header-container">
-            <div class="flex items-center gap-4">
-                <a href="/" class="logo">
-                    <div class="logo-icon">TL</div>
-                    <div class="logo-text">
-                        <div class="logo-primary">ThoraxLab</div>
-                    </div>
+            <div class="header-left">
+                <a href="/" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Projects
                 </a>
                 
-                <div class="breadcrumb">
-                    <a href="/">Dashboard</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span>AI-Powered COPD Detection</span>
+                <div class="project-title-header">
+                    <div class="project-icon" id="projectIcon">AI</div>
+                    <div class="project-title-text">
+                        <h1 id="projectTitle">AI-Powered COPD Detection</h1>
+                        <p>Clinical-Industry Innovation Project</p>
+                    </div>
                 </div>
             </div>
             
             <div class="header-actions">
-                <button class="btn btn-secondary btn-sm" id="backBtn">
-                    ← Back
+                <button class="action-button" id="editProjectBtn">
+                    <i class="fas fa-edit"></i>
+                    Edit
                 </button>
-                <button class="btn btn-primary btn-sm" id="likeBtn">
-                    👍 Like
+                <button class="action-button" id="shareProjectBtn">
+                    <i class="fas fa-share"></i>
+                    Share
+                </button>
+                <button class="action-button primary" id="joinProjectBtn">
+                    <i class="fas fa-plus"></i>
+                    Join Project
                 </button>
             </div>
         </div>
     </header>
     
     <!-- Main Content -->
-    <main class="main-container">
-        <!-- Project Header -->
-        <div class="project-header">
-            <div class="project-header-content">
-                <div class="project-info">
-                    <div class="project-title-section">
-                        <div>
-                            <h1 class="project-title" id="projectTitle">AI-Powered COPD Early Detection</h1>
+    <main class="project-container">
+        <!-- Left: Project Main Content -->
+        <div class="project-main">
+            <!-- Project Overview -->
+            <section class="project-overview">
+                <div class="overview-header">
+                    <div class="overview-title">
+                        <h2>Project Overview</h2>
+                        <div class="project-context">
+                            <span class="context-badge context-clinical" id="projectContext">Clinical Led</span>
                             <div class="project-meta">
-                                <span class="project-tag tag-department">Pneumology</span>
-                                <span class="project-tag tag-stage">Active Phase</span>
-                                <span class="project-tag tag-high-priority">High Priority</span>
+                                <span>Created <span id="projectCreated">2 weeks ago</span></span>
+                                <span>•</span>
+                                <span>Last active <span id="projectLastActive">Today</span></span>
                             </div>
                         </div>
-                        <button class="btn btn-secondary btn-md" id="editProjectBtn">
-                            ✏️ Edit
-                        </button>
                     </div>
                     
-                    <p class="project-description" id="projectDescription">
-                        Developing machine learning algorithms to detect Chronic Obstructive Pulmonary Disease (COPD) 
-                        patterns from routine chest X-rays 6-12 months earlier than current diagnostic methods. 
-                        Collaboration between Radiology and Pneumology departments for early intervention.
-                    </p>
+                    <button class="action-button" id="projectSettingsBtn">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </button>
+                </div>
+                
+                <div class="project-description" id="projectDescription">
+                    Developing machine learning algorithms to detect Chronic Obstructive Pulmonary Disease (COPD) patterns from routine chest X-rays 6-12 months earlier than current diagnostic methods. This project brings together clinicians from University Medical Center with AI specialists from MedTech Solutions to create a clinically validated screening tool.
+                </div>
+                
+                <!-- Progress Metrics -->
+                <div class="progress-metrics">
+                    <div class="progress-metric">
+                        <div class="metric-value" id="metricVelocity">85</div>
+                        <div class="metric-label">Velocity Score</div>
+                        <div class="metric-trend trend-up">+8 this week</div>
+                    </div>
                     
-                    <div class="project-stats">
-                        <div class="project-stat">
-                            <div class="stat-value">6</div>
-                            <div class="stat-label">Team Members</div>
-                        </div>
-                        <div class="project-stat">
-                            <div class="stat-value">156</div>
-                            <div class="stat-label">Total Interactions</div>
-                        </div>
-                        <div class="project-stat">
-                            <div class="stat-value">42</div>
-                            <div class="stat-label">Comments</div>
-                        </div>
-                        <div class="project-stat">
-                            <div class="stat-value">14d</div>
-                            <div class="stat-label">Time Active</div>
-                        </div>
+                    <div class="progress-metric">
+                        <div class="metric-value" id="metricContributors">12</div>
+                        <div class="metric-label">Contributors</div>
+                        <div class="metric-trend trend-up">+2 new</div>
+                    </div>
+                    
+                    <div class="progress-metric">
+                        <div class="metric-value" id="metricDecisions">8</div>
+                        <div class="metric-label">Decisions</div>
+                        <div class="metric-trend trend-up">3 pending</div>
+                    </div>
+                    
+                    <div class="progress-metric">
+                        <div class="metric-value" id="metricInteractions">156</div>
+                        <div class="metric-label">Interactions</div>
+                        <div class="metric-trend trend-up">+24 today</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Discussion Section -->
+            <section class="discussion-section">
+                <div class="section-header">
+                    <h3 class="section-title">Discussion</h3>
+                    <div class="section-actions">
+                        <button class="action-button" id="filterCommentsBtn">
+                            <i class="fas fa-filter"></i>
+                            Filter
+                        </button>
+                        <button class="action-button" id="sortCommentsBtn">
+                            <i class="fas fa-sort"></i>
+                            Sort
+                        </button>
                     </div>
                 </div>
                 
-                <!-- Pulse Card -->
-                <div class="pulse-card">
-                    <div class="pulse-header">
-                        <div class="pulse-title">Project Pulse</div>
-                        <div class="pulse-label">Live Engagement Score</div>
-                    </div>
-                    
-                    <div class="pulse-value" id="pulseValue">84</div>
-                    
-                    <div class="pulse-bar">
-                        <div class="pulse-fill" style="width: 84%"></div>
-                    </div>
-                    
-                    <div class="pulse-metrics">
-                        <div class="pulse-metric">
-                            <div class="metric-value">+8</div>
-                            <div class="metric-label">This Week</div>
-                        </div>
-                        <div class="pulse-metric">
-                            <div class="metric-value">42</div>
-                            <div class="metric-label">Comments</div>
-                        </div>
-                        <div class="pulse-metric">
-                            <div class="metric-value">89</div>
-                            <div class="metric-label">Likes</div>
-                        </div>
-                        <div class="pulse-metric">
-                            <div class="metric-value">25</div>
-                            <div class="metric-label">Shares</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Main Layout -->
-        <div class="project-layout">
-            <!-- Left: Discussion Section -->
-            <div class="discussion-section">
                 <!-- New Comment -->
-                <div class="new-comment-card">
-                    <div class="new-comment-header">
-                        <div class="user-avatar">DI</div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; color: var(--neutral-900);">Digital Innovation Lead</div>
-                            <div style="font-size: 0.875rem; color: var(--neutral-500);">Add to discussion...</div>
+                <div class="new-comment">
+                    <div class="comment-header">
+                        <div class="user-avatar" id="currentUserAvatar">SC</div>
+                        <div class="user-info">
+                            <h4 id="currentUserName">Dr. Sarah Chen</h4>
+                            <p id="currentUserRole">Clinical Lead</p>
                         </div>
                     </div>
                     
-                    <textarea class="comment-input" id="newComment" 
+                    <textarea class="comment-input" id="newCommentInput" 
                               placeholder="Share your thoughts, ask questions, or provide feedback..."></textarea>
                     
                     <div class="comment-actions">
                         <div class="comment-tools">
-                            <button class="tool-button" title="Attach file">📎</button>
-                            <button class="tool-button" title="Add image">🖼️</button>
-                            <button class="tool-button" title="Mention someone">@</button>
-                            <button class="tool-button" title="Format">🔠</button>
+                            <button class="tool-button" title="Attach file">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="tool-button" title="Add image">
+                                <i class="fas fa-image"></i>
+                            </button>
+                            <button class="tool-button" title="Mention someone">
+                                <i class="fas fa-at"></i>
+                            </button>
+                            <button class="tool-button" title="Format">
+                                <i class="fas fa-bold"></i>
+                            </button>
                         </div>
                         
-                        <button class="btn btn-primary btn-md" id="postCommentBtn">
+                        <button class="comment-submit" id="submitCommentBtn">
+                            <i class="fas fa-paper-plane"></i>
                             Post Comment
                         </button>
                     </div>
                 </div>
                 
-                <!-- Comments -->
-                <div class="comments-header">
-                    <div class="comments-title">Discussion</div>
-                    <div class="comments-count">8 comments</div>
+                <!-- Comments List -->
+                <div class="comments-list" id="commentsList">
+                    <!-- Dynamic content -->
+                </div>
+            </section>
+        </div>
+        
+        <!-- Right: Project Sidebar -->
+        <div class="project-sidebar">
+            <!-- Pulse Card -->
+            <div class="pulse-card">
+                <div class="pulse-header">
+                    <div class="pulse-title">Project Pulse</div>
+                    <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Live</div>
                 </div>
                 
-                <div class="comments-list" id="commentsList">
-                    <!-- Comment 1 -->
-                    <div class="comment-card">
-                        <div class="comment-header">
-                            <div class="comment-user">
-                                <div class="user-avatar">DS</div>
-                                <div class="user-info">
-                                    <div class="user-name">Dr. Sarah Chen</div>
-                                    <div class="user-role">Lead Radiologist</div>
-                                </div>
-                            </div>
-                            <div class="comment-time">2 hours ago</div>
-                        </div>
-                        
-                        <div class="comment-content">
-                            The latest algorithm update shows promising results with 94% accuracy on our test set. 
-                            False positives have been reduced by 32% compared to last month. We should schedule 
-                            a review with the ethics committee next week.
-                            
-                            <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--neutral-100); border-radius: var(--radius-md);">
-                                <div style="font-weight: 600; margin-bottom: var(--space-xs);">📈 Performance Metrics:</div>
-                                <div style="font-size: 0.875rem; color: var(--neutral-600);">
-                                    • Sensitivity: 92.4%<br>
-                                    • Specificity: 95.1%<br>
-                                    • AUC: 0.96<br>
-                                    • Processing time: 1.2s per scan
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="comment-actions-bar">
-                            <div class="comment-reactions">
-                                <button class="reaction-button active">
-                                    👍 12
-                                </button>
-                                <button class="reaction-button">
-                                    💬 Reply
-                                </button>
-                                <button class="reaction-button">
-                                    🔗 Share
-                                </button>
-                            </div>
-                        </div>
+                <div class="pulse-value" id="pulseValue">84</div>
+                <div class="pulse-label">Engagement Health Score</div>
+                
+                <div class="pulse-bar">
+                    <div class="pulse-fill" id="pulseFill" style="width: 84%"></div>
+                </div>
+                
+                <div class="pulse-breakdown">
+                    <div class="pulse-metric">
+                        <div class="breakdown-value">24</div>
+                        <div class="breakdown-label">Comments</div>
                     </div>
-                    
-                    <!-- Comment 2 -->
-                    <div class="comment-card">
-                        <div class="comment-header">
-                            <div class="comment-user">
-                                <div class="user-avatar">MW</div>
-                                <div class="user-info">
-                                    <div class="user-name">Dr. Michael Wang</div>
-                                    <div class="user-role">Clinical Director</div>
-                                </div>
-                            </div>
-                            <div class="comment-time">4 hours ago</div>
-                        </div>
-                        
-                        <div class="comment-content">
-                            Great progress! We need to consider the patient consent forms for the next phase. 
-                            @Digital Innovation Lead - can you coordinate with legal for the updated protocols?
-                            
-                            Also, we should discuss the deployment timeline. Are we targeting Q2 for the pilot?
-                        </div>
-                        
-                        <div class="comment-actions-bar">
-                            <div class="comment-reactions">
-                                <button class="reaction-button">
-                                    👍 8
-                                </button>
-                                <button class="reaction-button">
-                                    💬 2 Replies
-                                </button>
-                                <button class="reaction-button">
-                                    🔗 Share
-                                </button>
-                            </div>
-                        </div>
+                    <div class="pulse-metric">
+                        <div class="breakdown-value">89</div>
+                        <div class="breakdown-label">Likes</div>
                     </div>
-                    
-                    <!-- Comment 3 -->
-                    <div class="comment-card">
-                        <div class="comment-header">
-                            <div class="comment-user">
-                                <div class="user-avatar">RJ</div>
-                                <div class="user-info">
-                                    <div class="user-name">Dr. Rajesh Kumar</div>
-                                    <div class="user-role">Data Scientist</div>
-                                </div>
-                            </div>
-                            <div class="comment-time">1 day ago</div>
-                        </div>
-                        
-                        <div class="comment-content">
-                            I've uploaded the latest dataset with 5,000 additional annotated scans. The model 
-                            training is scheduled for completion by Friday. Initial validation shows improved 
-                            performance in detecting early-stage emphysema patterns.
-                            
-                            <div style="margin-top: var(--space-md);">
-                                <button class="btn btn-secondary btn-sm">
-                                    📁 View Dataset Report
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="comment-actions-bar">
-                            <div class="comment-reactions">
-                                <button class="reaction-button">
-                                    👍 15
-                                </button>
-                                <button class="reaction-button">
-                                    💬 Reply
-                                </button>
-                                <button class="reaction-button">
-                                    🔗 Share
-                                </button>
-                            </div>
-                        </div>
+                    <div class="pulse-metric">
+                        <div class="breakdown-value">8</div>
+                        <div class="breakdown-label">Decisions</div>
+                    </div>
+                    <div class="pulse-metric">
+                        <div class="breakdown-value">156</div>
+                        <div class="breakdown-label">Interactions</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Right: Sidebar -->
-            <div class="project-sidebar">
-                <!-- Team Card -->
-                <div class="team-card">
-                    <div class="team-header">
-                        <div class="team-title">Project Team</div>
-                        <div class="team-count">6 members</div>
-                    </div>
-                    
-                    <div class="team-list">
-                        <div class="team-member">
-                            <div class="user-avatar">DI</div>
-                            <div class="user-info">
-                                <div class="user-name">Digital Innovation Lead</div>
-                                <div class="user-role">Project Lead</div>
-                            </div>
-                            <div class="member-status status-online"></div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="user-avatar">DS</div>
-                            <div class="user-info">
-                                <div class="user-name">Dr. Sarah Chen</div>
-                                <div class="user-role">Lead Radiologist</div>
-                            </div>
-                            <div class="member-status status-online"></div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="user-avatar">MW</div>
-                            <div class="user-info">
-                                <div class="user-name">Dr. Michael Wang</div>
-                                <div class="user-role">Clinical Director</div>
-                            </div>
-                            <div class="member-status status-away"></div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="user-avatar">RJ</div>
-                            <div class="user-info">
-                                <div class="user-name">Dr. Rajesh Kumar</div>
-                                <div class="user-role">Data Scientist</div>
-                            </div>
-                            <div class="member-status status-online"></div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="user-avatar">LW</div>
-                            <div class="user-info">
-                                <div class="user-name">Lisa Williams</div>
-                                <div class="user-role">Research Nurse</div>
-                            </div>
-                            <div class="member-status status-offline"></div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="user-avatar">TJ</div>
-                            <div class="user-info">
-                                <div class="user-name">Thomas Johnson</div>
-                                <div class="user-role">Ethics Coordinator</div>
-                            </div>
-                            <div class="member-status status-online"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <button class="btn btn-secondary btn-sm" style="width: 100%;">
-                            + Invite Team Member
-                        </button>
-                    </div>
+            <!-- Team Card -->
+            <div class="team-card">
+                <div class="team-header">
+                    <div class="team-title">Project Team</div>
+                    <div class="team-count" id="teamCount">8 members</div>
                 </div>
                 
-                <!-- Progress Card -->
-                <div class="progress-card">
-                    <div class="progress-header">
-                        <div class="progress-title">Project Progress</div>
-                        <div style="font-size: 0.875rem; color: var(--neutral-500);">Phase 3 of 5</div>
-                    </div>
-                    
-                    <div class="progress-stages">
-                        <div class="progress-stage">
-                            <div class="stage-indicator stage-completed">✓</div>
-                            <div class="stage-info">
-                                <div class="stage-name">Ideation & Planning</div>
-                                <div class="stage-date">Completed: Jan 15, 2024</div>
-                            </div>
-                        </div>
-                        
-                        <div class="progress-stage">
-                            <div class="stage-indicator stage-completed">✓</div>
-                            <div class="stage-info">
-                                <div class="stage-name">Ethics Approval</div>
-                                <div class="stage-date">Completed: Feb 28, 2024</div>
-                            </div>
-                        </div>
-                        
-                        <div class="progress-stage">
-                            <div class="stage-indicator stage-current">3</div>
-                            <div class="stage-info">
-                                <div class="stage-name">Algorithm Development</div>
-                                <div class="stage-date">Target: Apr 30, 2024</div>
-                            </div>
-                        </div>
-                        
-                        <div class="progress-stage">
-                            <div class="stage-indicator stage-upcoming">4</div>
-                            <div class="stage-info">
-                                <div class="stage-name">Clinical Validation</div>
-                                <div class="stage-date">Starts: May 2024</div>
-                            </div>
-                        </div>
-                        
-                        <div class="progress-stage">
-                            <div class="stage-indicator stage-upcoming">5</div>
-                            <div class="stage-info">
-                                <div class="stage-name">Deployment</div>
-                                <div class="stage-date">Q3 2024</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="team-list" id="teamList">
+                    <!-- Dynamic content -->
                 </div>
                 
-                <!-- Timeline Card -->
-                <div class="timeline-card">
-                    <div class="timeline-header">
-                        <div class="timeline-title">Recent Activity</div>
-                    </div>
-                    
-                    <div class="timeline-list">
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-event">Algorithm accuracy reached 94% on test set</div>
-                                <div class="timeline-time">Today, 2:30 PM</div>
-                            </div>
-                        </div>
-                        
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-event">5,000 new scans added to training dataset</div>
-                                <div class="timeline-time">Yesterday, 4:15 PM</div>
-                            </div>
-                        </div>
-                        
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-event">Team meeting: Discussed Q2 deployment plans</div>
-                                <div class="timeline-time">Mar 12, 10:00 AM</div>
-                            </div>
-                        </div>
-                        
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-event">Received additional funding approval</div>
-                                <div class="timeline-time">Mar 10, 3:45 PM</div>
-                            </div>
-                        </div>
-                    </div>
+                <button class="action-button" style="width: 100%; margin-top: var(--space-lg);" id="inviteTeamBtn">
+                    <i class="fas fa-user-plus"></i>
+                    Invite Team Member
+                </button>
+            </div>
+            
+            <!-- Timeline Card -->
+            <div class="timeline-card">
+                <div class="timeline-header">
+                    <div class="timeline-title">Recent Activity</div>
+                </div>
+                
+                <div class="timeline-list" id="timelineList">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+            
+            <!-- Decisions Card -->
+            <div class="decisions-card">
+                <div class="decisions-header">
+                    <div class="decisions-title">Pending Decisions</div>
+                    <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);" id="pendingDecisionsCount">3 pending</div>
+                </div>
+                
+                <div class="decisions-list" id="decisionsList">
+                    <!-- Dynamic content -->
                 </div>
             </div>
         </div>
     </main>
     
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
     <!-- Edit Project Modal -->
-    <div class="modal-overlay" id="editModal">
-        <div class="modal">
-            <div style="padding: var(--space-xl); border-bottom: 1px solid var(--neutral-200);">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="font-size: 1.25rem; font-weight: 600; color: var(--neutral-900);">
-                        Edit Project Details
-                    </div>
-                    <button class="tool-button" id="closeEditModal">&times;</button>
-                </div>
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 3000; align-items: center; justify-content: center; padding: var(--space-xl);">
+        <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 600px; backdrop-filter: blur(20px); max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
+                <h2 style="color: white; font-size: 1.5rem; font-weight: 700;">Edit Project</h2>
+                <button onclick="closeEditModal()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
             
-            <div style="padding: var(--space-xl);">
-                <div style="margin-bottom: var(--space-xl);">
-                    <label style="display: block; font-weight: 600; margin-bottom: var(--space-xs);">
-                        Project Title
-                    </label>
-                    <input type="text" style="width: 100%; padding: var(--space-md); border: 1.5px solid var(--neutral-300); border-radius: var(--radius-md);" 
-                           value="AI-Powered COPD Early Detection">
+            <form id="editProjectForm" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                <div>
+                    <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Project Title</label>
+                    <input type="text" id="editProjectTitle" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem;">
                 </div>
                 
-                <div style="margin-bottom: var(--space-xl);">
-                    <label style="display: block; font-weight: 600; margin-bottom: var(--space-xs);">
-                        Description
-                    </label>
-                    <textarea style="width: 100%; padding: var(--space-md); border: 1.5px solid var(--neutral-300); border-radius: var(--radius-md); min-height: 120px;">
-Developing machine learning algorithms to detect Chronic Obstructive Pulmonary Disease (COPD) patterns from routine chest X-rays 6-12 months earlier than current diagnostic methods.
-                    </textarea>
+                <div>
+                    <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Description</label>
+                    <textarea id="editProjectDescription" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem; min-height: 150px; resize: vertical;"></textarea>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-bottom: var(--space-xl);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
                     <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: var(--space-xs);">
-                            Stage
-                        </label>
-                        <select style="width: 100%; padding: var(--space-md); border: 1.5px solid var(--neutral-300); border-radius: var(--radius-md);">
-                            <option>Ideation</option>
-                            <option>Planning</option>
-                            <option selected>Active</option>
-                            <option>Review</option>
-                            <option>Completed</option>
+                        <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Project Type</label>
+                        <select id="editProjectType" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem;">
+                            <option value="clinical">Clinical Led</option>
+                            <option value="industry">Industry Led</option>
+                            <option value="collaborative">Joint Collaboration</option>
                         </select>
                     </div>
                     
                     <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: var(--space-xs);">
-                            Priority
-                        </label>
-                        <select style="width: 100%; padding: var(--space-md); border: 1.5px solid var(--neutral-300); border-radius: var(--radius-md);">
-                            <option>Low</option>
-                            <option>Medium</option>
-                            <option selected>High</option>
-                            <option>Critical</option>
+                        <label style="display: block; color: rgba(255, 255, 255, 0.8); margin-bottom: var(--space-xs); font-size: 0.875rem; font-weight: 600;">Status</label>
+                        <select id="editProjectStatus" required style="width: 100%; padding: var(--space-md); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); color: white; font-size: 1rem;">
+                            <option value="active">Active</option>
+                            <option value="planning">Planning</option>
+                            <option value="review">Under Review</option>
+                            <option value="completed">Completed</option>
                         </select>
                     </div>
                 </div>
-            </div>
-            
-            <div style="padding: var(--space-xl); border-top: 1px solid var(--neutral-200); display: flex; justify-content: flex-end; gap: var(--space-md);">
-                <button class="btn btn-secondary btn-md" id="cancelEditBtn">
-                    Cancel
-                </button>
-                <button class="btn btn-primary btn-md" id="saveChangesBtn">
-                    Save Changes
-                </button>
-            </div>
+                
+                <div style="display: flex; gap: var(--space-md); margin-top: var(--space-xl);">
+                    <button type="button" onclick="closeEditModal()" style="flex: 1; padding: var(--space-md); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-md); color: white; font-size: 0.875rem; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="flex: 1; padding: var(--space-md); background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%); border: none; border-radius: var(--radius-md); color: white; font-size: 0.875rem; font-weight: 600; cursor: pointer;">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
-    
+
     <script>
-        // Initialize Project Page
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Project Details Page Initialized');
-            
-            // Initialize components
-            initProjectPage();
-            
-            // Show welcome message
-            setTimeout(() => {
-                showToast('Welcome to project details', 'info');
-            }, 500);
-        });
-        
-        function initProjectPage() {
-            // Back button
-            document.getElementById('backBtn').addEventListener('click', function() {
-                window.history.back();
-            });
-            
-            // Like button
-            document.getElementById('likeBtn').addEventListener('click', function() {
-                const currentPulse = parseInt(document.getElementById('pulseValue').textContent);
-                const newPulse = Math.min(currentPulse + 2, 100);
+        // ===== PROJECT DETAIL APPLICATION =====
+        class ProjectDetail {
+            constructor() {
+                this.baseUrl = window.location.origin;
+                this.projectId = this.getProjectIdFromURL();
+                this.user = null;
+                this.project = null;
+                this.comments = [];
+                this.team = [];
+                this.timeline = [];
+                this.decisions = [];
+                this.ws = null;
+                this.isConnected = false;
                 
-                // Animate pulse increase
-                animateCounter('pulseValue', currentPulse, newPulse);
+                this.init();
+            }
+            
+            async init() {
+                console.log(`🚀 Project Detail Page - Project ID: ${this.projectId}`);
                 
-                // Update pulse bar
-                document.querySelector('.pulse-fill').style.width = newPulse + '%';
+                // Load user session
+                await this.loadUserSession();
                 
-                showToast('Project liked! Engagement increased.', 'success');
-            });
-            
-            // Edit project button
-            document.getElementById('editProjectBtn').addEventListener('click', function() {
-                document.getElementById('editModal').classList.add('active');
-            });
-            
-            // Close edit modal
-            document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
-            document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
-            
-            // Save changes
-            document.getElementById('saveChangesBtn').addEventListener('click', function() {
-                showToast('Project details updated', 'success');
-                closeEditModal();
-            });
-            
-            // Post comment button
-            document.getElementById('postCommentBtn').addEventListener('click', function() {
-                const commentInput = document.getElementById('newComment');
-                const comment = commentInput.value.trim();
+                // Initialize WebSocket
+                this.initWebSocket();
                 
-                if (!comment) {
-                    showToast('Please enter a comment', 'warning');
+                // Load all project data
+                await this.loadProjectData();
+                
+                // Set up event listeners
+                this.setupEventListeners();
+                
+                // Show welcome
+                this.showToast(`Viewing project: ${this.project?.title || 'Loading...'}`, 'info');
+            }
+            
+            getProjectIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id') || 'proj_001';
+            }
+            
+            async loadUserSession() {
+                try {
+                    // In production, this would be from your auth system
+                    this.user = {
+                        id: 'user_001',
+                        name: 'Dr. Sarah Chen',
+                        role: 'clinician',
+                        email: 'sarah.chen@hospital.edu',
+                        institution: 'University Medical Center',
+                        avatar: 'SC',
+                        projectRole: 'Clinical Lead'
+                    };
+                    
+                    document.getElementById('currentUserName').textContent = this.user.name;
+                    document.getElementById('currentUserRole').textContent = this.user.projectRole;
+                    document.getElementById('currentUserAvatar').textContent = this.user.avatar;
+                    
+                } catch (error) {
+                    console.error('Failed to load user session:', error);
+                    this.showToast('Failed to load user session', 'error');
+                }
+            }
+            
+            initWebSocket() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}`;
+                
+                this.ws = new WebSocket(wsUrl);
+                
+                this.ws.onopen = () => {
+                    console.log('🔗 WebSocket connected for project');
+                    this.isConnected = true;
+                    
+                    // Subscribe to project updates
+                    this.ws.send(JSON.stringify({
+                        type: 'subscribe_project',
+                        projectId: this.projectId,
+                        userId: this.user.id
+                    }));
+                };
+                
+                this.ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    this.handleWebSocketMessage(data);
+                };
+                
+                this.ws.onclose = () => {
+                    console.log('🔌 WebSocket disconnected');
+                    this.isConnected = false;
+                    setTimeout(() => this.initWebSocket(), 3000);
+                };
+            }
+            
+            handleWebSocketMessage(data) {
+                switch (data.type) {
+                    case 'project_updated':
+                        if (data.project.id === this.projectId) {
+                            this.updateProject(data.project);
+                        }
+                        break;
+                    case 'comment_added':
+                        if (data.comment.projectId === this.projectId) {
+                            this.addComment(data.comment);
+                        }
+                        break;
+                    case 'decision_updated':
+                        if (data.decision.projectId === this.projectId) {
+                            this.updateDecision(data.decision);
+                        }
+                        break;
+                    case 'team_updated':
+                        if (data.projectId === this.projectId) {
+                            this.updateTeam(data.team);
+                        }
+                        break;
+                    case 'pulse_updated':
+                        if (data.projectId === this.projectId) {
+                            this.updatePulse(data.pulse);
+                        }
+                        break;
+                }
+            }
+            
+            async loadProjectData() {
+                try {
+                    await Promise.all([
+                        this.loadProjectDetails(),
+                        this.loadComments(),
+                        this.loadTeam(),
+                        this.loadTimeline(),
+                        this.loadDecisions()
+                    ]);
+                } catch (error) {
+                    console.error('Failed to load project data:', error);
+                    this.showToast('Failed to load project data', 'error');
+                    
+                    // Load mock data for development
+                    this.loadMockData();
+                }
+            }
+            
+            async loadProjectDetails() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}`);
+                    if (!response.ok) throw new Error('Failed to fetch project');
+                    
+                    this.project = await response.json();
+                    this.renderProjectDetails();
+                } catch (error) {
+                    console.warn('Using mock project data');
+                    this.project = this.getMockProject();
+                    this.renderProjectDetails();
+                }
+            }
+            
+            async loadComments() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}/comments`);
+                    if (!response.ok) throw new Error('Failed to fetch comments');
+                    
+                    this.comments = await response.json();
+                    this.renderComments();
+                } catch (error) {
+                    console.warn('Using mock comments data');
+                    this.comments = this.getMockComments();
+                    this.renderComments();
+                }
+            }
+            
+            async loadTeam() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}/team`);
+                    if (!response.ok) throw new Error('Failed to fetch team');
+                    
+                    this.team = await response.json();
+                    this.renderTeam();
+                } catch (error) {
+                    console.warn('Using mock team data');
+                    this.team = this.getMockTeam();
+                    this.renderTeam();
+                }
+            }
+            
+            async loadTimeline() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}/timeline`);
+                    if (!response.ok) throw new Error('Failed to fetch timeline');
+                    
+                    this.timeline = await response.json();
+                    this.renderTimeline();
+                } catch (error) {
+                    console.warn('Using mock timeline data');
+                    this.timeline = this.getMockTimeline();
+                    this.renderTimeline();
+                }
+            }
+            
+            async loadDecisions() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}/decisions`);
+                    if (!response.ok) throw new Error('Failed to fetch decisions');
+                    
+                    this.decisions = await response.json();
+                    this.renderDecisions();
+                } catch (error) {
+                    console.warn('Using mock decisions data');
+                    this.decisions = this.getMockDecisions();
+                    this.renderDecisions();
+                }
+            }
+            
+            renderProjectDetails() {
+                if (!this.project) return;
+                
+                // Update header
+                document.getElementById('projectTitle').textContent = this.project.title;
+                document.getElementById('projectIcon').textContent = this.project.title.substring(0, 2).toUpperCase();
+                
+                // Update overview
+                document.getElementById('projectDescription').textContent = this.project.description;
+                document.getElementById('projectContext').textContent = this.getContextLabel(this.project.type);
+                document.getElementById('projectContext').className = `context-badge context-${this.project.type}`;
+                
+                // Format dates
+                const createdDate = new Date(this.project.createdAt);
+                const now = new Date();
+                const daysAgo = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+                document.getElementById('projectCreated').textContent = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
+                
+                // Update metrics
+                document.getElementById('metricVelocity').textContent = this.project.velocity || 85;
+                document.getElementById('metricContributors').textContent = this.team.length;
+                document.getElementById('metricDecisions').textContent = this.decisions.filter(d => d.status === 'pending').length;
+                document.getElementById('metricInteractions').textContent = this.project.interactions || 156;
+                
+                // Update pulse
+                this.updatePulse(this.project.pulse || 84);
+            }
+            
+            updatePulse(pulseScore) {
+                document.getElementById('pulseValue').textContent = pulseScore;
+                document.getElementById('pulseFill').style.width = `${pulseScore}%`;
+                
+                // Add pulse animation
+                document.getElementById('pulseValue').classList.add('pulse');
+                setTimeout(() => {
+                    document.getElementById('pulseValue').classList.remove('pulse');
+                }, 2000);
+            }
+            
+            renderComments() {
+                const list = document.getElementById('commentsList');
+                
+                if (this.comments.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">💬</div>
+                            <div class="empty-title">No Comments Yet</div>
+                            <div class="empty-description">Be the first to start the discussion</div>
+                        </div>
+                    `;
                     return;
                 }
                 
-                // Add new comment to list
-                addNewComment(comment);
-                
-                // Clear input
-                commentInput.value = '';
-                
-                // Update pulse
-                const currentPulse = parseInt(document.getElementById('pulseValue').textContent);
-                const newPulse = Math.min(currentPulse + 3, 100);
-                animateCounter('pulseValue', currentPulse, newPulse);
-                document.querySelector('.pulse-fill').style.width = newPulse + '%';
-                
-                showToast('Comment posted successfully', 'success');
-            });
-            
-            // Reaction buttons
-            document.querySelectorAll('.reaction-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (this.classList.contains('active')) {
-                        this.classList.remove('active');
-                    } else {
-                        this.classList.add('active');
-                    }
-                });
-            });
-            
-            // Close modal on outside click
-            document.getElementById('editModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeEditModal();
-                }
-            });
-            
-            // Close modal with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeEditModal();
-                }
-            });
-        }
-        
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
-        
-        function addNewComment(comment) {
-            const commentsList = document.getElementById('commentsList');
-            const now = new Date();
-            
-            const commentCard = document.createElement('div');
-            commentCard.className = 'comment-card';
-            commentCard.innerHTML = `
-                <div class="comment-header">
-                    <div class="comment-user">
-                        <div class="user-avatar">DI</div>
-                        <div class="user-info">
-                            <div class="user-name">Digital Innovation Lead</div>
-                            <div class="user-role">Project Lead</div>
+                list.innerHTML = this.comments.map(comment => `
+                    <div class="comment-card" data-comment-id="${comment.id}">
+                        <div class="comment-card-header">
+                            <div class="comment-user">
+                                <div class="user-avatar" style="background: ${this.getUserColor(comment.user.role)}">${comment.user.avatar}</div>
+                                <div class="comment-user-info">
+                                    <h4>${comment.user.name}</h4>
+                                    <p>${comment.user.role} • ${this.formatRelativeTime(comment.createdAt)}</p>
+                                </div>
+                            </div>
+                            <div class="comment-time">${this.formatTime(comment.createdAt)}</div>
+                        </div>
+                        
+                        <div class="comment-content">${this.escapeHtml(comment.content)}</div>
+                        
+                        <div class="comment-actions-row">
+                            <div class="comment-reactions">
+                                <button class="reaction-button ${comment.userReaction === 'like' ? 'active' : ''}" onclick="window.app.reactToComment('${comment.id}', 'like')">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>${comment.likes || 0}</span>
+                                </button>
+                                <button class="reaction-button" onclick="window.app.replyToComment('${comment.id}')">
+                                    <i class="fas fa-reply"></i>
+                                    Reply
+                                </button>
+                                <button class="reaction-button" onclick="window.app.shareComment('${comment.id}')">
+                                    <i class="fas fa-share"></i>
+                                    Share
+                                </button>
+                            </div>
+                            
+                            ${comment.userId === this.user.id ? `
+                                <div class="comment-options">
+                                    <button class="tool-button" onclick="window.app.editComment('${comment.id}')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="tool-button" onclick="window.app.deleteComment('${comment.id}')" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
-                    <div class="comment-time">Just now</div>
-                </div>
+                `).join('');
+            }
+            
+            renderTeam() {
+                const list = document.getElementById('teamList');
+                const count = document.getElementById('teamCount');
                 
-                <div class="comment-content">
-                    ${comment}
-                </div>
+                count.textContent = `${this.team.length} members`;
                 
-                <div class="comment-actions-bar">
-                    <div class="comment-reactions">
-                        <button class="reaction-button">
-                            👍 0
-                        </button>
-                        <button class="reaction-button">
-                            💬 Reply
-                        </button>
-                        <button class="reaction-button">
-                            🔗 Share
-                        </button>
+                list.innerHTML = this.team.map(member => `
+                    <div class="team-member">
+                        <div class="member-avatar" style="background: ${this.getUserColor(member.role)}">${member.avatar}</div>
+                        <div class="member-info">
+                            <div class="member-name">${member.name}</div>
+                            <div class="member-role">${member.role}</div>
+                        </div>
+                        <div class="member-status ${member.status === 'online' ? 'status-online' : member.status === 'away' ? 'status-away' : 'status-offline'}"></div>
                     </div>
-                </div>
-            `;
+                `).join('');
+            }
             
-            // Add to top of comments list
-            commentsList.prepend(commentCard);
+            renderTimeline() {
+                const list = document.getElementById('timelineList');
+                
+                if (this.timeline.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📅</div>
+                            <div class="empty-title">No Recent Activity</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                list.innerHTML = this.timeline.map(event => `
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-event">${event.description}</div>
+                            <div class="timeline-time">${this.formatRelativeTime(event.timestamp)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
             
-            // Update comments count
-            const countElement = document.querySelector('.comments-count');
-            const currentCount = parseInt(countElement.textContent);
-            countElement.textContent = (currentCount + 1) + ' comments';
+            renderDecisions() {
+                const list = document.getElementById('decisionsList');
+                const count = document.getElementById('pendingDecisionsCount');
+                
+                const pending = this.decisions.filter(d => d.status === 'pending');
+                count.textContent = `${pending.length} pending`;
+                
+                if (pending.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">✅</div>
+                            <div class="empty-title">No Pending Decisions</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                list.innerHTML = pending.map(decision => `
+                    <div class="decision-item" onclick="window.app.viewDecision('${decision.id}')">
+                        <div class="decision-content">${decision.title}</div>
+                        <span class="decision-status status-pending">Pending</span>
+                    </div>
+                `).join('');
+            }
             
-            // Add event listeners to new reaction buttons
-            commentCard.querySelectorAll('.reaction-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (this.classList.contains('active')) {
-                        this.classList.remove('active');
-                    } else {
-                        this.classList.add('active');
+            updateProject(project) {
+                this.project = project;
+                this.renderProjectDetails();
+                this.showToast('Project updated', 'success');
+            }
+            
+            addComment(comment) {
+                this.comments.unshift(comment);
+                if (this.comments.length > 20) this.comments.pop();
+                this.renderComments();
+                this.showToast('New comment added', 'success');
+            }
+            
+            updateDecision(decision) {
+                const index = this.decisions.findIndex(d => d.id === decision.id);
+                if (index >= 0) {
+                    this.decisions[index] = decision;
+                } else {
+                    this.decisions.push(decision);
+                }
+                this.renderDecisions();
+            }
+            
+            updateTeam(team) {
+                this.team = team;
+                this.renderTeam();
+            }
+            
+            setupEventListeners() {
+                // Edit project button
+                document.getElementById('editProjectBtn').addEventListener('click', () => {
+                    this.openEditModal();
+                });
+                
+                // Share project button
+                document.getElementById('shareProjectBtn').addEventListener('click', () => {
+                    this.shareProject();
+                });
+                
+                // Join project button
+                document.getElementById('joinProjectBtn').addEventListener('click', () => {
+                    this.joinProject();
+                });
+                
+                // Project settings button
+                document.getElementById('projectSettingsBtn').addEventListener('click', () => {
+                    this.showProjectSettings();
+                });
+                
+                // Submit comment button
+                document.getElementById('submitCommentBtn').addEventListener('click', () => {
+                    this.submitComment();
+                });
+                
+                // Comment input - submit on Ctrl+Enter
+                document.getElementById('newCommentInput').addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        this.submitComment();
                     }
                 });
-            });
-        }
-        
-        function animateCounter(elementId, start, end) {
-            const element = document.getElementById(elementId);
-            const duration = 1000;
-            const startTime = performance.now();
+                
+                // Filter comments button
+                document.getElementById('filterCommentsBtn').addEventListener('click', () => {
+                    this.filterComments();
+                });
+                
+                // Sort comments button
+                document.getElementById('sortCommentsBtn').addEventListener('click', () => {
+                    this.sortComments();
+                });
+                
+                // Invite team button
+                document.getElementById('inviteTeamBtn').addEventListener('click', () => {
+                    this.inviteTeamMember();
+                });
+                
+                // Edit project form submission
+                document.getElementById('editProjectForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveProjectChanges();
+                });
+            }
             
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
+            async submitComment() {
+                const input = document.getElementById('newCommentInput');
+                const content = input.value.trim();
                 
-                const currentValue = Math.floor(start + (end - start) * progress);
-                element.textContent = currentValue;
+                if (!content) {
+                    this.showToast('Please enter a comment', 'warning');
+                    return;
+                }
                 
-                if (progress < 1) {
-                    requestAnimationFrame(update);
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/comments`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            projectId: this.projectId,
+                            content: content,
+                            userId: this.user.id
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to post comment');
+                    
+                    const comment = await response.json();
+                    
+                    // Clear input
+                    input.value = '';
+                    
+                    // Add to list
+                    this.addComment(comment);
+                    
+                    // Update pulse
+                    const newPulse = Math.min((this.project.pulse || 84) + 2, 100);
+                    this.updatePulse(newPulse);
+                    
+                } catch (error) {
+                    console.error('Failed to post comment:', error);
+                    this.showToast('Failed to post comment', 'error');
                 }
             }
             
-            requestAnimationFrame(update);
-        }
-        
-        function showToast(message, type = 'info') {
-            // Create toast container if it doesn't exist
-            let container = document.getElementById('toastContainer');
-            if (!container) {
-                container = document.createElement('div');
-                container.id = 'toastContainer';
-                container.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 2000;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    max-width: 400px;
+            openEditModal() {
+                if (!this.project) return;
+                
+                document.getElementById('editProjectTitle').value = this.project.title;
+                document.getElementById('editProjectDescription').value = this.project.description;
+                document.getElementById('editProjectType').value = this.project.type;
+                document.getElementById('editProjectStatus').value = this.project.status || 'active';
+                
+                document.getElementById('editModal').style.display = 'flex';
+            }
+            
+            closeEditModal() {
+                document.getElementById('editModal').style.display = 'none';
+            }
+            
+            async saveProjectChanges() {
+                try {
+                    const updates = {
+                        title: document.getElementById('editProjectTitle').value.trim(),
+                        description: document.getElementById('editProjectDescription').value.trim(),
+                        type: document.getElementById('editProjectType').value,
+                        status: document.getElementById('editProjectStatus').value
+                    };
+                    
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updates)
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to update project');
+                    
+                    const updatedProject = await response.json();
+                    this.updateProject(updatedProject);
+                    this.closeEditModal();
+                    
+                    this.showToast('Project updated successfully', 'success');
+                } catch (error) {
+                    console.error('Failed to update project:', error);
+                    this.showToast('Failed to update project', 'error');
+                }
+            }
+            
+            shareProject() {
+                const shareUrl = `${window.location.origin}/project.html?id=${this.projectId}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: this.project.title,
+                        text: this.project.description,
+                        url: shareUrl
+                    });
+                } else {
+                    navigator.clipboard.writeText(shareUrl);
+                    this.showToast('Project link copied to clipboard', 'success');
+                }
+            }
+            
+            async joinProject() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/projects/${this.projectId}/join`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: this.user.id,
+                            role: this.user.role
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to join project');
+                    
+                    const result = await response.json();
+                    this.showToast(result.message, 'success');
+                    
+                    // Refresh team list
+                    await this.loadTeam();
+                    
+                } catch (error) {
+                    console.error('Failed to join project:', error);
+                    this.showToast('Failed to join project', 'error');
+                }
+            }
+            
+            showProjectSettings() {
+                this.showToast('Project settings panel coming soon', 'info');
+            }
+            
+            filterComments() {
+                this.showToast('Filter comments functionality coming soon', 'info');
+            }
+            
+            sortComments() {
+                this.showToast('Sort comments functionality coming soon', 'info');
+            }
+            
+            inviteTeamMember() {
+                this.showToast('Invite team member functionality coming soon', 'info');
+            }
+            
+            // Comment actions
+            async reactToComment(commentId, reaction) {
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/comments/${commentId}/react`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: this.user.id,
+                            reaction: reaction
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to react to comment');
+                    
+                    this.showToast('Reaction added', 'success');
+                } catch (error) {
+                    console.error('Failed to react to comment:', error);
+                    this.showToast('Failed to react to comment', 'error');
+                }
+            }
+            
+            replyToComment(commentId) {
+                const comment = this.comments.find(c => c.id === commentId);
+                if (comment) {
+                    const input = document.getElementById('newCommentInput');
+                    input.value = `@${comment.user.name.split(' ')[0]} `;
+                    input.focus();
+                }
+            }
+            
+            shareComment(commentId) {
+                const comment = this.comments.find(c => c.id === commentId);
+                if (comment) {
+                    const shareText = `${comment.user.name}: ${comment.content.substring(0, 100)}...`;
+                    navigator.clipboard.writeText(shareText);
+                    this.showToast('Comment copied to clipboard', 'success');
+                }
+            }
+            
+            editComment(commentId) {
+                this.showToast('Edit comment functionality coming soon', 'info');
+            }
+            
+            async deleteComment(commentId) {
+                if (!confirm('Are you sure you want to delete this comment?')) return;
+                
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/comments/${commentId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to delete comment');
+                    
+                    this.comments = this.comments.filter(c => c.id !== commentId);
+                    this.renderComments();
+                    this.showToast('Comment deleted', 'success');
+                } catch (error) {
+                    console.error('Failed to delete comment:', error);
+                    this.showToast('Failed to delete comment', 'error');
+                }
+            }
+            
+            viewDecision(decisionId) {
+                this.showToast('View decision functionality coming soon', 'info');
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                
+                const icons = {
+                    success: '✅',
+                    error: '❌',
+                    warning: '⚠️',
+                    info: 'ℹ️'
+                };
+                
+                toast.innerHTML = `
+                    <div>${icons[type] || icons.info}</div>
+                    <div style="flex: 1;">${message}</div>
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer;">&times;</button>
                 `;
-                document.body.appendChild(container);
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 5000);
             }
             
-            const toastId = 'toast-' + Date.now();
-            const icons = {
-                success: '✅',
-                error: '❌',
-                warning: '⚠️',
-                info: 'ℹ️'
-            };
+            // Utility methods
+            getContextLabel(type) {
+                const labels = {
+                    clinical: 'Clinical Led',
+                    industry: 'Industry Led',
+                    collaborative: 'Joint Collaboration'
+                };
+                return labels[type] || 'Collaboration';
+            }
             
-            const toast = document.createElement('div');
-            toast.id = toastId;
-            toast.style.cssText = `
-                background: white;
-                border-radius: 12px;
-                padding: 16px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-                border-left: 4px solid var(--${type});
-                display: flex;
-                align-items: flex-start;
-                gap: 12px;
-                animation: slideInRight 0.3s ease-out;
-            `;
+            getUserColor(role) {
+                const colors = {
+                    clinician: 'linear-gradient(135deg, var(--clinical-accent) 0%, #0A7C59 100%)',
+                    industry: 'linear-gradient(135deg, var(--industry-accent) 0%, #B45300 100%)',
+                    public: 'linear-gradient(135deg, var(--public-accent) 0%, #6A5ACD 100%)'
+                };
+                return colors[role] || colors.clinician;
+            }
             
-            toast.innerHTML = `
-                <div style="
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 50%;
-                    background: var(--${type});
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 12px;
-                ">
-                    ${icons[type] || icons.info}
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">
-                        ${type.charAt(0).toUpperCase() + type.slice(1)}
-                    </div>
-                    <div style="font-size: 14px; color: var(--neutral-600);">
-                        ${message}
-                    </div>
-                </div>
-                <button style="
-                    background: none;
-                    border: none;
-                    color: var(--neutral-400);
-                    cursor: pointer;
-                    padding: 4px;
-                    font-size: 16px;
-                ">&times;</button>
-            `;
+            formatRelativeTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffMins < 1) return 'just now';
+                if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
+                if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+                if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+                if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) === 1 ? '' : 's'} ago`;
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
             
-            container.appendChild(toast);
+            formatTime(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            }
             
-            // Add close button listener
-            const closeBtn = toast.querySelector('button');
-            closeBtn.addEventListener('click', () => {
-                toast.remove();
-            });
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
             
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                const toastElement = document.getElementById(toastId);
-                if (toastElement) {
-                    toastElement.remove();
-                }
-            }, 5000);
+            // Mock data for development
+            loadMockData() {
+                this.project = this.getMockProject();
+                this.comments = this.getMockComments();
+                this.team = this.getMockTeam();
+                this.timeline = this.getMockTimeline();
+                this.decisions = this.getMockDecisions();
+                
+                this.renderProjectDetails();
+                this.renderComments();
+                this.renderTeam();
+                this.renderTimeline();
+                this.renderDecisions();
+            }
+            
+            getMockProject() {
+                return {
+                    id: this.projectId,
+                    title: 'AI-Powered COPD Detection',
+                    description: 'Developing machine learning algorithms to detect Chronic Obstructive Pulmonary Disease (COPD) patterns from routine chest X-rays 6-12 months earlier than current diagnostic methods. This project brings together clinicians from University Medical Center with AI specialists from MedTech Solutions to create a clinically validated screening tool.',
+                    type: 'clinical',
+                    status: 'active',
+                    pulse: 84,
+                    velocity: 85,
+                    interactions: 156,
+                    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days ago
+                    updatedAt: new Date().toISOString()
+                };
+            }
+            
+            getMockComments() {
+                return [
+                    {
+                        id: 'comment_001',
+                        content: 'The latest algorithm update shows promising results with 94% accuracy on our test set. False positives have been reduced by 32% compared to last month. We should schedule a review with the ethics committee next week.',
+                        userId: 'user_002',
+                        user: {
+                            name: 'Dr. Michael Wang',
+                            role: 'clinician',
+                            avatar: 'MW'
+                        },
+                        likes: 12,
+                        userReaction: null,
+                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() // 2 hours ago
+                    },
+                    {
+                        id: 'comment_002',
+                        content: 'Great progress! We need to consider the patient consent forms for the next phase. Also, we should discuss the deployment timeline. Are we targeting Q2 for the pilot?',
+                        userId: 'user_003',
+                        user: {
+                            name: 'Rajesh Kumar',
+                            role: 'industry',
+                            avatar: 'RK'
+                        },
+                        likes: 8,
+                        userReaction: 'like',
+                        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString() // 4 hours ago
+                    },
+                    {
+                        id: 'comment_003',
+                        content: 'I\'ve uploaded the latest dataset with 5,000 additional annotated scans. The model training is scheduled for completion by Friday. Initial validation shows improved performance in detecting early-stage emphysema patterns.',
+                        userId: 'user_004',
+                        user: {
+                            name: 'Lisa Williams',
+                            role: 'public',
+                            avatar: 'LW'
+                        },
+                        likes: 15,
+                        userReaction: null,
+                        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+                    }
+                ];
+            }
+            
+            getMockTeam() {
+                return [
+                    {
+                        id: 'user_001',
+                        name: 'Dr. Sarah Chen',
+                        role: 'Clinical Lead',
+                        avatar: 'SC',
+                        status: 'online'
+                    },
+                    {
+                        id: 'user_002',
+                        name: 'Dr. Michael Wang',
+                        role: 'Radiologist',
+                        avatar: 'MW',
+                        status: 'online'
+                    },
+                    {
+                        id: 'user_003',
+                        name: 'Rajesh Kumar',
+                        role: 'AI Engineer',
+                        avatar: 'RK',
+                        status: 'away'
+                    },
+                    {
+                        id: 'user_004',
+                        name: 'Lisa Williams',
+                        role: 'Patient Advocate',
+                        avatar: 'LW',
+                        status: 'offline'
+                    },
+                    {
+                        id: 'user_005',
+                        name: 'Tech Team',
+                        role: 'Development',
+                        avatar: 'TT',
+                        status: 'online'
+                    }
+                ];
+            }
+            
+            getMockTimeline() {
+                return [
+                    {
+                        description: 'Algorithm accuracy reached 94% on test set',
+                        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        description: '5,000 new scans added to training dataset',
+                        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        description: 'Team meeting: Discussed Q2 deployment plans',
+                        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        description: 'Received additional funding approval',
+                        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+                    }
+                ];
+            }
+            
+            getMockDecisions() {
+                return [
+                    {
+                        id: 'decision_001',
+                        title: 'Finalize patient inclusion criteria for trial',
+                        status: 'pending',
+                        projectId: this.projectId
+                    },
+                    {
+                        id: 'decision_002',
+                        title: 'Approve budget for prototype development',
+                        status: 'pending',
+                        projectId: this.projectId
+                    },
+                    {
+                        id: 'decision_003',
+                        title: 'Select manufacturing partner',
+                        status: 'pending',
+                        projectId: this.projectId
+                    },
+                    {
+                        id: 'decision_004',
+                        title: 'Ethics committee review scheduled',
+                        status: 'approved',
+                        projectId: this.projectId
+                    }
+                ];
+            }
         }
+        
+        // ===== GLOBAL FUNCTIONS =====
+        function closeEditModal() {
+            window.app.closeEditModal();
+        }
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new ProjectDetail();
+        });
     </script>
 </body>
 </html>
