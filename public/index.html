@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThoraxLab | Research Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- REMOVED: Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ==================== CSS VARIABLES ==================== */
         :root {
-            --thorax-primary: #1A5F7A;
+            /* ThoraxLab Brand Colors */
+            --thorax-primary: #1A5F7A;        /* Deep medical blue */
             --thorax-primary-dark: #14485E;
             --thorax-primary-light: #E8F4F8;
-            --thorax-secondary: #0D8B70;
-            --thorax-accent: #6D5ACF;
+            --thorax-secondary: #0D8B70;      /* Medical teal */
+            --thorax-accent: #6D5ACF;         /* Professional purple */
             --thorax-warning: #F59E0B;
             --thorax-error: #EF4444;
             --thorax-success: #10B981;
+            
+            /* Neutral Colors */
             --text-dark: #1E293B;
             --text-medium: #475569;
             --text-light: #64748B;
@@ -24,62 +27,25 @@
             --background-gray: #F8FAFC;
             --card-white: #FFFFFF;
             --border-subtle: #E2E8F0;
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
+            
+            /* Typography */
+            --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing */
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
             --space-md: 1rem;
             --space-lg: 1.5rem;
             --space-xl: 2rem;
             --space-2xl: 3rem;
+            
+            /* Effects */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
         }
-
-        /* ==================== ICON SYSTEM ==================== */
-        .icon {
-            display: inline-block;
-            font-style: normal;
-            font-weight: normal;
-            line-height: 1;
-            text-align: center;
-            width: 1em;
-            height: 1em;
-            position: relative;
-        }
-
-        .icon::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .icon-flask::before { content: '🧪'; }
-        .icon-chart-line::before { content: '📈'; }
-        .icon-users::before { content: '👥'; }
-        .icon-handshake::before { content: '🤝'; }
-        .icon-plus::before { content: '➕'; }
-        .icon-file::before { content: '📄'; }
-        .icon-list::before { content: '📋'; }
-        .icon-user-plus::before { content: '👤➕'; }
-        .icon-search::before { content: '🔍'; }
-        .icon-sign-out::before { content: '🚪'; }
-        .icon-arrow-left::before { content: '⬅️'; }
-        .icon-arrow-right::before { content: '➡️'; }
-        .icon-calendar::before { content: '📅'; }
-        .icon-user-md::before { content: '👨‍⚕️'; }
-        .icon-sync::before { content: '🔄'; }
-        .icon-chevron-left::before { content: '◀️'; }
-        .icon-chevron-right::before { content: '▶️'; }
-        .icon-check::before { content: '✅'; }
-        .icon-edit::before { content: '✏️'; }
-        .icon-cog::before { content: '⚙️'; }
-        .icon-bolt::before { content: '⚡'; }
-        .icon-share::before { content: '↗️'; }
-        .icon-download::before { content: '⬇️'; }
-        .icon-chart-pie::before { content: '📊'; }
 
         /* ==================== BASE STYLES ==================== */
         * {
@@ -89,36 +55,21 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             background: var(--background-gray);
             color: var(--text-dark);
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-sm { gap: var(--space-sm); }
-        .gap-md { gap: var(--space-md); }
-        .gap-lg { gap: var(--space-lg); }
-        .w-full { width: 100%; }
-
-        /* ==================== CONTAINER ==================== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 var(--space-lg);
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 var(--space-md);
-            }
-        }
-
-        /* ==================== HEADER ==================== */
+        /* ==================== HEADER & NAVIGATION ==================== */
         .header {
             background: var(--card-white);
             border-bottom: 1px solid var(--border-subtle);
@@ -126,6 +77,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98);
         }
 
         .header-content {
@@ -135,19 +88,18 @@
             gap: var(--space-lg);
         }
 
+        /* Logo - Modern Typography */
         .logo {
             display: flex;
             align-items: center;
             gap: var(--space-sm);
             text-decoration: none;
-            color: var(--thorax-primary);
-            font-weight: 700;
-            font-size: 1.25rem;
+            font-family: var(--font-heading);
         }
 
-        .logo-badge {
-            width: 36px;
-            height: 36px;
+        .logo-mark {
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
             border-radius: var(--radius-md);
             display: flex;
@@ -155,12 +107,34 @@
             justify-content: center;
             color: white;
             font-weight: 800;
-            font-size: 1.125rem;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.15);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-tagline {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--thorax-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: -4px;
         }
 
         .nav-links {
             display: flex;
             gap: var(--space-lg);
+            margin-left: auto;
+            margin-right: var(--space-xl);
         }
 
         .nav-link {
@@ -170,6 +144,7 @@
             padding: var(--space-xs) var(--space-sm);
             border-radius: var(--radius-md);
             transition: all 0.2s;
+            font-size: 0.9375rem;
         }
 
         .nav-link:hover {
@@ -183,42 +158,265 @@
             font-weight: 600;
         }
 
-        .user-section {
+        /* ==================== HERO SECTION ==================== */
+        .hero {
+            padding: var(--space-2xl) 0;
+            background: linear-gradient(135deg, 
+                rgba(26, 95, 122, 0.02) 0%,
+                rgba(13, 139, 112, 0.05) 100%);
+            margin-bottom: var(--space-2xl);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: var(--thorax-primary-light);
+            color: var(--thorax-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: var(--space-lg);
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: var(--space-lg);
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+            margin-bottom: var(--space-xl);
+        }
+
+        /* ==================== STATS GRID ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .stat-card {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--thorax-secondary);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--thorax-primary-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--thorax-primary);
+            font-size: 1.25rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--thorax-primary);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-label {
+            color: var(--text-medium);
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        /* ==================== QUICK ACTIONS ==================== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .action-card {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--thorax-secondary);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .action-description {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        /* ==================== PROJECTS SECTION ==================== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .section-title i {
+            color: var(--thorax-primary);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .project-card {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--thorax-secondary);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .project-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-planning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--thorax-warning);
+        }
+
+        .status-active {
+            background: rgba(13, 139, 112, 0.1);
+            color: var(--thorax-secondary);
+        }
+
+        .status-completed {
+            background: rgba(26, 95, 122, 0.1);
+            color: var(--thorax-primary);
+        }
+
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: var(--space-sm);
+            line-height: 1.3;
+        }
+
+        .project-description {
+            color: var(--text-medium);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            margin-bottom: var(--space-lg);
+            flex: 1;
+        }
+
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .project-meta {
             display: flex;
             align-items: center;
             gap: var(--space-md);
-        }
-
-        .search-box {
-            position: relative;
-            width: 240px;
-        }
-
-        .search-box .icon {
-            position: absolute;
-            left: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            pointer-events: none;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.75rem var(--space-md) 0.75rem 2.75rem;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            font-family: inherit;
             font-size: 0.875rem;
-            transition: all 0.2s;
-            background: var(--background-gray);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--thorax-primary);
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-            background: var(--card-white);
+            color: var(--text-light);
         }
 
         /* ==================== BUTTONS ==================== */
@@ -240,13 +438,13 @@
         }
 
         .btn-primary {
-            background: var(--thorax-primary);
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
             color: white;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: var(--thorax-primary-dark);
-            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 95, 122, 0.2);
         }
 
         .btn-secondary {
@@ -257,18 +455,7 @@
 
         .btn-secondary:hover:not(:disabled) {
             background: var(--background-gray);
-            border-color: var(--text-light);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border-color: var(--border-subtle);
-            color: var(--text-dark);
-        }
-
-        .btn-outline:hover:not(:disabled) {
-            background: var(--background-gray);
-            border-color: var(--text-light);
+            border-color: var(--thorax-primary);
         }
 
         .btn-sm {
@@ -276,327 +463,59 @@
             font-size: 0.8125rem;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ==================== HERO SECTION ==================== */
-        .thoraxlab-hero {
-            background: linear-gradient(135deg, 
-                rgba(26, 95, 122, 0.03) 0%,
-                rgba(13, 139, 112, 0.08) 100%);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-subtle);
-            padding: var(--space-2xl);
-            margin: var(--space-2xl) 0;
+        /* ==================== FORM ELEMENTS ==================== */
+        .search-box {
             position: relative;
-            overflow: hidden;
+            width: 240px;
         }
 
-        .thoraxlab-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                var(--thorax-primary) 0%,
-                var(--thorax-secondary) 50%,
-                var(--thorax-accent) 100%);
-        }
-
-        .hero-content {
-            display: flex;
-            align-items: center;
-            gap: var(--space-2xl);
-        }
-
-        .hero-logo {
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-primary-dark));
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            flex-shrink: 0;
-        }
-
-        .hero-logo-text {
-            font-weight: 800;
-            font-size: 2.5rem;
-            color: white;
-            text-align: center;
-            line-height: 1;
-        }
-
-        .hero-text {
-            flex: 1;
-        }
-
-        .hero-tagline {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--thorax-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-sm);
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--thorax-primary);
-            line-height: 1.1;
-            margin-bottom: var(--space-sm);
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-medium);
-            max-width: 600px;
-        }
-
-        @media (max-width: 1024px) {
-            .hero-content {
-                flex-direction: column;
-                text-align: center;
-                gap: var(--space-xl);
-            }
-            
-            .hero-logo {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-        }
-
-        /* ==================== STATS GRID ==================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .stat-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
+        .search-input {
+            width: 100%;
+            padding: 0.75rem var(--space-md) 0.75rem 2.75rem;
             border: 1px solid var(--border-subtle);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--thorax-secondary);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--thorax-primary);
-            line-height: 1;
-            margin-bottom: var(--space-xs);
-        }
-
-        .stat-label {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            color: var(--text-medium);
-            font-size: 0.9375rem;
-        }
-
-        .stat-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--thorax-primary-light);
             border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--thorax-primary);
-        }
-
-        /* ==================== QUICK ACTIONS ==================== */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .action-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid var(--border-subtle);
+            font-family: inherit;
+            font-size: 0.875rem;
             transition: all 0.2s;
-            cursor: pointer;
-            text-align: center;
+            background: var(--card-white);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--thorax-primary);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* ==================== USER SECTION ==================== */
+        .user-section {
             display: flex;
-            flex-direction: column;
             align-items: center;
             gap: var(--space-md);
-            border: none;
-            width: 100%;
         }
 
-        .action-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--thorax-secondary);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .action-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--thorax-primary-light);
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: var(--thorax-primary);
-        }
-
-        .action-title {
-            font-size: 1.125rem;
+            color: white;
             font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .action-description {
             font-size: 0.875rem;
-            color: var(--text-light);
-            line-height: 1.4;
         }
 
-        /* ==================== PROJECTS SECTION ==================== */
-        .projects-section {
-            margin-bottom: var(--space-2xl);
-        }
-
-        .projects-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-            flex-wrap: wrap;
-            gap: var(--space-lg);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .section-filters {
-            display: flex;
-            gap: var(--space-md);
-            align-items: center;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: var(--space-xl);
-            margin-bottom: var(--space-xl);
-        }
-
-        .project-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.2s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .project-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--thorax-secondary);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .project-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: 0.375rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-md);
-            align-self: flex-start;
-        }
-
-        .project-badge.planning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--thorax-warning);
-        }
-
-        .project-badge.active {
-            background: rgba(13, 139, 112, 0.1);
-            color: var(--thorax-secondary);
-        }
-
-        .project-badge.completed {
-            background: rgba(26, 95, 122, 0.1);
-            color: var(--thorax-primary);
-        }
-
-        .project-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: var(--space-sm);
-            line-height: 1.3;
-        }
-
-        .project-description {
-            color: var(--text-medium);
-            font-size: 0.9375rem;
-            line-height: 1.5;
-            margin-bottom: var(--space-lg);
-            flex: 1;
-        }
-
-        .project-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .project-footer {
-            margin-top: auto;
-        }
-
-        /* ==================== LOADING STATES ==================== */
-        .loading-state {
+        /* ==================== LOADING & EMPTY STATES ==================== */
+        .loading {
             text-align: center;
             padding: var(--space-2xl);
         }
@@ -615,11 +534,6 @@
             to { transform: rotate(360deg); }
         }
 
-        .loading-text {
-            color: var(--text-light);
-        }
-
-        /* ==================== EMPTY STATES ==================== */
         .empty-state {
             text-align: center;
             padding: var(--space-2xl);
@@ -649,169 +563,57 @@
             margin-right: auto;
         }
 
-        /* ==================== MODAL ==================== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: var(--space-lg);
-            backdrop-filter: blur(4px);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--space-md);
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: stretch;
+            }
         }
 
-        .modal {
-            background: var(--card-white);
-            border-radius: var(--radius-xl);
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: translateY(20px);
-            transition: transform 0.3s;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            padding: var(--space-xl);
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: var(--space-xs);
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: var(--background-gray);
-            color: var(--text-dark);
-        }
-
-        .modal-body {
-            padding: var(--space-xl);
-        }
-
-        .modal-footer {
-            padding: var(--space-xl);
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            gap: var(--space-md);
-            justify-content: flex-end;
-        }
-
-        /* ==================== FORM ==================== */
-        .form-group {
-            margin-bottom: var(--space-lg);
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: var(--space-sm);
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 0.9375rem;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 0.875rem var(--space-md);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            background: var(--card-white);
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--thorax-primary);
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-        }
-
-        /* ==================== NOTIFICATIONS ==================== */
-        .notification-container {
-            position: fixed;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-            max-width: 400px;
-        }
-
-        .notification {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border-left: 4px solid var(--thorax-primary);
-            animation: slideIn 0.3s ease;
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .notification.info { border-color: var(--thorax-primary); }
-        .notification.success { border-color: var(--thorax-success); }
-        .notification.error { border-color: var(--thorax-error); }
-
-        .notification-title {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: var(--space-xs);
-        }
-
-        .notification-message {
-            font-size: 0.9375rem;
-            color: var(--text-medium);
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.25rem;
+            }
+            
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -821,199 +623,233 @@
         <div class="container">
             <div class="header-content">
                 <a href="/" class="logo">
-                    <div class="logo-badge">T</div>
-                    <span>ThoraxLab</span>
+                    <div class="logo-mark">T</div>
+                    <div>
+                        <div class="logo-text">ThoraxLab</div>
+                        <div class="logo-tagline">Research Platform</div>
+                    </div>
                 </a>
                 
                 <nav class="nav-links">
-                    <a href="/" class="nav-link active">Dashboard</a>
-                    <a href="#" class="nav-link">Projects</a>
-                    <a href="#" class="nav-link">Analytics</a>
-                    <a href="#" class="nav-link">Team</a>
+                    <a href="/" class="nav-link active">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-flask"></i> Projects
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i> Team
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-pie"></i> Analytics
+                    </a>
                 </nav>
                 
                 <div class="user-section">
                     <div class="search-box">
-                        <span class="icon icon-search"></span>
+                        <i class="fas fa-search search-icon"></i>
                         <input type="text" 
                                id="globalSearch" 
                                class="search-input" 
                                placeholder="Search projects...">
                     </div>
                     
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    
                     <button id="logoutBtn" class="btn btn-outline btn-sm">
-                        <span class="icon icon-sign-out"></span> Logout
+                        <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="dashboard">
+    <!-- Hero Section -->
+    <section class="hero">
         <div class="container">
-            <!-- Hero Section -->
-            <section class="thoraxlab-hero">
-                <div class="hero-content">
-                    <div class="hero-logo">
-                        <div class="hero-logo-text">TL</div>
-                    </div>
-                    <div class="hero-text">
-                        <div class="hero-tagline">Advanced Research Platform</div>
-                        <h1 class="hero-title" id="welcomeTitle">ThoraxLab Dashboard</h1>
-                        <p class="hero-subtitle" id="welcomeSubtitle">
-                            Collaborative platform for thoracic research and clinical studies.
-                        </p>
-                    </div>
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    HIPAA Compliant Research Platform
                 </div>
-            </section>
+                
+                <h1 class="hero-title" id="welcomeTitle">Advanced Thoracic Research</h1>
+                
+                <p class="hero-subtitle" id="welcomeSubtitle">
+                    Collaborative platform for thoracic specialists to conduct, share, 
+                    and validate clinical research with real-time consensus building.
+                </p>
+                
+                <div class="flex gap-md justify-center">
+                    <button id="newProjectBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> New Research Project
+                    </button>
+                    <button id="exploreProjects" class="btn btn-secondary">
+                        <i class="fas fa-compass"></i> Explore Studies
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <!-- Stats Grid -->
-            <section class="stats-grid" id="statsContainer">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalProjects">0</div>
-                    <div class="stat-label">
-                        <div class="stat-icon">
-                            <span class="icon icon-flask"></span>
-                        </div>
-                        <span>Research Projects</span>
-                    </div>
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Stats Grid -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-flask"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="activeStudies">0</div>
-                    <div class="stat-label">
-                        <div class="stat-icon">
-                            <span class="icon icon-chart-line"></span>
-                        </div>
-                        <span>Active Studies</span>
-                    </div>
+                <div class="stat-value" id="totalProjects">0</div>
+                <div class="stat-label">Active Research Projects</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-md"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="totalResearchers">0</div>
-                    <div class="stat-label">
-                        <div class="stat-icon">
-                            <span class="icon icon-users"></span>
-                        </div>
-                        <span>Researchers</span>
-                    </div>
+                <div class="stat-value" id="activeResearchers">0</div>
+                <div class="stat-label">Active Researchers</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="consensusScore">0%</div>
-                    <div class="stat-label">
-                        <div class="stat-icon">
-                            <span class="icon icon-handshake"></span>
-                        </div>
-                        <span>Platform Consensus</span>
-                    </div>
+                <div class="stat-value" id="consensusScore">0%</div>
+                <div class="stat-label">Platform Consensus</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-comments"></i>
                 </div>
-            </section>
+                <div class="stat-value" id="totalDiscussions">0</div>
+                <div class="stat-label">Active Discussions</div>
+            </div>
+        </section>
 
-            <!-- Quick Actions -->
-            <section class="quick-actions">
-                <button class="action-card" id="newProjectBtn">
+        <!-- Quick Actions -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Quick Actions
+                </h2>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="action-card" id="newStudyBtn">
                     <div class="action-icon">
-                        <span class="icon icon-plus"></span>
+                        <i class="fas fa-plus"></i>
                     </div>
-                    <div class="action-title">New Research Project</div>
-                    <div class="action-description">Start a new clinical study or research initiative</div>
+                    <div class="action-title">New Clinical Study</div>
+                    <div class="action-description">
+                        Start a new research study with customizable protocols
+                    </div>
                 </button>
                 
                 <button class="action-card" id="useTemplateBtn">
                     <div class="action-icon">
-                        <span class="icon icon-file"></span>
+                        <i class="fas fa-copy"></i>
                     </div>
-                    <div class="action-title">Use a Template</div>
-                    <div class="action-description">Start with proven methodology and protocols</div>
+                    <div class="action-title">Use Template</div>
+                    <div class="action-description">
+                        Start from proven methodology and protocols
+                    </div>
                 </button>
                 
                 <a href="#" class="action-card">
                     <div class="action-icon">
-                        <span class="icon icon-list"></span>
-                    </div>
-                    <div class="action-title">View All Projects</div>
-                    <div class="action-description">Browse all research initiatives and studies</div>
-                </a>
-                
-                <button class="action-card" id="inviteTeamBtn">
-                    <div class="action-icon">
-                        <span class="icon icon-user-plus"></span>
+                        <i class="fas fa-user-plus"></i>
                     </div>
                     <div class="action-title">Invite Team</div>
-                    <div class="action-description">Add researchers to collaborate on projects</div>
+                    <div class="action-description">
+                        Add researchers to collaborate on projects
+                    </div>
+                </a>
+                
+                <button class="action-card" id="analyticsBtn">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="action-title">View Analytics</div>
+                    <div class="action-description">
+                        Access platform insights and research metrics
+                    </div>
                 </button>
-            </section>
+            </div>
+        </section>
 
-            <!-- Projects Section -->
-            <section class="projects-section">
-                <div class="projects-header">
-                    <h2 class="section-title">Your Research Projects</h2>
+        <!-- Your Projects -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-folder-open"></i>
+                    Your Research Projects
+                </h2>
+                
+                <div class="flex gap-sm">
+                    <div class="search-box" style="width: 200px;">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               id="projectSearch" 
+                               class="search-input" 
+                               placeholder="Search projects...">
+                    </div>
                     
-                    <div class="section-filters">
-                        <div class="search-box" style="width: 200px;">
-                            <span class="icon icon-search"></span>
-                            <input type="text" 
-                                   id="projectSearch" 
-                                   class="search-input" 
-                                   placeholder="Search projects...">
-                        </div>
-                        
-                        <select id="statusFilter" class="form-input" style="width: 150px;">
-                            <option value="">All Status</option>
-                            <option value="planning">Planning</option>
-                            <option value="active">Active</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                        
-                        <button id="refreshProjects" class="btn btn-secondary btn-sm">
-                            <span class="icon icon-sync"></span>
-                        </button>
-                    </div>
+                    <select id="statusFilter" class="search-input" style="width: 150px;">
+                        <option value="">All Status</option>
+                        <option value="planning">Planning</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    
+                    <button id="refreshProjects" class="btn btn-secondary">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                 </div>
+            </div>
 
-                <!-- Loading State -->
-                <div id="loadingState" class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <p class="loading-text">Loading research projects...</p>
-                </div>
+            <!-- Loading State -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading research projects...</p>
+            </div>
 
-                <!-- Empty State -->
-                <div id="emptyState" class="empty-state hidden">
-                    <div class="empty-icon">
-                        <span class="icon icon-flask" style="font-size: 3rem;"></span>
-                    </div>
-                    <h3 class="empty-title">No Research Projects Yet</h3>
-                    <p class="empty-description">
-                        Start your first research project to begin collaboration with your team.
-                        Choose from templates or create a custom project.
-                    </p>
-                    <div class="flex gap-md justify-center">
-                        <button id="emptyNewProjectBtn" class="btn btn-primary">
-                            <span class="icon icon-plus"></span> Create Project
-                        </button>
-                    </div>
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-icon">
+                    <i class="fas fa-flask"></i>
                 </div>
+                <h3 class="empty-title">No Research Projects Yet</h3>
+                <p class="empty-description">
+                    Start your first research project to begin collaboration 
+                    with your team. Choose from templates or create a custom project.
+                </p>
+                <button id="emptyNewProjectBtn" class="btn btn-primary mt-lg">
+                    <i class="fas fa-plus"></i> Create Your First Project
+                </button>
+            </div>
 
-                <!-- Projects Grid -->
-                <div id="projectsContainer" class="projects-grid hidden">
-                    <!-- Projects will be loaded here -->
-                </div>
-            </section>
-        </div>
+            <!-- Projects Grid -->
+            <div id="projectsContainer" class="projects-grid hidden">
+                <!-- Projects loaded here -->
+            </div>
+        </section>
     </main>
 
     <!-- New Project Modal -->
-    <div id="newProjectModal" class="modal-overlay">
+    <div id="newProjectModal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title">Create Research Project</h2>
-                <button class="modal-close" id="closeNewProjectModal">
-                    <span class="icon icon-plus" style="transform: rotate(45deg);"></span>
-                </button>
+                <h2>Create Research Project</h2>
+                <button class="modal-close">&times;</button>
             </div>
             <form id="createProjectForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="projectTitle" class="form-label">Project Title *</label>
+                        <label for="projectTitle">Project Title *</label>
                         <input type="text" 
                                id="projectTitle" 
                                class="form-input" 
@@ -1022,9 +858,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="projectDescription" class="form-label">Description *</label>
+                        <label for="projectDescription">Description *</label>
                         <textarea id="projectDescription" 
-                                  class="form-textarea" 
+                                  class="form-input form-textarea" 
                                   required
                                   placeholder="Describe your research project..."></textarea>
                     </div>
@@ -1034,7 +870,7 @@
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <span class="icon icon-plus"></span> Create Project
+                        <i class="fas fa-plus"></i> Create Project
                     </button>
                 </div>
             </form>
@@ -1042,7 +878,7 @@
     </div>
 
     <!-- Notification Container -->
-    <div class="notification-container" id="notificationContainer"></div>
+    <div id="notificationContainer"></div>
 
     <script>
         class ThoraxLabDashboard {
@@ -1050,11 +886,6 @@
                 this.API_BASE = window.location.origin;
                 this.user = null;
                 this.projects = [];
-                this.state = {
-                    isLoading: true,
-                    activeModal: null
-                };
-                
                 this.init();
             }
 
@@ -1065,17 +896,17 @@
 
             setupEventListeners() {
                 // Navigation
-                document.getElementById('newProjectBtn')?.addEventListener('click', () => this.showModal('newProject'));
-                document.getElementById('useTemplateBtn')?.addEventListener('click', () => this.showNotification('Coming Soon', 'Template feature coming soon.', 'info'));
-                document.getElementById('inviteTeamBtn')?.addEventListener('click', () => this.showNotification('Coming Soon', 'Team invitation coming soon.', 'info'));
-                document.getElementById('emptyNewProjectBtn')?.addEventListener('click', () => this.showModal('newProject'));
+                document.getElementById('newProjectBtn')?.addEventListener('click', () => this.showNewProjectModal());
+                document.getElementById('emptyNewProjectBtn')?.addEventListener('click', () => this.showNewProjectModal());
+                document.getElementById('newStudyBtn')?.addEventListener('click', () => this.showNewProjectModal());
+                document.getElementById('useTemplateBtn')?.addEventListener('click', () => this.showNotification('Templates', 'Template feature coming soon.', 'info'));
+                document.getElementById('analyticsBtn')?.addEventListener('click', () => this.showNotification('Analytics', 'Advanced analytics coming soon.', 'info'));
+                document.getElementById('exploreProjects')?.addEventListener('click', () => this.showNotification('Explore', 'Public projects coming soon.', 'info'));
                 document.getElementById('refreshProjects')?.addEventListener('click', () => this.loadProjects());
                 
-                // Modal controls
-                document.getElementById('closeNewProjectModal')?.addEventListener('click', () => this.hideModal());
+                // Modal
                 document.getElementById('cancelNewProject')?.addEventListener('click', () => this.hideModal());
-                
-                // Form submission
+                document.querySelector('#newProjectModal .modal-close')?.addEventListener('click', () => this.hideModal());
                 document.getElementById('createProjectForm')?.addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.createProject();
@@ -1090,14 +921,7 @@
                 
                 // Close modal on backdrop click
                 document.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal-overlay')) {
-                        this.hideModal();
-                    }
-                });
-                
-                // Escape key to close modal
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && this.state.activeModal) {
+                    if (e.target.id === 'newProjectModal') {
                         this.hideModal();
                     }
                 });
@@ -1110,20 +934,15 @@
                     });
                     
                     if (response.status === 401) {
-                        // Redirect to login
                         window.location.href = '/login.html';
                         return;
-                    }
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
                     }
                     
                     const data = await response.json();
                     
                     if (data.success) {
                         this.user = data.user;
-                        this.updateWelcomeMessage();
+                        this.updateUI();
                         this.loadProjects();
                         this.loadStats();
                     } else {
@@ -1135,32 +954,36 @@
                 }
             }
 
-            updateWelcomeMessage() {
+            updateUI() {
                 if (!this.user) return;
                 
+                // Update welcome message
                 const welcomeTitle = document.getElementById('welcomeTitle');
                 const welcomeSubtitle = document.getElementById('welcomeSubtitle');
+                const userAvatar = document.getElementById('userAvatar');
                 
                 if (welcomeTitle) {
-                    welcomeTitle.textContent = `Welcome, ${this.user.name}`;
+                    welcomeTitle.textContent = `Welcome, Dr. ${this.user.name.split(' ')[0]}`;
+                }
+                
+                if (userAvatar) {
+                    userAvatar.textContent = this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
                 }
                 
                 if (welcomeSubtitle) {
-                    welcomeSubtitle.textContent = `Access your research projects and collaborate with your team.`;
+                    welcomeSubtitle.textContent = `You have ${this.user.projectCount || 0} active research projects.`;
                 }
             }
 
             async loadProjects() {
                 try {
-                    this.setLoading(true);
+                    this.showLoading(true);
                     
                     const response = await fetch(`${this.API_BASE}/api/projects`, {
                         credentials: 'include'
                     });
                     
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     
                     const data = await response.json();
                     
@@ -1172,7 +995,7 @@
                     console.error('Failed to load projects:', error);
                     this.showNotification('Error', 'Failed to load projects.', 'error');
                 } finally {
-                    this.setLoading(false);
+                    this.showLoading(false);
                 }
             }
 
@@ -1183,43 +1006,40 @@
                 
                 if (!container) return;
                 
-                // Hide loading
-                if (loading) loading.classList.add('hidden');
+                loading.classList.add('hidden');
                 
                 if (this.projects.length === 0) {
-                    // Show empty state
-                    if (empty) empty.classList.remove('hidden');
+                    empty.classList.remove('hidden');
                     container.classList.add('hidden');
                     return;
                 }
                 
-                // Show projects grid
-                if (empty) empty.classList.add('hidden');
+                empty.classList.add('hidden');
                 container.classList.remove('hidden');
                 
-                // Render projects
                 container.innerHTML = this.projects.map(project => `
                     <div class="project-card">
-                        <div class="project-badge ${project.status}">
-                            ${project.status}
+                        <div class="project-header">
+                            <span class="project-status status-${project.status}">
+                                <i class="fas fa-${project.status === 'active' ? 'play' : project.status === 'completed' ? 'check' : 'calendar'}"></i>
+                                ${project.status}
+                            </span>
+                            <span class="text-sm text-light">
+                                <i class="fas fa-users"></i> ${project.teamCount || 1}
+                            </span>
                         </div>
+                        
                         <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
                         <p class="project-description">${this.escapeHtml(project.description)}</p>
                         
-                        <div class="project-meta">
-                            <div class="meta-item">
-                                <span class="icon icon-calendar"></span>
-                                <span>${this.formatDate(project.createdAt)}</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="icon icon-user-md"></span>
-                                <span>${this.escapeHtml(project.lead)}</span>
-                            </div>
-                        </div>
-                        
                         <div class="project-footer">
-                            <a href="/project.html?id=${project.id}" class="btn btn-primary w-full">
-                                <span class="icon icon-arrow-right"></span> Open Project
+                            <div class="project-meta">
+                                <span><i class="fas fa-user-md"></i> ${this.escapeHtml(project.lead)}</span>
+                                <span><i class="fas fa-clock"></i> ${this.formatDate(project.createdAt)}</span>
+                            </div>
+                            
+                            <a href="/project.html?id=${project.id}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right"></i> Open
                             </a>
                         </div>
                     </div>
@@ -1239,16 +1059,10 @@
                     if (data.success) {
                         const stats = data.analytics;
                         
-                        // Update stats display
-                        const totalProjects = document.getElementById('totalProjects');
-                        const activeStudies = document.getElementById('activeStudies');
-                        const totalResearchers = document.getElementById('totalResearchers');
-                        const consensusScore = document.getElementById('consensusScore');
-                        
-                        if (totalProjects) totalProjects.textContent = stats.user.projectCount;
-                        if (activeStudies) activeStudies.textContent = stats.platform.activeProjects;
-                        if (totalResearchers) totalResearchers.textContent = stats.platform.totalUsers;
-                        if (consensusScore) consensusScore.textContent = '85%'; // Default
+                        document.getElementById('totalProjects').textContent = stats.user.projectCount;
+                        document.getElementById('activeResearchers').textContent = stats.platform.totalUsers || 0;
+                        document.getElementById('consensusScore').textContent = stats.platform.consensusScore || '78%';
+                        document.getElementById('totalDiscussions').textContent = '12'; // Mock
                     }
                 } catch (error) {
                     console.error('Failed to load stats:', error);
@@ -1267,9 +1081,7 @@
                 try {
                     const response = await fetch(`${this.API_BASE}/api/projects`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
                         body: JSON.stringify({ title, description })
                     });
@@ -1293,32 +1105,23 @@
                 }
             }
 
-            showModal(modalType) {
-                this.state.activeModal = modalType;
-                
-                if (modalType === 'newProject') {
-                    const modal = document.getElementById('newProjectModal');
-                    if (modal) {
-                        modal.classList.add('active');
-                        document.getElementById('projectTitle')?.focus();
-                    }
-                }
-                
+            showNewProjectModal() {
+                document.getElementById('newProjectModal').classList.remove('hidden');
+                document.getElementById('projectTitle').focus();
                 document.body.style.overflow = 'hidden';
             }
 
             hideModal() {
-                const modal = document.getElementById('newProjectModal');
-                if (modal) {
-                    modal.classList.remove('active');
-                }
-                
-                this.state.activeModal = null;
+                document.getElementById('newProjectModal').classList.add('hidden');
                 document.body.style.overflow = '';
-                
-                // Reset form
-                const form = document.getElementById('createProjectForm');
-                if (form) form.reset();
+                document.getElementById('createProjectForm').reset();
+            }
+
+            showLoading(show) {
+                const loading = document.getElementById('loadingState');
+                if (loading) {
+                    loading.classList.toggle('hidden', !show);
+                }
             }
 
             showNotification(title, message, type = 'info') {
@@ -1326,7 +1129,7 @@
                 if (!container) return;
                 
                 const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
+                notification.className = `notification notification-${type}`;
                 notification.innerHTML = `
                     <div class="notification-title">${this.escapeHtml(title)}</div>
                     <div class="notification-message">${this.escapeHtml(message)}</div>
@@ -1335,43 +1138,24 @@
                 container.appendChild(notification);
                 
                 setTimeout(() => notification.classList.add('show'), 10);
-                
                 setTimeout(() => {
                     notification.classList.remove('show');
                     setTimeout(() => notification.remove(), 300);
                 }, 5000);
             }
 
-            setLoading(isLoading) {
-                this.state.isLoading = isLoading;
-                
-                const loading = document.getElementById('loadingState');
-                if (loading) {
-                    if (isLoading) {
-                        loading.classList.remove('hidden');
-                    } else {
-                        loading.classList.add('hidden');
-                    }
-                }
-            }
-
             async logout() {
                 try {
-                    const response = await fetch(`${this.API_BASE}/api/logout`, {
+                    await fetch(`${this.API_BASE}/api/logout`, {
                         method: 'POST',
                         credentials: 'include'
                     });
-                    
-                    if (response.ok) {
-                        window.location.href = '/login.html';
-                    }
+                    window.location.href = '/login.html';
                 } catch (error) {
-                    console.error('Logout error:', error);
                     window.location.href = '/login.html';
                 }
             }
 
-            // Utility methods
             escapeHtml(text) {
                 const div = document.createElement('div');
                 div.textContent = text;
@@ -1383,18 +1167,17 @@
                     const date = new Date(dateString);
                     return date.toLocaleDateString('en-US', {
                         month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
+                        day: 'numeric'
                     });
-                } catch (error) {
-                    return 'Unknown date';
+                } catch {
+                    return 'Unknown';
                 }
             }
         }
 
-        // Initialize dashboard
+        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
-            window.dashboard = new ThoraxLabDashboard();
+            new ThoraxLabDashboard();
         });
     </script>
 </body>
