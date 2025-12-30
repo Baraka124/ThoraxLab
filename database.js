@@ -996,4 +996,4 @@ class ThoraxLabDatabase {
 const database = new ThoraxLabDatabase();
 
 // Export both the class and instance
-module.exports = { ThoraxLabDatabase, database };
+module.exports = { ThoraxLabDatabase, database }; 
