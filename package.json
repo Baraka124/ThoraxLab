@@ -1,32 +1,35 @@
 {
-  "name": "thoraxlab-research-platform",
-  "version": "3.3.0",
-  "description": "Collaborative pneumology research platform",
+  "name": "thoraxlab",
+  "version": "4.0.0",
+  "description": "ThoraxLab Research Collaboration Platform",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "test": "echo \"No tests specified\" && exit 0"
-  },
-  "keywords": [
-    "medical",
-    "research",
-    "collaboration",
-    "pneumology"
-  ],
-  "author": "ThoraxLab Team",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
+    "dev": "nodemon server.js",
+    "test": "echo \"No tests yet\" && exit 0"
   },
   "dependencies": {
     "express": "^4.18.2",
     "socket.io": "^4.7.2",
     "cors": "^2.8.5",
-    "uuid": "^9.0.0",
-    "helmet": "^7.1.0",
+    "helmet": "^7.0.0",
     "compression": "^1.7.4",
-    "express-rate-limit": "^7.1.5"
-  }
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "research",
+    "collaboration",
+    "thoracic",
+    "medical",
+    "platform"
+  ],
+  "author": "ThoraxLab Team",
+  "license": "MIT"
 }
