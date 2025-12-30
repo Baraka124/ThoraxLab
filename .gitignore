@@ -1,8 +1,31 @@
+# Dependencies
 node_modules/
-*.db
-*.db-*
-.env
-.DS_Store
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+
+# Database
+thoraxlab.db
+thoraxlab.db-*
+thoraxlab.db-journal
+*.db
+
+# Environment
+.env
+.env.local
+
+# Runtime
+*.pid
+*.seed
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
