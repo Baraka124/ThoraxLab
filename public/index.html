@@ -1,722 +1,1199 @@
-import express from 'express';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import { v4 as uuidv4 } from 'uuid';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'production';
-const isProduction = NODE_ENV === 'production';
-
-const app = express();
-const server = createServer(app);
-
-// ==================== INNOVATION PLATFORM DATA STORE ====================
-class InnovationPlatform {
-    constructor() {
-        this.dataPath = path.join(__dirname, 'innovation_data.json');
-        this.data = {
-            projects: {},
-            discussions: {},
-            comments: {},
-            activities: []
-        };
-        this.initializeData();
-    }
-
-    async initializeData() {
-        try {
-            const fileData = await fs.readFile(this.dataPath, 'utf8');
-            this.data = JSON.parse(fileData);
-            console.log(`📊 Loaded ${Object.keys(this.data.projects).length} innovation projects`);
-        } catch (error) {
-            if (error.code === 'ENOENT') {
-                await this.createSampleInnovationData();
-                console.log('🚀 Created innovation platform with sample data');
-            } else {
-                console.error('Data initialization error:', error);
-            }
-        }
-        // Auto-save every 5 minutes
-        setInterval(() => this.saveData(), 300000);
-    }
-
-    async createSampleInnovationData() {
-        // Create real, multi-stakeholder innovation projects
-        const project1 = this.createProject({
-            title: "AI-Powered Early Lung Cancer Detection",
-            description: "Developing an AI algorithm that can detect early-stage lung cancer from CT scans with higher accuracy than current methods.",
-            stage: "validation",
-            problem: "Late-stage diagnosis of lung cancer leads to poor survival rates. Current screening misses 20% of early cases.",
-            stakeholders: [
-                { id: 'clinician_1', name: 'Dr. Sarah Chen', type: 'clinician', role: 'Thoracic Surgeon', organization: 'Mass General' },
-                { id: 'researcher_1', name: 'Dr. Michael Park', type: 'researcher', role: 'AI Researcher', organization: 'MIT CSAIL' },
-                { id: 'industry_1', name: 'MedTech AI', type: 'industry', role: 'Product Lead', organization: 'MedTech Solutions' }
-            ],
-            tags: ['AI/ML', 'Diagnostics', 'Oncology', 'Medical Imaging']
-        });
-
-        const project2 = this.createProject({
-            title: "Smart Post-Op Monitoring Platform",
-            description: "IoT-based wearable system for continuous monitoring of thoracic surgery patients post-discharge.",
-            stage: "development",
-            problem: "30% of post-thoracotomy patients experience complications after discharge, often detected too late.",
-            stakeholders: [
-                { id: 'clinician_2', name: 'Dr. James Wilson', type: 'clinician', role: 'Pulmonologist', organization: 'Cleveland Clinic' },
-                { id: 'industry_2', name: 'IoT Health', type: 'industry', role: 'CTO', organization: 'IoT Health Tech' },
-                { id: 'patient_1', name: 'Robert Kim', type: 'patient', role: 'Patient Advocate', organization: 'Lung Health Alliance' }
-            ],
-            tags: ['IoT', 'Remote Monitoring', 'Patient Safety', 'Wearables']
-        });
-
-        const project3 = this.createProject({
-            title: "Minimally Invasive Stapler Enhancement",
-            description: "Redesigning surgical stapler mechanism for better tissue handling in VATS procedures.",
-            stage: "ideation",
-            problem: "Current staplers cause tissue damage in 15% of VATS lobectomies, leading to complications.",
-            stakeholders: [
-                { id: 'clinician_3', name: 'Dr. Elena Rodriguez', type: 'clinician', role: 'Thoracic Surgeon', organization: 'Mayo Clinic' },
-                { id: 'industry_3', name: 'Surgical Innovations', type: 'industry', role: 'Engineer', organization: 'Precision Surgical' },
-                { id: 'investor_1', name: 'HealthTech Ventures', type: 'investor', role: 'Partner', organization: 'HealthTech Capital' }
-            ],
-            tags: ['Medical Devices', 'Surgical Tools', 'Minimally Invasive']
-        });
-
-        // Create real discussions
-        this.createDiscussion(project1.id, {
-            title: "Clinical Validation Study Design",
-            content: "We need to design a multi-center trial for validating the AI algorithm. Should we focus on retrospective data first or go straight to prospective?",
-            author: { id: 'clinician_1', name: 'Dr. Sarah Chen', type: 'clinician' },
-            tags: ['Clinical Trials', 'Validation', 'Study Design']
-        });
-
-        this.createDiscussion(project2.id, {
-            title: "FDA Regulatory Pathway",
-            content: "Discussing whether to pursue 510(k) clearance or De Novo classification for the monitoring platform.",
-            author: { id: 'industry_2', name: 'IoT Health', type: 'industry' },
-            tags: ['Regulatory', 'FDA', 'Compliance']
-        });
-
-        await this.saveData();
-    }
-
-    createProject(data) {
-        const projectId = `project_${uuidv4()}`;
-        const now = new Date().toISOString();
-        
-        const project = {
-            id: projectId,
-            title: data.title.trim(),
-            description: data.description.trim(),
-            problem: data.problem.trim(),
-            stage: data.stage || 'ideation',
-            tags: data.tags || [],
-            stakeholders: data.stakeholders || [],
-            metrics: {
-                discussions: 0,
-                comments: 0,
-                files: 0,
-                activityScore: 0
-            },
-            timeline: {
-                created: now,
-                updated: now,
-                milestones: []
-            },
-            createdAt: now,
-            updatedAt: now
-        };
-
-        this.data.projects[projectId] = project;
-        this.addActivity({
-            type: 'project_created',
-            projectId,
-            title: project.title,
-            timestamp: now,
-            author: data.stakeholders?.[0] || { name: 'Anonymous', type: 'anonymous' }
-        });
-
-        return project;
-    }
-
-    createDiscussion(projectId, data) {
-        const discussionId = `disc_${uuidv4()}`;
-        const now = new Date().toISOString();
-        
-        const discussion = {
-            id: discussionId,
-            projectId,
-            title: data.title.trim(),
-            content: data.content.trim(),
-            author: data.author,
-            tags: data.tags || [],
-            comments: [],
-            metrics: {
-                likes: 0,
-                views: 0
-            },
-            createdAt: now,
-            updatedAt: now
-        };
-
-        this.data.discussions[discussionId] = discussion;
-        
-        // Update project metrics
-        if (this.data.projects[projectId]) {
-            this.data.projects[projectId].metrics.discussions++;
-            this.data.projects[projectId].updatedAt = now;
-        }
-
-        this.addActivity({
-            type: 'discussion_created',
-            projectId,
-            discussionId,
-            title: discussion.title,
-            timestamp: now,
-            author: data.author
-        });
-
-        return discussion;
-    }
-
-    addComment(discussionId, data) {
-        const commentId = `comment_${uuidv4()}`;
-        const now = new Date().toISOString();
-        
-        const comment = {
-            id: commentId,
-            discussionId,
-            content: data.content.trim(),
-            author: data.author,
-            createdAt: now
-        };
-
-        this.data.comments[commentId] = comment;
-        
-        // Add to discussion
-        if (this.data.discussions[discussionId]) {
-            this.data.discussions[discussionId].comments.push(commentId);
-            this.data.discussions[discussionId].updatedAt = now;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThoraxLab | Innovation Collaboration Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        /* ==================== INNOVATION PLATFORM STYLES ==================== */
+        :root {
+            --innovation-blue: #0066CC;
+            --innovation-blue-dark: #004D99;
+            --innovation-blue-light: #E6F2FF;
+            --innovation-green: #00A86B;
+            --innovation-purple: #8A2BE2;
+            --innovation-orange: #FF9800;
+            --innovation-red: #E53935;
             
-            // Update project metrics
-            const projectId = this.data.discussions[discussionId].projectId;
-            if (projectId && this.data.projects[projectId]) {
-                this.data.projects[projectId].metrics.comments++;
-                this.data.projects[projectId].updatedAt = now;
+            --clinician-color: #2196F3;
+            --industry-color: #FF9800;
+            --researcher-color: #9C27B0;
+            --investor-color: #4CAF50;
+            --patient-color: #009688;
+            
+            --text-dark: #1A202C;
+            --text-medium: #4A5568;
+            --text-light: #718096;
+            --background-gray: #F7FAFC;
+            --card-white: #FFFFFF;
+            --border-subtle: #E2E8F0;
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        /* ==================== HEADER ==================== */
+        .header {
+            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-blue-dark));
+            color: white;
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            text-decoration: none;
+        }
+
+        .logo-symbol {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--innovation-blue);
+            font-weight: 800;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .quick-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--innovation-blue);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            padding: var(--space-2xl) 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 102, 204, 0.05) 0%,
+                rgba(0, 168, 107, 0.08) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: var(--space-lg);
+            background: linear-gradient(135deg, var(--innovation-blue), var(--innovation-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+            margin-bottom: var(--space-xl);
+        }
+
+        /* ==================== PROJECTS GRID ==================== */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+            margin: var(--space-xl) 0;
+        }
+
+        .project-card {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 102, 204, 0.1);
+            border-color: var(--innovation-blue);
+        }
+
+        .project-stage {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-md);
+            align-self: flex-start;
+        }
+
+        .stage-ideation { background: rgba(0, 102, 204, 0.1); color: var(--innovation-blue); }
+        .stage-development { background: rgba(255, 152, 0, 0.1); color: var(--innovation-orange); }
+        .stage-validation { background: rgba(156, 39, 176, 0.1); color: var(--innovation-purple); }
+        .stage-scale { background: rgba(0, 168, 107, 0.1); color: var(--innovation-green); }
+
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: var(--space-sm);
+            line-height: 1.3;
+        }
+
+        .project-description {
+            color: var(--text-medium);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            margin-bottom: var(--space-lg);
+            flex: 1;
+        }
+
+        .project-problem {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            background: var(--background-gray);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+            border-left: 3px solid var(--innovation-red);
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .stakeholder-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .stakeholder-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            margin-right: -8px;
+            border: 2px solid white;
+        }
+
+        .stakeholder-count {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-left: var(--space-md);
+        }
+
+        .project-stats {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* ==================== MODALS ==================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-lg);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-white);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-body {
+            padding: var(--space-xl);
+        }
+
+        .modal-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+        }
+
+        /* ==================== FORMS ==================== */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9375rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.875rem var(--space-md);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            background: var(--card-white);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--innovation-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .stakeholder-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .stakeholder-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: var(--background-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .stakeholder-option:hover {
+            border-color: var(--innovation-blue);
+            background: white;
+        }
+
+        .stakeholder-option.selected {
+            border-color: var(--innovation-blue);
+            background: rgba(0, 102, 204, 0.05);
+        }
+
+        /* ==================== NOTIFICATIONS ==================== */
+        .notification-container {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            max-width: 400px;
+        }
+
+        .notification {
+            background: var(--card-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-left: 4px solid var(--innovation-blue);
+            animation: slideIn 0.3s ease;
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--space-md);
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stakeholder-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
             }
         }
 
-        this.addActivity({
-            type: 'comment_added',
-            discussionId,
-            commentId,
-            timestamp: now,
-            author: data.author
-        });
-
-        return comment;
-    }
-
-    addActivity(activity) {
-        this.data.activities.unshift(activity);
-        // Keep only last 100 activities
-        if (this.data.activities.length > 100) {
-            this.data.activities = this.data.activities.slice(0, 100);
+        @media (max-width: 480px) {
+            .stakeholder-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-title {
+                font-size: 1.75rem;
+            }
         }
-    }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-symbol">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="logo-text">ThoraxLab</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="btn btn-secondary" id="joinPlatformBtn">
+                        <i class="fas fa-user-plus"></i> Join Platform
+                    </button>
+                    <button class="btn btn-primary" id="newProjectBtn">
+                        <i class="fas fa-plus"></i> New Innovation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    async saveData() {
-        try {
-            await fs.writeFile(this.dataPath, JSON.stringify(this.data, null, 2));
-        } catch (error) {
-            console.error('Save data error:', error);
-        }
-    }
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Healthcare Innovation Collaboration</h1>
+                <p class="hero-subtitle">
+                    A shared space for clinicians, industry partners, researchers, investors, 
+                    and patients to collaborate on transformative healthcare innovations.
+                </p>
+                <div style="display: flex; gap: var(--space-md); justify-content: center;">
+                    <button class="btn btn-primary" id="exploreProjectsBtn">
+                        <i class="fas fa-search"></i> Explore Innovations
+                    </button>
+                    <button class="btn btn-secondary" id="howItWorksBtn">
+                        <i class="fas fa-play-circle"></i> How It Works
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Query methods
-    getAllProjects() {
-        return Object.values(this.data.projects).sort((a, b) => 
-            new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
-    }
+    <!-- Main Content -->
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: var(--space-xl) 0;">
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark);">
+                <i class="fas fa-rocket" style="color: var(--innovation-blue);"></i>
+                Active Innovation Projects
+            </h2>
+            <div style="display: flex; gap: var(--space-sm);">
+                <select id="stageFilter" class="form-input" style="width: 150px;">
+                    <option value="">All Stages</option>
+                    <option value="ideation">Ideation</option>
+                    <option value="development">Development</option>
+                    <option value="validation">Validation</option>
+                    <option value="scale">Scale</option>
+                </select>
+                <button class="btn btn-secondary" id="refreshProjectsBtn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
 
-    getProject(id) {
-        const project = this.data.projects[id];
-        if (!project) return null;
+        <!-- Projects Grid -->
+        <div id="projectsContainer" class="projects-grid">
+            <!-- Projects loaded dynamically -->
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-2xl); color: var(--text-light);">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: var(--space-md);"></i>
+                <p>Loading innovation projects...</p>
+            </div>
+        </div>
 
-        // Get project discussions
-        const projectDiscussions = Object.values(this.data.discussions)
-            .filter(d => d.projectId === id)
-            .map(discussion => ({
-                ...discussion,
-                fullComments: discussion.comments.map(commentId => 
-                    this.data.comments[commentId]
-                ).filter(Boolean)
-            }));
+        <!-- Activity Feed -->
+        <div style="margin: var(--space-2xl) 0;">
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin-bottom: var(--space-lg);">
+                <i class="fas fa-bolt" style="color: var(--innovation-orange);"></i>
+                Recent Activity
+            </h2>
+            <div id="activityContainer" style="background: var(--card-white); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); padding: var(--space-lg);">
+                <div style="text-align: center; padding: var(--space-xl); color: var(--text-light);">
+                    <i class="fas fa-spinner fa-spin" style="margin-right: var(--space-sm);"></i>
+                    Loading recent activity...
+                </div>
+            </div>
+        </div>
+    </main>
 
-        return {
-            ...project,
-            discussions: projectDiscussions,
-            recentActivity: this.data.activities
-                .filter(a => a.projectId === id)
-                .slice(0, 10)
-        };
-    }
+    <!-- Modals -->
+    <!-- Join Platform Modal -->
+    <div id="joinModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Join Innovation Platform</h2>
+                <button class="modal-close" id="closeJoinModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-medium); margin-bottom: var(--space-lg);">
+                    Select your role to start collaborating. No account needed - just start contributing!
+                </p>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" 
+                           id="userName" 
+                           class="form-input" 
+                           placeholder="Enter your name (optional)">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">I am a:</label>
+                    <div class="stakeholder-options">
+                        <div class="stakeholder-option" data-type="clinician">
+                            <div style="width: 48px; height: 48px; background: rgba(33, 150, 243, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--clinician-color); font-size: 1.25rem;">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <span style="font-weight: 600; font-size: 0.875rem;">Clinician</span>
+                        </div>
+                        <div class="stakeholder-option" data-type="industry">
+                            <div style="width: 48px; height: 48px; background: rgba(255, 152, 0, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--industry-color); font-size: 1.25rem;">
+                                <i class="fas fa-industry"></i>
+                            </div>
+                            <span style="font-weight: 600; font-size: 0.875rem;">Industry</span>
+                        </div>
+                        <div class="stakeholder-option" data-type="researcher">
+                            <div style="width: 48px; height: 48px; background: rgba(156, 39, 176, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--researcher-color); font-size: 1.25rem;">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <span style="font-weight: 600; font-size: 0.875rem;">Researcher</span>
+                        </div>
+                        <div class="stakeholder-option" data-type="investor">
+                            <div style="width: 48px; height: 48px; background: rgba(76, 175, 80, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--investor-color); font-size: 1.25rem;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span style="font-weight: 600; font-size: 0.875rem;">Investor</span>
+                        </div>
+                        <div class="stakeholder-option" data-type="patient">
+                            <div style="width: 48px; height: 48px; background: rgba(0, 150, 136, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--patient-color); font-size: 1.25rem;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span style="font-weight: 600; font-size: 0.875rem;">Patient</span>
+                        </div>
+                        <div class="stakeholder-option" data-type="other">
+                            <div style="width: 48px; height: 48px; background: rgba(0, 102, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--innovation-blue); font-size: 1.25rem;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span style="font-weight: 600; font-size: 0.875rem;">Other</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selectedRole" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Organization (optional)</label>
+                    <input type="text" 
+                           id="userOrganization" 
+                           class="form-input" 
+                           placeholder="Hospital, company, institution">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelJoin">Cancel</button>
+                <button class="btn btn-primary" id="confirmJoin">
+                    <i class="fas fa-rocket"></i> Start Collaborating
+                </button>
+            </div>
+        </div>
+    </div>
 
-    getRecentActivity(limit = 20) {
-        return this.data.activities.slice(0, limit);
-    }
-}
+    <!-- New Project Modal -->
+    <div id="newProjectModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Start New Innovation</h2>
+                <button class="modal-close" id="closeProjectModal">&times;</button>
+            </div>
+            <form id="createProjectForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Innovation Title *</label>
+                        <input type="text" 
+                               id="projectTitle" 
+                               class="form-input" 
+                               required
+                               placeholder="e.g., AI-Powered Diagnostic Tool for Early Detection">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">What problem does this solve? *</label>
+                        <textarea id="projectProblem" 
+                                  class="form-textarea" 
+                                  required
+                                  placeholder="Describe the clinical or healthcare problem..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Innovation Description *</label>
+                        <textarea id="projectDescription" 
+                                  class="form-textarea" 
+                                  required
+                                  placeholder="Describe your innovation idea or solution..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current Stage</label>
+                        <select id="projectStage" class="form-input">
+                            <option value="ideation">Ideation - Early concept</option>
+                            <option value="development">Development - Building prototype</option>
+                            <option value="validation">Validation - Testing & feedback</option>
+                            <option value="scale">Scale - Ready for implementation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tags (comma separated)</label>
+                        <input type="text" 
+                               id="projectTags" 
+                               class="form-input" 
+                               placeholder="e.g., AI, diagnostics, remote monitoring, surgical tools">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelProject">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Innovation Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-// ==================== INITIALIZE PLATFORM ====================
-const innovationPlatform = new InnovationPlatform();
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
 
-// ==================== EXPRESS SETUP ====================
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
-            fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-            imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'", "ws:", "wss:"],
-            frameSrc: ["'self'"],
-            objectSrc: ["'none'"]
-        }
-    }
-}));
+    <script>
+        class InnovationPlatform {
+            constructor() {
+                this.API_BASE = window.location.origin;
+                this.currentUser = null;
+                this.socket = null;
+                this.projects = [];
+                this.activity = [];
+                this.init();
+            }
 
-app.use(cors({
-    origin: function(origin, callback) {
-        // Allow all origins for development
-        if (NODE_ENV === 'development') return callback(null, true);
-        
-        const allowedOrigins = [
-            'http://localhost:3000',
-            'http://localhost:5173',
-            'https://thoraxlab.up.railway.app',
-            /\.railway\.app$/,
-            /\.healthcare-innovation\.org$/
-        ];
-        
-        if (!origin || allowedOrigins.some(allowed => {
-            if (typeof allowed === 'string') return origin === allowed;
-            if (allowed instanceof RegExp) return allowed.test(origin);
-            return false;
-        })) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-}));
+            init() {
+                this.setupEventListeners();
+                this.loadProjects();
+                this.loadActivity();
+                this.initSocket();
+            }
 
-app.use(compression());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Static files
-app.use(express.static('public', {
-    maxAge: isProduction ? '1y' : '0',
-    setHeaders: (res, path) => {
-        if (path.endsWith('.html')) {
-            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        }
-    }
-}));
-
-// ==================== SOCKET.IO FOR REAL-TIME COLLABORATION ====================
-const io = new Server(server, {
-    cors: {
-        origin: NODE_ENV === 'development' ? '*' : [
-            'https://thoraxlab.up.railway.app',
-            /\.railway\.app$/,
-            /\.healthcare-innovation\.org$/
-        ],
-        credentials: true
-    },
-    transports: ['websocket', 'polling']
-});
-
-// Track active users per project
-const activeUsers = new Map();
-
-io.on('connection', (socket) => {
-    console.log(`🔌 Real-time connection: ${socket.id}`);
-
-    socket.on('join:project', (projectId) => {
-        socket.join(`project:${projectId}`);
-        
-        // Track active user
-        if (!activeUsers.has(projectId)) {
-            activeUsers.set(projectId, new Set());
-        }
-        activeUsers.get(projectId).add(socket.id);
-        
-        // Notify others
-        socket.to(`project:${projectId}`).emit('user:joined', {
-            userId: socket.id,
-            timestamp: new Date().toISOString(),
-            activeUsers: activeUsers.get(projectId).size
-        });
-
-        console.log(`💡 User joined project: ${projectId} (${activeUsers.get(projectId).size} active)`);
-    });
-
-    socket.on('project:update', (data) => {
-        const { projectId, updateType, data: updateData } = data;
-        
-        // Broadcast to all in project room
-        socket.to(`project:${projectId}`).emit('project:updated', {
-            projectId,
-            updateType,
-            data: updateData,
-            timestamp: new Date().toISOString()
-        });
-    });
-
-    socket.on('discussion:create', async (data) => {
-        const { projectId, title, content, author, tags } = data;
-        
-        const discussion = innovationPlatform.createDiscussion(projectId, {
-            title,
-            content,
-            author,
-            tags
-        });
-
-        // Broadcast new discussion
-        io.to(`project:${projectId}`).emit('discussion:created', discussion);
-    });
-
-    socket.on('comment:add', async (data) => {
-        const { discussionId, content, author } = data;
-        
-        const comment = innovationPlatform.addComment(discussionId, {
-            content,
-            author
-        });
-
-        // Get discussion for projectId
-        const discussion = innovationPlatform.data.discussions[discussionId];
-        if (discussion) {
-            io.to(`project:${discussion.projectId}`).emit('comment:added', {
-                discussionId,
-                comment
-            });
-        }
-    });
-
-    socket.on('disconnect', () => {
-        // Remove from active users
-        activeUsers.forEach((users, projectId) => {
-            if (users.has(socket.id)) {
-                users.delete(socket.id);
-                io.to(`project:${projectId}`).emit('user:left', {
-                    userId: socket.id,
-                    timestamp: new Date().toISOString(),
-                    activeUsers: users.size
+            setupEventListeners() {
+                // Header buttons
+                document.getElementById('joinPlatformBtn')?.addEventListener('click', () => this.showModal('join'));
+                document.getElementById('newProjectBtn')?.addEventListener('click', () => this.showModal('project'));
+                document.getElementById('exploreProjectsBtn')?.addEventListener('click', () => this.loadProjects());
+                document.getElementById('refreshProjectsBtn')?.addEventListener('click', () => this.loadProjects());
+                
+                // Join modal
+                document.getElementById('closeJoinModal')?.addEventListener('click', () => this.hideModal());
+                document.getElementById('cancelJoin')?.addEventListener('click', () => this.hideModal());
+                document.getElementById('confirmJoin')?.addEventListener('click', () => this.joinPlatform());
+                
+                // Project modal
+                document.getElementById('closeProjectModal')?.addEventListener('click', () => this.hideModal());
+                document.getElementById('cancelProject')?.addEventListener('click', () => this.hideModal());
+                document.getElementById('createProjectForm')?.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createProject();
+                });
+                
+                // Stakeholder selection
+                document.querySelectorAll('.stakeholder-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        document.querySelectorAll('.stakeholder-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        option.classList.add('selected');
+                        document.getElementById('selectedRole').value = option.dataset.type;
+                    });
+                });
+                
+                // Set default selection
+                document.querySelector('.stakeholder-option[data-type="clinician"]')?.click();
+                
+                // Modal backdrop click
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        this.hideModal();
+                    }
+                });
+                
+                // Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideModal();
+                    }
                 });
             }
-        });
-        console.log(`🔌 Socket disconnected: ${socket.id}`);
-    });
-});
 
-// ==================== API ENDPOINTS ====================
+            async loadProjects() {
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/projects`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.projects = data.data;
+                        this.renderProjects();
+                    }
+                } catch (error) {
+                    console.error('Failed to load projects:', error);
+                    this.showNotification('Error', 'Failed to load innovation projects', 'error');
+                }
+            }
 
-// Health check for Railway
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'healthy',
-        platform: 'ThoraxLab Innovation Platform',
-        version: '1.0.0',
-        timestamp: new Date().toISOString(),
-        stats: {
-            projects: Object.keys(innovationPlatform.data.projects).length,
-            discussions: Object.keys(innovationPlatform.data.discussions).length,
-            comments: Object.keys(innovationPlatform.data.comments).length
+            renderProjects() {
+                const container = document.getElementById('projectsContainer');
+                if (!container) return;
+                
+                if (this.projects.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-2xl);">
+                            <i class="fas fa-lightbulb" style="font-size: 3rem; color: var(--text-light); margin-bottom: var(--space-md);"></i>
+                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-dark); margin-bottom: var(--space-sm);">
+                                No Innovation Projects Yet
+                            </h3>
+                            <p style="color: var(--text-medium); margin-bottom: var(--space-lg);">
+                                Be the first to start an innovation project!
+                            </p>
+                            <button class="btn btn-primary" id="createFirstProject">
+                                <i class="fas fa-plus"></i> Start First Project
+                            </button>
+                        </div>
+                    `;
+                    
+                    document.getElementById('createFirstProject')?.addEventListener('click', () => {
+                        this.showModal('project');
+                    });
+                    return;
+                }
+                
+                container.innerHTML = this.projects.map(project => {
+                    const stageClass = `stage-${project.stage || 'ideation'}`;
+                    const stageLabel = project.stage ? 
+                        project.stage.charAt(0).toUpperCase() + project.stage.slice(1) : 
+                        'Ideation';
+                    
+                    // Get unique stakeholder types
+                    const stakeholderTypes = [...new Set(project.stakeholders.map(s => s.type))];
+                    
+                    return `
+                        <div class="project-card" data-project-id="${project.id}" onclick="window.innovationPlatform.openProject('${project.id}')">
+                            <div class="project-stage ${stageClass}">
+                                <i class="fas fa-${this.getStageIcon(project.stage)}"></i>
+                                ${stageLabel}
+                            </div>
+                            
+                            <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
+                            
+                            <div class="project-problem">
+                                <strong>Problem:</strong> ${this.escapeHtml(project.problem.substring(0, 150))}${project.problem.length > 150 ? '...' : ''}
+                            </div>
+                            
+                            <p class="project-description">${this.escapeHtml(project.description.substring(0, 120))}${project.description.length > 120 ? '...' : ''}</p>
+                            
+                            <div class="project-meta">
+                                <div>
+                                    <div class="stakeholder-avatars">
+                                        ${stakeholderTypes.slice(0, 3).map(type => `
+                                            <div class="stakeholder-avatar" style="background: ${this.getStakeholderColor(type)};">
+                                                ${this.getStakeholderIcon(type)}
+                                            </div>
+                                        `).join('')}
+                                        ${stakeholderTypes.length > 3 ? `
+                                            <div class="stakeholder-avatar" style="background: var(--text-light);">
+                                                +${stakeholderTypes.length - 3}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="stakeholder-count">${project.stakeholders.length} collaborators</div>
+                                </div>
+                                
+                                <div class="project-stats">
+                                    <span><i class="fas fa-comment"></i> ${project.metrics?.comments || 0}</span>
+                                    <span><i class="fas fa-comments"></i> ${project.metrics?.discussions || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async loadActivity() {
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/activity?limit=10`);
+                    
+                    if (!response.ok) return;
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.activity = data.data;
+                        this.renderActivity();
+                    }
+                } catch (error) {
+                    console.error('Failed to load activity:', error);
+                }
+            }
+
+            renderActivity() {
+                const container = document.getElementById('activityContainer');
+                if (!container || !this.activity.length) return;
+                
+                container.innerHTML = this.activity.map(item => {
+                    let icon = 'fa-bell';
+                    let color = 'var(--innovation-blue)';
+                    let text = '';
+                    
+                    switch (item.type) {
+                        case 'project_created':
+                            icon = 'fa-plus-circle';
+                            color = 'var(--innovation-green)';
+                            text = `<strong>${this.escapeHtml(item.author?.name || 'Someone')}</strong> created innovation project <strong>"${this.escapeHtml(item.title)}"</strong>`;
+                            break;
+                        case 'discussion_created':
+                            icon = 'fa-comment-medical';
+                            color = 'var(--innovation-purple)';
+                            text = `<strong>${this.escapeHtml(item.author?.name || 'Someone')}</strong> started discussion <strong>"${this.escapeHtml(item.title)}"</strong>`;
+                            break;
+                        case 'comment_added':
+                            icon = 'fa-comment';
+                            color = 'var(--innovation-orange)';
+                            text = `<strong>${this.escapeHtml(item.author?.name || 'Someone')}</strong> added a comment`;
+                            break;
+                    }
+                    
+                    const timeAgo = this.formatTimeAgo(item.timestamp);
+                    
+                    return `
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-md); padding: var(--space-sm) 0; border-bottom: 1px solid var(--border-subtle);">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem;">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.9375rem; color: var(--text-medium);">
+                                    ${text}
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 2px;">
+                                    ${timeAgo}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async joinPlatform() {
+                const name = document.getElementById('userName').value.trim();
+                const role = document.getElementById('selectedRole').value;
+                const organization = document.getElementById('userOrganization').value.trim();
+                
+                if (!role) {
+                    this.showNotification('Select Role', 'Please select your stakeholder role', 'warning');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/quick-join`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: name || undefined,
+                            type: role,
+                            role: this.getRoleTitle(role),
+                            organization: organization || undefined
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Join failed');
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.currentUser = data.data;
+                        this.hideModal();
+                        this.showNotification('Welcome!', `Welcome to ThoraxLab as a ${this.getRoleTitle(role)}`, 'success');
+                        
+                        // Update UI to show user is joined
+                        document.getElementById('joinPlatformBtn').innerHTML = `
+                            <i class="fas fa-user-check"></i> ${this.currentUser.name}
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Join error:', error);
+                    this.showNotification('Error', 'Failed to join platform', 'error');
+                }
+            }
+
+            async createProject() {
+                if (!this.currentUser) {
+                    this.showNotification('Join First', 'Please join the platform first to create projects', 'warning');
+                    this.showModal('join');
+                    return;
+                }
+                
+                const title = document.getElementById('projectTitle').value.trim();
+                const problem = document.getElementById('projectProblem').value.trim();
+                const description = document.getElementById('projectDescription').value.trim();
+                const stage = document.getElementById('projectStage').value;
+                const tags = document.getElementById('projectTags').value.split(',').map(t => t.trim()).filter(t => t);
+                
+                if (!title || !problem || !description) {
+                    this.showNotification('Missing Fields', 'Please fill in all required fields', 'warning');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/projects`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title,
+                            problem,
+                            description,
+                            stage,
+                            tags,
+                            stakeholder: this.currentUser
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Create project failed');
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.hideModal();
+                        this.showNotification('Success!', 'Innovation project created', 'success');
+                        this.loadProjects();
+                        this.loadActivity();
+                        
+                        // Reset form
+                        document.getElementById('createProjectForm').reset();
+                    }
+                } catch (error) {
+                    console.error('Create project error:', error);
+                    this.showNotification('Error', 'Failed to create project', 'error');
+                }
+            }
+
+            openProject(projectId) {
+                window.location.href = `/project.html?id=${projectId}`;
+            }
+
+            showModal(modalType) {
+                const modal = document.getElementById(`${modalType}Modal`);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            hideModal() {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+
+            showNotification(title, message, type = 'info') {
+                const container = document.getElementById('notificationContainer');
+                if (!container) return;
+                
+                const notification = document.createElement('div');
+                notification.className = `notification`;
+                notification.innerHTML = `
+                    <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 4px;">${this.escapeHtml(title)}</div>
+                    <div style="font-size: 0.9375rem; color: var(--text-medium);">${this.escapeHtml(message)}</div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => notification.classList.add('show'), 10);
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000);
+            }
+
+            initSocket() {
+                this.socket = io(this.API_BASE);
+                
+                this.socket.on('connect', () => {
+                    console.log('🔌 Connected to real-time server');
+                });
+                
+                this.socket.on('project:updated', (data) => {
+                    console.log('Project updated:', data);
+                    this.loadProjects();
+                    this.loadActivity();
+                });
+                
+                this.socket.on('discussion:created', (discussion) => {
+                    this.showNotification('New Discussion', `"${discussion.title}" started`, 'info');
+                    this.loadActivity();
+                });
+            }
+
+            // Utility methods
+            getStageIcon(stage) {
+                const icons = {
+                    'ideation': 'lightbulb',
+                    'development': 'tools',
+                    'validation': 'check-circle',
+                    'scale': 'rocket'
+                };
+                return icons[stage] || 'lightbulb';
+            }
+
+            getStakeholderColor(type) {
+                const colors = {
+                    'clinician': '#2196F3',
+                    'industry': '#FF9800',
+                    'researcher': '#9C27B0',
+                    'investor': '#4CAF50',
+                    'patient': '#009688',
+                    'other': '#0066CC'
+                };
+                return colors[type] || '#718096';
+            }
+
+            getStakeholderIcon(type) {
+                const icons = {
+                    'clinician': '👨‍⚕️',
+                    'industry': '🏭',
+                    'researcher': '🔬',
+                    'investor': '📈',
+                    'patient': '👤',
+                    'other': '👥'
+                };
+                return icons[type] || '👤';
+            }
+
+            getRoleTitle(role) {
+                const titles = {
+                    'clinician': 'Clinician',
+                    'industry': 'Industry Partner',
+                    'researcher': 'Researcher',
+                    'investor': 'Investor',
+                    'patient': 'Patient',
+                    'other': 'Collaborator'
+                };
+                return titles[role] || 'Collaborator';
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            formatTimeAgo(timestamp) {
+                try {
+                    const date = new Date(timestamp);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+                    
+                    if (diffMins < 60) return `${diffMins}m ago`;
+                    if (diffHours < 24) return `${diffHours}h ago`;
+                    if (diffDays < 7) return `${diffDays}d ago`;
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                } catch {
+                    return 'Recently';
+                }
+            }
         }
-    });
-});
 
-// Get all innovation projects
-app.get('/api/projects', (req, res) => {
-    try {
-        const projects = innovationPlatform.getAllProjects();
-        res.json({
-            success: true,
-            data: projects,
-            count: projects.length
+        // Initialize platform
+        window.addEventListener('DOMContentLoaded', () => {
+            window.innovationPlatform = new InnovationPlatform();
         });
-    } catch (error) {
-        console.error('Get projects error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to load innovation projects'
-        });
-    }
-});
-
-// Get single project with discussions
-app.get('/api/projects/:id', (req, res) => {
-    try {
-        const projectId = req.params.id;
-        const project = innovationPlatform.getProject(projectId);
-        
-        if (!project) {
-            return res.status(404).json({
-                success: false,
-                error: 'Innovation project not found'
-            });
-        }
-
-        res.json({
-            success: true,
-            data: project
-        });
-    } catch (error) {
-        console.error('Get project error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to load project'
-        });
-    }
-});
-
-// Create new innovation project
-app.post('/api/projects', (req, res) => {
-    try {
-        const { title, description, problem, stage, tags, stakeholder } = req.body;
-        
-        if (!title || !description || !problem) {
-            return res.status(400).json({
-                success: false,
-                error: 'Title, description, and problem are required'
-            });
-        }
-
-        const project = innovationPlatform.createProject({
-            title,
-            description,
-            problem,
-            stage: stage || 'ideation',
-            tags: tags || [],
-            stakeholders: stakeholder ? [{
-                id: `temp_${uuidv4()}`,
-                name: stakeholder.name || 'Anonymous',
-                type: stakeholder.type || 'anonymous',
-                role: stakeholder.role || 'Contributor',
-                organization: stakeholder.organization || 'Independent'
-            }] : []
-        });
-
-        res.status(201).json({
-            success: true,
-            data: project,
-            message: 'Innovation project created successfully'
-        });
-    } catch (error) {
-        console.error('Create project error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to create innovation project'
-        });
-    }
-});
-
-// Create discussion
-app.post('/api/discussions', (req, res) => {
-    try {
-        const { projectId, title, content, author, tags } = req.body;
-        
-        if (!projectId || !title || !content || !author) {
-            return res.status(400).json({
-                success: false,
-                error: 'Project ID, title, content, and author are required'
-            });
-        }
-
-        const discussion = innovationPlatform.createDiscussion(projectId, {
-            title,
-            content,
-            author,
-            tags: tags || []
-        });
-
-        res.status(201).json({
-            success: true,
-            data: discussion,
-            message: 'Discussion created successfully'
-        });
-    } catch (error) {
-        console.error('Create discussion error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to create discussion'
-        });
-    }
-});
-
-// Add comment
-app.post('/api/comments', (req, res) => {
-    try {
-        const { discussionId, content, author } = req.body;
-        
-        if (!discussionId || !content || !author) {
-            return res.status(400).json({
-                success: false,
-                error: 'Discussion ID, content, and author are required'
-            });
-        }
-
-        const comment = innovationPlatform.addComment(discussionId, {
-            content,
-            author
-        });
-
-        res.status(201).json({
-            success: true,
-            data: comment,
-            message: 'Comment added successfully'
-        });
-    } catch (error) {
-        console.error('Add comment error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to add comment'
-        });
-    }
-});
-
-// Get recent activity
-app.get('/api/activity', (req, res) => {
-    try {
-        const limit = parseInt(req.query.limit) || 20;
-        const activity = innovationPlatform.getRecentActivity(limit);
-        
-        res.json({
-            success: true,
-            data: activity,
-            count: activity.length
-        });
-    } catch (error) {
-        console.error('Get activity error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to load activity'
-        });
-    }
-});
-
-// Quick join - create anonymous contributor
-app.post('/api/quick-join', (req, res) => {
-    try {
-        const { name, type, role, organization } = req.body;
-        
-        const contributor = {
-            id: `contrib_${uuidv4()}`,
-            name: name || 'Anonymous Contributor',
-            type: type || 'anonymous',
-            role: role || 'Collaborator',
-            organization: organization || 'Independent',
-            joinedAt: new Date().toISOString()
-        };
-
-        res.json({
-            success: true,
-            data: contributor,
-            message: 'Welcome to the innovation platform!'
-        });
-    } catch (error) {
-        console.error('Quick join error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to join platform'
-        });
-    }
-});
-
-// SPA fallback
-app.get('*', (req, res) => {
-    if (req.path.startsWith('/api/')) {
-        return res.status(404).json({
-            success: false,
-            error: 'API endpoint not found',
-            path: req.originalUrl
-        });
-    }
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Error handler
-app.use((err, req, res, next) => {
-    console.error('🔥 Innovation platform error:', err);
-    res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-        message: NODE_ENV === 'development' ? err.message : undefined,
-        timestamp: new Date().toISOString()
-    });
-});
-
-// ==================== START SERVER ====================
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`
-🚀 THORAXLAB INNOVATION PLATFORM
-===================================
-📡 Server running on port ${PORT}
-🌐 Environment: ${NODE_ENV}
-🔒 Production: ${isProduction}
-💡 Mission: Multi-stakeholder innovation collaboration
-
-📊 PLATFORM STATUS:
-   • Innovation Projects: ${Object.keys(innovationPlatform.data.projects).length}
-   • Active Discussions: ${Object.keys(innovationPlatform.data.discussions).length}
-   • Comments: ${Object.keys(innovationPlatform.data.comments).length}
-
-🎯 STAKEHOLDER ACCESS:
-   • No login required
-   • Immediate project creation
-   • Real-time collaboration
-   • Role-based contributions
-
-🔗 CRITICAL ENDPOINTS:
-   • Health: http://localhost:${PORT}/health
-   • Projects: http://localhost:${PORT}/api/projects
-   • Quick Join: POST /api/quick-join
-
-🌟 Ready for innovation collaboration!
-`);
-});
-
-// Graceful shutdown
-const gracefulShutdown = () => {
-    console.log('\n🔻 Innovation platform shutting down...');
-    innovationPlatform.saveData();
-    console.log('💾 Platform data saved');
-    
-    server.close(() => {
-        console.log('📴 Server closed gracefully');
-        process.exit(0);
-    });
-    
-    setTimeout(() => {
-        console.log('⏰ Forcing shutdown...');
-        process.exit(1);
-    }, 10000);
-};
-
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+    </script>
+</body>
+</html>
