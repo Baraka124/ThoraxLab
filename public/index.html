@@ -1,1903 +1,722 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Innovation Platform | ThoraxLab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ==================== HEALTHCARE INNOVATION THEME ==================== */
-        :root {
-            /* Innovation Brand Colors */
-            --innovation-primary: #0066CC;        /* Trust blue */
-            --innovation-primary-dark: #004D99;
-            --innovation-primary-light: #E6F2FF;
-            --innovation-secondary: #00A86B;      /* Growth green */
-            --innovation-accent: #8A2BE2;         /* Creative purple */
-            --innovation-warning: #FF9800;
-            --innovation-error: #E53935;
-            --innovation-success: #4CAF50;
-            
-            /* Stakeholder Colors */
-            --clinician-color: #2196F3;
-            --industry-color: #FF9800;
-            --researcher-color: #9C27B0;
-            --investor-color: #4CAF50;
-            --patient-color: #009688;
-            
-            /* Neutral Colors */
-            --text-dark: #1A202C;
-            --text-medium: #4A5568;
-            --text-light: #718096;
-            --text-lighter: #A0AEC0;
-            --background-gray: #F7FAFC;
-            --card-white: #FFFFFF;
-            --border-subtle: #E2E8F0;
-            --border-medium: #CBD5E0;
-            
-            /* Typography */
-            --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            
-            /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            
-            /* Effects */
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-full: 9999px;
-            
-            --shadow-xs: 0 1px 3px rgba(0, 102, 204, 0.1);
-            --shadow-sm: 0 4px 6px rgba(0, 102, 204, 0.1);
-            --shadow-md: 0 10px 15px rgba(0, 102, 204, 0.1);
-            --shadow-lg: 0 20px 25px rgba(0, 102, 204, 0.1);
-            --shadow-xl: 0 25px 50px rgba(0, 102, 204, 0.1);
-        }
-
-        /* ==================== BASE STYLES ==================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font-body);
-            background: var(--background-gray);
-            color: var(--text-dark);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 var(--space-lg);
-        }
-
-        /* ==================== INNOVATION HEADER ==================== */
-        .innovation-header {
-            background: linear-gradient(135deg, var(--innovation-primary), var(--innovation-primary-dark));
-            color: white;
-            padding: var(--space-xl) 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .innovation-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                var(--clinician-color) 20%,
-                var(--industry-color) 40%,
-                var(--researcher-color) 60%,
-                var(--investor-color) 80%,
-                var(--patient-color) 100%);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-lg);
-        }
-
-        /* Innovation Logo */
-        .innovation-logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            text-decoration: none;
-        }
-
-        .logo-symbol {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--innovation-primary);
-            font-weight: 800;
-            font-size: 1.5rem;
-            box-shadow: var(--shadow-md);
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-title {
-            font-size: 1.75rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-        }
-
-        .logo-tagline {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        /* Stakeholder Navigation */
-        .stakeholder-nav {
-            display: flex;
-            gap: var(--space-md);
-            margin-left: auto;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .nav-link.active {
-            background: white;
-            color: var(--innovation-primary);
-            font-weight: 600;
-        }
-
-        /* User Section */
-        .innovation-user-section {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .stakeholder-badge {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: var(--radius-full);
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .badge-clinician { border-left: 3px solid var(--clinician-color); }
-        .badge-industry { border-left: 3px solid var(--industry-color); }
-        .badge-researcher { border-left: 3px solid var(--researcher-color); }
-        .badge-investor { border-left: 3px solid var(--investor-color); }
-        .badge-patient { border-left: 3px solid var(--patient-color); }
-        .badge-admin { border-left: 3px solid var(--innovation-primary); }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--innovation-primary), var(--innovation-secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* ==================== INNOVATION HERO ==================== */
-        .innovation-hero {
-            padding: var(--space-2xl) 0;
-            background: linear-gradient(135deg, 
-                rgba(0, 102, 204, 0.05) 0%,
-                rgba(0, 168, 107, 0.08) 100%);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .innovation-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
-            background: var(--innovation-primary-light);
-            color: var(--innovation-primary);
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-full);
-            font-weight: 600;
-            font-size: 0.875rem;
-            margin-bottom: var(--space-lg);
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: var(--space-lg);
-            background: linear-gradient(135deg, var(--innovation-primary), var(--innovation-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-medium);
-            line-height: 1.5;
-            margin-bottom: var(--space-xl);
-        }
-
-        /* ==================== STAKEHOLDER STATS ==================== */
-        .stakeholder-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .stat-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-        }
-
-        .stat-clinicians::before { background: var(--clinician-color); }
-        .stat-industry::before { background: var(--industry-color); }
-        .stat-researchers::before { background: var(--researcher-color); }
-        .stat-investors::before { background: var(--investor-color); }
-
-        .stat-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .icon-clinicians { background: rgba(33, 150, 243, 0.1); color: var(--clinician-color); }
-        .icon-industry { background: rgba(255, 152, 0, 0.1); color: var(--industry-color); }
-        .icon-researchers { background: rgba(156, 39, 176, 0.1); color: var(--researcher-color); }
-        .icon-investors { background: rgba(76, 175, 80, 0.1); color: var(--investor-color); }
-
-        .stat-title {
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 1rem;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--text-dark);
-            line-height: 1;
-            margin-bottom: var(--space-xs);
-        }
-
-        .stat-growth {
-            font-size: 0.875rem;
-            color: var(--innovation-secondary);
-            font-weight: 600;
-        }
-
-        /* ==================== INNOVATION GRID ==================== */
-        .innovation-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .innovation-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .innovation-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--innovation-primary);
-        }
-
-        .innovation-stage {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-md);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-md);
-            align-self: flex-start;
-        }
-
-        .stage-ideation { background: rgba(0, 102, 204, 0.1); color: var(--innovation-primary); }
-        .stage-development { background: rgba(255, 152, 0, 0.1); color: var(--innovation-warning); }
-        .stage-validation { background: rgba(156, 39, 176, 0.1); color: var(--innovation-accent); }
-        .stage-commercialization { background: rgba(0, 168, 107, 0.1); color: var(--innovation-secondary); }
-
-        .innovation-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: var(--space-sm);
-            line-height: 1.3;
-        }
-
-        .innovation-tagline {
-            color: var(--text-medium);
-            font-size: 0.9375rem;
-            line-height: 1.5;
-            margin-bottom: var(--space-lg);
-            flex: 1;
-        }
-
-        .innovation-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-            padding-top: var(--space-lg);
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .innovation-stakeholders {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .stakeholder-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--innovation-primary-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--innovation-primary);
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* ==================== QUICK ACTIONS ==================== */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .action-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 2px dashed var(--border-subtle);
-            transition: all 0.3s;
-            cursor: pointer;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--space-md);
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .action-card:hover {
-            border-color: var(--innovation-primary);
-            border-style: solid;
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .action-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--innovation-primary), var(--innovation-secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .action-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .action-description {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            line-height: 1.4;
-        }
-
-        /* ==================== BUTTONS ==================== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-md) var(--space-xl);
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.9375rem;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            white-space: nowrap;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--innovation-primary), var(--innovation-secondary));
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-secondary {
-            background: var(--card-white);
-            border-color: var(--border-subtle);
-            color: var(--text-dark);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--background-gray);
-            border-color: var(--innovation-primary);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border-color: var(--border-subtle);
-            color: var(--text-dark);
-        }
-
-        .btn-outline:hover:not(:disabled) {
-            background: var(--background-gray);
-            border-color: var(--innovation-primary);
-        }
-
-        .btn-sm {
-            padding: var(--space-sm) var(--space-md);
-            font-size: 0.875rem;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ==================== SECTION HEADERS ==================== */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .section-title i {
-            color: var(--innovation-primary);
-        }
-
-        /* ==================== OPPORTUNITIES ==================== */
-        .opportunities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .opportunity-card {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .opportunity-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        }
-
-        .opportunity-high::before { background: var(--innovation-error); }
-        .opportunity-medium::before { background: var(--innovation-warning); }
-        .opportunity-low::before { background: var(--innovation-success); }
-
-        .opportunity-urgency {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-md);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: var(--space-md);
-        }
-
-        .urgency-high { background: rgba(229, 57, 53, 0.1); color: var(--innovation-error); }
-        .urgency-medium { background: rgba(255, 152, 0, 0.1); color: var(--innovation-warning); }
-        .urgency-low { background: rgba(76, 175, 80, 0.1); color: var(--innovation-success); }
-
-        .opportunity-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: var(--space-sm);
-        }
-
-        .opportunity-description {
-            color: var(--text-medium);
-            font-size: 0.9375rem;
-            line-height: 1.5;
-            margin-bottom: var(--space-lg);
-        }
-
-        .opportunity-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: var(--space-lg);
-            padding-top: var(--space-lg);
-            border-top: 1px solid var(--border-subtle);
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        /* ==================== MODALS ==================== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: var(--space-lg);
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--card-white);
-            border-radius: var(--radius-xl);
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
-            box-shadow: var(--shadow-xl);
-        }
-
-        @keyframes modalSlideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            padding: var(--space-xl);
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: var(--space-xs);
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: var(--background-gray);
-            color: var(--text-dark);
-        }
-
-        .modal-body {
-            padding: var(--space-xl);
-        }
-
-        .modal-footer {
-            padding: var(--space-xl);
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            gap: var(--space-md);
-            justify-content: flex-end;
-        }
-
-        /* ==================== FORM ELEMENTS ==================== */
-        .form-group {
-            margin-bottom: var(--space-lg);
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: var(--space-sm);
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 0.9375rem;
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: var(--space-md);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            background: var(--card-white);
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--innovation-primary);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        /* ==================== NOTIFICATIONS ==================== */
-        .notification-container {
-            position: fixed;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-            max-width: 400px;
-        }
-
-        .notification {
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--shadow-lg);
-            border-left: 4px solid var(--innovation-primary);
-            animation: slideIn 0.3s ease;
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .notification.info { border-color: var(--innovation-primary); }
-        .notification.success { border-color: var(--innovation-success); }
-        .notification.warning { border-color: var(--innovation-warning); }
-        .notification.error { border-color: var(--innovation-error); }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* ==================== LOADING & EMPTY STATES ==================== */
-        .loading-state {
-            text-align: center;
-            padding: var(--space-2xl);
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-subtle);
-            border-top-color: var(--innovation-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto var(--space-md);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: var(--space-2xl);
-            background: var(--card-white);
-            border-radius: var(--radius-lg);
-            border: 2px dashed var(--border-subtle);
-        }
-
-        .empty-icon {
-            font-size: 3rem;
-            color: var(--text-lighter);
-            margin-bottom: var(--space-lg);
-        }
-
-        .empty-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: var(--space-sm);
-        }
-
-        .empty-description {
-            color: var(--text-light);
-            margin-bottom: var(--space-xl);
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* ==================== RESPONSIVE DESIGN ==================== */
-        @media (max-width: 1024px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .stakeholder-nav {
-                display: none;
-            }
-            
-            .header-content {
-                flex-wrap: wrap;
+import express from 'express';
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import { v4 as uuidv4 } from 'uuid';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'production';
+const isProduction = NODE_ENV === 'production';
+
+const app = express();
+const server = createServer(app);
+
+// ==================== INNOVATION PLATFORM DATA STORE ====================
+class InnovationPlatform {
+    constructor() {
+        this.dataPath = path.join(__dirname, 'innovation_data.json');
+        this.data = {
+            projects: {},
+            discussions: {},
+            comments: {},
+            activities: []
+        };
+        this.initializeData();
+    }
+
+    async initializeData() {
+        try {
+            const fileData = await fs.readFile(this.dataPath, 'utf8');
+            this.data = JSON.parse(fileData);
+            console.log(`📊 Loaded ${Object.keys(this.data.projects).length} innovation projects`);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await this.createSampleInnovationData();
+                console.log('🚀 Created innovation platform with sample data');
+            } else {
+                console.error('Data initialization error:', error);
             }
         }
+        // Auto-save every 5 minutes
+        setInterval(() => this.saveData(), 300000);
+    }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 var(--space-md);
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.125rem;
-            }
-            
-            .innovation-grid,
-            .opportunities-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                gap: var(--space-md);
-                align-items: stretch;
-            }
-            
-            .modal {
-                max-width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo-title {
-                font-size: 1.5rem;
-            }
-            
-            .hero-title {
-                font-size: 1.75rem;
-            }
-            
-            .stakeholder-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-header,
-            .modal-body,
-            .modal-footer {
-                padding: var(--space-lg);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Innovation Header -->
-    <header class="innovation-header">
-        <div class="container">
-            <div class="header-content">
-                <a href="/" class="innovation-logo">
-                    <div class="logo-symbol">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <div class="logo-text">
-                        <div class="logo-title">Healthcare Innovation</div>
-                        <div class="logo-tagline">Collaboration Platform</div>
-                    </div>
-                </a>
-                
-                <nav class="stakeholder-nav">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-home"></i> Dashboard
-                    </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-project-diagram"></i> Projects
-                    </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-handshake"></i> Opportunities
-                    </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-users"></i> Network
-                    </a>
-                </nav>
-                
-                <div class="innovation-user-section">
-                    <div class="stakeholder-badge badge-clinician" id="stakeholderBadge">
-                        <i class="fas fa-user-md"></i>
-                        <span id="stakeholderRole">Clinician</span>
-                    </div>
-                    
-                    <div class="user-avatar" id="userAvatar">JD</div>
-                    
-                    <button id="logoutBtn" class="btn btn-outline btn-sm" style="color: white; border-color: rgba(255,255,255,0.3);">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Innovation Hero -->
-    <section class="innovation-hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="innovation-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    Secure Multi-Stakeholder Collaboration
-                </div>
-                
-                <h1 class="hero-title" id="welcomeTitle">Healthcare Innovation Hub</h1>
-                
-                <p class="hero-subtitle" id="welcomeSubtitle">
-                    Connect with clinicians, industry partners, researchers, and investors 
-                    to transform healthcare through collaborative innovation.
-                </p>
-                
-                <div class="flex gap-md justify-center">
-                    <button id="newInnovationBtn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Start Innovation Project
-                    </button>
-                    <button id="exploreOpportunities" class="btn btn-secondary" style="background: white; color: var(--innovation-primary);">
-                        <i class="fas fa-search"></i> Explore Opportunities
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Stakeholder Statistics -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-chart-network"></i>
-                    Innovation Network
-                </h2>
-            </div>
-            
-            <div class="stakeholder-stats">
-                <div class="stat-card stat-clinicians">
-                    <div class="stat-header">
-                        <div class="stat-icon icon-clinicians">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <div>
-                            <div class="stat-title">Clinicians</div>
-                            <div class="stat-growth">+12% this month</div>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="cliniciansCount">0</div>
-                </div>
-                
-                <div class="stat-card stat-industry">
-                    <div class="stat-header">
-                        <div class="stat-icon icon-industry">
-                            <i class="fas fa-industry"></i>
-                        </div>
-                        <div>
-                            <div class="stat-title">Industry Partners</div>
-                            <div class="stat-growth">+8% this month</div>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="industryCount">0</div>
-                </div>
-                
-                <div class="stat-card stat-researchers">
-                    <div class="stat-header">
-                        <div class="stat-icon icon-researchers">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                        <div>
-                            <div class="stat-title">Researchers</div>
-                            <div class="stat-growth">+15% this month</div>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="researchersCount">0</div>
-                </div>
-                
-                <div class="stat-card stat-investors">
-                    <div class="stat-header">
-                        <div class="stat-icon icon-investors">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div>
-                            <div class="stat-title">Investors</div>
-                            <div class="stat-growth">+5% this month</div>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="investorsCount">0</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Actions -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-bolt"></i>
-                    Quick Actions
-                </h2>
-            </div>
-            
-            <div class="quick-actions">
-                <button class="action-card" id="newProjectBtn">
-                    <div class="action-icon">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="action-title">Start Innovation Project</div>
-                    <div class="action-description">
-                        Launch a new healthcare innovation with cross-stakeholder collaboration
-                    </div>
-                </button>
-                
-                <button class="action-card" id="submitOpportunityBtn">
-                    <div class="action-icon">
-                        <i class="fas fa-bullhorn"></i>
-                    </div>
-                    <div class="action-title">Submit Opportunity</div>
-                    <div class="action-description">
-                        Share unmet clinical needs or innovation opportunities with the network
-                    </div>
-                </button>
-                
-                <a href="#" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="action-title">Find Collaborators</div>
-                    <div class="action-description">
-                        Connect with stakeholders across the healthcare innovation ecosystem
-                    </div>
-                </a>
-                
-                <button class="action-card" id="viewAnalyticsBtn">
-                    <div class="action-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <div class="action-title">Platform Analytics</div>
-                    <div class="action-description">
-                        Access insights on innovation trends and collaboration patterns
-                    </div>
-                </button>
-            </div>
-        </section>
-
-        <!-- Your Innovation Projects -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-rocket"></i>
-                    Your Innovation Projects
-                </h2>
-                
-                <div class="flex gap-sm">
-                    <div class="search-box" style="position: relative; width: 200px;">
-                        <i class="fas fa-search" style="position: absolute; left: var(--space-md); top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
-                        <input type="text" 
-                               id="projectSearch" 
-                               class="form-input" 
-                               style="padding-left: 2.5rem;"
-                               placeholder="Search projects...">
-                    </div>
-                    
-                    <select id="stageFilter" class="form-input" style="width: 150px;">
-                        <option value="">All Stages</option>
-                        <option value="ideation">Ideation</option>
-                        <option value="development">Development</option>
-                        <option value="validation">Validation</option>
-                        <option value="commercialization">Commercialization</option>
-                    </select>
-                    
-                    <button id="refreshProjects" class="btn btn-secondary">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Loading State -->
-            <div id="loadingState" class="loading-state">
-                <div class="loading-spinner"></div>
-                <p>Loading innovation projects...</p>
-            </div>
-
-            <!-- Empty State -->
-            <div id="emptyState" class="empty-state hidden">
-                <div class="empty-icon">
-                    <i class="fas fa-lightbulb"></i>
-                </div>
-                <h3 class="empty-title">No Innovation Projects Yet</h3>
-                <p class="empty-description">
-                    Start your first innovation project to collaborate with stakeholders 
-                    across the healthcare ecosystem.
-                </p>
-                <button id="emptyNewProjectBtn" class="btn btn-primary mt-lg">
-                    <i class="fas fa-plus"></i> Start Your First Project
-                </button>
-            </div>
-
-            <!-- Innovation Projects Grid -->
-            <div id="projectsContainer" class="innovation-grid hidden">
-                <!-- Projects loaded here -->
-            </div>
-        </section>
-
-        <!-- Innovation Opportunities -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-bullseye"></i>
-                    Innovation Opportunities
-                </h2>
-                <button id="viewAllOpportunities" class="btn btn-secondary">
-                    <i class="fas fa-eye"></i> View All
-                </button>
-            </div>
-
-            <div id="opportunitiesContainer" class="opportunities-grid">
-                <!-- Opportunities loaded here -->
-            </div>
-        </section>
-    </main>
-
-    <!-- New Innovation Project Modal -->
-    <div id="newProjectModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Start Innovation Project</h2>
-                <button class="modal-close" id="closeNewProjectModal">&times;</button>
-            </div>
-            <form id="createProjectForm">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="projectTitle" class="form-label">Project Title *</label>
-                        <input type="text" 
-                               id="projectTitle" 
-                               class="form-input" 
-                               required
-                               placeholder="e.g., AI-Powered Diagnostic Tool">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="projectTagline" class="form-label">Tagline</label>
-                        <input type="text" 
-                               id="projectTagline" 
-                               class="form-input" 
-                               placeholder="Short description (max 60 characters)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="projectDescription" class="form-label">Description *</label>
-                        <textarea id="projectDescription" 
-                                  class="form-textarea" 
-                                  required
-                                  placeholder="Describe your innovation project, clinical need, and value proposition..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="projectType" class="form-label">Innovation Type</label>
-                        <select id="projectType" class="form-select">
-                            <option value="digital_health">Digital Health</option>
-                            <option value="medical_device">Medical Device</option>
-                            <option value="therapeutic">Therapeutic</option>
-                            <option value="diagnostic">Diagnostic</option>
-                            <option value="care_delivery">Care Delivery</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="clinicalNeed" class="form-label">Clinical Need *</label>
-                        <textarea id="clinicalNeed" 
-                                  class="form-textarea" 
-                                  required
-                                  placeholder="Describe the clinical problem you're solving..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelNewProject">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-rocket"></i> Launch Project
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Submit Opportunity Modal -->
-    <div id="submitOpportunityModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Submit Innovation Opportunity</h2>
-                <button class="modal-close" id="closeOpportunityModal">&times;</button>
-            </div>
-            <form id="submitOpportunityForm">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="opportunityTitle" class="form-label">Opportunity Title *</label>
-                        <input type="text" 
-                               id="opportunityTitle" 
-                               class="form-input" 
-                               required
-                               placeholder="e.g., Need: Remote Monitoring for Post-Op Patients">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="opportunityDescription" class="form-label">Description *</label>
-                        <textarea id="opportunityDescription" 
-                                  class="form-textarea" 
-                                  required
-                                  placeholder="Describe the opportunity, clinical context, and potential impact..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="clinicalProblem" class="form-label">Clinical Problem *</label>
-                        <textarea id="clinicalProblem" 
-                                  class="form-textarea" 
-                                  required
-                                  placeholder="What specific problem needs solving?"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="opportunityUrgency" class="form-label">Urgency</label>
-                        <select id="opportunityUrgency" class="form-select">
-                            <option value="high">High - Immediate need</option>
-                            <option value="medium" selected>Medium - Important but not urgent</option>
-                            <option value="low">Low - Future opportunity</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="seekingStakeholders" class="form-label">Seeking Stakeholders</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm);">
-                            <label style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <input type="checkbox" value="clinicians"> Clinicians
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <input type="checkbox" value="industry"> Industry
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <input type="checkbox" value="researchers"> Researchers
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <input type="checkbox" value="investors"> Investors
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelOpportunity">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-bullhorn"></i> Submit Opportunity
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Notification Container -->
-    <div class="notification-container" id="notificationContainer"></div>
-
-    <script>
-        // ==================== HEALTHCARE INNOVATION PLATFORM ====================
-        class HealthcareInnovationPlatform {
-            constructor() {
-                this.API_BASE = window.location.origin;
-                this.stakeholder = null;
-                this.innovationProjects = [];
-                this.innovationOpportunities = [];
-                this.platformAnalytics = {};
-                this.init();
-            }
-
-            init() {
-                this.setupEventListeners();
-                this.checkAuth();
-            }
-
-            setupEventListeners() {
-                // Navigation
-                document.getElementById('newInnovationBtn')?.addEventListener('click', () => this.showModal('newProject'));
-                document.getElementById('newProjectBtn')?.addEventListener('click', () => this.showModal('newProject'));
-                document.getElementById('emptyNewProjectBtn')?.addEventListener('click', () => this.showModal('newProject'));
-                document.getElementById('submitOpportunityBtn')?.addEventListener('click', () => this.showModal('submitOpportunity'));
-                document.getElementById('viewAnalyticsBtn')?.addEventListener('click', () => this.showPlatformAnalytics());
-                document.getElementById('exploreOpportunities')?.addEventListener('click', () => this.loadOpportunities());
-                document.getElementById('viewAllOpportunities')?.addEventListener('click', () => this.loadOpportunities());
-                document.getElementById('refreshProjects')?.addEventListener('click', () => this.loadInnovationProjects());
-                
-                // Modal controls
-                document.getElementById('closeNewProjectModal')?.addEventListener('click', () => this.hideModal());
-                document.getElementById('cancelNewProject')?.addEventListener('click', () => this.hideModal());
-                document.getElementById('closeOpportunityModal')?.addEventListener('click', () => this.hideModal());
-                document.getElementById('cancelOpportunity')?.addEventListener('click', () => this.hideModal());
-                
-                // Form submissions
-                document.getElementById('createProjectForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.createInnovationProject();
-                });
-                
-                document.getElementById('submitOpportunityForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.submitInnovationOpportunity();
-                });
-                
-                // Logout
-                document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                    if (confirm('Are you sure you want to logout?')) {
-                        this.logout();
-                    }
-                });
-                
-                // Close modals on backdrop click
-                document.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal-overlay')) {
-                        this.hideModal();
-                    }
-                });
-                
-                // Escape key to close modals
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && document.querySelector('.modal-overlay.active')) {
-                        this.hideModal();
-                    }
-                });
-            }
-
-            async checkAuth() {
-                try {
-                    const response = await fetch(`${this.API_BASE}/api/stakeholders/me`, {
-                        credentials: 'include'
-                    });
-                    
-                    if (response.status === 401) {
-                        window.location.href = '/login.html';
-                        return;
-                    }
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.stakeholder = data.stakeholder;
-                        this.updateUI();
-                        this.loadPlatformData();
-                    } else {
-                        window.location.href = '/login.html';
-                    }
-                } catch (error) {
-                    console.error('Auth check failed:', error);
-                    window.location.href = '/login.html';
-                }
-            }
-
-            updateUI() {
-                if (!this.stakeholder) return;
-                
-                // Update welcome message
-                const welcomeTitle = document.getElementById('welcomeTitle');
-                const welcomeSubtitle = document.getElementById('welcomeSubtitle');
-                const userAvatar = document.getElementById('userAvatar');
-                const stakeholderBadge = document.getElementById('stakeholderBadge');
-                const stakeholderRole = document.getElementById('stakeholderRole');
-                
-                if (welcomeTitle) {
-                    const firstName = this.stakeholder.name.split(' ')[0];
-                    const roleMap = {
-                        'clinician': 'Dr.',
-                        'industry': '',
-                        'researcher': 'Dr.',
-                        'investor': '',
-                        'patient': '',
-                        'platform_administration': ''
-                    };
-                    const prefix = roleMap[this.stakeholder.stakeholderType] || '';
-                    welcomeTitle.textContent = `Welcome, ${prefix} ${firstName}`;
-                }
-                
-                if (userAvatar) {
-                    userAvatar.textContent = this.stakeholder.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                }
-                
-                if (stakeholderBadge) {
-                    // Remove all badge classes
-                    stakeholderBadge.className = 'stakeholder-badge';
-                    
-                    // Add appropriate badge class
-                    const badgeClass = `badge-${this.stakeholder.stakeholderType}`;
-                    stakeholderBadge.classList.add(badgeClass);
-                    
-                    // Update icon and text
-                    const iconMap = {
-                        'clinician': 'fa-user-md',
-                        'industry': 'fa-industry',
-                        'researcher': 'fa-flask',
-                        'investor': 'fa-chart-line',
-                        'patient': 'fa-user',
-                        'platform_administration': 'fa-crown'
-                    };
-                    
-                    const icon = iconMap[this.stakeholder.stakeholderType] || 'fa-user';
-                    stakeholderBadge.innerHTML = `<i class="fas ${icon}"></i> <span id="stakeholderRole">${this.stakeholder.stakeholderType.charAt(0).toUpperCase() + this.stakeholder.stakeholderType.slice(1)}</span>`;
-                }
-                
-                if (welcomeSubtitle) {
-                    welcomeSubtitle.textContent = `You have ${this.stakeholder.innovationProjectCount || 0} active innovation projects.`;
-                }
-            }
-
-            async loadPlatformData() {
-                try {
-                    await Promise.all([
-                        this.loadPlatformAnalytics(),
-                        this.loadInnovationProjects(),
-                        this.loadOpportunities()
-                    ]);
-                } catch (error) {
-                    console.error('Failed to load platform data:', error);
-                    this.showNotification('Error', 'Failed to load platform data.', 'error');
-                }
-            }
-
-            async loadPlatformAnalytics() {
-                try {
-                    const response = await fetch(`${this.API_BASE}/api/platform/analytics`, {
-                        credentials: 'include'
-                    });
-                    
-                    if (!response.ok) return;
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.platformAnalytics = data.analytics;
-                        this.updateAnalyticsUI();
-                    }
-                } catch (error) {
-                    console.error('Failed to load analytics:', error);
-                }
-            }
-
-            updateAnalyticsUI() {
-                if (!this.platformAnalytics.stakeholderDistribution) return;
-                
-                const distribution = this.platformAnalytics.stakeholderDistribution;
-                
-                // Update counts
-                document.getElementById('cliniciansCount').textContent = distribution.clinician || 0;
-                document.getElementById('industryCount').textContent = distribution.industry || 0;
-                document.getElementById('researchersCount').textContent = distribution.researcher || 0;
-                document.getElementById('investorsCount').textContent = distribution.investor || 0;
-            }
-
-            async loadInnovationProjects() {
-                try {
-                    this.showLoading(true);
-                    
-                    const response = await fetch(`${this.API_BASE}/api/stakeholders/me/projects`, {
-                        credentials: 'include'
-                    });
-                    
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.innovationProjects = data.projects || [];
-                        this.renderInnovationProjects();
-                    }
-                } catch (error) {
-                    console.error('Failed to load projects:', error);
-                    this.showNotification('Error', 'Failed to load innovation projects.', 'error');
-                } finally {
-                    this.showLoading(false);
-                }
-            }
-
-            renderInnovationProjects() {
-                const container = document.getElementById('projectsContainer');
-                const loading = document.getElementById('loadingState');
-                const empty = document.getElementById('emptyState');
-                
-                if (!container) return;
-                
-                loading.classList.add('hidden');
-                
-                if (this.innovationProjects.length === 0) {
-                    empty.classList.remove('hidden');
-                    container.classList.add('hidden');
-                    return;
-                }
-                
-                empty.classList.add('hidden');
-                container.classList.remove('hidden');
-                
-                container.innerHTML = this.innovationProjects.map(project => {
-                    const stageClass = `stage-${project.stage || 'ideation'}`;
-                    const stageText = (project.stage || 'ideation').charAt(0).toUpperCase() + (project.stage || 'ideation').slice(1);
-                    
-                    return `
-                        <div class="innovation-card">
-                            <div class="innovation-stage ${stageClass}">
-                                <i class="fas fa-${this.getStageIcon(project.stage)}"></i>
-                                ${stageText}
-                            </div>
-                            
-                            <h3 class="innovation-title">${this.escapeHtml(project.title)}</h3>
-                            <p class="innovation-tagline">${this.escapeHtml(project.tagline || project.description.substring(0, 120) + '...')}</p>
-                            
-                            <div class="innovation-meta">
-                                <div class="innovation-stakeholders">
-                                    <div class="stakeholder-avatar">${this.getInitials(project.leadStakeholder || 'Lead')}</div>
-                                    <span style="font-size: 0.875rem; color: var(--text-light);">
-                                        ${project.teamSize || 1} collaborators
-                                    </span>
-                                </div>
-                                
-                                <a href="/project.html?id=${project.id}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-arrow-right"></i> Open
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            getStageIcon(stage) {
-                const icons = {
-                    'ideation': 'lightbulb',
-                    'development': 'tools',
-                    'validation': 'check-circle',
-                    'commercialization': 'rocket'
-                };
-                return icons[stage] || 'lightbulb';
-            }
-
-            async loadOpportunities() {
-                try {
-                    const response = await fetch(`${this.API_BASE}/api/innovation/opportunities`, {
-                        credentials: 'include'
-                    });
-                    
-                    if (!response.ok) return;
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.innovationOpportunities = data.opportunities || [];
-                        this.renderOpportunities();
-                    }
-                } catch (error) {
-                    console.error('Failed to load opportunities:', error);
-                }
-            }
-
-            renderOpportunities() {
-                const container = document.getElementById('opportunitiesContainer');
-                if (!container) return;
-                
-                if (this.innovationOpportunities.length === 0) {
-                    container.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-2xl);">
-                            <i class="fas fa-bullseye" style="font-size: 3rem; color: var(--text-lighter); margin-bottom: var(--space-md);"></i>
-                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-dark); margin-bottom: var(--space-sm);">
-                                No Opportunities Yet
-                            </h3>
-                            <p style="color: var(--text-light);">
-                                Be the first to submit an innovation opportunity!
-                            </p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = this.innovationOpportunities.slice(0, 3).map(opportunity => {
-                    const urgencyClass = `urgency-${opportunity.urgency || 'medium'}`;
-                    const urgencyText = (opportunity.urgency || 'medium').charAt(0).toUpperCase() + (opportunity.urgency || 'medium').slice(1);
-                    
-                    return `
-                        <div class="opportunity-card opportunity-${opportunity.urgency || 'medium'}">
-                            <div class="opportunity-urgency ${urgencyClass}">
-                                <i class="fas fa-${this.getUrgencyIcon(opportunity.urgency)}"></i>
-                                ${urgencyText} Priority
-                            </div>
-                            
-                            <h3 class="opportunity-title">${this.escapeHtml(opportunity.title)}</h3>
-                            <p class="opportunity-description">${this.escapeHtml(opportunity.description.substring(0, 150) + '...')}</p>
-                            
-                            <div class="opportunity-meta">
-                                <span>${this.formatTimeAgo(opportunity.createdAt)}</span>
-                                <span>•</span>
-                                <span>${opportunity.seeking?.length || 0} stakeholders needed</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            getUrgencyIcon(urgency) {
-                const icons = {
-                    'high': 'exclamation-triangle',
-                    'medium': 'exclamation-circle',
-                    'low': 'info-circle'
-                };
-                return icons[urgency] || 'exclamation-circle';
-            }
-
-            async createInnovationProject() {
-                const title = document.getElementById('projectTitle')?.value.trim();
-                const tagline = document.getElementById('projectTagline')?.value.trim();
-                const description = document.getElementById('projectDescription')?.value.trim();
-                const innovationType = document.getElementById('projectType')?.value;
-                const clinicalNeed = document.getElementById('clinicalNeed')?.value.trim();
-                
-                if (!title || !description || !clinicalNeed) {
-                    this.showNotification('Error', 'Title, description, and clinical need are required.', 'error');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch(`${this.API_BASE}/api/innovation/projects`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({
-                            title,
-                            tagline,
-                            description,
-                            innovationType,
-                            clinicalNeed,
-                            goals: []
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Failed to create project');
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.hideModal();
-                        this.showNotification('Success', 'Innovation project launched successfully!', 'success');
-                        this.loadInnovationProjects();
-                        this.loadPlatformAnalytics();
-                    }
-                } catch (error) {
-                    console.error('Create project error:', error);
-                    this.showNotification('Error', error.message || 'Failed to launch project.', 'error');
-                }
-            }
-
-            async submitInnovationOpportunity() {
-                const title = document.getElementById('opportunityTitle')?.value.trim();
-                const description = document.getElementById('opportunityDescription')?.value.trim();
-                const clinicalProblem = document.getElementById('clinicalProblem')?.value.trim();
-                const urgency = document.getElementById('opportunityUrgency')?.value;
-                
-                if (!title || !description || !clinicalProblem) {
-                    this.showNotification('Error', 'Title, description, and clinical problem are required.', 'error');
-                    return;
-                }
-                
-                // Get selected stakeholders
-                const seeking = Array.from(document.querySelectorAll('#seekingStakeholders input[type="checkbox"]:checked'))
-                    .map(cb => cb.value);
-                
-                try {
-                    const response = await fetch(`${this.API_BASE}/api/innovation/opportunities`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({
-                            title,
-                            description,
-                            clinicalProblem,
-                            urgency,
-                            seeking
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Failed to submit opportunity');
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.hideModal();
-                        this.showNotification('Success', 'Innovation opportunity submitted!', 'success');
-                        this.loadOpportunities();
-                    }
-                } catch (error) {
-                    console.error('Submit opportunity error:', error);
-                    this.showNotification('Error', error.message || 'Failed to submit opportunity.', 'error');
-                }
-            }
-
-            showPlatformAnalytics() {
-                if (!this.platformAnalytics.summary) {
-                    this.showNotification('Info', 'Loading platform analytics...', 'info');
-                    this.loadPlatformAnalytics();
-                    return;
-                }
-                
-                const summary = this.platformAnalytics.summary;
-                const message = `
-                    Platform Overview:
-                    • Innovation Projects: ${summary.totalInnovationProjects}
-                    • Active Innovations: ${summary.activeInnovations}
-                    • Total Stakeholders: ${summary.totalStakeholders}
-                    • Cross-sector Collaborations: ${summary.crossSectorCollaborations}
-                    • Pipeline Value: $${summary.innovationPipelineValue.toLocaleString()}
-                `;
-                
-                this.showNotification('Platform Analytics', message, 'info');
-            }
-
-            showModal(modalType) {
-                const modal = document.getElementById(`${modalType}Modal`);
-                if (modal) {
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                    
-                    if (modalType === 'newProject') {
-                        document.getElementById('projectTitle')?.focus();
-                    } else if (modalType === 'submitOpportunity') {
-                        document.getElementById('opportunityTitle')?.focus();
-                    }
-                }
-            }
-
-            hideModal() {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-                document.body.style.overflow = '';
-                
-                // Reset forms
-                document.getElementById('createProjectForm')?.reset();
-                document.getElementById('submitOpportunityForm')?.reset();
-            }
-
-            showLoading(show) {
-                const loading = document.getElementById('loadingState');
-                if (loading) {
-                    loading.classList.toggle('hidden', !show);
-                }
-            }
-
-            showNotification(title, message, type = 'info') {
-                const container = document.getElementById('notificationContainer');
-                if (!container) return;
-                
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.innerHTML = `
-                    <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 4px;">${this.escapeHtml(title)}</div>
-                    <div style="font-size: 0.9375rem; color: var(--text-medium);">${this.escapeHtml(message)}</div>
-                `;
-                
-                container.appendChild(notification);
-                
-                setTimeout(() => notification.classList.add('show'), 10);
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => notification.remove(), 300);
-                }, 5000);
-            }
-
-            async logout() {
-                try {
-                    await fetch(`${this.API_BASE}/api/stakeholders/logout`, {
-                        method: 'POST',
-                        credentials: 'include'
-                    });
-                    window.location.href = '/login.html';
-                } catch (error) {
-                    window.location.href = '/login.html';
-                }
-            }
-
-            // Utility methods
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            formatTimeAgo(timestamp) {
-                try {
-                    const date = new Date(timestamp);
-                    const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMs / 3600000);
-                    const diffDays = Math.floor(diffMs / 86400000);
-                    
-                    if (diffMins < 60) return `${diffMins}m ago`;
-                    if (diffHours < 24) return `${diffHours}h ago`;
-                    if (diffDays < 7) return `${diffDays}d ago`;
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                } catch {
-                    return 'Recently';
-                }
-            }
-
-            getInitials(name) {
-                if (!name || typeof name !== 'string') return '??';
-                return name.split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
-            }
-        }
-
-        // Initialize the Healthcare Innovation Platform
-        window.addEventListener('DOMContentLoaded', () => {
-            window.innovationPlatform = new HealthcareInnovationPlatform();
+    async createSampleInnovationData() {
+        // Create real, multi-stakeholder innovation projects
+        const project1 = this.createProject({
+            title: "AI-Powered Early Lung Cancer Detection",
+            description: "Developing an AI algorithm that can detect early-stage lung cancer from CT scans with higher accuracy than current methods.",
+            stage: "validation",
+            problem: "Late-stage diagnosis of lung cancer leads to poor survival rates. Current screening misses 20% of early cases.",
+            stakeholders: [
+                { id: 'clinician_1', name: 'Dr. Sarah Chen', type: 'clinician', role: 'Thoracic Surgeon', organization: 'Mass General' },
+                { id: 'researcher_1', name: 'Dr. Michael Park', type: 'researcher', role: 'AI Researcher', organization: 'MIT CSAIL' },
+                { id: 'industry_1', name: 'MedTech AI', type: 'industry', role: 'Product Lead', organization: 'MedTech Solutions' }
+            ],
+            tags: ['AI/ML', 'Diagnostics', 'Oncology', 'Medical Imaging']
         });
-    </script>
-</body>
-</html>
+
+        const project2 = this.createProject({
+            title: "Smart Post-Op Monitoring Platform",
+            description: "IoT-based wearable system for continuous monitoring of thoracic surgery patients post-discharge.",
+            stage: "development",
+            problem: "30% of post-thoracotomy patients experience complications after discharge, often detected too late.",
+            stakeholders: [
+                { id: 'clinician_2', name: 'Dr. James Wilson', type: 'clinician', role: 'Pulmonologist', organization: 'Cleveland Clinic' },
+                { id: 'industry_2', name: 'IoT Health', type: 'industry', role: 'CTO', organization: 'IoT Health Tech' },
+                { id: 'patient_1', name: 'Robert Kim', type: 'patient', role: 'Patient Advocate', organization: 'Lung Health Alliance' }
+            ],
+            tags: ['IoT', 'Remote Monitoring', 'Patient Safety', 'Wearables']
+        });
+
+        const project3 = this.createProject({
+            title: "Minimally Invasive Stapler Enhancement",
+            description: "Redesigning surgical stapler mechanism for better tissue handling in VATS procedures.",
+            stage: "ideation",
+            problem: "Current staplers cause tissue damage in 15% of VATS lobectomies, leading to complications.",
+            stakeholders: [
+                { id: 'clinician_3', name: 'Dr. Elena Rodriguez', type: 'clinician', role: 'Thoracic Surgeon', organization: 'Mayo Clinic' },
+                { id: 'industry_3', name: 'Surgical Innovations', type: 'industry', role: 'Engineer', organization: 'Precision Surgical' },
+                { id: 'investor_1', name: 'HealthTech Ventures', type: 'investor', role: 'Partner', organization: 'HealthTech Capital' }
+            ],
+            tags: ['Medical Devices', 'Surgical Tools', 'Minimally Invasive']
+        });
+
+        // Create real discussions
+        this.createDiscussion(project1.id, {
+            title: "Clinical Validation Study Design",
+            content: "We need to design a multi-center trial for validating the AI algorithm. Should we focus on retrospective data first or go straight to prospective?",
+            author: { id: 'clinician_1', name: 'Dr. Sarah Chen', type: 'clinician' },
+            tags: ['Clinical Trials', 'Validation', 'Study Design']
+        });
+
+        this.createDiscussion(project2.id, {
+            title: "FDA Regulatory Pathway",
+            content: "Discussing whether to pursue 510(k) clearance or De Novo classification for the monitoring platform.",
+            author: { id: 'industry_2', name: 'IoT Health', type: 'industry' },
+            tags: ['Regulatory', 'FDA', 'Compliance']
+        });
+
+        await this.saveData();
+    }
+
+    createProject(data) {
+        const projectId = `project_${uuidv4()}`;
+        const now = new Date().toISOString();
+        
+        const project = {
+            id: projectId,
+            title: data.title.trim(),
+            description: data.description.trim(),
+            problem: data.problem.trim(),
+            stage: data.stage || 'ideation',
+            tags: data.tags || [],
+            stakeholders: data.stakeholders || [],
+            metrics: {
+                discussions: 0,
+                comments: 0,
+                files: 0,
+                activityScore: 0
+            },
+            timeline: {
+                created: now,
+                updated: now,
+                milestones: []
+            },
+            createdAt: now,
+            updatedAt: now
+        };
+
+        this.data.projects[projectId] = project;
+        this.addActivity({
+            type: 'project_created',
+            projectId,
+            title: project.title,
+            timestamp: now,
+            author: data.stakeholders?.[0] || { name: 'Anonymous', type: 'anonymous' }
+        });
+
+        return project;
+    }
+
+    createDiscussion(projectId, data) {
+        const discussionId = `disc_${uuidv4()}`;
+        const now = new Date().toISOString();
+        
+        const discussion = {
+            id: discussionId,
+            projectId,
+            title: data.title.trim(),
+            content: data.content.trim(),
+            author: data.author,
+            tags: data.tags || [],
+            comments: [],
+            metrics: {
+                likes: 0,
+                views: 0
+            },
+            createdAt: now,
+            updatedAt: now
+        };
+
+        this.data.discussions[discussionId] = discussion;
+        
+        // Update project metrics
+        if (this.data.projects[projectId]) {
+            this.data.projects[projectId].metrics.discussions++;
+            this.data.projects[projectId].updatedAt = now;
+        }
+
+        this.addActivity({
+            type: 'discussion_created',
+            projectId,
+            discussionId,
+            title: discussion.title,
+            timestamp: now,
+            author: data.author
+        });
+
+        return discussion;
+    }
+
+    addComment(discussionId, data) {
+        const commentId = `comment_${uuidv4()}`;
+        const now = new Date().toISOString();
+        
+        const comment = {
+            id: commentId,
+            discussionId,
+            content: data.content.trim(),
+            author: data.author,
+            createdAt: now
+        };
+
+        this.data.comments[commentId] = comment;
+        
+        // Add to discussion
+        if (this.data.discussions[discussionId]) {
+            this.data.discussions[discussionId].comments.push(commentId);
+            this.data.discussions[discussionId].updatedAt = now;
+            
+            // Update project metrics
+            const projectId = this.data.discussions[discussionId].projectId;
+            if (projectId && this.data.projects[projectId]) {
+                this.data.projects[projectId].metrics.comments++;
+                this.data.projects[projectId].updatedAt = now;
+            }
+        }
+
+        this.addActivity({
+            type: 'comment_added',
+            discussionId,
+            commentId,
+            timestamp: now,
+            author: data.author
+        });
+
+        return comment;
+    }
+
+    addActivity(activity) {
+        this.data.activities.unshift(activity);
+        // Keep only last 100 activities
+        if (this.data.activities.length > 100) {
+            this.data.activities = this.data.activities.slice(0, 100);
+        }
+    }
+
+    async saveData() {
+        try {
+            await fs.writeFile(this.dataPath, JSON.stringify(this.data, null, 2));
+        } catch (error) {
+            console.error('Save data error:', error);
+        }
+    }
+
+    // Query methods
+    getAllProjects() {
+        return Object.values(this.data.projects).sort((a, b) => 
+            new Date(b.updatedAt) - new Date(a.updatedAt)
+        );
+    }
+
+    getProject(id) {
+        const project = this.data.projects[id];
+        if (!project) return null;
+
+        // Get project discussions
+        const projectDiscussions = Object.values(this.data.discussions)
+            .filter(d => d.projectId === id)
+            .map(discussion => ({
+                ...discussion,
+                fullComments: discussion.comments.map(commentId => 
+                    this.data.comments[commentId]
+                ).filter(Boolean)
+            }));
+
+        return {
+            ...project,
+            discussions: projectDiscussions,
+            recentActivity: this.data.activities
+                .filter(a => a.projectId === id)
+                .slice(0, 10)
+        };
+    }
+
+    getRecentActivity(limit = 20) {
+        return this.data.activities.slice(0, limit);
+    }
+}
+
+// ==================== INITIALIZE PLATFORM ====================
+const innovationPlatform = new InnovationPlatform();
+
+// ==================== EXPRESS SETUP ====================
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+            fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'", "ws:", "wss:"],
+            frameSrc: ["'self'"],
+            objectSrc: ["'none'"]
+        }
+    }
+}));
+
+app.use(cors({
+    origin: function(origin, callback) {
+        // Allow all origins for development
+        if (NODE_ENV === 'development') return callback(null, true);
+        
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'https://thoraxlab.up.railway.app',
+            /\.railway\.app$/,
+            /\.healthcare-innovation\.org$/
+        ];
+        
+        if (!origin || allowedOrigins.some(allowed => {
+            if (typeof allowed === 'string') return origin === allowed;
+            if (allowed instanceof RegExp) return allowed.test(origin);
+            return false;
+        })) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
+app.use(compression());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static files
+app.use(express.static('public', {
+    maxAge: isProduction ? '1y' : '0',
+    setHeaders: (res, path) => {
+        if (path.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        }
+    }
+}));
+
+// ==================== SOCKET.IO FOR REAL-TIME COLLABORATION ====================
+const io = new Server(server, {
+    cors: {
+        origin: NODE_ENV === 'development' ? '*' : [
+            'https://thoraxlab.up.railway.app',
+            /\.railway\.app$/,
+            /\.healthcare-innovation\.org$/
+        ],
+        credentials: true
+    },
+    transports: ['websocket', 'polling']
+});
+
+// Track active users per project
+const activeUsers = new Map();
+
+io.on('connection', (socket) => {
+    console.log(`🔌 Real-time connection: ${socket.id}`);
+
+    socket.on('join:project', (projectId) => {
+        socket.join(`project:${projectId}`);
+        
+        // Track active user
+        if (!activeUsers.has(projectId)) {
+            activeUsers.set(projectId, new Set());
+        }
+        activeUsers.get(projectId).add(socket.id);
+        
+        // Notify others
+        socket.to(`project:${projectId}`).emit('user:joined', {
+            userId: socket.id,
+            timestamp: new Date().toISOString(),
+            activeUsers: activeUsers.get(projectId).size
+        });
+
+        console.log(`💡 User joined project: ${projectId} (${activeUsers.get(projectId).size} active)`);
+    });
+
+    socket.on('project:update', (data) => {
+        const { projectId, updateType, data: updateData } = data;
+        
+        // Broadcast to all in project room
+        socket.to(`project:${projectId}`).emit('project:updated', {
+            projectId,
+            updateType,
+            data: updateData,
+            timestamp: new Date().toISOString()
+        });
+    });
+
+    socket.on('discussion:create', async (data) => {
+        const { projectId, title, content, author, tags } = data;
+        
+        const discussion = innovationPlatform.createDiscussion(projectId, {
+            title,
+            content,
+            author,
+            tags
+        });
+
+        // Broadcast new discussion
+        io.to(`project:${projectId}`).emit('discussion:created', discussion);
+    });
+
+    socket.on('comment:add', async (data) => {
+        const { discussionId, content, author } = data;
+        
+        const comment = innovationPlatform.addComment(discussionId, {
+            content,
+            author
+        });
+
+        // Get discussion for projectId
+        const discussion = innovationPlatform.data.discussions[discussionId];
+        if (discussion) {
+            io.to(`project:${discussion.projectId}`).emit('comment:added', {
+                discussionId,
+                comment
+            });
+        }
+    });
+
+    socket.on('disconnect', () => {
+        // Remove from active users
+        activeUsers.forEach((users, projectId) => {
+            if (users.has(socket.id)) {
+                users.delete(socket.id);
+                io.to(`project:${projectId}`).emit('user:left', {
+                    userId: socket.id,
+                    timestamp: new Date().toISOString(),
+                    activeUsers: users.size
+                });
+            }
+        });
+        console.log(`🔌 Socket disconnected: ${socket.id}`);
+    });
+});
+
+// ==================== API ENDPOINTS ====================
+
+// Health check for Railway
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'healthy',
+        platform: 'ThoraxLab Innovation Platform',
+        version: '1.0.0',
+        timestamp: new Date().toISOString(),
+        stats: {
+            projects: Object.keys(innovationPlatform.data.projects).length,
+            discussions: Object.keys(innovationPlatform.data.discussions).length,
+            comments: Object.keys(innovationPlatform.data.comments).length
+        }
+    });
+});
+
+// Get all innovation projects
+app.get('/api/projects', (req, res) => {
+    try {
+        const projects = innovationPlatform.getAllProjects();
+        res.json({
+            success: true,
+            data: projects,
+            count: projects.length
+        });
+    } catch (error) {
+        console.error('Get projects error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to load innovation projects'
+        });
+    }
+});
+
+// Get single project with discussions
+app.get('/api/projects/:id', (req, res) => {
+    try {
+        const projectId = req.params.id;
+        const project = innovationPlatform.getProject(projectId);
+        
+        if (!project) {
+            return res.status(404).json({
+                success: false,
+                error: 'Innovation project not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: project
+        });
+    } catch (error) {
+        console.error('Get project error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to load project'
+        });
+    }
+});
+
+// Create new innovation project
+app.post('/api/projects', (req, res) => {
+    try {
+        const { title, description, problem, stage, tags, stakeholder } = req.body;
+        
+        if (!title || !description || !problem) {
+            return res.status(400).json({
+                success: false,
+                error: 'Title, description, and problem are required'
+            });
+        }
+
+        const project = innovationPlatform.createProject({
+            title,
+            description,
+            problem,
+            stage: stage || 'ideation',
+            tags: tags || [],
+            stakeholders: stakeholder ? [{
+                id: `temp_${uuidv4()}`,
+                name: stakeholder.name || 'Anonymous',
+                type: stakeholder.type || 'anonymous',
+                role: stakeholder.role || 'Contributor',
+                organization: stakeholder.organization || 'Independent'
+            }] : []
+        });
+
+        res.status(201).json({
+            success: true,
+            data: project,
+            message: 'Innovation project created successfully'
+        });
+    } catch (error) {
+        console.error('Create project error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to create innovation project'
+        });
+    }
+});
+
+// Create discussion
+app.post('/api/discussions', (req, res) => {
+    try {
+        const { projectId, title, content, author, tags } = req.body;
+        
+        if (!projectId || !title || !content || !author) {
+            return res.status(400).json({
+                success: false,
+                error: 'Project ID, title, content, and author are required'
+            });
+        }
+
+        const discussion = innovationPlatform.createDiscussion(projectId, {
+            title,
+            content,
+            author,
+            tags: tags || []
+        });
+
+        res.status(201).json({
+            success: true,
+            data: discussion,
+            message: 'Discussion created successfully'
+        });
+    } catch (error) {
+        console.error('Create discussion error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to create discussion'
+        });
+    }
+});
+
+// Add comment
+app.post('/api/comments', (req, res) => {
+    try {
+        const { discussionId, content, author } = req.body;
+        
+        if (!discussionId || !content || !author) {
+            return res.status(400).json({
+                success: false,
+                error: 'Discussion ID, content, and author are required'
+            });
+        }
+
+        const comment = innovationPlatform.addComment(discussionId, {
+            content,
+            author
+        });
+
+        res.status(201).json({
+            success: true,
+            data: comment,
+            message: 'Comment added successfully'
+        });
+    } catch (error) {
+        console.error('Add comment error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to add comment'
+        });
+    }
+});
+
+// Get recent activity
+app.get('/api/activity', (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 20;
+        const activity = innovationPlatform.getRecentActivity(limit);
+        
+        res.json({
+            success: true,
+            data: activity,
+            count: activity.length
+        });
+    } catch (error) {
+        console.error('Get activity error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to load activity'
+        });
+    }
+});
+
+// Quick join - create anonymous contributor
+app.post('/api/quick-join', (req, res) => {
+    try {
+        const { name, type, role, organization } = req.body;
+        
+        const contributor = {
+            id: `contrib_${uuidv4()}`,
+            name: name || 'Anonymous Contributor',
+            type: type || 'anonymous',
+            role: role || 'Collaborator',
+            organization: organization || 'Independent',
+            joinedAt: new Date().toISOString()
+        };
+
+        res.json({
+            success: true,
+            data: contributor,
+            message: 'Welcome to the innovation platform!'
+        });
+    } catch (error) {
+        console.error('Quick join error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to join platform'
+        });
+    }
+});
+
+// SPA fallback
+app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({
+            success: false,
+            error: 'API endpoint not found',
+            path: req.originalUrl
+        });
+    }
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error('🔥 Innovation platform error:', err);
+    res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        message: NODE_ENV === 'development' ? err.message : undefined,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// ==================== START SERVER ====================
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`
+🚀 THORAXLAB INNOVATION PLATFORM
+===================================
+📡 Server running on port ${PORT}
+🌐 Environment: ${NODE_ENV}
+🔒 Production: ${isProduction}
+💡 Mission: Multi-stakeholder innovation collaboration
+
+📊 PLATFORM STATUS:
+   • Innovation Projects: ${Object.keys(innovationPlatform.data.projects).length}
+   • Active Discussions: ${Object.keys(innovationPlatform.data.discussions).length}
+   • Comments: ${Object.keys(innovationPlatform.data.comments).length}
+
+🎯 STAKEHOLDER ACCESS:
+   • No login required
+   • Immediate project creation
+   • Real-time collaboration
+   • Role-based contributions
+
+🔗 CRITICAL ENDPOINTS:
+   • Health: http://localhost:${PORT}/health
+   • Projects: http://localhost:${PORT}/api/projects
+   • Quick Join: POST /api/quick-join
+
+🌟 Ready for innovation collaboration!
+`);
+});
+
+// Graceful shutdown
+const gracefulShutdown = () => {
+    console.log('\n🔻 Innovation platform shutting down...');
+    innovationPlatform.saveData();
+    console.log('💾 Platform data saved');
+    
+    server.close(() => {
+        console.log('📴 Server closed gracefully');
+        process.exit(0);
+    });
+    
+    setTimeout(() => {
+        console.log('⏰ Forcing shutdown...');
+        process.exit(1);
+    }, 10000);
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
