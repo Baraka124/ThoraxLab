@@ -5,36 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project | ThoraxLab</title>
     
-    <!-- Import FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
-        /* ===== REUSE DESIGN SYSTEM FROM INDEX.HTML ===== */
         :root {
-            /* Color Palette */
-            --primary-dark: #0A1929;
-            --primary-main: #1A365D;
-            --primary-light: #2D4A8C;
-            --clinical-accent: #0C7C59;
-            --industry-accent: #D35400;
-            --public-accent: #7B68EE;
-            --velocity-green: #10B981;
-            --attention-amber: #F59E0B;
-            --blocked-red: #EF4444;
-            --decision-purple: #8B5CF6;
+            --primary-blue: #0A4D68;
+            --primary-teal: #088F8F;
+            --secondary-blue: #05BFDB;
+            --accent-green: #00B894;
+            --accent-amber: #F39C12;
+            --accent-red: #E74C3C;
+            --neutral-900: #1A202C;
+            --neutral-800: #2D3748;
+            --neutral-700: #4A5568;
+            --neutral-600: #718096;
+            --neutral-500: #A0AEC0;
+            --neutral-400: #CBD5E0;
+            --neutral-300: #E2E8F0;
+            --neutral-200: #EDF2F7;
+            --neutral-100: #F7FAFC;
+            --white: #FFFFFF;
             
-            /* Status Colors */
-            --status-excellent: #10B981;
-            --status-good: #3B82F6;
-            --status-fair: #F59E0B;
-            --status-needs-attention: #EF4444;
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
-            /* Spacing */
             --space-xs: 0.5rem;
             --space-sm: 0.75rem;
             --space-md: 1rem;
@@ -42,1022 +35,738 @@
             --space-xl: 2rem;
             --space-2xl: 3rem;
             
-            /* Typography */
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            
-            /* Effects */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            
             --radius-sm: 0.375rem;
             --radius-md: 0.5rem;
             --radius-lg: 0.75rem;
             --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html {
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: var(--font-sans);
-            background: linear-gradient(135deg, #0A1929 0%, #1A365D 100%);
-            min-height: 100vh;
-            color: white;
+            font-family: var(--font-primary);
+            background: var(--white);
+            color: var(--neutral-800);
         }
         
-        /* ===== ENHANCED HEADER (SAME AS INDEX.HTML) ===== */
-        .command-header {
-            background: linear-gradient(135deg, rgba(10, 25, 41, 0.98) 0%, rgba(26, 54, 93, 0.98) 100%);
-            backdrop-filter: blur(40px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            height: 94px;
+        /* ===== HEADER ===== */
+        .project-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            color: var(--white);
+            padding: 2rem 0;
         }
         
         .header-container {
-            max-width: 1800px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 var(--space-xl);
-            height: 100%;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: var(--space-xl);
+            padding: 0 2rem;
         }
         
-        /* Logo Container */
-        .logo-container {
-            display: flex;
+        .back-link {
+            display: inline-flex;
             align-items: center;
-            gap: var(--space-md);
+            gap: 0.5rem;
+            color: var(--white);
             text-decoration: none;
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-xl);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            min-width: 240px;
+            margin-bottom: 1rem;
+            opacity: 0.9;
         }
         
-        .logo-icon {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 50%, var(--public-accent) 100%);
-            border-radius: 14px;
+        .back-link:hover { opacity: 1; }
+        
+        .project-title-section {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 900;
-            font-size: 1.75rem;
-            box-shadow: var(--shadow-lg);
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-bottom: 1rem;
         }
         
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xs);
-        }
-        
-        .logo-primary {
-            font-size: 1.25rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, white 0%, #A5B4FC 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .logo-status {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            font-size: 0.875rem;
-        }
-        
-        .status-label {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .status-value {
+        .project-title {
+            font-size: 2rem;
             font-weight: 700;
-            color: white;
-            background: var(--status-good);
-            padding: 0.125rem 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-type {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: var(--radius-full);
-            min-width: 36px;
-            text-align: center;
-        }
-        
-        .project-header-info {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xl);
-            flex: 1;
-            margin: 0 var(--space-xl);
-        }
-        
-        .project-title-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 0.25rem;
-        }
-        
-        .project-title-header p {
             font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
         }
         
         .header-actions {
             display: flex;
-            align-items: center;
-            gap: var(--space-sm);
+            gap: 0.5rem;
         }
         
-        .action-button {
-            padding: var(--space-sm) var(--space-lg);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-full);
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.875rem;
-            font-weight: 500;
+        .action-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            color: var(--white);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            gap: 0.5rem;
+            transition: all 0.2s;
         }
         
-        .action-button.primary {
-            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
-            border: none;
-            color: white;
-            font-weight: 600;
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
-        /* ===== PROJECT LAYOUT ===== */
-        .project-container {
-            max-width: 1800px;
+        /* ===== MAIN CONTENT ===== */
+        .main-container {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: var(--space-xl);
+            padding: 2rem;
+        }
+        
+        .project-layout {
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: var(--space-xl);
-            min-height: calc(100vh - 94px);
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
         }
         
-        /* Main Content */
-        .project-main {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xl);
+        /* ===== PROJECT DETAILS ===== */
+        .project-details {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--neutral-200);
         }
         
-        /* Project Overview Card */
-        .project-overview {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-2xl);
-            backdrop-filter: blur(20px);
+        .details-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--neutral-200);
         }
         
-        .overview-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: var(--space-xl);
-        }
-        
-        .project-context {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-lg);
-        }
-        
-        .context-badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.375rem 0.875rem;
-            border-radius: var(--radius-full);
-            text-transform: uppercase;
-        }
-        
-        .context-clinical {
-            background: rgba(12, 124, 89, 0.2);
-            color: var(--clinical-accent);
-            border: 1px solid rgba(12, 124, 89, 0.3);
-        }
-        
-        .project-description {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: var(--space-2xl);
-        }
-        
-        /* Progress Metrics */
-        .progress-metrics {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-lg);
-            margin: var(--space-xl) 0;
-        }
-        
-        .progress-metric {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-lg);
-            text-align: center;
-        }
-        
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: var(--space-xs);
-        }
-        
-        .metric-label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        /* Discussion Section */
-        .discussion-section {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-2xl);
-            backdrop-filter: blur(20px);
-        }
-        
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-xl);
+        .details-section:last-child {
+            border-bottom: none;
         }
         
         .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        /* New Comment */
-        .new-comment {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            margin-bottom: var(--space-xl);
+        .project-description {
+            color: var(--neutral-700);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        /* ===== DISCUSSION ===== */
+        .comment-form {
+            background: var(--neutral-50);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .comment-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+        
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+        }
+        
+        .comment-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .submit-comment {
+            padding: 0.5rem 1.5rem;
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .submit-comment:hover {
+            background: var(--primary-teal);
+        }
+        
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .comment-item {
+            padding: 1rem;
+            background: var(--neutral-50);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--neutral-200);
         }
         
         .comment-header {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
         
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-teal);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--white);
             font-weight: 600;
+            font-size: 0.875rem;
         }
         
-        .comment-input {
-            width: 100%;
-            min-height: 120px;
-            padding: var(--space-lg);
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-lg);
-            color: white;
-            font-size: 1rem;
-            resize: vertical;
-        }
-        
-        .comment-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--space-lg);
-        }
-        
-        .comment-submit {
-            padding: var(--space-sm) var(--space-xl);
-            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
-            border: none;
-            border-radius: var(--radius-full);
-            color: white;
+        .comment-author {
             font-weight: 600;
-            cursor: pointer;
+            color: var(--neutral-800);
         }
         
-        /* Comments List */
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xl);
-        }
-        
-        .comment-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-        }
-        
-        .comment-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-md);
-        }
-        
-        .comment-user {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
+        .comment-time {
+            color: var(--neutral-500);
+            font-size: 0.875rem;
         }
         
         .comment-content {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            margin-bottom: var(--space-lg);
+            color: var(--neutral-700);
+            line-height: 1.5;
         }
         
-        /* ===== PROJECT SIDEBAR ===== */
-        .project-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xl);
+        /* ===== SIDEBAR ===== */
+        .sidebar-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--neutral-200);
+            margin-bottom: 1.5rem;
         }
         
-        /* Pulse Card */
-        .pulse-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(20px);
-        }
-        
-        .pulse-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .pulse-title {
-            font-size: 0.875rem;
+        .sidebar-title {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--neutral-200);
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            text-transform: uppercase;
+            color: var(--primary-blue);
         }
         
-        .pulse-value {
-            font-size: 3rem;
-            font-weight: 800;
-            color: white;
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+        
+        .project-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-box {
             text-align: center;
-            margin-bottom: var(--space-sm);
+            padding: 1rem;
+            background: var(--neutral-50);
+            border-radius: var(--radius-md);
         }
         
-        .pulse-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            margin-bottom: var(--space-md);
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
         }
         
-        .pulse-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--blocked-red) 0%, var(--attention-amber) 30%, var(--velocity-green) 100%);
-            border-radius: var(--radius-full);
-        }
-        
-        /* Team Card */
-        .team-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(20px);
-        }
-        
-        .team-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .team-list {
             display: flex;
             flex-direction: column;
-            gap: var(--space-md);
+            gap: 0.75rem;
         }
         
         .team-member {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-sm);
-            border-radius: var(--radius-lg);
+            gap: 0.75rem;
         }
         
         .member-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--clinical-accent) 0%, var(--industry-accent) 100%);
+            width: 36px;
+            height: 36px;
+            background: var(--primary-teal);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--white);
             font-weight: 600;
+            font-size: 0.875rem;
         }
         
-        .member-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+        .member-info {
+            flex: 1;
         }
         
-        .status-online {
-            background: var(--velocity-green);
+        .member-name {
+            font-weight: 600;
+            color: var(--neutral-800);
         }
         
-        /* Timeline Card */
-        .timeline-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(20px);
-        }
-        
-        .timeline-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-lg);
+        .member-role {
+            font-size: 0.875rem;
+            color: var(--neutral-500);
         }
         
         .timeline-item {
-            display: flex;
-            gap: var(--space-md);
-            padding-bottom: var(--space-lg);
-            border-left: 2px solid rgba(255, 255, 255, 0.1);
-            margin-left: 7px;
+            padding: 0.75rem;
+            border-left: 2px solid var(--neutral-300);
+            margin-left: 0.5rem;
         }
         
-        /* Decisions Card */
-        .decisions-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-xl);
-            backdrop-filter: blur(20px);
+        .timeline-content {
+            color: var(--neutral-700);
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
         }
         
-        .decisions-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-        
-        .decision-item {
-            padding: var(--space-md);
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-lg);
-        }
-        
-        .decision-status {
-            display: inline-block;
-            padding: 0.125rem 0.5rem;
-            border-radius: var(--radius-full);
+        .timeline-time {
+            color: var(--neutral-500);
             font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
         }
         
-        .status-pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--attention-amber);
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 3000;
+        }
+        
+        .toast {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary-teal);
+            margin-top: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 1200px) {
-            .project-container {
+        @media (max-width: 1024px) {
+            .project-layout {
                 grid-template-columns: 1fr;
-            }
-            
-            .progress-metrics {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
         
         @media (max-width: 768px) {
-            .header-container {
-                grid-template-columns: 1fr;
-                height: auto;
-                padding: var(--space-md);
-                gap: var(--space-md);
-            }
-            
-            .project-header-info {
-                margin: 0;
-                justify-content: center;
-                text-align: center;
+            .project-title-section {
+                flex-direction: column;
             }
             
             .header-actions {
-                justify-content: center;
+                width: 100%;
+                justify-content: flex-start;
             }
-            
-            .progress-metrics {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Toast Container */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .toast {
-            background: rgba(10, 25, 41, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md) var(--space-lg);
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            min-width: 300px;
-            animation: slideIn 0.3s ease-out;
         }
     </style>
 </head>
 <body>
-    <!-- Enhanced Header -->
-    <header class="command-header">
+    <!-- Project Header -->
+    <header class="project-header">
         <div class="header-container">
-            <!-- Logo with Status -->
-            <a href="/" class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-lungs"></i>
-                </div>
-                <div class="logo-text">
-                    <div class="logo-primary">ThoraxLab</div>
-                    <div class="logo-status">
-                        <span class="status-label">Project Pulse:</span>
-                        <span class="status-value" id="projectPulse">84</span>
-                    </div>
-                </div>
+            <a href="/" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
             
-            <!-- Project Info -->
-            <div class="project-header-info">
-                <div class="project-title-header">
-                    <h1 id="projectTitle">AI-Powered COPD Detection</h1>
-                    <p>Clinical-Industry Innovation Project</p>
+            <div class="project-title-section">
+                <div>
+                    <h1 class="project-title" id="projectTitle">Loading...</h1>
+                    <span class="project-type" id="projectType">Clinical Led</span>
                 </div>
-            </div>
-            
-            <!-- Actions -->
-            <div class="header-actions">
-                <button class="action-button" id="editProjectBtn">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="action-button" id="shareProjectBtn">
-                    <i class="fas fa-share"></i> Share
-                </button>
-                <button class="action-button primary" id="joinProjectBtn">
-                    <i class="fas fa-plus"></i> Join Project
-                </button>
+                
+                <div class="header-actions">
+                    <button class="action-btn" id="editProjectBtn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="action-btn" id="shareProjectBtn">
+                        <i class="fas fa-share"></i> Share
+                    </button>
+                </div>
             </div>
         </div>
     </header>
-    
+
     <!-- Main Content -->
-    <main class="project-container">
-        <!-- Left: Project Content -->
-        <div class="project-main">
-            <!-- Overview -->
-            <section class="project-overview">
-                <div class="overview-header">
-                    <div>
-                        <h2>Project Overview</h2>
-                        <div class="project-context">
-                            <span class="context-badge context-clinical">Clinical Led</span>
-                            <span style="color: rgba(255,255,255,0.6); font-size: 0.875rem;">
-                                Created <span id="projectCreated">2 weeks ago</span>
-                            </span>
+    <main class="main-container">
+        <div class="project-layout">
+            <!-- Main Content -->
+            <div class="project-content">
+                <!-- Project Details -->
+                <section class="project-details">
+                    <div class="details-section">
+                        <h2 class="section-title"><i class="fas fa-info-circle"></i> Project Overview</h2>
+                        <p class="project-description" id="projectDescription">Loading...</p>
+                        
+                        <div class="project-meta" style="display: flex; gap: 2rem; color: var(--neutral-600); font-size: 0.875rem;">
+                            <div>
+                                <strong>Created:</strong> <span id="projectCreated">Loading...</span>
+                            </div>
+                            <div>
+                                <strong>Last Updated:</strong> <span id="projectUpdated">Loading...</span>
+                            </div>
+                            <div>
+                                <strong>Status:</strong> <span id="projectStatus" style="color: var(--accent-green); font-weight: 600;">Active</span>
+                            </div>
                         </div>
                     </div>
-                    <button class="action-button" id="projectSettingsBtn">
-                        <i class="fas fa-cog"></i> Settings
-                    </button>
-                </div>
-                
-                <div class="project-description" id="projectDescription">
-                    Developing machine learning algorithms to detect Chronic Obstructive Pulmonary Disease (COPD) patterns from routine chest X-rays 6-12 months earlier than current diagnostic methods. This project brings together clinicians from University Medical Center with AI specialists from MedTech Solutions to create a clinically validated screening tool.
-                </div>
-                
-                <!-- Metrics -->
-                <div class="progress-metrics">
-                    <div class="progress-metric">
-                        <div class="metric-value" id="metricVelocity">85</div>
-                        <div class="metric-label">Velocity</div>
-                    </div>
-                    <div class="progress-metric">
-                        <div class="metric-value" id="metricContributors">12</div>
-                        <div class="metric-label">Contributors</div>
-                    </div>
-                    <div class="progress-metric">
-                        <div class="metric-value" id="metricDecisions">8</div>
-                        <div class="metric-label">Decisions</div>
-                    </div>
-                    <div class="progress-metric">
-                        <div class="metric-value" id="metricInteractions">156</div>
-                        <div class="metric-label">Interactions</div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Discussion -->
-            <section class="discussion-section">
-                <div class="section-header">
-                    <h3 class="section-title">Discussion</h3>
-                    <div class="header-actions">
-                        <button class="action-button" id="filterCommentsBtn">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <button class="action-button" id="sortCommentsBtn">
-                            <i class="fas fa-sort"></i> Sort
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- New Comment -->
-                <div class="new-comment">
-                    <div class="comment-header">
-                        <div class="user-avatar" id="currentUserAvatar">SC</div>
-                        <div>
-                            <h4 id="currentUserName">Dr. Sarah Chen</h4>
-                            <p id="currentUserRole">Clinical Lead</p>
+                    
+                    <!-- Discussion -->
+                    <div class="details-section">
+                        <h2 class="section-title"><i class="fas fa-comments"></i> Discussion</h2>
+                        
+                        <!-- Comment Form -->
+                        <div class="comment-form">
+                            <textarea class="comment-input" id="commentInput" 
+                                      placeholder="Add your comment or question..."></textarea>
+                            <div class="comment-actions">
+                                <button class="submit-comment" id="submitComment">Post Comment</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Comments List -->
+                        <div class="comments-list" id="commentsList">
+                            <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
+                                <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                <p>No comments yet. Start the discussion!</p>
+                            </div>
                         </div>
                     </div>
-                    <textarea class="comment-input" id="newCommentInput" placeholder="Share your thoughts..."></textarea>
-                    <div class="comment-actions">
-                        <div>
-                            <button class="action-button">
-                                <i class="fas fa-paperclip"></i> Attach
-                            </button>
+                </section>
+            </div>
+            
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Project Stats -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Project Metrics</div>
+                    <div class="sidebar-content">
+                        <div class="project-stats">
+                            <div class="stat-box">
+                                <div class="stat-value" id="pulseScore">75%</div>
+                                <div class="stat-label">Pulse</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="teamSize">1</div>
+                                <div class="stat-label">Team</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="commentCount">0</div>
+                                <div class="stat-label">Comments</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="decisionCount">0</div>
+                                <div class="stat-label">Decisions</div>
+                            </div>
                         </div>
-                        <button class="comment-submit" id="submitCommentBtn">
-                            <i class="fas fa-paper-plane"></i> Post Comment
+                    </div>
+                </div>
+                
+                <!-- Team Members -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Project Team</div>
+                    <div class="sidebar-content">
+                        <div class="team-list" id="teamList">
+                            <div class="team-member">
+                                <div class="member-avatar">SC</div>
+                                <div class="member-info">
+                                    <div class="member-name">Dr. Sarah Chen</div>
+                                    <div class="member-role">Project Lead</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="inviteMemberBtn" style="width: 100%; margin-top: 1rem; padding: 0.5rem; background: var(--neutral-100); border: 1px solid var(--neutral-300); border-radius: var(--radius-md); cursor: pointer;">
+                            <i class="fas fa-user-plus"></i> Invite Member
                         </button>
                     </div>
                 </div>
                 
-                <!-- Comments List -->
-                <div class="comments-list" id="commentsList">
-                    <!-- Dynamic -->
+                <!-- Recent Activity -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Recent Activity</div>
+                    <div class="sidebar-content">
+                        <div class="timeline" id="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-content">Project created</div>
+                                <div class="timeline-time">Just now</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </section>
-        </div>
-        
-        <!-- Right: Sidebar -->
-        <div class="project-sidebar">
-            <!-- Pulse -->
-            <div class="pulse-card">
-                <div class="pulse-header">
-                    <div class="pulse-title">Project Pulse</div>
-                    <span style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">Live</span>
-                </div>
-                <div class="pulse-value" id="pulseValue">84</div>
-                <div class="pulse-bar">
-                    <div class="pulse-fill" id="pulseFill" style="width: 84%"></div>
-                </div>
-                <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.875rem;">
-                    Engagement Health Score
-                </div>
-            </div>
-            
-            <!-- Team -->
-            <div class="team-card">
-                <div class="team-header">
-                    <div class="pulse-title">Project Team</div>
-                    <span id="teamCount" style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">8 members</span>
-                </div>
-                <div class="team-list" id="teamList">
-                    <!-- Dynamic -->
-                </div>
-                <button class="action-button" style="width: 100%; margin-top: var(--space-lg);" id="inviteTeamBtn">
-                    <i class="fas fa-user-plus"></i> Invite
-                </button>
-            </div>
-            
-            <!-- Timeline -->
-            <div class="timeline-card">
-                <div class="pulse-title" style="margin-bottom: var(--space-lg);">Recent Activity</div>
-                <div class="timeline-list" id="timelineList">
-                    <!-- Dynamic -->
-                </div>
-            </div>
-            
-            <!-- Decisions -->
-            <div class="decisions-card">
-                <div class="team-header">
-                    <div class="pulse-title">Pending Decisions</div>
-                    <span id="pendingDecisionsCount" style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">3 pending</span>
-                </div>
-                <div class="decisions-list" id="decisionsList">
-                    <!-- Dynamic -->
-                </div>
-            </div>
+            </aside>
         </div>
     </main>
-    
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ===== PROJECT DETAIL v2.0 =====
-        class ProjectDetail {
+        // ===== PROJECT DETAIL MANAGER =====
+        class ProjectDetailManager {
             constructor() {
                 this.projectId = this.getProjectId();
-                this.user = null;
                 this.project = null;
                 this.comments = [];
                 this.team = [];
                 this.timeline = [];
-                this.decisions = [];
                 this.ws = null;
-                
                 this.init();
-            }
-            
-            async init() {
-                console.log(`🚀 Project Detail - ID: ${this.projectId}`);
-                
-                await this.loadUserSession();
-                await this.loadProjectData();
-                this.initEventListeners();
-                this.initWebSocket();
-                
-                this.showToast(`Viewing: ${this.project?.title || 'Project'}`, 'info');
             }
             
             getProjectId() {
                 const params = new URLSearchParams(window.location.search);
-                return params.get('id') || 'proj_001';
+                return params.get('id') || '';
             }
             
-            async loadUserSession() {
-                const saved = localStorage.getItem('thoraxlab_user');
-                this.user = saved ? JSON.parse(saved) : {
-                    id: 'user_001',
-                    name: 'Dr. Sarah Chen',
-                    role: 'clinician',
-                    avatar: 'SC'
-                };
+            async init() {
+                if (!this.projectId) {
+                    this.showError('No project ID specified');
+                    return;
+                }
                 
-                document.getElementById('currentUserName').textContent = this.user.name;
-                document.getElementById('currentUserAvatar').textContent = this.user.avatar;
+                console.log(`Loading project: ${this.projectId}`);
+                await this.loadProject();
+                await this.loadComments();
+                this.setupEventListeners();
+                this.connectWebSocket();
             }
             
-            async loadProjectData() {
+            // ===== LOAD DATA =====
+            async loadProject() {
                 try {
-                    // Load project
-                    const projectRes = await fetch(`/api/projects/${this.projectId}`);
-                    this.project = await projectRes.json();
+                    const response = await fetch(`/api/projects/${this.projectId}`);
+                    if (!response.ok) throw new Error('Failed to load project');
+                    
+                    this.project = await response.json();
                     this.renderProject();
                     
-                    // Load other data
-                    await Promise.all([
-                        this.loadComments(),
-                        this.loadTeam(),
-                        this.loadTimeline(),
-                        this.loadDecisions()
-                    ]);
                 } catch (error) {
-                    console.error('Load error:', error);
-                    this.loadMockData();
+                    console.error('Error loading project:', error);
+                    this.showError('Failed to load project');
                 }
             }
             
+            async loadComments() {
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/comments`);
+                    if (response.ok) {
+                        this.comments = await response.json();
+                    }
+                    this.renderComments();
+                    
+                } catch (error) {
+                    console.error('Error loading comments:', error);
+                }
+            }
+            
+            // ===== RENDER =====
             renderProject() {
                 if (!this.project) return;
                 
                 document.getElementById('projectTitle').textContent = this.project.title;
                 document.getElementById('projectDescription').textContent = this.project.description;
-                document.getElementById('projectPulse').textContent = this.project.pulse_score || 84;
-                document.getElementById('pulseValue').textContent = this.project.pulse_score || 84;
-                document.getElementById('pulseFill').style.width = `${this.project.pulse_score || 84}%`;
-                
-                // Update metrics
-                document.getElementById('metricVelocity').textContent = this.project.velocity_score || 85;
-                document.getElementById('metricContributors').textContent = this.project.total_members || 12;
-                document.getElementById('metricDecisions').textContent = this.project.pending_decisions || 8;
-                document.getElementById('metricInteractions').textContent = this.project.total_interactions || 156;
-            }
-            
-            async loadComments() {
-                try {
-                    const res = await fetch(`/api/projects/${this.projectId}/comments`);
-                    this.comments = await res.json();
-                    this.renderComments();
-                } catch (error) {
-                    console.warn('Using mock comments');
-                    this.comments = this.getMockComments();
-                    this.renderComments();
-                }
+                document.getElementById('projectType').textContent = this.getTypeLabel(this.project.type);
+                document.getElementById('projectCreated').textContent = this.formatDate(this.project.created_at);
+                document.getElementById('projectUpdated').textContent = this.formatDate(this.project.updated_at);
+                document.getElementById('pulseScore').textContent = `${this.project.pulse_score || 75}%`;
+                document.getElementById('commentCount').textContent = this.project.total_comments || 0;
             }
             
             renderComments() {
-                const list = document.getElementById('commentsList');
+                const container = document.getElementById('commentsList');
                 
-                if (this.comments.length === 0) {
-                    list.innerHTML = `
-                        <div style="text-align: center; padding: var(--space-2xl); color: rgba(255,255,255,0.5);">
-                            <i class="fas fa-comments" style="font-size: 3rem; opacity: 0.3; margin-bottom: var(--space-md);"></i>
+                if (!this.comments || this.comments.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
+                            <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                             <p>No comments yet. Start the discussion!</p>
                         </div>
                     `;
                     return;
                 }
                 
-                list.innerHTML = this.comments.map(comment => `
-                    <div class="comment-card">
-                        <div class="comment-card-header">
-                            <div class="comment-user">
-                                <div class="user-avatar" style="background: ${this.getUserColor(comment.user_role)}">
-                                    ${comment.user_name?.substring(0, 2).toUpperCase() || 'U'}
-                                </div>
-                                <div>
-                                    <h4>${comment.user_name}</h4>
-                                    <p style="color: rgba(255,255,255,0.6); font-size: 0.875rem;">
-                                        ${comment.user_role} • ${this.formatTime(comment.created_at)}
-                                    </p>
-                                </div>
+                container.innerHTML = this.comments.map(comment => `
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar">${comment.user_name?.substring(0, 2) || 'U'}</div>
+                            <div style="flex: 1;">
+                                <div class="comment-author">${comment.user_name || 'User'}</div>
+                                <div class="comment-time">${this.formatRelativeTime(comment.created_at)}</div>
                             </div>
                         </div>
-                        <div class="comment-content">${comment.content}</div>
-                        <div style="display: flex; gap: var(--space-md);">
-                            <button class="action-button" style="padding: var(--space-xs) var(--space-sm);">
-                                <i class="fas fa-thumbs-up"></i> ${comment.likes || 0}
-                            </button>
-                            <button class="action-button" style="padding: var(--space-xs) var(--space-sm);">
-                                <i class="fas fa-reply"></i> Reply
-                            </button>
-                        </div>
+                        <div class="comment-content">${this.escapeHtml(comment.content)}</div>
                     </div>
                 `).join('');
             }
             
-            async loadTeam() {
+            // ===== ACTIONS =====
+            async submitComment() {
+                const input = document.getElementById('commentInput');
+                const content = input.value.trim();
+                
+                if (!content) {
+                    this.showToast('Please enter a comment', 'warning');
+                    return;
+                }
+                
                 try {
-                    const res = await fetch(`/api/projects/${this.projectId}/team`);
-                    this.team = await res.json();
-                    this.renderTeam();
+                    const user = this.getCurrentUser();
+                    
+                    const response = await fetch('/api/comments', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            projectId: this.projectId,
+                            content,
+                            userId: user.id
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to post comment');
+                    
+                    const comment = await response.json();
+                    this.comments.unshift(comment);
+                    this.renderComments();
+                    
+                    input.value = '';
+                    this.showToast('Comment posted', 'success');
+                    
                 } catch (error) {
-                    console.warn('Using mock team');
-                    this.team = this.getMockTeam();
-                    this.renderTeam();
+                    console.error('Error posting comment:', error);
+                    this.showToast('Failed to post comment', 'error');
                 }
             }
             
-            renderTeam() {
-                const list = document.getElementById('teamList');
-                const count = document.getElementById('teamCount');
+            async editProject() {
+                const newTitle = prompt('Enter new project title:', this.project?.title);
+                if (!newTitle || newTitle === this.project?.title) return;
                 
-                count.textContent = `${this.team.length} members`;
-                
-                list.innerHTML = this.team.map(member => `
-                    <div class="team-member">
-                        <div class="member-avatar" style="background: ${this.getUserColor(member.role)}">
-                            ${member.name.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600;">${member.name}</div>
-                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                                ${member.project_role || member.role}
-                            </div>
-                        </div>
-                        <div class="member-status ${member.status === 'online' ? 'status-online' : ''}"></div>
-                    </div>
-                `).join('');
-            }
-            
-            async loadTimeline() {
                 try {
-                    const res = await fetch(`/api/projects/${this.projectId}/timeline?limit=5`);
-                    this.timeline = await res.json();
-                    this.renderTimeline();
+                    const response = await fetch(`/api/projects/${this.projectId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ title: newTitle })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to update project');
+                    
+                    this.project.title = newTitle;
+                    this.renderProject();
+                    this.showToast('Project updated', 'success');
+                    
                 } catch (error) {
-                    console.warn('Using mock timeline');
-                    this.timeline = this.getMockTimeline();
-                    this.renderTimeline();
+                    console.error('Error updating project:', error);
+                    this.showToast('Failed to update project', 'error');
                 }
             }
             
-            renderTimeline() {
-                const list = document.getElementById('timelineList');
-                
-                list.innerHTML = this.timeline.map(event => `
-                    <div class="timeline-item">
-                        <div style="flex: 1;">
-                            <div style="color: rgba(255,255,255,0.9); font-size: 0.875rem;">
-                                ${event.description}
-                            </div>
-                            <div style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 0.25rem;">
-                                ${this.formatRelativeTime(event.created_at)}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
+            shareProject() {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url);
+                this.showToast('Project link copied to clipboard', 'success');
             }
             
-            async loadDecisions() {
-                try {
-                    const res = await fetch(`/api/projects/${this.projectId}/decisions?status=pending&limit=5`);
-                    this.decisions = await res.json();
-                    this.renderDecisions();
-                } catch (error) {
-                    console.warn('Using mock decisions');
-                    this.decisions = this.getMockDecisions();
-                    this.renderDecisions();
+            inviteMember() {
+                const email = prompt('Enter email address to invite:');
+                if (!email) return;
+                
+                this.showToast(`Invitation sent to ${email}`, 'success');
+            }
+            
+            // ===== WEBSOCKET =====
+            connectWebSocket() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}`;
+                
+                this.ws = new WebSocket(wsUrl);
+                
+                this.ws.onopen = () => {
+                    this.ws.send(JSON.stringify({
+                        type: 'subscribe_project',
+                        projectId: this.projectId
+                    }));
+                };
+                
+                this.ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        this.handleWebSocketMessage(data);
+                    } catch (error) {
+                        console.error('WebSocket message error:', error);
+                    }
+                };
+            }
+            
+            handleWebSocketMessage(data) {
+                switch (data.type) {
+                    case 'comment_added':
+                        if (data.comment.projectId === this.projectId) {
+                            this.comments.unshift(data.comment);
+                            this.renderComments();
+                        }
+                        break;
+                        
+                    case 'project_updated':
+                        if (data.project.id === this.projectId) {
+                            this.project = data.project;
+                            this.renderProject();
+                        }
+                        break;
                 }
             }
             
-            renderDecisions() {
-                const list = document.getElementById('decisionsList');
-                const count = document.getElementById('pendingDecisionsCount');
-                
-                const pending = this.decisions.filter(d => d.status === 'pending');
-                count.textContent = `${pending.length} pending`;
-                
-                list.innerHTML = pending.map(decision => `
-                    <div class="decision-item">
-                        <div style="color: rgba(255,255,255,0.9); font-size: 0.875rem; margin-bottom: 0.25rem;">
-                            ${decision.title}
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="decision-status status-pending">Pending</span>
-                            <span style="color: rgba(255,255,255,0.5); font-size: 0.75rem;">
-                                ${decision.priority}
-                            </span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            
-            initEventListeners() {
+            // ===== EVENT LISTENERS =====
+            setupEventListeners() {
                 // Submit comment
-                document.getElementById('submitCommentBtn').addEventListener('click', () => {
+                document.getElementById('submitComment').addEventListener('click', () => {
                     this.submitComment();
                 });
                 
                 // Comment input - Ctrl+Enter to submit
-                document.getElementById('newCommentInput').addEventListener('keydown', (e) => {
+                document.getElementById('commentInput').addEventListener('keydown', (e) => {
                     if (e.ctrlKey && e.key === 'Enter') {
                         this.submitComment();
                     }
@@ -1073,158 +782,36 @@
                     this.shareProject();
                 });
                 
-                // Join project
-                document.getElementById('joinProjectBtn').addEventListener('click', () => {
-                    this.joinProject();
-                });
-                
-                // Invite team
-                document.getElementById('inviteTeamBtn').addEventListener('click', () => {
-                    this.inviteTeam();
-                });
-                
-                // Filter comments
-                document.getElementById('filterCommentsBtn').addEventListener('click', () => {
-                    this.filterComments();
-                });
-                
-                // Sort comments
-                document.getElementById('sortCommentsBtn').addEventListener('click', () => {
-                    this.sortComments();
+                // Invite member
+                document.getElementById('inviteMemberBtn').addEventListener('click', () => {
+                    this.inviteMember();
                 });
             }
             
-            async submitComment() {
-                const input = document.getElementById('newCommentInput');
-                const content = input.value.trim();
-                
-                if (!content) {
-                    this.showToast('Please enter a comment', 'warning');
-                    return;
-                }
-                
-                try {
-                    const res = await fetch('/api/comments', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            projectId: this.projectId,
-                            content,
-                            userId: this.user.id
-                        })
-                    });
-                    
-                    if (!res.ok) throw new Error('Failed to post comment');
-                    
-                    const comment = await res.json();
-                    this.comments.unshift(comment);
-                    this.renderComments();
-                    
-                    input.value = '';
-                    this.showToast('Comment posted', 'success');
-                    
-                } catch (error) {
-                    console.error('Comment error:', error);
-                    this.showToast('Failed to post comment', 'error');
-                }
-            }
-            
-            editProject() {
-                this.showToast('Edit project functionality coming soon', 'info');
-            }
-            
-            shareProject() {
-                const url = window.location.href;
-                navigator.clipboard.writeText(url);
-                this.showToast('Project link copied to clipboard', 'success');
-            }
-            
-            async joinProject() {
-                try {
-                    const res = await fetch(`/api/projects/${this.projectId}/join`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userId: this.user.id,
-                            role: 'contributor'
-                        })
-                    });
-                    
-                    if (!res.ok) throw new Error('Failed to join');
-                    
-                    const result = await res.json();
-                    this.showToast(result.message, 'success');
-                    await this.loadTeam();
-                    
-                } catch (error) {
-                    this.showToast('Failed to join project', 'error');
-                }
-            }
-            
-            inviteTeam() {
-                this.showToast('Invite team functionality coming soon', 'info');
-            }
-            
-            filterComments() {
-                this.showToast('Filter comments coming soon', 'info');
-            }
-            
-            sortComments() {
-                this.showToast('Sort comments coming soon', 'info');
-            }
-            
-            initWebSocket() {
-                // WebSocket for real-time updates
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                this.ws = new WebSocket(`${protocol}//${window.location.host}`);
-                
-                this.ws.onopen = () => {
-                    this.ws.send(JSON.stringify({
-                        type: 'subscribe_project',
-                        projectId: this.projectId,
-                        userId: this.user.id
-                    }));
-                };
-                
-                this.ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    this.handleWebSocketMessage(data);
+            // ===== UTILITIES =====
+            getCurrentUser() {
+                return {
+                    id: localStorage.getItem('userId') || `user_${Date.now()}`,
+                    name: localStorage.getItem('userName') || 'Dr. Sarah Chen',
+                    role: localStorage.getItem('userRole') || 'clinician'
                 };
             }
             
-            handleWebSocketMessage(data) {
-                switch (data.type) {
-                    case 'comment_added':
-                        this.comments.unshift(data.comment);
-                        this.renderComments();
-                        break;
-                    case 'team_updated':
-                        this.team = data.team;
-                        this.renderTeam();
-                        break;
-                    case 'project_updated':
-                        this.project = data.project;
-                        this.renderProject();
-                        break;
-                }
-            }
-            
-            // Utility methods
-            getUserColor(role) {
-                const colors = {
-                    clinician: 'linear-gradient(135deg, var(--clinical-accent) 0%, #0A7C59 100%)',
-                    industry: 'linear-gradient(135deg, var(--industry-accent) 0%, #B45300 100%)',
-                    public: 'linear-gradient(135deg, var(--public-accent) 0%, #6A5ACD 100%)'
+            getTypeLabel(type) {
+                const labels = {
+                    clinical: 'Clinical Led',
+                    industry: 'Industry Led',
+                    collaborative: 'Collaborative'
                 };
-                return colors[role] || colors.clinician;
+                return labels[type] || 'Clinical Led';
             }
             
-            formatTime(dateString) {
+            formatDate(dateString) {
                 const date = new Date(dateString);
-                return date.toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true 
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                 });
             }
             
@@ -1232,132 +819,71 @@
                 const date = new Date(dateString);
                 const now = new Date();
                 const diffMs = now - date;
-                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffMins = Math.floor(diffMs / (1000 * 60));
                 
-                if (diffHours < 1) return 'just now';
-                if (diffHours < 24) return `${diffHours}h ago`;
-                if (diffHours < 168) return `${Math.floor(diffHours / 24)}d ago`;
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                if (diffMins < 1) return 'just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+                return `${Math.floor(diffMins / 1440)}d ago`;
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
             
             showToast(message, type = 'info') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
-                toast.className = 'toast';
+                toast.className = `toast`;
+                toast.style.borderLeftColor = {
+                    success: 'var(--accent-green)',
+                    error: 'var(--accent-red)',
+                    warning: 'var(--accent-amber)',
+                    info: 'var(--primary-teal)'
+                }[type] || 'var(--primary-teal)';
                 
-                const icons = {
+                const icon = {
                     success: '✅',
                     error: '❌',
                     warning: '⚠️',
                     info: 'ℹ️'
-                };
+                }[type] || 'ℹ️';
                 
                 toast.innerHTML = `
-                    <div>${icons[type] || icons.info}</div>
-                    <div style="flex: 1;">${message}</div>
-                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer;">&times;</button>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span>${icon}</span>
+                        <span>${message}</span>
+                    </div>
                 `;
                 
                 container.appendChild(toast);
                 
                 setTimeout(() => {
-                    if (toast.parentElement) toast.remove();
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
                 }, 5000);
             }
             
-            // Mock data
-            loadMockData() {
-                this.project = {
-                    title: 'AI-Powered COPD Detection',
-                    description: 'Developing machine learning algorithms to detect Chronic Obstructive Pulmonary Disease (COPD) patterns from routine chest X-rays 6-12 months earlier than current diagnostic methods.',
-                    pulse_score: 84,
-                    velocity_score: 85,
-                    total_members: 12,
-                    pending_decisions: 8,
-                    total_interactions: 156
-                };
-                
-                this.comments = this.getMockComments();
-                this.team = this.getMockTeam();
-                this.timeline = this.getMockTimeline();
-                this.decisions = this.getMockDecisions();
-                
-                this.renderProject();
-                this.renderComments();
-                this.renderTeam();
-                this.renderTimeline();
-                this.renderDecisions();
-            }
-            
-            getMockComments() {
-                return [
-                    {
-                        user_name: 'Dr. Michael Wang',
-                        user_role: 'clinician',
-                        content: 'The latest algorithm update shows 94% accuracy on test set. False positives reduced by 32%.',
-                        likes: 12,
-                        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-                    },
-                    {
-                        user_name: 'Rajesh Kumar',
-                        user_role: 'industry',
-                        content: 'Great progress! We should discuss deployment timeline for Q2 pilot.',
-                        likes: 8,
-                        created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()
-                    }
-                ];
-            }
-            
-            getMockTeam() {
-                return [
-                    { name: 'Dr. Sarah Chen', role: 'clinician', project_role: 'Clinical Lead', status: 'online' },
-                    { name: 'Michael Wang', role: 'clinician', project_role: 'Radiologist', status: 'online' },
-                    { name: 'Rajesh Kumar', role: 'industry', project_role: 'AI Engineer', status: 'away' },
-                    { name: 'Lisa Williams', role: 'public', project_role: 'Patient Advocate', status: 'offline' }
-                ];
-            }
-            
-            getMockTimeline() {
-                return [
-                    {
-                        description: 'Algorithm accuracy reached 94% on test set',
-                        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-                    },
-                    {
-                        description: '5,000 new scans added to training dataset',
-                        created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-                    },
-                    {
-                        description: 'Team meeting: Discussed Q2 deployment plans',
-                        created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-                    }
-                ];
-            }
-            
-            getMockDecisions() {
-                return [
-                    {
-                        title: 'Finalize patient inclusion criteria for trial',
-                        status: 'pending',
-                        priority: 'high'
-                    },
-                    {
-                        title: 'Approve budget for prototype development',
-                        status: 'pending',
-                        priority: 'medium'
-                    },
-                    {
-                        title: 'Select manufacturing partner',
-                        status: 'pending',
-                        priority: 'high'
-                    }
-                ];
+            showError(message) {
+                document.querySelector('.main-container').innerHTML = `
+                    <div style="text-align: center; padding: 4rem; color: var(--neutral-500);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-red);"></i>
+                        <h2 style="margin-bottom: 1rem;">Error Loading Project</h2>
+                        <p style="margin-bottom: 2rem;">${message}</p>
+                        <a href="/" style="padding: 0.75rem 1.5rem; background: var(--primary-blue); color: white; text-decoration: none; border-radius: var(--radius-md);">
+                            Return to Dashboard
+                        </a>
+                    </div>
+                `;
             }
         }
         
-        // Initialize
+        // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            window.projectApp = new ProjectDetail();
+            window.projectManager = new ProjectDetailManager();
         });
     </script>
 </body>
