@@ -1,30 +1,23 @@
 {
-  "name": "thoraxlab-innovation-platform",
+  "name": "thoraxlab",
   "version": "1.0.0",
-  "type": "module",
-  "description": "Multi-stakeholder healthcare innovation collaboration platform",
+  "description": "Clinical innovation collaboration platform for Pneumology",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "nodemon server.js",
+    "railway": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "socket.io": "^4.7.2",
-    "cors": "^2.8.5",
-    "helmet": "^7.0.0",
-    "compression": "^1.7.4",
+    "sqlite3": "^5.1.6",
+    "sqlite": "^5.1.1",
     "uuid": "^9.0.0"
   },
-  "engines": {
-    "node": "18.x"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   },
-  "keywords": [
-    "healthcare",
-    "innovation",
-    "collaboration",
-    "multi-stakeholder"
-  ],
-  "author": "ThoraxLab Team",
-  "license": "MIT"
+  "engines": {
+    "node": ">=16.0.0"
+  }
 }
