@@ -9,11 +9,13 @@ yarn-error.log*
 .env.local
 .env.*.local
 
-# Database
+# Database and data files
+data/
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
+thoraxlab.db
 
 # Runtime data
 pids
@@ -48,3 +50,16 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Server session files
+session/
+sessions/
+
+# Uploads
+uploads/
+*.tmp
+*.temp
+
+# Backups
+*.bak
+*.backup
