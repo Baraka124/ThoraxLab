@@ -1,206 +1,506 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const express = require('express');
 const path = require('path');
-const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const WebSocket = require('ws');
+const helmet = require('helmet');
+const compression = require('compression');
+const { getDB, calculatePulseScore } = require('./database');
 
-let db = null;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const DB_PATH = process.env.RAILWAY_VOLUME_MOUNT_PATH 
-    ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, 'thoraxlab.db')
-    : path.join(__dirname, 'thoraxlab.db');
+// Security & Performance
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"]
+        }
+    }
+}));
+app.use(compression());
+app.use(express.static('public', {
+    maxAge: '1h',
+    setHeaders: (res, filePath) => {
+        if (path.extname(filePath) === '.html') {
+            res.setHeader('Cache-Control', 'no-cache');
+        }
+    }
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-async function getDB() {
-    if (!db) {
-        console.log(`📊 Opening database: ${DB_PATH}`);
+// WebSocket Server
+const server = require('http').createServer(app);
+const wss = new WebSocket.Server({ server });
+
+const connectedClients = new Map();
+
+wss.on('connection', (ws, req) => {
+    const clientId = uuidv4();
+    connectedClients.set(clientId, ws);
+    
+    ws.on('message', async (data) => {
+        try {
+            const message = JSON.parse(data.toString());
+            
+            switch (message.type) {
+                case 'heartbeat':
+                    ws.send(JSON.stringify({ type: 'heartbeat_ack', timestamp: Date.now() }));
+                    break;
+                    
+                case 'subscribe_project':
+                    ws.projectSubscriptions = ws.projectSubscriptions || new Set();
+                    ws.projectSubscriptions.add(message.projectId);
+                    break;
+                    
+                case 'interaction':
+                    await handleInteraction(message);
+                    broadcastProjectUpdate(message.projectId);
+                    break;
+            }
+        } catch (error) {
+            console.error('WebSocket error:', error);
+        }
+    });
+    
+    ws.on('close', () => {
+        connectedClients.delete(clientId);
+    });
+    
+    // Send welcome with connection ID
+    ws.send(JSON.stringify({
+        type: 'connected',
+        clientId,
+        timestamp: new Date().toISOString()
+    }));
+});
+
+// Broadcast to all clients subscribed to a project
+function broadcastProjectUpdate(projectId) {
+    const updateMsg = JSON.stringify({
+        type: 'project_updated',
+        projectId,
+        timestamp: new Date().toISOString()
+    });
+    
+    connectedClients.forEach((ws, clientId) => {
+        if (ws.readyState === WebSocket.OPEN && ws.projectSubscriptions && ws.projectSubscriptions.has(projectId)) {
+            ws.send(updateMsg);
+        }
+    });
+}
+
+async function handleInteraction(data) {
+    const db = await getDB();
+    const timestamp = new Date().toISOString();
+    
+    try {
+        // Get admin user for now
+        const admin = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
         
-        const dir = path.dirname(DB_PATH);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        // Record interaction
+        await db.run(
+            `INSERT INTO interactions (project_id, user_id, type, metadata, created_at) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [data.projectId, admin.id, data.interactionType, JSON.stringify(data.metadata || {}), timestamp]
+        );
         
-        db = await open({
-            filename: DB_PATH,
-            driver: sqlite3.Database
+        // Log activity
+        await db.run(
+            `INSERT INTO activity_log (user_id, action, entity_type, entity_id, metadata) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [admin.id, data.interactionType, 'project', data.projectId, JSON.stringify(data.metadata || {})]
+        );
+        
+        // Update project pulse
+        const newPulse = await calculatePulseScore(db, data.projectId);
+        await db.run(
+            `UPDATE projects SET pulse_score = ?, last_calculated = ?, updated_at = ? WHERE id = ?`,
+            [newPulse, timestamp, timestamp, data.projectId]
+        );
+        
+        return newPulse;
+    } catch (error) {
+        console.error('Interaction error:', error);
+        throw error;
+    }
+}
+
+// API Routes
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        version: '2.0.0',
+        clients: connectedClients.size
+    });
+});
+
+app.get('/api/projects', async (req, res) => {
+    try {
+        const db = await getDB();
+        const projects = await db.all(`
+            SELECT 
+                p.*,
+                u.name as creator_name,
+                u.avatar_color as creator_color,
+                COUNT(DISTINCT pm.user_id) as team_size,
+                COUNT(DISTINCT d.id) as discussion_count,
+                COUNT(DISTINCT i.id) as interaction_count,
+                MAX(i.created_at) as last_activity_at
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            LEFT JOIN project_members pm ON p.id = pm.project_id
+            LEFT JOIN discussions d ON p.id = d.project_id
+            LEFT JOIN interactions i ON p.id = i.project_id
+            GROUP BY p.id
+            ORDER BY p.updated_at DESC
+        `);
+        
+        res.json({
+            success: true,
+            data: projects,
+            count: projects.length,
+            serverTime: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Projects fetch error:', error);
+        res.status(500).json({ success: false, error: 'Database error' });
+    }
+});
+
+app.get('/api/projects/:id', async (req, res) => {
+    try {
+        const db = await getDB();
+        const { id } = req.params;
+        
+        const project = await db.get(`
+            SELECT 
+                p.*,
+                u.name as creator_name,
+                u.avatar_color as creator_color
+            FROM projects p
+            LEFT JOIN users u ON p.created_by = u.id
+            WHERE p.id = ?
+        `, [id]);
+        
+        if (!project) {
+            return res.status(404).json({ success: false, error: 'Project not found' });
+        }
+        
+        // Get detailed stats
+        const stats = await db.get(`
+            SELECT 
+                COUNT(DISTINCT pm.user_id) as team_size,
+                COUNT(DISTINCT d.id) as discussion_count,
+                COUNT(DISTINCT i.id) as interaction_count,
+                COUNT(DISTINCT CASE WHEN i.type = 'like' THEN i.id END) as like_count,
+                COUNT(DISTINCT CASE WHEN i.type = 'comment' THEN i.id END) as comment_count,
+                COUNT(DISTINCT CASE WHEN i.type = 'view' THEN i.id END) as view_count,
+                MAX(i.created_at) as last_interaction_at
+            FROM projects p
+            LEFT JOIN project_members pm ON p.id = pm.project_id
+            LEFT JOIN discussions d ON p.id = d.project_id
+            LEFT JOIN interactions i ON p.id = i.project_id
+            WHERE p.id = ?
+            GROUP BY p.id
+        `, [id]);
+        
+        // Get team members
+        const team = await db.all(`
+            SELECT u.id, u.name, u.role, u.department, u.avatar_color, pm.role as project_role
+            FROM project_members pm
+            JOIN users u ON pm.user_id = u.id
+            WHERE pm.project_id = ?
+            ORDER BY pm.joined_at
+        `, [id]);
+        
+        // Get recent discussions
+        const discussions = await db.all(`
+            SELECT d.*, u.name as user_name, u.avatar_color
+            FROM discussions d
+            JOIN users u ON d.user_id = u.id
+            WHERE d.project_id = ?
+            ORDER BY d.created_at DESC
+            LIMIT 20
+        `, [id]);
+        
+        // Get activity timeline
+        const timeline = await db.all(`
+            SELECT 
+                al.action,
+                al.entity_type,
+                al.metadata,
+                u.name as user_name,
+                u.avatar_color,
+                al.created_at
+            FROM activity_log al
+            LEFT JOIN users u ON al.user_id = u.id
+            WHERE al.entity_id = ?
+            ORDER BY al.created_at DESC
+            LIMIT 30
+        `, [id]);
+        
+        res.json({
+            success: true,
+            data: {
+                ...project,
+                stats: stats || {},
+                team,
+                discussions,
+                timeline
+            }
+        });
+    } catch (error) {
+        console.error('Project fetch error:', error);
+        res.status(500).json({ success: false, error: 'Database error' });
+    }
+});
+
+app.post('/api/projects', async (req, res) => {
+    try {
+        const { title, description, stage = 'idea', department = 'Pneumology', targetDate } = req.body;
+        
+        if (!title || !description) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Title and description are required' 
+            });
+        }
+        
+        const db = await getDB();
+        const projectId = `proj_${uuidv4()}`;
+        const timestamp = new Date().toISOString();
+        
+        // Get admin
+        const admin = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
+        
+        // Create project
+        await db.run(
+            `INSERT INTO projects (id, title, description, stage, department, created_by, target_date, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [projectId, title, description, stage, department, admin.id, targetDate, timestamp, timestamp]
+        );
+        
+        // Add creator as admin member
+        await db.run(
+            `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
+            [projectId, admin.id, 'admin']
+        );
+        
+        // Log creation
+        await db.run(
+            `INSERT INTO activity_log (user_id, action, entity_type, entity_id, metadata) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [admin.id, 'project_create', 'project', projectId, JSON.stringify({ title, stage })]
+        );
+        
+        // Initial interaction
+        await db.run(
+            `INSERT INTO interactions (project_id, user_id, type, metadata) 
+             VALUES (?, ?, ?, ?)`,
+            [projectId, admin.id, 'view', JSON.stringify({ source: 'creation' })]
+        );
+        
+        // Calculate initial pulse
+        const initialPulse = await calculatePulseScore(db, projectId);
+        await db.run(
+            `UPDATE projects SET pulse_score = ?, last_calculated = ? WHERE id = ?`,
+            [initialPulse, timestamp, projectId]
+        );
+        
+        // Broadcast creation
+        broadcastProjectUpdate(projectId);
+        
+        res.json({
+            success: true,
+            data: {
+                id: projectId,
+                title,
+                stage,
+                pulse_score: initialPulse,
+                created_at: timestamp
+            },
+            message: 'Project created successfully'
+        });
+    } catch (error) {
+        console.error('Project creation error:', error);
+        res.status(500).json({ success: false, error: 'Creation failed' });
+    }
+});
+
+app.post('/api/interactions', async (req, res) => {
+    try {
+        const { projectId, type, metadata = {} } = req.body;
+        
+        if (!projectId || !type) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Project ID and interaction type required' 
+            });
+        }
+        
+        const newPulse = await handleInteraction({
+            projectId,
+            interactionType: type,
+            metadata
         });
         
-        await initTables(db);
+        res.json({
+            success: true,
+            data: {
+                projectId,
+                pulseScore: newPulse,
+                interactionType: type,
+                timestamp: new Date().toISOString()
+            },
+            message: 'Interaction recorded'
+        });
+    } catch (error) {
+        console.error('Interaction error:', error);
+        res.status(500).json({ success: false, error: 'Interaction failed' });
     }
-    return db;
-}
+});
 
-async function initTables(dbInstance) {
-    await dbInstance.exec('PRAGMA journal_mode = WAL');
-    await dbInstance.exec('PRAGMA foreign_keys = ON');
-    
-    // Users (minimal auth for MVP)
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            email TEXT UNIQUE,
-            name TEXT NOT NULL,
-            role TEXT DEFAULT 'clinician',
-            department TEXT DEFAULT 'Pneumology',
-            avatar_color TEXT DEFAULT '#2D9CDB',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `);
-    
-    // Projects
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS projects (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            description TEXT,
-            stage TEXT CHECK(stage IN ('idea', 'planning', 'active', 'review', 'completed')) DEFAULT 'idea',
-            department TEXT DEFAULT 'Pneumology',
-            status TEXT DEFAULT 'active',
-            created_by TEXT,
-            pulse_score INTEGER DEFAULT 50,
-            last_calculated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            target_date DATE,
-            FOREIGN KEY (created_by) REFERENCES users(id)
-        );
-    `);
-    
-    // Project Members
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS project_members (
-            project_id TEXT NOT NULL,
-            user_id TEXT NOT NULL,
-            role TEXT DEFAULT 'contributor',
-            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (project_id, user_id),
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
-    `);
-    
-    // Discussions
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS discussions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            project_id TEXT NOT NULL,
-            user_id TEXT NOT NULL,
-            content TEXT NOT NULL,
-            type TEXT DEFAULT 'comment',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Interactions (Real-time tracking)
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS interactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            project_id TEXT NOT NULL,
-            discussion_id INTEGER,
-            user_id TEXT NOT NULL,
-            type TEXT CHECK(type IN ('view', 'like', 'comment', 'vote', 'stage_change')),
-            metadata TEXT DEFAULT '{}',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Activity Log (for analytics)
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS activity_log (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT,
-            action TEXT NOT NULL,
-            entity_type TEXT,
-            entity_id TEXT,
-            metadata TEXT DEFAULT '{}',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    `);
-    
-    // Indexes
-    await dbInstance.exec(`
-        CREATE INDEX IF NOT EXISTS idx_projects_stage ON projects(stage);
-        CREATE INDEX IF NOT EXISTS idx_projects_pulse ON projects(pulse_score);
-        CREATE INDEX IF NOT EXISTS idx_discussions_project ON discussions(project_id);
-        CREATE INDEX IF NOT EXISTS idx_interactions_project ON interactions(project_id);
-        CREATE INDEX IF NOT EXISTS idx_interactions_time ON interactions(created_at);
-        CREATE INDEX IF NOT EXISTS idx_activity_log_time ON activity_log(created_at);
-    `);
-    
-    // Create admin user
-    const adminExists = await dbInstance.get(
-        "SELECT id FROM users WHERE email = 'admin@thoraxlab.local'"
-    );
-    
-    if (!adminExists) {
-        const { v4: uuidv4 } = require('uuid');
-        await dbInstance.run(
-            `INSERT INTO users (id, email, name, role, department, avatar_color) 
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [uuidv4(), 'admin@thoraxlab.local', 'Digital Innovation Lead', 'admin', 'Pneumology', '#1A365D']
-        );
-        console.log('✅ Admin user created');
-    }
-    
-    console.log('✅ Database initialized with enterprise schema');
-}
-
-// Pulse calculation algorithm
-async function calculatePulseScore(db, projectId) {
+app.post('/api/discussions', async (req, res) => {
     try {
-        const now = new Date();
-        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const { projectId, content } = req.body;
+        
+        if (!projectId || !content?.trim()) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Project ID and content required' 
+            });
+        }
+        
+        const db = await getDB();
+        const timestamp = new Date().toISOString();
+        const admin = await db.get("SELECT id FROM users WHERE email = 'admin@thoraxlab.local'");
+        
+        // Create discussion
+        const result = await db.run(
+            `INSERT INTO discussions (project_id, user_id, content, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [projectId, admin.id, content.trim(), timestamp, timestamp]
+        );
+        
+        // Record as interaction
+        await db.run(
+            `INSERT INTO interactions (project_id, user_id, type, metadata) 
+             VALUES (?, ?, ?, ?)`,
+            [projectId, admin.id, 'comment', JSON.stringify({ discussionId: result.lastID })]
+        );
+        
+        // Update project
+        await db.run(
+            `UPDATE projects SET updated_at = ? WHERE id = ?`,
+            [timestamp, projectId]
+        );
+        
+        // Recalculate pulse
+        const newPulse = await calculatePulseScore(db, projectId);
+        await db.run(
+            `UPDATE projects SET pulse_score = ?, last_calculated = ? WHERE id = ?`,
+            [newPulse, timestamp, projectId]
+        );
+        
+        // Broadcast update
+        broadcastProjectUpdate(projectId);
+        
+        res.json({
+            success: true,
+            data: {
+                id: result.lastID,
+                projectId,
+                content: content.trim(),
+                user_name: 'Digital Innovation Lead',
+                avatar_color: '#1A365D',
+                created_at: timestamp
+            },
+            message: 'Discussion posted'
+        });
+    } catch (error) {
+        console.error('Discussion error:', error);
+        res.status(500).json({ success: false, error: 'Post failed' });
+    }
+});
+
+app.get('/api/stats', async (req, res) => {
+    try {
+        const db = await getDB();
         
         const stats = await db.get(`
             SELECT 
-                COUNT(DISTINCT i.id) as total_interactions_7d,
-                COUNT(DISTINCT CASE WHEN i.type = 'like' THEN i.id END) as likes_7d,
-                COUNT(DISTINCT CASE WHEN i.type = 'comment' THEN i.id END) as comments_7d,
-                COUNT(DISTINCT d.id) as new_discussions_7d,
-                COUNT(DISTINCT CASE WHEN i.user_id NOT IN (SELECT created_by FROM projects WHERE id = ?) THEN i.user_id END) as new_users_7d,
-                MAX(i.created_at) as last_interaction_at
+                COUNT(DISTINCT p.id) as total_projects,
+                COUNT(DISTINCT CASE WHEN p.stage = 'active' THEN p.id END) as active_projects,
+                COUNT(DISTINCT i.id) as total_interactions,
+                COUNT(DISTINCT u.id) as total_users,
+                ROUND(AVG(p.pulse_score), 1) as avg_pulse,
+                COUNT(DISTINCT d.id) as total_discussions,
+                MAX(p.created_at) as latest_project_date
             FROM projects p
-            LEFT JOIN interactions i ON p.id = i.project_id 
-                AND i.created_at > datetime(?)
-            LEFT JOIN discussions d ON p.id = d.project_id 
-                AND d.created_at > datetime(?)
-            WHERE p.id = ?
-            GROUP BY p.id
-        `, [projectId, sevenDaysAgo.toISOString(), sevenDaysAgo.toISOString(), projectId]);
+            LEFT JOIN interactions i ON p.id = i.project_id
+            LEFT JOIN users u ON p.created_by = u.id
+            LEFT JOIN discussions d ON p.id = d.project_id
+            WHERE p.status = 'active'
+        `);
         
-        if (!stats) return 50;
+        // 24h activity
+        const dailyActivity = await db.get(`
+            SELECT COUNT(*) as interactions_24h
+            FROM interactions 
+            WHERE created_at > datetime('now', '-1 day')
+        `);
         
-        let score = 50; // Base score
-        
-        // Engagement weight: 40% of score
-        score += Math.min((stats.total_interactions_7d || 0) * 1.5, 20);
-        score += Math.min((stats.likes_7d || 0) * 2, 10);
-        score += Math.min((stats.comments_7d || 0) * 3, 10);
-        
-        // Diversity weight: 20% of score
-        score += Math.min((stats.new_users_7d || 0) * 5, 10);
-        score += Math.min((stats.new_discussions_7d || 0) * 2, 10);
-        
-        // Recency weight: 40% of score
-        if (stats.last_interaction_at) {
-            const lastInteraction = new Date(stats.last_interaction_at);
-            const hoursSince = (now - lastInteraction) / (1000 * 60 * 60);
-            
-            if (hoursSince < 1) score += 20;
-            else if (hoursSince < 24) score += 15;
-            else if (hoursSince < 72) score += 10;
-            else if (hoursSince < 168) score += 5;
-        }
-        
-        // Cap between 0-100
-        return Math.max(0, Math.min(100, Math.round(score)));
+        res.json({
+            success: true,
+            data: {
+                ...stats,
+                ...dailyActivity,
+                webSocketClients: connectedClients.size,
+                serverTime: new Date().toISOString()
+            }
+        });
     } catch (error) {
-        console.error('Pulse calculation error:', error);
-        return 50;
+        console.error('Stats error:', error);
+        res.status(500).json({ success: false, error: 'Stats unavailable' });
     }
-}
+});
 
-module.exports = { getDB, calculatePulseScore };
+// Serve frontend
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/project', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'project.html'));
+});
+
+// Start server
+server.listen(PORT, async () => {
+    console.log(`🚀 THORAXLAB Enterprise v2.0`);
+    console.log(`   Port: ${PORT}`);
+    console.log(`   WebSocket: Ready (${wss.options.port})`);
+    console.log(`   Database: Initializing...`);
+    
+    // Initialize database
+    await getDB();
+    
+    console.log(`   Status: Ready for €10M competition`);
+    console.log(`   URL: http://localhost:${PORT}`);
+    
+    // Periodic WebSocket heartbeat
+    setInterval(() => {
+        connectedClients.forEach((ws, clientId) => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'heartbeat',
+                    timestamp: Date.now()
+                }));
+            }
+        });
+    }, 30000);
+});
