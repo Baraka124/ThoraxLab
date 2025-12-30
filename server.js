@@ -225,21 +225,20 @@ const clientManager = new ClientManager();
 // ===== MIDDLEWARE =====
 function setupMiddleware() {
   // Security headers
-  app.use(helmet({
+app.use(helmet({
     contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-        connectSrc: ["'self'", "ws:", "wss:"],
-        imgSrc: ["'self'", "data:", "https:"]
-      }
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.gstatic.com"],
+            connectSrc: ["'self'", "ws:", "wss:"],
+            imgSrc: ["'self'", "data:", "https:"]
+        }
     },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: "cross-origin" }
-  }));
-  
+}));
   // Compression
   app.use(compression({
     level: 6,
