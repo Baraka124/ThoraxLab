@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | ThoraxLab</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --thorax-primary: #1A5F7A;
@@ -40,14 +41,14 @@
 
         .login-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
 
         .login-card {
             background: var(--card-white);
             border-radius: var(--radius-lg);
             padding: var(--space-xl);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border-subtle);
         }
 
@@ -62,14 +63,12 @@
             justify-content: center;
             gap: var(--space-md);
             margin-bottom: var(--space-lg);
-            color: var(--thorax-primary);
-            font-size: 1.5rem;
-            font-weight: 700;
+            text-decoration: none;
         }
 
-        .logo-badge {
-            width: 48px;
-            height: 48px;
+        .logo-mark {
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
             border-radius: var(--radius-md);
             display: flex;
@@ -77,7 +76,27 @@
             justify-content: center;
             color: white;
             font-weight: 800;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.15);
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-tagline {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--thorax-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: -4px;
         }
 
         .login-title {
@@ -123,7 +142,7 @@
         .btn {
             width: 100%;
             padding: 0.875rem;
-            background: var(--thorax-primary);
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-secondary));
             color: white;
             border: none;
             border-radius: var(--radius-md);
@@ -131,11 +150,12 @@
             font-size: 0.9375rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn:hover {
-            background: #14485E;
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
         }
 
         .btn:disabled {
@@ -143,10 +163,38 @@
             cursor: not-allowed;
         }
 
+        .login-footer {
+            margin-top: var(--space-xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+        }
+
+        .test-credentials {
+            background: var(--background-gray);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-lg);
+            font-size: 0.8125rem;
+        }
+
+        .test-title {
+            font-weight: 600;
+            color: var(--thorax-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .test-item {
+            margin-bottom: 0.25rem;
+            color: var(--text-medium);
+        }
+
         .error-message {
             color: #EF4444;
             font-size: 0.875rem;
-            margin-top: 0.25rem;
+            margin-top: 0.5rem;
             display: none;
         }
 
@@ -154,37 +202,20 @@
             display: block;
         }
 
-        .test-credentials {
-            margin-top: var(--space-xl);
-            padding-top: var(--space-lg);
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .test-credentials h4 {
-            font-size: 0.875rem;
-            color: var(--text-medium);
-            margin-bottom: var(--space-md);
-        }
-
-        .credentials-list {
-            background: var(--background-gray);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            font-size: 0.8125rem;
-        }
-
-        .credential-item {
-            margin-bottom: 0.5rem;
-            color: var(--text-medium);
-        }
-
-        .credential-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .credential-label {
-            font-weight: 600;
-            color: var(--thorax-primary);
+        @media (max-width: 480px) {
+            .login-card {
+                padding: var(--space-lg);
+            }
+            
+            .logo-text {
+                font-size: 1.75rem;
+            }
+            
+            .logo-mark {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
@@ -193,11 +224,14 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="logo">
-                    <div class="logo-badge">T</div>
-                    <span>ThoraxLab</span>
+                    <div class="logo-mark">T</div>
+                    <div>
+                        <div class="logo-text">ThoraxLab</div>
+                        <div class="logo-tagline">Research Platform</div>
+                    </div>
                 </div>
-                <h1 class="login-title">Welcome Back</h1>
-                <p class="login-subtitle">Sign in to your research dashboard</p>
+                <h1 class="login-title">Researcher Login</h1>
+                <p class="login-subtitle">Access the thoracic research collaboration platform</p>
             </div>
 
             <form id="loginForm">
@@ -229,19 +263,19 @@
                 </div>
 
                 <button type="submit" class="btn" id="loginBtn">
-                    Sign In
+                    <i class="fas fa-sign-in-alt"></i> Access Platform
                 </button>
+                
+                <div class="error-message" id="loginError"></div>
             </form>
 
-            <div class="test-credentials">
-                <h4>Test Credentials:</h4>
-                <div class="credentials-list">
-                    <div class="credential-item">
-                        <span class="credential-label">Admin:</span> Name: "Admin", Email: "admin"
-                    </div>
-                    <div class="credential-item">
-                        <span class="credential-label">User:</span> Any name and email will work
-                    </div>
+            <div class="login-footer">
+                <p>HIPAA compliant • Encrypted communication</p>
+                
+                <div class="test-credentials">
+                    <div class="test-title">Test Credentials:</div>
+                    <div class="test-item">Admin: Name="Admin", Email="admin"</div>
+                    <div class="test-item">Any name/email will work for new users</div>
                 </div>
             </div>
         </div>
@@ -255,15 +289,17 @@
             const email = document.getElementById('email').value.trim();
             const institution = document.getElementById('institution').value.trim();
             const loginBtn = document.getElementById('loginBtn');
+            const errorDisplay = document.getElementById('loginError');
             
             if (!name || !email) {
-                alert('Name and email are required.');
+                errorDisplay.textContent = 'Name and email are required.';
+                errorDisplay.classList.add('show');
                 return;
             }
             
-            // Disable button
+            errorDisplay.classList.remove('show');
             loginBtn.disabled = true;
-            loginBtn.textContent = 'Signing in...';
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
             
             try {
                 const response = await fetch('/api/login', {
@@ -274,26 +310,26 @@
                     body: JSON.stringify({
                         name,
                         email,
-                        institution
+                        institution: institution || 'Medical Center'
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Login successful, redirect to dashboard
                     window.location.href = '/';
                 } else {
-                    // Show error
-                    alert(data.error || 'Login failed. Please try again.');
+                    errorDisplay.textContent = data.error || 'Login failed. Please try again.';
+                    errorDisplay.classList.add('show');
                     loginBtn.disabled = false;
-                    loginBtn.textContent = 'Sign In';
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Platform';
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert('Network error. Please check your connection and try again.');
+                errorDisplay.textContent = 'Network error. Please check your connection and try again.';
+                errorDisplay.classList.add('show');
                 loginBtn.disabled = false;
-                loginBtn.textContent = 'Sign In';
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Platform';
             }
         });
     </script>
