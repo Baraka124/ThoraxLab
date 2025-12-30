@@ -1,6 +1,6 @@
 {
   "name": "thoraxlab",
-  "version": "4.0.0",
+  "version": "4.2.0",
   "description": "ThoraxLab Research Collaboration Platform",
   "type": "module",
   "main": "server.js",
@@ -14,20 +14,13 @@
     "cors": "^2.8.5",
     "helmet": "^7.0.0",
     "compression": "^1.7.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "cookie-parser": "^1.4.6"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "keywords": [
-    "research",
-    "medical",
-    "collaboration",
-    "thoracic"
-  ],
-  "author": "ThoraxLab Team",
-  "license": "MIT"
+  }
 }
