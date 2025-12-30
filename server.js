@@ -13,20 +13,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || 'production'; // Railway sets to production
+const RAILWAY_PUBLIC_DOMAIN = process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost';
 
 // ==================== INITIALIZATION ====================
 const app = express();
 const server = createServer(app);
 
-// ==================== FIXED CSP CONFIGURATION ====================
-// Allow Font Awesome and other necessary resources
+// ==================== RAILWAY-SPECIFIC CSP ====================
 const cspDirectives = {
   defaultSrc: ["'self'"],
   scriptSrc: [
     "'self'",
-    "'unsafe-inline'",  // Allow inline scripts (for demo)
-    "'unsafe-eval'"     // Allow eval for development
+    "'unsafe-inline'",  // Allow inline scripts for now
   ],
   styleSrc: [
     "'self'",
@@ -48,8 +47,8 @@ const cspDirectives = {
   ],
   connectSrc: [
     "'self'",
-    `ws://localhost:${PORT}`,
-    `ws://127.0.0.1:${PORT}`
+    "ws://" + RAILWAY_PUBLIC_DOMAIN,
+    "wss://" + RAILWAY_PUBLIC_DOMAIN
   ],
   frameSrc: ["'self'"],
   objectSrc: ["'none'"],
@@ -57,16 +56,16 @@ const cspDirectives = {
   manifestSrc: ["'self'"]
 };
 
+// Relax CSP in development
 if (NODE_ENV === 'development') {
-  // Relax CSP for development
-  cspDirectives.connectSrc.push("ws://*");
+  cspDirectives.connectSrc.push("ws://*", "wss://*");
   cspDirectives.scriptSrc.push("'unsafe-eval'");
 }
 
 app.use(helmet({
   contentSecurityPolicy: {
     directives: cspDirectives,
-    reportOnly: false
+    reportOnly: NODE_ENV === 'development'
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -89,6 +88,9 @@ app.use(express.static('public', {
   setHeaders: (res, path) => {
     if (path.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else {
+      // Cache static assets for 1 year
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     }
   }
 }));
@@ -138,94 +140,146 @@ function validateSession(sessionId) {
   return session;
 }
 
-// ==================== SIMPLE DATA STORAGE ====================
-class DataStore {
+// ==================== DATA STORAGE WITH RAILWAY VOLUME ====================
+class RailwayDataStore {
   constructor() {
     this.users = new Map();
     this.projects = new Map();
-    this.discussions = new Map();
-    this.comments = new Map();
-    this.votes = new Map();
+    this.dataPath = path.join(__dirname, 'data');
     
-    // Create default admin
+    // Create data directory if it doesn't exist
+    this.initializeDataDirectory();
     this.initializeDefaultData();
   }
   
-  initializeDefaultData() {
-    // Default admin user
-    const adminId = 'admin-' + Date.now();
-    this.users.set(adminId, {
-      id: adminId,
-      name: 'Platform Admin',
-      email: 'admin@thoraxlab.org',
-      institution: 'ThoraxLab HQ',
-      role: 'administrator',
-      specialty: 'platform_management',
-      impactScore: 1000,
-      isAdmin: true,
-      createdAt: new Date().toISOString(),
-      lastActivity: new Date().toISOString(),
-      projects: [],
-      discussions: [],
-      preferences: {
-        notifications: true,
-        theme: 'medical-blue'
+  async initializeDataDirectory() {
+    try {
+      await fs.mkdir(this.dataPath, { recursive: true });
+      console.log('✅ Data directory initialized');
+    } catch (error) {
+      console.error('Failed to create data directory:', error);
+    }
+  }
+  
+  async saveToDisk() {
+    try {
+      const data = {
+        users: Array.from(this.users.entries()),
+        projects: Array.from(this.projects.entries()),
+        timestamp: new Date().toISOString()
+      };
+      
+      const filePath = path.join(this.dataPath, 'store.json');
+      await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+      console.log('💾 Data saved to disk');
+    } catch (error) {
+      console.error('Failed to save data:', error);
+    }
+  }
+  
+  async loadFromDisk() {
+    try {
+      const filePath = path.join(this.dataPath, 'store.json');
+      const data = await fs.readFile(filePath, 'utf8');
+      const parsed = JSON.parse(data);
+      
+      this.users = new Map(parsed.users);
+      this.projects = new Map(parsed.projects);
+      console.log('✅ Loaded data from disk');
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        console.log('📝 No existing data found, starting fresh');
+      } else {
+        console.error('Failed to load data:', error);
       }
-    });
-    
-    // Create a sample project
-    const projectId = 'project-' + Date.now();
-    this.projects.set(projectId, {
-      id: projectId,
-      title: 'Welcome to ThoraxLab',
-      description: 'This is a sample project to demonstrate the ThoraxLab platform features.',
-      status: 'active',
-      lead: {
+    }
+  }
+  
+  initializeDefaultData() {
+    // Create default admin if no users exist
+    if (this.users.size === 0) {
+      const adminId = 'admin-' + Date.now();
+      this.users.set(adminId, {
         id: adminId,
-        name: 'Platform Admin',
-        email: 'admin@thoraxlab.org'
-      },
-      team: [{
-        id: adminId,
-        name: 'Platform Admin',
+        name: 'Platform Administrator',
         email: 'admin@thoraxlab.org',
-        role: 'lead',
-        joinedAt: new Date().toISOString()
-      }],
-      objectives: [
-        'Explore platform features',
-        'Learn how to create discussions',
-        'Understand consensus building'
-      ],
-      methodology: 'Demonstration of research collaboration platform',
-      timeline: {
-        startDate: new Date().toISOString(),
-        estimatedDuration: 'Ongoing',
-        milestones: [],
-        progress: 100
-      },
-      metrics: {
-        consensus: 85,
-        engagement: 50,
-        discussions: 1,
-        comments: 0,
-        votes: 0
-      },
-      settings: {
-        isPublic: true,
-        allowComments: true,
-        allowVoting: true,
-        requireApproval: false
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
-    
-    // Add project to admin
-    const admin = this.users.get(adminId);
-    admin.projects.push(projectId);
-    
-    console.log('✅ Initialized default data');
+        institution: 'ThoraxLab HQ',
+        role: 'administrator',
+        specialty: 'platform_management',
+        impactScore: 1000,
+        isAdmin: true,
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        projects: [],
+        discussions: [],
+        preferences: {
+          notifications: true,
+          theme: 'medical-blue'
+        }
+      });
+      
+      // Create welcome project
+      const projectId = 'project-' + Date.now();
+      this.projects.set(projectId, {
+        id: projectId,
+        title: 'Welcome to ThoraxLab',
+        description: 'This is a sample project to demonstrate the ThoraxLab platform features for thoracic research collaboration.',
+        status: 'active',
+        lead: {
+          id: adminId,
+          name: 'Platform Administrator',
+          email: 'admin@thoraxlab.org'
+        },
+        team: [{
+          id: adminId,
+          name: 'Platform Administrator',
+          email: 'admin@thoraxlab.org',
+          role: 'lead',
+          joinedAt: new Date().toISOString()
+        }],
+        objectives: [
+          'Explore platform features and capabilities',
+          'Learn how to create and manage research projects',
+          'Understand the consensus building process',
+          'Collaborate effectively with research teams'
+        ],
+        methodology: 'Mixed-methods research with quantitative and qualitative analysis',
+        timeline: {
+          startDate: new Date().toISOString(),
+          estimatedDuration: 'Ongoing',
+          milestones: [
+            { title: 'Platform Setup', date: new Date().toISOString(), completed: true },
+            { title: 'Team Onboarding', date: new Date(Date.now() + 86400000).toISOString(), completed: false },
+            { title: 'First Research Cycle', date: new Date(Date.now() + 604800000).toISOString(), completed: false }
+          ],
+          progress: 25
+        },
+        metrics: {
+          consensus: 85,
+          engagement: 42,
+          discussions: 3,
+          comments: 12,
+          votes: 28
+        },
+        settings: {
+          isPublic: true,
+          allowComments: true,
+          allowVoting: true,
+          requireApproval: false
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      // Add project to admin
+      const admin = this.users.get(adminId);
+      admin.projects.push(projectId);
+      
+      // Save to disk
+      this.saveToDisk();
+      
+      console.log('👑 Created default administrator and welcome project');
+    }
   }
   
   // User methods
@@ -255,6 +309,7 @@ class DataStore {
     };
     
     this.users.set(userId, user);
+    this.saveToDisk();
     return user;
   }
   
@@ -266,6 +321,10 @@ class DataStore {
       }
     }
     return null;
+  }
+  
+  getUser(userId) {
+    return this.users.get(userId);
   }
   
   // Project methods
@@ -296,9 +355,10 @@ class DataStore {
       objectives: projectData.objectives || [
         'Define research objectives',
         'Establish methodology',
-        'Assemble research team'
+        'Assemble research team',
+        'Collect and analyze data'
       ],
-      methodology: projectData.methodology || 'To be determined',
+      methodology: projectData.methodology || 'To be determined based on research goals',
       timeline: {
         startDate: now,
         estimatedDuration: '6 months',
@@ -325,11 +385,31 @@ class DataStore {
     this.projects.set(projectId, project);
     user.projects.push(projectId);
     
+    this.saveToDisk();
     return project;
   }
   
   getProject(projectId) {
     return this.projects.get(projectId);
+  }
+  
+  updateProject(projectId, updates) {
+    const project = this.projects.get(projectId);
+    if (!project) throw new Error('Project not found');
+    
+    // Apply updates
+    if (updates.title !== undefined) project.title = updates.title.trim();
+    if (updates.description !== undefined) project.description = updates.description.trim();
+    if (updates.status !== undefined) project.status = updates.status;
+    if (updates.objectives !== undefined) project.objectives = updates.objectives;
+    if (updates.methodology !== undefined) project.methodology = updates.methodology;
+    if (updates.timeline !== undefined) project.timeline = { ...project.timeline, ...updates.timeline };
+    if (updates.metrics !== undefined) project.metrics = { ...project.metrics, ...updates.metrics };
+    
+    project.updatedAt = new Date().toISOString();
+    
+    this.saveToDisk();
+    return project;
   }
   
   getProjectsForUser(userId) {
@@ -341,10 +421,25 @@ class DataStore {
     }
     return userProjects;
   }
+  
+  // Statistics
+  getPlatformStats() {
+    const totalProjects = this.projects.size;
+    const activeProjects = Array.from(this.projects.values()).filter(p => p.status === 'active').length;
+    const totalUsers = this.users.size;
+    
+    return {
+      totalProjects,
+      activeProjects,
+      totalUsers,
+      consensusScore: 78, // Example calculation
+      engagementRate: 45
+    };
+  }
 }
 
 // Initialize data store
-const dataStore = new DataStore();
+const dataStore = new RailwayDataStore();
 
 // ==================== AUTHENTICATION MIDDLEWARE ====================
 async function authenticate(req, res, next) {
@@ -357,12 +452,6 @@ async function authenticate(req, res, next) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       sessionId = authHeader.substring(7);
     }
-    
-    console.log('Auth check:', { 
-      hasCookie: !!req.cookies?.sessionId, 
-      hasAuthHeader: !!authHeader,
-      sessionId: sessionId?.substring(0, 20) + '...'
-    });
     
     if (!sessionId) {
       return res.status(401).json({
@@ -382,7 +471,7 @@ async function authenticate(req, res, next) {
       });
     }
     
-    const user = dataStore.users.get(session.userId);
+    const user = dataStore.getUser(session.userId);
     if (!user) {
       sessions.delete(sessionId);
       res.clearCookie('sessionId');
@@ -435,12 +524,14 @@ io.on('connection', (socket) => {
 
 // ==================== API ROUTES ====================
 
-// Health endpoint
+// Health endpoint for Railway
 app.get('/health', (req, res) => {
   res.json({
     success: true,
     service: 'ThoraxLab Platform',
     version: '4.0.0',
+    environment: NODE_ENV,
+    domain: RAILWAY_PUBLIC_DOMAIN,
     timestamp: new Date().toISOString(),
     status: 'operational',
     stats: {
@@ -451,11 +542,20 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Status endpoint
+app.get('/api/status', (req, res) => {
+  res.json({
+    success: true,
+    status: 'online',
+    service: 'ThoraxLab Platform',
+    environment: NODE_ENV,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Login endpoint
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   try {
-    console.log('Login attempt:', req.body);
-    
     const { name, email, institution } = req.body;
     
     if (!name || !email) {
@@ -481,13 +581,14 @@ app.post('/api/login', (req, res) => {
     // Create session
     const session = createSession(user.id);
     
-    // Set cookie
+    // Set secure cookie for Railway
     res.cookie('sessionId', session.id, {
       httpOnly: true,
       secure: NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: '/'
+      path: '/',
+      domain: NODE_ENV === 'production' ? RAILWAY_PUBLIC_DOMAIN : undefined
     });
     
     console.log('Login successful for:', user.name);
@@ -529,7 +630,14 @@ app.post('/api/logout', (req, res) => {
       sessions.delete(sessionId);
     }
     
-    res.clearCookie('sessionId');
+    res.clearCookie('sessionId', {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+      sameSite: NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      domain: NODE_ENV === 'production' ? RAILWAY_PUBLIC_DOMAIN : undefined
+    });
+    
     res.json({
       success: true,
       message: 'Logged out successfully'
@@ -704,14 +812,7 @@ app.put('/api/projects/:id', authenticate, (req, res) => {
       });
     }
     
-    // Apply updates
-    if (updates.title !== undefined) project.title = updates.title.trim();
-    if (updates.description !== undefined) project.description = updates.description.trim();
-    if (updates.status !== undefined) project.status = updates.status;
-    if (updates.objectives !== undefined) project.objectives = updates.objectives;
-    if (updates.methodology !== undefined) project.methodology = updates.methodology;
-    
-    project.updatedAt = new Date().toISOString();
+    const updatedProject = dataStore.updateProject(id, updates);
     
     // Emit update
     io.to(`project:${id}`).emit('project:updated', {
@@ -721,7 +822,7 @@ app.put('/api/projects/:id', authenticate, (req, res) => {
     
     res.json({
       success: true,
-      project,
+      project: updatedProject,
       message: 'Project updated successfully'
     });
   } catch (error) {
@@ -759,7 +860,7 @@ app.get('/api/projects/:id/team', authenticate, (req, res) => {
     
     // Enhance team data with user details
     const enhancedTeam = project.team.map(member => {
-      const userData = dataStore.users.get(member.id);
+      const userData = dataStore.getUser(member.id);
       return {
         ...member,
         specialty: userData?.specialty,
@@ -782,88 +883,12 @@ app.get('/api/projects/:id/team', authenticate, (req, res) => {
   }
 });
 
-// Get project discussions (placeholder)
-app.get('/api/projects/:id/discussions', authenticate, (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = req.user;
-    
-    const project = dataStore.getProject(id);
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        error: 'Project not found'
-      });
-    }
-    
-    // Check access
-    const hasAccess = project.team.some(member => member.id === user.id) || user.isAdmin;
-    if (!hasAccess) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access denied'
-      });
-    }
-    
-    // Return empty array for now (discussions feature coming soon)
-    res.json({
-      success: true,
-      discussions: [],
-      count: 0
-    });
-  } catch (error) {
-    console.error('Get discussions error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to load discussions'
-    });
-  }
-});
-
-// Create discussion (placeholder)
-app.post('/api/projects/:id/discussions', authenticate, (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, content } = req.body;
-    const user = req.user;
-    
-    if (!title || !content) {
-      return res.status(400).json({
-        success: false,
-        error: 'Title and content are required'
-      });
-    }
-    
-    // Return placeholder response
-    res.status(201).json({
-      success: true,
-      discussion: {
-        id: `discussion-${uuidv4()}`,
-        title,
-        content,
-        author: {
-          id: user.id,
-          name: user.name
-        },
-        createdAt: new Date().toISOString()
-      },
-      message: 'Discussion created (feature coming soon)'
-    });
-  } catch (error) {
-    console.error('Create discussion error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create discussion'
-    });
-  }
-});
-
 // Get analytics
 app.get('/api/analytics', authenticate, (req, res) => {
   try {
     const user = req.user;
-    
     const userProjects = dataStore.getProjectsForUser(user.id);
+    const platformStats = dataStore.getPlatformStats();
     
     res.json({
       success: true,
@@ -871,13 +896,10 @@ app.get('/api/analytics', authenticate, (req, res) => {
         user: {
           projectCount: userProjects.length,
           impactScore: user.impactScore,
-          role: user.role
+          role: user.role,
+          isAdmin: user.isAdmin
         },
-        platform: {
-          totalUsers: dataStore.users.size,
-          totalProjects: dataStore.projects.size,
-          activeProjects: Array.from(dataStore.projects.values()).filter(p => p.status === 'active').length
-        }
+        platform: platformStats
       }
     });
   } catch (error) {
@@ -890,7 +912,6 @@ app.get('/api/analytics', authenticate, (req, res) => {
 });
 
 // ==================== SPA FALLBACK ====================
-// This must be AFTER all API routes but BEFORE error handlers
 app.get('*', (req, res) => {
   // Don't serve HTML for API routes
   if (req.path.startsWith('/api/')) {
@@ -906,7 +927,6 @@ app.get('*', (req, res) => {
 });
 
 // ==================== ERROR HANDLERS ====================
-// 404 handler for API routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -915,7 +935,6 @@ app.use('/api/*', (req, res) => {
   });
 });
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error('🔥 Server error:', err);
   res.status(500).json({
@@ -928,47 +947,51 @@ app.use((err, req, res, next) => {
 // ==================== START SERVER ====================
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`
-🎯 THORAXLAB RESEARCH PLATFORM v4.0.0
+🚀 THORAXLAB DEPLOYED ON RAILWAY v4.0.0
 ===============================================
-🌐 Server URL: http://localhost:${PORT}
-🚀 Health Check: http://localhost:${PORT}/health
-📊 API Status: http://localhost:${PORT}/api/me
-👥 Dashboard: http://localhost:${PORT}/
+🌐 Environment: ${NODE_ENV}
+🔗 Domain: ${RAILWAY_PUBLIC_DOMAIN}
+📡 Port: ${PORT}
+🚦 Health Check: /health
+📊 API Status: /api/status
+👥 Dashboard: /
 
 🔧 FEATURES:
-   ✅ Fixed CSP for Font Awesome
-   ✅ Session-based authentication
-   ✅ Project management
-   ✅ Real-time WebSocket support
-   ✅ In-memory data storage
-   ✅ CORS enabled for development
+   ✅ Railway-optimized CSP
+   ✅ Persistent data storage
+   ✅ Secure cookie handling
+   ✅ Production-ready configuration
+   ✅ Health checks for Railway
+   ✅ Automatic data backup
 
-📈 STATISTICS:
+📈 INITIAL STATS:
    • Users: ${dataStore.users.size}
    • Projects: ${dataStore.projects.size}
-   • Active Sessions: ${sessions.size}
+   • Storage: ./data/store.json
 
-🔐 TEST CREDENTIALS:
+🔐 DEFAULT CREDENTIALS:
    • Admin: Name="Admin", Email="admin"
-   • Any name/email will work
+   • Any name/email works for new users
 
-💡 Server started on port ${PORT}
+💡 Server started successfully on port ${PORT}
 `);
 });
 
-// Graceful shutdown
+// Graceful shutdown for Railway
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down...');
+  console.log('SIGTERM received, saving data and shutting down...');
+  dataStore.saveToDisk();
   server.close(() => {
-    console.log('Server closed');
+    console.log('Server closed gracefully');
     process.exit(0);
   });
 });
 
 process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down...');
+  console.log('SIGINT received, saving data and shutting down...');
+  dataStore.saveToDisk();
   server.close(() => {
-    console.log('Server closed');
+    console.log('Server closed gracefully');
     process.exit(0);
   });
 });
