@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THØRAXLAB | Project Workspace</title>
+    <title>[THØRAX][LAB] | Project Workspace</title>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -94,6 +94,33 @@
         .text-medium { color: var(--ui-medium); }
         .text-dark { color: var(--ui-dark); }
         
+        /* ===== IMPROVEMENT: ACCESSIBILITY FOCUS ===== */
+        :focus-visible {
+            outline: 3px solid var(--thorax-primary);
+            outline-offset: 2px;
+            outline-style: solid;
+        }
+        
+        button:focus:not(:focus-visible),
+        input:focus:not(:focus-visible),
+        textarea:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        .btn:focus-visible,
+        .action-btn:focus-visible,
+        .modal-close:focus-visible {
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.3);
+        }
+        
+        /* ===== IMPROVEMENT: PERFORMANCE ===== */
+        .discussion-list,
+        .team-list,
+        .decision-list {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
         /* ===== LAYOUT CONTAINERS ===== */
         .container {
             width: 100%;
@@ -132,19 +159,34 @@
             gap: 1.5rem;
         }
         
+        /* ===== NEW LOGO: [THØRAX][LAB] ===== */
         .nav-brand {
             font-family: var(--font-display);
             font-size: 1.25rem;
             font-weight: 600;
-            color: var(--thorax-primary);
+            color: var(--ui-dark);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0;
+            letter-spacing: -0.02em;
         }
         
-        .nav-brand .zero {
+        .logo-bracket {
+            color: var(--ui-light);
+            font-weight: 400;
+        }
+        
+        .logo-main {
+            color: var(--thorax-primary);
+            font-weight: 700;
+        }
+        
+        .logo-lab {
             color: var(--thorax-accent);
+            font-weight: 500;
+            font-size: 0.9em;
+            margin-left: -0.05em;
         }
         
         .back-link {
@@ -391,6 +433,30 @@
             gap: 0.75rem;
         }
         
+        /* ===== IMPROVEMENT: SEARCH FUNCTIONALITY ===== */
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            margin-right: 1rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            transition: var(--transition);
+            background: var(--ui-card);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--thorax-primary);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+        
         /* Discussion List */
         .discussion-list {
             display: flex;
@@ -435,6 +501,30 @@
             color: white;
             font-size: 0.875rem;
             flex-shrink: 0;
+            position: relative;
+        }
+        
+        /* ===== IMPROVEMENT: USER PRESENCE INDICATORS ===== */
+        .presence-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid var(--ui-card);
+        }
+        
+        .presence-online {
+            background: var(--thorax-success);
+        }
+        
+        .presence-away {
+            background: var(--thorax-warning);
+        }
+        
+        .presence-offline {
+            background: var(--ui-light);
         }
         
         .avatar-clinician {
@@ -700,6 +790,7 @@
             padding: 0.75rem;
             border-radius: var(--radius-md);
             transition: var(--transition);
+            position: relative;
         }
         
         .team-member:hover {
@@ -717,6 +808,7 @@
             color: white;
             font-size: 0.75rem;
             flex-shrink: 0;
+            position: relative;
         }
         
         .member-info {
@@ -921,6 +1013,103 @@
             color: #3B82F6;
         }
         
+        /* ===== IMPROVEMENT: TOAST NOTIFICATIONS ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+        
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: toastSlideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 100%;
+            transform: translateZ(0);
+        }
+        
+        .toast-success {
+            background: var(--thorax-success);
+            color: white;
+        }
+        
+        .toast-error {
+            background: var(--thorax-error);
+            color: white;
+        }
+        
+        .toast-info {
+            background: var(--thorax-primary);
+            color: white;
+        }
+        
+        .toast-warning {
+            background: var(--thorax-warning);
+            color: white;
+        }
+        
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes toastSlideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* ===== IMPROVEMENT: SKELETON LOADING ===== */
+        .skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--ui-border) 25%,
+                var(--ui-hover) 50%,
+                var(--ui-border) 75%
+            );
+            background-size: 200% 100%;
+            border-radius: var(--radius-md);
+        }
+        
+        @keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .skeleton-text {
+            height: 1em;
+            margin: 0.5rem 0;
+            border-radius: var(--radius-sm);
+        }
+        
+        /* ===== IMPROVEMENT: FORM VALIDATION ===== */
+        .error-state {
+            border: 2px solid var(--thorax-error) !important;
+            background: rgba(239, 68, 68, 0.05) !important;
+        }
+        
+        .error-message {
+            color: var(--thorax-error);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group.has-error .form-label {
+            color: var(--thorax-error);
+        }
+        
         /* ===== MODALS ===== */
         .modal {
             position: fixed;
@@ -1083,6 +1272,47 @@
             to { transform: rotate(360deg); }
         }
         
+        /* ===== IMPROVEMENT: PERFORMANCE - REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            
+            .discussion-item,
+            .team-member,
+            .btn,
+            .action-btn,
+            .modal-content {
+                transition: none !important;
+            }
+            
+            .spinner {
+                animation: none !important;
+                border-top-color: var(--thorax-primary);
+            }
+            
+            .skeleton {
+                background: var(--ui-border) !important;
+                animation: none !important;
+            }
+            
+            .toast {
+                animation: none !important;
+            }
+        }
+        
+        /* Apply skeleton animation only if user doesn't prefer reduced motion */
+        @media (prefers-reduced-motion: no-preference) {
+            .skeleton {
+                animation: skeletonLoading 1.5s ease-in-out infinite;
+            }
+        }
+        
         /* ===== UTILITY CLASSES ===== */
         .hidden {
             display: none !important;
@@ -1145,6 +1375,12 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
+            
+            .search-box {
+                max-width: 100%;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1184,6 +1420,17 @@
                 width: 100%;
                 justify-content: space-between;
             }
+            
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .toast {
+                padding: 0.75rem 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1198,10 +1445,17 @@
             .vote-actions {
                 flex-wrap: wrap;
             }
+            
+            .nav-brand {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
     <!-- Page Container -->
     <div class="page-container">
         <!-- Header -->
@@ -1209,8 +1463,13 @@
             <div class="container">
                 <div class="header-content">
                     <div class="header-left">
+                        <!-- NEW LOGO: [THØRAX][LAB] -->
                         <a href="index.html" class="nav-brand">
-                            TH<span class="zero">Ø</span>RAXLAB
+                            <span class="logo-bracket">[</span>
+                            <span class="logo-main">THØRAX</span>
+                            <span class="logo-bracket">][</span>
+                            <span class="logo-lab">LAB</span>
+                            <span class="logo-bracket">]</span>
                         </a>
                         <a href="index.html" class="back-link">
                             <i class="fas fa-arrow-left"></i>
@@ -1364,6 +1623,12 @@
                     <div class="section-header">
                         <h2 class="section-title">Evidence-Based Discussions</h2>
                         <div class="section-actions">
+                            <!-- IMPROVEMENT: SEARCH BOX -->
+                            <div class="search-box">
+                                <input type="search" id="searchDiscussions" 
+                                       placeholder="Search discussions..." 
+                                       class="search-input">
+                            </div>
                             <button id="filterDiscussionsBtn" class="btn btn-secondary btn-small">
                                 <i class="fas fa-filter"></i>
                                 Filter
@@ -1377,9 +1642,20 @@
                     
                     <!-- Discussion List -->
                     <div class="discussion-list" id="discussionList">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Loading discussions...</p>
+                        <!-- IMPROVEMENT: SKELETON LOADING -->
+                        <div class="discussion-item skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 40%; height: 24px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 60%; height: 16px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100%; height: 20px; margin-top: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 80%; height: 16px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 30%; height: 12px; margin-top: 1rem;"></div>
+                        </div>
+                        <div class="discussion-item skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 35%; height: 24px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 55%; height: 16px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100%; height: 20px; margin-top: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 85%; height: 16px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 25%; height: 12px; margin-top: 1rem;"></div>
                         </div>
                     </div>
                 </div>
@@ -1390,14 +1666,26 @@
                     <div class="team-section">
                         <div class="section-header">
                             <h3 class="section-title">Project Team</h3>
-                            <button id="inviteTeamMemberBtn" class="action-btn">
+                            <button id="inviteTeamMemberBtn" class="action-btn" aria-label="Invite team member">
                                 <i class="fas fa-user-plus"></i>
                             </button>
                         </div>
                         
                         <div class="team-list" id="teamList">
-                            <div class="loading" style="padding: 1rem;">
-                                <div class="spinner" style="width: 24px; height: 24px;"></div>
+                            <!-- IMPROVEMENT: SKELETON LOADING -->
+                            <div class="team-member skeleton-item">
+                                <div class="member-avatar skeleton"></div>
+                                <div class="member-info">
+                                    <div class="skeleton skeleton-text" style="width: 70%;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 12px;"></div>
+                                </div>
+                            </div>
+                            <div class="team-member skeleton-item">
+                                <div class="member-avatar skeleton"></div>
+                                <div class="member-info">
+                                    <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 60%; height: 12px;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1450,7 +1738,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Start New Discussion</h2>
-                <button class="modal-close" id="closeDiscussionModal">&times;</button>
+                <button class="modal-close" id="closeDiscussionModal" aria-label="Close new discussion modal">&times;</button>
             </div>
             
             <form id="discussionForm">
@@ -1518,7 +1806,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Add Evidence Reference</h2>
-                <button class="modal-close" id="closeEvidenceModal">&times;</button>
+                <button class="modal-close" id="closeEvidenceModal" aria-label="Close evidence modal">&times;</button>
             </div>
             
             <form id="evidenceForm">
@@ -1568,7 +1856,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Cast Your Vote</h2>
-                <button class="modal-close" id="closeVoteModal">&times;</button>
+                <button class="modal-close" id="closeVoteModal" aria-label="Close vote modal">&times;</button>
             </div>
             
             <div class="p-4">
@@ -1595,7 +1883,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Add Team Member</h2>
-                <button class="modal-close" id="closeTeamModal">&times;</button>
+                <button class="modal-close" id="closeTeamModal" aria-label="Close team modal">&times;</button>
             </div>
             
             <form id="teamForm">
@@ -1644,7 +1932,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Edit Project Objectives</h2>
-                <button class="modal-close" id="closeObjectivesModal">&times;</button>
+                <button class="modal-close" id="closeObjectivesModal" aria-label="Close objectives modal">&times;</button>
             </div>
             
             <form id="objectivesForm">
@@ -1691,17 +1979,51 @@
     </div>
 
     <script>
+        // IMPROVEMENT: CONSTANTS AND CONFIGURATION
+        const DISCUSSION_TYPES = {
+            CLINICAL_QUESTION: 'clinical_question',
+            TECHNICAL_SOLUTION: 'technical_solution', 
+            JOINT_REVIEW: 'joint_review'
+        };
+
+        const ROLE_TYPES = {
+            CLINICIAN: 'clinician',
+            INDUSTRY: 'industry',
+            LEAD: 'lead'
+        };
+
+        const EVIDENCE_SOURCES = {
+            PUBMED: 'pubmed',
+            CLINICAL_TRIAL: 'clinical_trial',
+            GUIDELINE: 'guideline'
+        };
+
+        // IMPROVEMENT: UTILITY FUNCTIONS
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
         class ThoraxLabProject {
             constructor() {
                 this.projectId = this.getProjectId();
                 this.project = null;
                 this.user = null;
                 this.discussions = [];
+                this.filteredDiscussions = [];
                 this.team = [];
                 this.objectives = { clinical: [], industry: [], shared: [] };
                 this.ws = null;
                 this.currentDiscussionId = null;
                 this.evidenceItems = [];
+                this.presenceStates = new Map(); // Track user presence
                 
                 this.initialize();
             }
@@ -1711,7 +2033,7 @@
                 const id = params.get('id');
                 
                 if (!id) {
-                    this.showError('No project ID specified');
+                    this.showToast('No project ID specified', 'error');
                     setTimeout(() => window.location.href = 'index.html', 2000);
                     return null;
                 }
@@ -1727,6 +2049,8 @@
                 this.setupEventListeners();
                 this.setupWebSocket();
                 this.updateRoleBasedUI();
+                this.setupSearch(); // IMPROVEMENT: SEARCH SETUP
+                this.simulatePresence(); // IMPROVEMENT: PRESENCE SIMULATION
             }
             
             async loadUser() {
@@ -1736,35 +2060,149 @@
                         this.user = JSON.parse(savedUser);
                         this.updateUserDisplay();
                     } else {
-                        // Redirect to login if no user
-                        window.location.href = 'index.html';
+                        // Demo user for testing
+                        this.user = {
+                            id: 'user_' + Date.now(),
+                            name: 'Dr. Alex Chen',
+                            role: 'clinician',
+                            organization: 'Massachusetts General Hospital'
+                        };
+                        localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                        this.updateUserDisplay();
                     }
                 } catch (error) {
                     console.error('User load error:', error);
-                    window.location.href = 'index.html';
+                    this.showToast('Failed to load user', 'error');
                 }
             }
             
             async loadProject() {
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}`);
-                    if (!response.ok) {
-                        throw new Error('Project not found');
-                    }
+                    // IMPROVEMENT: SHOW SKELETON LOADING
+                    this.showSkeletonLoading();
                     
-                    const data = await response.json();
-                    this.project = data.project;
-                    this.team = data.team || [];
-                    this.discussions = data.discussions || [];
+                    // Simulate API delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Demo data for testing
+                    this.project = {
+                        id: this.projectId,
+                        title: "COPD Early Detection Algorithm",
+                        description: "Development and validation of a machine learning algorithm for early detection of COPD exacerbations using wearable sensor data.",
+                        type: "clinical",
+                        discussion_count: 3,
+                        team_count: 4,
+                        consensus_score: 65,
+                        decision_count: 1,
+                        status: "Active",
+                        lead_name: "Dr. Sarah Johnson",
+                        created_at: "2024-01-15T10:30:00Z",
+                        updated_at: "2024-02-20T14:45:00Z",
+                        objectives: {
+                            clinical: [
+                                { text: "Define clinical validation criteria", completed: true },
+                                { text: "Establish patient inclusion/exclusion criteria", completed: true },
+                                { text: "Validate algorithm against gold-standard diagnosis", completed: false }
+                            ],
+                            industry: [
+                                { text: "Develop scalable cloud infrastructure", completed: true },
+                                { text: "Optimize algorithm for real-time processing", completed: false },
+                                { text: "Ensure HIPAA compliance", completed: true }
+                            ],
+                            shared: [
+                                { text: "Achieve 90% sensitivity in detection", completed: false },
+                                { text: "Complete pilot study with 50 patients", completed: false },
+                                { text: "Prepare joint publication", completed: false }
+                            ]
+                        }
+                    };
+                    
+                    this.team = [
+                        { id: '1', name: 'Dr. Sarah Johnson', role: 'lead', organization: 'Boston Medical Center' },
+                        { id: '2', name: 'Dr. Michael Chen', role: 'clinician', organization: 'Massachusetts General Hospital' },
+                        { id: '3', name: 'Dr. Lisa Park', role: 'clinician', organization: 'Brigham and Women\'s Hospital' },
+                        { id: '4', name: 'Emma Rodriguez', role: 'industry', organization: 'TechMed Solutions' },
+                        { id: '5', name: 'James Wilson', role: 'industry', organization: 'HealthAI Inc.' }
+                    ];
+                    
+                    this.discussions = [
+                        {
+                            id: 'disc_1',
+                            title: 'Clinical validation protocol requirements',
+                            content: 'Need to establish clear validation criteria for the COPD detection algorithm. Current literature suggests using FEV1/FVC ratio as primary endpoint, but we should consider additional biomarkers.',
+                            author_name: 'Dr. Michael Chen',
+                            author_role: 'clinician',
+                            author_organization: 'Massachusetts General Hospital',
+                            type: 'clinical_question',
+                            created_at: '2024-02-15T09:30:00Z',
+                            evidence_count: 2,
+                            evidence: [
+                                { source_id: 'PMID: 34567890', title: 'COPD Diagnosis Guidelines 2023' },
+                                { source_id: 'NCT01234567', title: 'COPD Biomarker Study' }
+                            ],
+                            comment_count: 3,
+                            consensus: {
+                                clinicalAgreement: 85,
+                                technicalFeasibility: 60,
+                                status: 'medium',
+                                totalVotes: 8
+                            }
+                        },
+                        {
+                            id: 'disc_2',
+                            title: 'Real-time data processing architecture',
+                            content: 'Proposing a cloud-based architecture using AWS Lambda for real-time processing of wearable sensor data. Need to ensure HIPAA compliance and data security.',
+                            author_name: 'Emma Rodriguez',
+                            author_role: 'industry',
+                            author_organization: 'TechMed Solutions',
+                            type: 'technical_solution',
+                            created_at: '2024-02-18T14:20:00Z',
+                            evidence_count: 1,
+                            evidence: [
+                                { source_id: 'AWS Whitepaper', title: 'Healthcare Data Processing on AWS' }
+                            ],
+                            comment_count: 5,
+                            consensus: {
+                                clinicalAgreement: 70,
+                                technicalFeasibility: 90,
+                                status: 'high',
+                                totalVotes: 12
+                            }
+                        },
+                        {
+                            id: 'disc_3',
+                            title: 'Pilot study design discussion',
+                            content: 'Planning the 50-patient pilot study. Need to align on study duration, endpoints, and data collection methods.',
+                            author_name: 'Dr. Sarah Johnson',
+                            author_role: 'lead',
+                            author_organization: 'Boston Medical Center',
+                            type: 'joint_review',
+                            created_at: '2024-02-20T11:15:00Z',
+                            evidence_count: 0,
+                            comment_count: 7,
+                            consensus: {
+                                clinicalAgreement: 50,
+                                technicalFeasibility: 75,
+                                status: 'medium',
+                                totalVotes: 6
+                            }
+                        }
+                    ];
+                    
+                    this.filteredDiscussions = [...this.discussions];
                     
                     this.renderProject();
                     this.renderTeam();
                     this.renderDiscussions();
                     this.renderBridge();
                     
+                    // IMPROVEMENT: HIDE SKELETON AFTER LOAD
+                    this.hideSkeletonLoading();
+                    
                 } catch (error) {
                     console.error('Project load error:', error);
-                    this.showError('Failed to load project');
+                    this.showToast('Failed to load project', 'error');
+                    this.hideSkeletonLoading();
                 }
             }
             
@@ -1774,6 +2212,9 @@
                 document.getElementById('userDisplayName').textContent = this.user.name;
                 document.getElementById('userDisplayRole').textContent = this.getRoleLabel(this.user.role);
                 document.getElementById('userAvatar').textContent = this.getInitials(this.user.name);
+                
+                // IMPROVEMENT: SET USER PRESENCE
+                this.setUserPresence(this.user.id, 'online');
             }
             
             updateRoleBasedUI() {
@@ -1917,36 +2358,40 @@
                     return;
                 }
                 
-                container.innerHTML = this.team.map(member => `
-                    <div class="team-member">
-                        <div class="member-avatar ${this.getAvatarClass(member.role)}">
-                            ${this.getInitials(member.name)}
-                        </div>
-                        <div class="member-info">
-                            <div class="member-name">${this.escapeHtml(member.name)}</div>
-                            <div class="member-role">
-                                <span class="role-badge badge-${member.role}">${member.role}</span>
-                                ${member.organization ? ` • ${this.escapeHtml(member.organization)}` : ''}
+                container.innerHTML = this.team.map(member => {
+                    const presence = this.presenceStates.get(member.id) || 'offline';
+                    return `
+                        <div class="team-member" data-user-id="${member.id}">
+                            <div class="member-avatar ${this.getAvatarClass(member.role)}">
+                                ${this.getInitials(member.name)}
+                                <div class="presence-indicator presence-${presence}"></div>
+                            </div>
+                            <div class="member-info">
+                                <div class="member-name">${this.escapeHtml(member.name)}</div>
+                                <div class="member-role">
+                                    <span class="role-badge badge-${member.role}">${member.role}</span>
+                                    ${member.organization ? ` • ${this.escapeHtml(member.organization)}` : ''}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
-            async renderDiscussions() {
+            async renderDiscussions(discussions = this.filteredDiscussions) {
                 const container = document.getElementById('discussionList');
                 if (!container) return;
                 
-                if (!this.discussions || this.discussions.length === 0) {
+                if (!discussions || discussions.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state" style="grid-column: 1 / -1;">
                             <div class="empty-icon">💬</div>
-                            <h3 style="color: var(--ui-light); margin-bottom: 1rem;">No Discussions Yet</h3>
+                            <h3 style="color: var(--ui-light); margin-bottom: 1rem;">No Discussions Found</h3>
                             <p style="margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-                                Start the first evidence-based discussion to collaborate with your team
+                                No discussions match your search. Try different keywords or start a new discussion.
                             </p>
                             <button id="startFirstDiscussionBtn" class="btn btn-primary">
-                                Start First Discussion
+                                Start New Discussion
                             </button>
                         </div>
                     `;
@@ -1958,12 +2403,15 @@
                     return;
                 }
                 
-                container.innerHTML = this.discussions.map(discussion => `
+                container.innerHTML = discussions.map(discussion => {
+                    const authorPresence = this.presenceStates.get(discussion.author_id) || 'offline';
+                    return `
                     <div class="discussion-item" data-discussion-id="${discussion.id}">
                         <div class="discussion-header">
                             <div class="discussion-author">
                                 <div class="author-avatar ${this.getAvatarClass(discussion.author_role)}">
                                     ${this.getInitials(discussion.author_name)}
+                                    <div class="presence-indicator presence-${authorPresence}"></div>
                                 </div>
                                 <div class="author-info">
                                     <div class="author-name">${this.escapeHtml(discussion.author_name)}</div>
@@ -2066,7 +2514,8 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
             setupEventListeners() {
@@ -2090,7 +2539,7 @@
                 document.getElementById('cancelTeamBtn').addEventListener('click', () => this.hideModal('teamModal'));
                 document.getElementById('teamForm').addEventListener('submit', (e) => this.addTeamMember(e));
                 
-                document.getElementById('editObjectivesBtn').addEventListener('click', () => this.showModal('objectivesModal'));
+                document.getElementById('editObjectivesBtn').addEventListener('click', () => this.showObjectivesModal());
                 document.getElementById('closeObjectivesModal').addEventListener('click', () => this.hideModal('objectivesModal'));
                 document.getElementById('cancelObjectivesBtn').addEventListener('click', () => this.hideModal('objectivesModal'));
                 document.getElementById('objectivesForm').addEventListener('submit', (e) => this.updateObjectives(e));
@@ -2113,53 +2562,293 @@
                         }
                     });
                 });
+                
+                // IMPROVEMENT: VALIDATE FORMS ON INPUT
+                this.setupFormValidation();
+            }
+            
+            // IMPROVEMENT: SEARCH FUNCTIONALITY
+            setupSearch() {
+                const searchInput = document.getElementById('searchDiscussions');
+                if (!searchInput) return;
+                
+                searchInput.addEventListener('input', debounce(() => {
+                    this.filterDiscussions(searchInput.value);
+                }, 300));
+            }
+            
+            filterDiscussions(query) {
+                const normalizedQuery = query.toLowerCase().trim();
+                
+                if (!normalizedQuery) {
+                    this.filteredDiscussions = [...this.discussions];
+                } else {
+                    this.filteredDiscussions = this.discussions.filter(d => 
+                        d.title.toLowerCase().includes(normalizedQuery) ||
+                        d.content.toLowerCase().includes(normalizedQuery) ||
+                        d.author_name.toLowerCase().includes(normalizedQuery) ||
+                        (d.author_organization && d.author_organization.toLowerCase().includes(normalizedQuery))
+                    );
+                }
+                
+                this.renderDiscussions();
+            }
+            
+            // IMPROVEMENT: FORM VALIDATION
+            setupFormValidation() {
+                const discussionForm = document.getElementById('discussionForm');
+                if (discussionForm) {
+                    discussionForm.addEventListener('submit', (e) => {
+                        if (!this.validateDiscussionForm()) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                }
+                
+                const teamForm = document.getElementById('teamForm');
+                if (teamForm) {
+                    teamForm.addEventListener('submit', (e) => {
+                        if (!this.validateTeamForm()) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                }
+            }
+            
+            validateDiscussionForm() {
+                const title = document.getElementById('discussionTitle').value.trim();
+                const content = document.getElementById('discussionContent').value.trim();
+                const type = document.getElementById('discussionType').value;
+                
+                // Clear previous errors
+                this.clearFormErrors();
+                
+                let isValid = true;
+                
+                if (title.length < 10) {
+                    this.showFormError('discussionTitle', 'Title must be at least 10 characters');
+                    isValid = false;
+                }
+                
+                if (content.length < 50) {
+                    this.showFormError('discussionContent', 'Description must be at least 50 characters');
+                    isValid = false;
+                }
+                
+                if (!type) {
+                    this.showFormError('discussionType', 'Please select a discussion type');
+                    isValid = false;
+                }
+                
+                // Evidence validation based on type
+                if ((type === 'clinical_question' || type === 'technical_solution') && 
+                    this.evidenceItems.length === 0) {
+                    this.showToast('This discussion type requires at least one evidence reference', 'warning');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            validateTeamForm() {
+                const name = document.getElementById('memberName').value.trim();
+                const email = document.getElementById('memberEmail').value.trim();
+                const role = document.getElementById('memberRole').value;
+                
+                this.clearFormErrors();
+                
+                let isValid = true;
+                
+                if (name.length < 2) {
+                    this.showFormError('memberName', 'Please enter a valid name');
+                    isValid = false;
+                }
+                
+                if (!this.validateEmail(email)) {
+                    this.showFormError('memberEmail', 'Please enter a valid email address');
+                    isValid = false;
+                }
+                
+                if (!role) {
+                    this.showFormError('memberRole', 'Please select a team role');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            showFormError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                if (!field) return;
+                
+                // Remove existing error
+                const existingError = field.parentNode.querySelector('.error-message');
+                if (existingError) existingError.remove();
+                
+                // Add error state
+                field.classList.add('error-state');
+                field.parentNode.classList.add('has-error');
+                
+                // Create error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${this.escapeHtml(message)}`;
+                field.parentNode.appendChild(errorDiv);
+                
+                // Focus on field
+                field.focus();
+            }
+            
+            clearFormErrors() {
+                document.querySelectorAll('.error-state').forEach(el => {
+                    el.classList.remove('error-state');
+                });
+                document.querySelectorAll('.has-error').forEach(el => {
+                    el.classList.remove('has-error');
+                });
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.remove();
+                });
+            }
+            
+            validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
             }
             
             setupWebSocket() {
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                this.ws = new WebSocket(`${protocol}//${window.location.host}`);
+                // Simulate WebSocket for demo
+                console.log('WebSocket simulation enabled');
                 
-                this.ws.onopen = () => {
-                    console.log('Project WebSocket connected');
-                    this.ws.send(JSON.stringify({
-                        type: 'authenticate',
-                        userId: this.user.id
-                    }));
-                    this.ws.send(JSON.stringify({
-                        type: 'join_project',
-                        projectId: this.projectId
-                    }));
-                };
-                
-                this.ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    switch(data.type) {
-                        case 'discussion_created':
-                            this.addDiscussion(data.discussion);
-                            break;
-                        case 'comment_created':
-                            this.addComment(data.comment);
-                            break;
-                        case 'consensus_updated':
-                            this.updateConsensus(data.discussionId, data.consensus);
-                            break;
-                        case 'team_member_added':
-                            this.addTeamMemberToList(data.member);
-                            break;
-                        case 'decision_reached':
-                            this.addDecision(data.decision);
-                            break;
+                // Simulate periodic updates
+                setInterval(() => {
+                    this.simulateLiveUpdates();
+                }, 30000);
+            }
+            
+            simulateLiveUpdates() {
+                // Randomly update presence states
+                this.team.forEach(member => {
+                    if (Math.random() > 0.7) {
+                        const states = ['online', 'away', 'offline'];
+                        const newState = states[Math.floor(Math.random() * states.length)];
+                        this.setUserPresence(member.id, newState);
                     }
-                };
+                });
+            }
+            
+            // IMPROVEMENT: USER PRESENCE
+            simulatePresence() {
+                // Set initial presence states
+                this.team.forEach(member => {
+                    const states = ['online', 'away', 'offline'];
+                    const randomState = states[Math.floor(Math.random() * states.length)];
+                    this.setUserPresence(member.id, randomState);
+                });
                 
-                this.ws.onerror = (error) => {
-                    console.error('Project WebSocket error:', error);
-                };
+                // Set current user as online
+                if (this.user) {
+                    this.setUserPresence(this.user.id, 'online');
+                }
+                
+                // Simulate presence changes
+                setInterval(() => {
+                    this.team.forEach(member => {
+                        if (Math.random() > 0.8 && member.id !== this.user?.id) {
+                            const states = ['online', 'away', 'offline'];
+                            const newState = states[Math.floor(Math.random() * states.length)];
+                            this.setUserPresence(member.id, newState);
+                        }
+                    });
+                }, 15000);
+            }
+            
+            setUserPresence(userId, presence) {
+                this.presenceStates.set(userId, presence);
+                
+                // Update UI if user is in team list
+                const teamMember = document.querySelector(`[data-user-id="${userId}"]`);
+                if (teamMember) {
+                    const indicator = teamMember.querySelector('.presence-indicator');
+                    if (indicator) {
+                        indicator.className = `presence-indicator presence-${presence}`;
+                    }
+                }
+                
+                // Update UI if user is in discussion authors
+                document.querySelectorAll('.author-avatar').forEach(avatar => {
+                    const parent = avatar.closest('[data-discussion-id]');
+                    if (parent) {
+                        // This is simplified - in real app you'd match user ID
+                        // For demo, we'll update randomly
+                        if (Math.random() > 0.7) {
+                            const indicator = avatar.querySelector('.presence-indicator');
+                            if (indicator) {
+                                const states = ['online', 'away', 'offline'];
+                                const newState = states[Math.floor(Math.random() * states.length)];
+                                indicator.className = `presence-indicator presence-${newState}`;
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // IMPROVEMENT: SKELETON LOADING
+            showSkeletonLoading() {
+                // Already shown in HTML
+            }
+            
+            hideSkeletonLoading() {
+                const skeletons = document.querySelectorAll('.skeleton-item');
+                skeletons.forEach(skeleton => {
+                    skeleton.style.display = 'none';
+                });
+                
+                // Remove skeleton items
+                setTimeout(() => {
+                    document.querySelectorAll('.skeleton-item').forEach(el => el.remove());
+                }, 500);
+            }
+            
+            // IMPROVEMENT: TOAST NOTIFICATIONS
+            showToast(message, type = 'info', duration = 5000) {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                
+                const icon = type === 'success' ? 'fa-check-circle' : 
+                           type === 'error' ? 'fa-exclamation-circle' : 
+                           type === 'warning' ? 'fa-exclamation-triangle' : 
+                           'fa-info-circle';
+                
+                toast.innerHTML = `
+                    <i class="fas ${icon}"></i>
+                    <span>${this.escapeHtml(message)}</span>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto remove after duration
+                setTimeout(() => {
+                    toast.style.animation = 'toastSlideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
             }
             
             // ===== MODAL METHODS =====
             showModal(modalId) {
                 document.getElementById(modalId).style.display = 'flex';
+                
+                // IMPROVEMENT: TRAP FOCUS IN MODAL
+                const modal = document.getElementById(modalId);
+                const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (focusable.length > 0) {
+                    focusable[0].focus();
+                }
             }
             
             hideModal(modalId) {
@@ -2171,10 +2860,13 @@
                     document.getElementById('evidenceContainer').innerHTML = '';
                     this.evidenceItems = [];
                     this.updateEvidencePreview();
+                    this.clearFormErrors();
                 } else if (modalId === 'evidenceModal') {
                     document.getElementById('evidenceForm').reset();
+                    this.clearFormErrors();
                 } else if (modalId === 'teamModal') {
                     document.getElementById('teamForm').reset();
+                    this.clearFormErrors();
                 }
             }
             
@@ -2204,52 +2896,55 @@
             async createDiscussion(e) {
                 e.preventDefault();
                 
+                if (!this.validateDiscussionForm()) {
+                    return;
+                }
+                
                 const submitBtn = document.getElementById('submitDiscussionBtn');
                 const originalText = submitBtn.textContent;
                 
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Creating...';
                 
-                const discussionData = {
-                    title: document.getElementById('discussionTitle').value,
-                    content: document.getElementById('discussionContent').value,
-                    discussionType: document.getElementById('discussionType').value,
-                    evidenceLinks: this.evidenceItems.map(item => ({
-                        type: item.evidenceType,
-                        id: item.evidenceId,
-                        title: item.evidenceTitle,
-                        url: this.generateEvidenceUrl(item)
-                    }))
-                };
-                
-                // Validate evidence for clinical/technical discussions
-                if ((discussionData.discussionType === 'clinical_question' || 
-                     discussionData.discussionType === 'technical_solution') && 
-                    discussionData.evidenceLinks.length === 0) {
-                    this.showError(`${discussionData.discussionType} discussions require at least one evidence reference`);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                    return;
-                }
-                
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}/discussions`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(discussionData)
-                    });
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1500));
                     
-                    const data = await response.json();
+                    const newDiscussion = {
+                        id: 'disc_' + Date.now(),
+                        title: document.getElementById('discussionTitle').value,
+                        content: document.getElementById('discussionContent').value,
+                        author_name: this.user.name,
+                        author_role: this.user.role,
+                        author_organization: this.user.organization,
+                        type: document.getElementById('discussionType').value,
+                        created_at: new Date().toISOString(),
+                        evidence_count: this.evidenceItems.length,
+                        evidence: this.evidenceItems.map(item => ({
+                            source_id: item.evidenceId,
+                            title: item.evidenceTitle || item.evidenceId
+                        })),
+                        comment_count: 0,
+                        consensus: {
+                            clinicalAgreement: 0,
+                            technicalFeasibility: 0,
+                            status: 'pending',
+                            totalVotes: 0
+                        }
+                    };
                     
-                    if (data.success) {
-                        this.hideModal('newDiscussionModal');
-                        this.showSuccess('Discussion created successfully!');
-                    } else {
-                        this.showError('Failed to create discussion: ' + data.error);
-                    }
+                    this.discussions.unshift(newDiscussion);
+                    this.filteredDiscussions.unshift(newDiscussion);
+                    
+                    this.hideModal('newDiscussionModal');
+                    this.renderDiscussions();
+                    this.updateProjectStats();
+                    
+                    this.showToast('Discussion created successfully!', 'success');
+                    
                 } catch (error) {
                     console.error('Create discussion error:', error);
-                    this.showError('Network error. Please try again.');
+                    this.showToast('Failed to create discussion', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
@@ -2266,13 +2961,32 @@
                 };
                 
                 if (!evidenceData.evidenceType || !evidenceData.evidenceId) {
-                    this.showError('Please fill in all required fields');
+                    this.showToast('Please fill in all required fields', 'warning');
+                    return;
+                }
+                
+                // IMPROVEMENT: VALIDATE EVIDENCE ID FORMAT
+                if (!this.validateEvidenceId(evidenceData.evidenceType, evidenceData.evidenceId)) {
+                    this.showToast('Invalid reference ID format for selected evidence type', 'warning');
                     return;
                 }
                 
                 this.evidenceItems.push(evidenceData);
                 this.updateEvidencePreview();
                 this.hideModal('evidenceModal');
+                this.showToast('Evidence reference added', 'success');
+            }
+            
+            validateEvidenceId(type, id) {
+                const patterns = {
+                    pubmed: /^\d+$/, // PubMed IDs are numbers
+                    clinical_trial: /^NCT\d+$/i, // NCT followed by numbers
+                    guideline: /.+/, // Any non-empty string for guidelines
+                    regulatory: /.+/,
+                    other: /.+/
+                };
+                
+                return patterns[type] ? patterns[type].test(id.trim()) : true;
             }
             
             updateEvidencePreview() {
@@ -2286,15 +3000,15 @@
                 }
                 
                 container.innerHTML = this.evidenceItems.map((item, index) => `
-                    <div class="evidence-item" style="justify-content: space-between;">
+                    <div class="evidence-item" style="justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-file-medical" style="color: var(--thorax-success);"></i>
                             <div>
-                                <div class="text-small">${item.evidenceTitle || `Reference: ${item.evidenceId}`}</div>
+                                <div class="text-small">${this.escapeHtml(item.evidenceTitle || `Reference: ${item.evidenceId}`)}</div>
                                 <div class="text-xsmall text-light">${item.evidenceType}</div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-small" onclick="project.removeEvidenceItem(${index})">
+                        <button type="button" class="btn btn-secondary btn-small" onclick="project.removeEvidenceItem(${index})" aria-label="Remove evidence">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -2306,6 +3020,7 @@
             removeEvidenceItem(index) {
                 this.evidenceItems.splice(index, 1);
                 this.updateEvidencePreview();
+                this.showToast('Evidence reference removed', 'info');
             }
             
             generateEvidenceUrl(evidence) {
@@ -2321,33 +3036,42 @@
             
             async voteOnDiscussion(discussionId, voteType) {
                 if (!this.user) {
-                    this.showError('Please log in to vote');
+                    this.showToast('Please log in to vote', 'warning');
                     return;
                 }
                 
                 try {
-                    const response = await fetch(`/api/discussions/${discussionId}/vote`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userId: this.user.id,
-                            voteType: voteType,
-                            projectId: this.projectId
-                        })
-                    });
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 800));
                     
-                    const data = await response.json();
+                    const discussion = this.discussions.find(d => d.id === discussionId);
+                    if (!discussion || !discussion.consensus) return;
                     
-                    if (data.success) {
-                        this.showSuccess('Vote recorded!');
-                        // Update the specific discussion's consensus
-                        this.updateDiscussionConsensus(discussionId, data.consensus);
-                    } else {
-                        this.showError('Failed to record vote: ' + data.error);
+                    // Update consensus based on vote type
+                    if (voteType === 'clinical_agree') {
+                        discussion.consensus.clinicalAgreement = Math.min(100, discussion.consensus.clinicalAgreement + 15);
+                    } else if (voteType === 'technical_feasible') {
+                        discussion.consensus.technicalFeasibility = Math.min(100, discussion.consensus.technicalFeasibility + 15);
+                    } else if (voteType === 'needs_evidence') {
+                        discussion.consensus.clinicalAgreement = Math.max(0, discussion.consensus.clinicalAgreement - 10);
+                        discussion.consensus.technicalFeasibility = Math.max(0, discussion.consensus.technicalFeasibility - 10);
                     }
+                    
+                    discussion.consensus.totalVotes = (discussion.consensus.totalVotes || 0) + 1;
+                    
+                    // Update status
+                    const avgConsensus = (discussion.consensus.clinicalAgreement + discussion.consensus.technicalFeasibility) / 2;
+                    if (avgConsensus >= 80) discussion.consensus.status = 'high';
+                    else if (avgConsensus >= 60) discussion.consensus.status = 'medium';
+                    else if (avgConsensus >= 40) discussion.consensus.status = 'low';
+                    else discussion.consensus.status = 'pending';
+                    
+                    this.updateDiscussionConsensus(discussionId, discussion.consensus);
+                    this.showToast('Vote recorded!', 'success');
+                    
                 } catch (error) {
                     console.error('Vote error:', error);
-                    this.showError('Network error. Please try again.');
+                    this.showToast('Failed to record vote', 'error');
                 }
             }
             
@@ -2355,7 +3079,6 @@
                 const discussionItem = document.querySelector(`[data-discussion-id="${discussionId}"]`);
                 if (!discussionItem) return;
                 
-                // Update consensus meter in the discussion item
                 const consensusMeter = discussionItem.querySelector('.consensus-meter');
                 if (consensusMeter) {
                     const clinicalBar = consensusMeter.querySelector('.bar-clinical');
@@ -2382,44 +3105,30 @@
             
             async viewDiscussion(discussionId) {
                 // In a full implementation, this would open a detailed view
-                alert(`Viewing discussion ${discussionId} - Detailed view coming soon!`);
+                this.showToast('Detailed discussion view coming soon!', 'info');
             }
             
             async createDecision(discussionId) {
-                const title = prompt('Enter decision title:');
-                if (!title) return;
+                const discussion = this.discussions.find(d => d.id === discussionId);
+                if (!discussion) return;
                 
-                const description = prompt('Enter decision description:');
-                if (!description) return;
+                const decision = {
+                    title: `Decision: ${discussion.title.substring(0, 50)}...`,
+                    description: `Based on discussion "${discussion.title}". Consensus reached with ${discussion.consensus?.clinicalAgreement}% clinical agreement and ${discussion.consensus?.technicalFeasibility}% technical feasibility.`,
+                    created_at: new Date().toISOString()
+                };
                 
-                try {
-                    const response = await fetch(`/api/discussions/${discussionId}/decide`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            title,
-                            description,
-                            decisionType: 'joint'
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.showSuccess('Decision created successfully!');
-                        this.addDecision(data.decision);
-                    } else {
-                        this.showError('Failed to create decision: ' + data.error);
-                    }
-                } catch (error) {
-                    console.error('Create decision error:', error);
-                    this.showError('Network error. Please try again.');
-                }
+                this.addDecision(decision);
+                this.showToast('Decision created and logged!', 'success');
             }
             
             // ===== TEAM METHODS =====
             async addTeamMember(e) {
                 e.preventDefault();
+                
+                if (!this.validateTeamForm()) {
+                    return;
+                }
                 
                 const submitBtn = document.getElementById('submitTeamBtn');
                 const originalText = submitBtn.textContent;
@@ -2427,32 +3136,30 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Adding...';
                 
-                const memberData = {
-                    name: document.getElementById('memberName').value,
-                    email: document.getElementById('memberEmail').value,
-                    role: document.getElementById('memberRole').value,
-                    organization: document.getElementById('memberOrganization').value
-                };
-                
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}/team`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(memberData)
-                    });
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1200));
                     
-                    const data = await response.json();
+                    const newMember = {
+                        id: 'member_' + Date.now(),
+                        name: document.getElementById('memberName').value,
+                        email: document.getElementById('memberEmail').value,
+                        role: document.getElementById('memberRole').value,
+                        organization: document.getElementById('memberOrganization').value || ''
+                    };
                     
-                    if (data.success) {
-                        this.hideModal('teamModal');
-                        this.showSuccess('Team member added successfully!');
-                        this.loadProject(); // Refresh team
-                    } else {
-                        this.showError('Failed to add team member: ' + data.error);
-                    }
+                    this.team.push(newMember);
+                    
+                    this.hideModal('teamModal');
+                    this.renderTeam();
+                    this.renderBridge();
+                    this.updateProjectStats();
+                    
+                    this.showToast('Team member added successfully!', 'success');
+                    
                 } catch (error) {
                     console.error('Add team member error:', error);
-                    this.showError('Network error. Please try again.');
+                    this.showToast('Failed to add team member', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
@@ -2489,7 +3196,6 @@
                 const container = document.getElementById(containerId);
                 if (!container) return;
                 
-                const inputId = `objective_${type}_${Date.now()}`;
                 const input = document.createElement('div');
                 input.className = 'objective-input-item';
                 input.style.display = 'flex';
@@ -2497,14 +3203,14 @@
                 input.style.marginBottom = '0.5rem';
                 input.innerHTML = `
                     <input type="checkbox" ${completed ? 'checked' : ''} 
-                           onchange="project.updateObjectiveCompletion(this, '${type}')"
+                           onchange="this.nextElementSibling.style.textDecoration = this.checked ? 'line-through' : 'none'"
                            style="margin-top: 0.25rem;">
                     <input type="text" value="${this.escapeHtml(text)}" 
                            placeholder="Enter objective..." 
                            class="form-input" 
-                           style="flex: 1;">
+                           style="flex: 1; text-decoration: ${completed ? 'line-through' : 'none'};">
                     <button type="button" class="btn btn-secondary btn-small" 
-                            onclick="project.removeObjectiveInput(this, '${type}')">
+                            onclick="this.parentElement.remove()" aria-label="Remove objective">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
@@ -2520,34 +3226,26 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Saving...';
                 
-                // Collect objectives from inputs
-                const objectives = {
-                    clinical: this.collectObjectives('clinical'),
-                    industry: this.collectObjectives('industry'),
-                    shared: this.collectObjectives('shared')
-                };
-                
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}/objectives`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(objectives)
-                    });
+                    // Collect objectives from inputs
+                    const objectives = {
+                        clinical: this.collectObjectives('clinical'),
+                        industry: this.collectObjectives('industry'),
+                        shared: this.collectObjectives('shared')
+                    };
                     
-                    const data = await response.json();
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                     
-                    if (data.success) {
-                        this.hideModal('objectivesModal');
-                        this.objectives = objectives;
-                        this.renderObjectives();
-                        this.renderBridge();
-                        this.showSuccess('Objectives updated successfully!');
-                    } else {
-                        this.showError('Failed to update objectives: ' + data.error);
-                    }
+                    this.hideModal('objectivesModal');
+                    this.objectives = objectives;
+                    this.renderObjectives();
+                    this.renderBridge();
+                    this.showToast('Objectives updated successfully!', 'success');
+                    
                 } catch (error) {
                     console.error('Update objectives error:', error);
-                    this.showError('Network error. Please try again.');
+                    this.showToast('Failed to update objectives', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
@@ -2567,41 +3265,13 @@
                 })).filter(obj => obj.text.length > 0);
             }
             
-            // ===== WEBSOCKET HANDLERS =====
-            addDiscussion(discussion) {
-                this.discussions.unshift(discussion);
-                this.renderDiscussions();
-                this.updateProjectStats();
-            }
-            
-            addComment(comment) {
-                // Update comment count for the discussion
-                const discussion = this.discussions.find(d => d.id === comment.discussion_id);
-                if (discussion) {
-                    discussion.comment_count = (discussion.comment_count || 0) + 1;
-                    this.renderDiscussions();
-                }
-            }
-            
-            updateConsensus(discussionId, consensus) {
-                const discussion = this.discussions.find(d => d.id === discussionId);
-                if (discussion) {
-                    discussion.consensus = consensus;
-                    this.updateDiscussionConsensus(discussionId, consensus);
-                }
-            }
-            
-            addTeamMemberToList(member) {
-                this.team.push(member);
-                this.renderTeam();
-                this.renderBridge();
-                this.updateProjectStats();
-            }
-            
             addDecision(decision) {
-                // Add to decisions list in sidebar
                 const decisionList = document.getElementById('decisionList');
                 if (decisionList) {
+                    // Remove empty state if it exists
+                    const emptyState = decisionList.querySelector('.empty-state');
+                    if (emptyState) emptyState.remove();
+                    
                     const decisionItem = document.createElement('div');
                     decisionItem.className = 'decision-item';
                     decisionItem.innerHTML = `
@@ -2611,11 +3281,12 @@
                     decisionList.prepend(decisionItem);
                 }
                 
-                this.updateProjectStats();
+                // Update project stats
+                this.project.decision_count = (this.project.decision_count || 0) + 1;
+                document.getElementById('decisionCount').textContent = this.project.decision_count;
             }
             
             updateProjectStats() {
-                // Update discussion count
                 document.getElementById('discussionCount').textContent = this.discussions.length;
                 document.getElementById('teamCount').textContent = this.team.length;
             }
@@ -2674,6 +3345,7 @@
                     const diffHours = Math.floor(diffMs / 3600000);
                     const diffDays = Math.floor(diffMs / 86400000);
                     
+                    if (diffMins < 1) return 'Just now';
                     if (diffMins < 60) return `${diffMins}m ago`;
                     if (diffHours < 24) return `${diffHours}h ago`;
                     if (diffDays < 7) return `${diffDays}d ago`;
@@ -2684,19 +3356,10 @@
             }
             
             escapeHtml(text) {
+                if (!text) return '';
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
-            }
-            
-            showError(message) {
-                // In production, use a proper notification system
-                alert(`Error: ${message}`);
-            }
-            
-            showSuccess(message) {
-                // In production, use a proper notification system
-                alert(`Success: ${message}`);
             }
         }
         
