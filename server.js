@@ -113,22 +113,28 @@ app.get('/api/health', async (req, res) => {
 // Platform status
 app.get('/api/platform/status', async (req, res) => {
     try {
-        const status = await database.getPlatformStatus();
-        res.json(status);
+        const stats = await database.getPlatformStats();
+        res.json(stats);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to get platform status' });
+        console.error('Platform status error:', error);
+        res.status(500).json({ 
+            error: 'Failed to get platform status',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
 // Get all projects
 app.get('/api/projects', async (req, res) => {
     try {
-        const { status = 'active', limit = 50, offset = 0 } = req.query;
-        const projects = await database.getAllProjects(status, parseInt(limit), parseInt(offset));
+        const projects = await database.getAllProjects();
         res.json(projects);
     } catch (error) {
         console.error('Projects fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch projects' });
+        res.status(500).json({ 
+            error: 'Failed to fetch projects',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
@@ -136,43 +142,58 @@ app.get('/api/projects', async (req, res) => {
 app.get('/api/projects/:id', async (req, res) => {
     try {
         const projectId = req.params.id;
-        const userId = req.headers['x-user-id'] || 'anonymous';
-        
         const project = await database.getProject(projectId);
+        
         if (!project) {
             return res.status(404).json({ error: 'Project not found' });
         }
 
-        await database.recordInteraction(projectId, userId, 'project_view');
         res.json(project);
 
     } catch (error) {
         console.error('Project fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch project' });
+        res.status(500).json({ 
+            error: 'Failed to fetch project',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
 // Create project
 app.post('/api/projects', async (req, res) => {
     try {
-        const { title, description, type = 'clinical', createdBy } = req.body;
+        const { title, description, type = 'clinical' } = req.body;
         
-        if (!title || !description || !createdBy) {
-            return res.status(400).json({ error: 'Missing required fields' });
+        console.log('Creating project:', { title, description, type });
+        
+        if (!title || !description) {
+            return res.status(400).json({ 
+                error: 'Missing required fields: title and description are required' 
+            });
         }
 
-        if (title.length > 200) {
-            return res.status(400).json({ error: 'Title too long (max 200 characters)' });
-        }
+        // Create or get user
+        const userId = `user_${uuidv4()}`;
+        const userEmail = `user_${userId}@thoraxlab.local`;
+        
+        // Ensure user exists
+        await database.ensureUserExists(userId, 'Demo User', 'clinician', userEmail);
 
-        const project = await database.createProject({ title, description, type, createdBy });
+        const project = await database.createProject({ 
+            title, 
+            description, 
+            type, 
+            createdBy: userId 
+        });
+        
+        console.log('Project created successfully:', project.id);
         
         // Add timeline event
         await database.addTimelineEvent(
             project.id,
             'project_created',
             `Project "${title}" created`,
-            createdBy
+            userId
         );
 
         // Broadcast to WebSocket clients
@@ -182,53 +203,15 @@ app.post('/api/projects', async (req, res) => {
             timestamp: new Date().toISOString()
         });
 
-        // Update platform metrics
-        await database.updatePlatformMetrics();
-
         res.status(201).json(project);
 
     } catch (error) {
         console.error('Project creation error:', error);
-        res.status(500).json({ error: 'Failed to create project' });
-    }
-});
-
-// Update project
-app.put('/api/projects/:id', async (req, res) => {
-    try {
-        const projectId = req.params.id;
-        const updates = req.body;
-        const userId = req.headers['x-user-id'];
-
-        if (!updates || Object.keys(updates).length === 0) {
-            return res.status(400).json({ error: 'No updates provided' });
-        }
-
-        const isMember = await database.isProjectMember(projectId, userId);
-        if (!isMember && userId !== 'system') {
-            return res.status(403).json({ error: 'Not authorized' });
-        }
-
-        const project = await database.updateProject(projectId, updates);
-        
-        await database.addTimelineEvent(
-            projectId,
-            'project_updated',
-            'Project details updated',
-            userId
-        );
-
-        broadcastToProject(projectId, {
-            type: 'project_updated',
-            project,
-            timestamp: new Date().toISOString()
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            error: 'Failed to create project',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
-
-        res.json(project);
-
-    } catch (error) {
-        console.error('Project update error:', error);
-        res.status(500).json({ error: 'Failed to update project' });
     }
 });
 
@@ -236,38 +219,40 @@ app.put('/api/projects/:id', async (req, res) => {
 app.get('/api/projects/:id/comments', async (req, res) => {
     try {
         const projectId = req.params.id;
-        const { limit = 100, offset = 0, parent_id = null } = req.query;
-        const userId = req.headers['x-user-id'] || '';
-        
-        const comments = await database.getProjectComments(
-            projectId, 
-            parseInt(limit), 
-            parseInt(offset),
-            parent_id,
-            userId
-        );
+        const comments = await database.getProjectComments(projectId);
         res.json(comments);
-
     } catch (error) {
         console.error('Comments fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch comments' });
+        res.status(500).json({ 
+            error: 'Failed to fetch comments',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
 // Create comment
 app.post('/api/comments', async (req, res) => {
     try {
-        const { projectId, content, userId } = req.body;
+        const { projectId, content } = req.body;
         
-        if (!projectId || !content || !userId) {
+        if (!projectId || !content) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        const comment = await database.createComment({ projectId, userId, content });
+        // Create demo user for comment
+        const userId = `comment_user_${uuidv4()}`;
+        await database.ensureUserExists(userId, 'Comment User', 'clinician', `${userId}@thoraxlab.local`);
+
+        const comment = await database.createComment({ 
+            projectId, 
+            userId, 
+            content 
+        });
         
-        await database.recordInteraction(projectId, userId, 'comment_create');
+        // Update comment count
         await database.incrementProjectCounter(projectId, 'total_comments');
         
+        // Add timeline event
         await database.addTimelineEvent(
             projectId,
             'comment_added',
@@ -275,6 +260,7 @@ app.post('/api/comments', async (req, res) => {
             userId
         );
 
+        // Broadcast to WebSocket clients
         broadcastToProject(projectId, {
             type: 'comment_added',
             comment,
@@ -285,7 +271,10 @@ app.post('/api/comments', async (req, res) => {
 
     } catch (error) {
         console.error('Comment creation error:', error);
-        res.status(500).json({ error: 'Failed to create comment' });
+        res.status(500).json({ 
+            error: 'Failed to create comment',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
@@ -297,42 +286,10 @@ app.get('/api/projects/:id/team', async (req, res) => {
         res.json(team);
     } catch (error) {
         console.error('Team fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch team' });
-    }
-});
-
-// Join project
-app.post('/api/projects/:id/join', async (req, res) => {
-    try {
-        const projectId = req.params.id;
-        const { userId, role = 'contributor' } = req.body;
-        
-        if (!userId) {
-            return res.status(400).json({ error: 'User ID required' });
-        }
-
-        const result = await database.addProjectMember(projectId, userId, role);
-        
-        await database.addTimelineEvent(
-            projectId,
-            'member_joined',
-            'New member joined',
-            userId
-        );
-
-        const team = await database.getProjectTeam(projectId);
-        
-        broadcastToProject(projectId, {
-            type: 'team_updated',
-            team,
-            timestamp: new Date().toISOString()
+        res.status(500).json({ 
+            error: 'Failed to fetch team',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
-
-        res.json({ success: true, team });
-
-    } catch (error) {
-        console.error('Join project error:', error);
-        res.status(500).json({ error: 'Failed to join project' });
     }
 });
 
@@ -340,60 +297,64 @@ app.post('/api/projects/:id/join', async (req, res) => {
 app.get('/api/projects/:id/timeline', async (req, res) => {
     try {
         const projectId = req.params.id;
-        const { limit = 50, offset = 0 } = req.query;
-        
-        const timeline = await database.getProjectTimeline(
-            projectId, 
-            parseInt(limit), 
-            parseInt(offset)
-        );
+        const timeline = await database.getProjectTimeline(projectId);
         res.json(timeline);
     } catch (error) {
         console.error('Timeline fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch timeline' });
-    }
-});
-
-// Get online users
-app.get('/api/users/online', async (req, res) => {
-    try {
-        const users = await database.getOnlineUsers();
-        res.json(users);
-    } catch (error) {
-        console.error('Online users fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch online users' });
+        res.status(500).json({ 
+            error: 'Failed to fetch timeline',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
 // User login
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { email, name, role = 'clinician' } = req.body;
+        const { email = 'demo@thoraxlab.com', name = 'Demo User', role = 'clinician' } = req.body;
         
-        if (!email || !name) {
-            return res.status(400).json({ error: 'Email and name required' });
-        }
-
-        let user = await database.getUserByEmail(email);
+        // Create or get user
+        const userId = `user_${uuidv4()}`;
+        await database.ensureUserExists(userId, name, role, email);
         
-        if (!user) {
-            user = await database.createUser(email, name, role);
-        }
-
-        await database.updateUserStatus(user.id, 'online');
+        const user = await database.getUser(userId);
         
-        const userResponse = { ...user };
-        delete userResponse.password;
-
         res.json({
-            user: userResponse,
+            user: {
+                id: user.id,
+                name: user.name,
+                role: user.role,
+                avatar_color: user.avatar_color
+            },
             token: `demo_${user.id}`,
             expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
         });
 
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Failed to authenticate' });
+        res.status(500).json({ 
+            error: 'Failed to authenticate',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
+
+// Test endpoint
+app.get('/api/test-db', async (req, res) => {
+    try {
+        const db = await database.getDB();
+        const result = await db.get('SELECT 1 as test');
+        res.json({ 
+            success: true, 
+            message: 'Database connection successful',
+            result 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            error: error.message,
+            stack: error.stack 
+        });
     }
 });
 
@@ -412,6 +373,8 @@ async function startServer() {
         // Connect to database
         await database.connect();
         
+        console.log('✅ Database connected successfully');
+        
         // Start HTTP server
         server.listen(PORT, () => {
             console.log(`
@@ -420,14 +383,19 @@ async function startServer() {
 🌐 WebSocket: Active
 💾 Database: Connected
 🔗 URL: http://localhost:${PORT}
+📁 Data directory: ${path.join(__dirname, 'data')}
             `);
         });
 
         // Broadcast platform stats every 30 seconds
         setInterval(async () => {
             try {
-                const status = await database.getPlatformStatus();
-                const message = { type: 'platform_stats', ...status };
+                const stats = await database.getPlatformStats();
+                const message = { 
+                    type: 'platform_stats', 
+                    ...stats,
+                    timestamp: new Date().toISOString()
+                };
                 
                 activeClients.forEach(client => {
                     if (client.ws.readyState === WebSocket.OPEN) {
@@ -439,17 +407,19 @@ async function startServer() {
             }
         }, 30000);
 
-        // Maintenance every hour
-        setInterval(async () => {
+        // Initial broadcast
+        setTimeout(async () => {
             try {
-                await database.performMaintenance();
+                const stats = await database.getPlatformStats();
+                console.log('📊 Initial platform stats:', stats);
             } catch (error) {
-                console.error('Maintenance error:', error);
+                console.error('Initial stats error:', error);
             }
-        }, 3600000);
+        }, 2000);
 
     } catch (error) {
-        console.error('Failed to start server:', error);
+        console.error('❌ Failed to start server:', error);
+        console.error('Error stack:', error.stack);
         process.exit(1);
     }
 }
