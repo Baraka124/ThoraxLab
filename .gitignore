@@ -4,18 +4,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Database and data files
+# Database
 data/
 *.db
 *.db-journal
-*.db-wal
-*.db-shm
-thoraxlab.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Runtime data
 pids
@@ -27,39 +26,22 @@ pids
 coverage/
 .nyc_output/
 
-# Build outputs
-dist/
-build/
-.out/
-.next/
-
 # Logs
 logs
 *.log
 
-# IDE
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Temporary files
-tmp/
-temp/
-
-# Server session files
-session/
-sessions/
-
-# Uploads
-uploads/
-*.tmp
-*.temp
-
-# Backups
-*.bak
-*.backup
+*~
