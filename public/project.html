@@ -3,864 +3,1509 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThoraxLab | Innovation Platform</title>
+    <title>THØRAXLAB | Project Workspace</title>
     
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ===== ALL CSS ===== */
+        /* ===== CORE VARIABLES ===== */
         :root {
-            --primary-blue: #0A4D68;
-            --primary-teal: #088F8F;
-            --secondary-blue: #05BFDB;
-            --accent-green: #00B894;
-            --accent-amber: #F39C12;
-            --accent-red: #E74C3C;
-            --neutral-900: #1A202C;
-            --neutral-800: #2D3748;
-            --neutral-700: #4A5568;
-            --neutral-600: #718096;
-            --neutral-500: #A0AEC0;
-            --neutral-400: #CBD5E0;
-            --neutral-300: #E2E8F0;
-            --neutral-200: #EDF2F7;
-            --neutral-100: #F7FAFC;
-            --white: #FFFFFF;
+            /* Brand Colors */
+            --thorax-primary: #1A5F7A;      /* Clinical Blue */
+            --thorax-secondary: #0D8B70;     /* Medical Green */
+            --thorax-accent: #6D5ACF;        /* Innovation Purple */
+            --thorax-warning: #F59E0B;
+            --thorax-error: #EF4444;
+            --thorax-success: #10B981;
             
-            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            /* Role Colors */
+            --role-clinician: #1A5F7A;
+            --role-industry: #6D5ACF;
+            --role-lead: #0D8B70;
             
-            --space-xs: 0.5rem;
-            --space-sm: 0.75rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
+            /* Organization Colors */
+            --org-hospital: #3B82F6;
+            --org-pharma: #8B5CF6;
+            --org-academic: #10B981;
+            --org-startup: #F59E0B;
             
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
+            /* UI Colors */
+            --ui-dark: #1E293B;
+            --ui-medium: #475569;
+            --ui-light: #64748B;
+            --ui-lighter: #94A3B8;
+            --ui-bg: #F8FAFC;
+            --ui-card: #FFFFFF;
+            --ui-border: #E2E8F0;
             
+            /* Typography */
+            --font-display: 'SF Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Spacing & Effects */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            
-            --transition-fast: 150ms ease;
-            --transition-base: 250ms ease;
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html { font-size: 16px; }
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         body {
-            font-family: var(--font-primary);
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            font-family: var(--font-body);
+            background: var(--ui-bg);
+            color: var(--ui-dark);
+            line-height: 1.6;
             min-height: 100vh;
-            color: var(--neutral-800);
         }
         
-        /* ===== HEADER ===== */
-        .header {
-            background: var(--white);
-            border-bottom: 1px solid var(--neutral-200);
+        /* ===== BRAND HEADER ===== */
+        .brand-header {
+            background: white;
+            border-bottom: 1px solid var(--ui-border);
+            padding: 0.75rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            padding: 1rem 0;
-            box-shadow: var(--shadow-sm);
         }
         
-        .header-container {
+        .brand-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 2rem;
+            align-items: center;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .thoraxlab-brand {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--thorax-primary);
             text-decoration: none;
         }
         
-        .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 700;
-            font-size: 1.25rem;
+        .thoraxlab-brand .zero {
+            color: var(--thorax-accent);
         }
         
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-        }
-        
-        .search-container {
-            flex: 1;
-            max-width: 500px;
-            position: relative;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 3rem;
-            border: 1px solid var(--neutral-300);
-            border-radius: var(--radius-full);
-            font-size: 0.9375rem;
-            background: var(--neutral-100);
-            transition: all var(--transition-fast);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            background: var(--white);
-            border-color: var(--primary-teal);
-            box-shadow: 0 0 0 3px rgba(8, 143, 143, 0.1);
-        }
-        
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--neutral-500);
-        }
-        
-        /* ===== MAIN CONTENT ===== */
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* ===== DASHBOARD GRID ===== */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        /* ===== PROJECTS SECTION ===== */
-        .projects-section {
-            background: var(--white);
-            border-radius: var(--radius-xl);
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* ===== PROJECT COMMAND CENTER ===== */
+        .project-command {
+            background: linear-gradient(135deg, var(--thorax-primary) 0%, #14485E 100%);
+            color: white;
+            padding: 2rem 0;
             margin-bottom: 2rem;
         }
         
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary-blue);
-        }
-        
-        .create-project-btn {
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius-lg);
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all var(--transition-fast);
-        }
-        
-        .create-project-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        /* ===== PROJECTS LIST ===== */
-        .projects-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .project-item {
-            background: var(--neutral-50);
-            border: 1px solid var(--neutral-200);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all var(--transition-base);
-        }
-        
-        .project-item:hover {
-            background: var(--white);
-            border-color: var(--primary-teal);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+        .command-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
         }
         
         .project-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
         }
         
         .project-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--primary-blue);
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
         }
         
-        .project-type {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-full);
-            text-transform: uppercase;
-        }
-        
-        .type-clinical { background: rgba(10, 77, 104, 0.1); color: var(--primary-blue); }
-        .type-industry { background: rgba(8, 143, 143, 0.1); color: var(--primary-teal); }
-        
-        .project-description {
-            color: var(--neutral-600);
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-        
-        .project-meta {
-            display: flex;
+        .project-type-badge {
+            display: inline-flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md);
             font-size: 0.875rem;
-            color: var(--neutral-500);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.5rem;
         }
         
-        /* ===== SIDEBAR ===== */
-        .sidebar {
+        .command-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .command-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        /* ===== COLLABORATION BRIDGE ===== */
+        .collaboration-bridge {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+        }
+        
+        .bridge-visualization {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            border: 1px solid var(--ui-border);
+            margin-bottom: 2rem;
+        }
+        
+        .bridge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .bridge-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--ui-dark);
+        }
+        
+        .bridge-content {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .bridge-side {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
         
-        .widget {
-            background: var(--white);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
+        .side-clinician {
+            border-right: 2px solid var(--role-clinician);
+            padding-right: 1.5rem;
         }
         
-        .widget-title {
-            font-size: 0.875rem;
+        .side-industry {
+            border-left: 2px solid var(--role-industry);
+            padding-left: 1.5rem;
+        }
+        
+        .side-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .side-icon {
+            font-size: 1.5rem;
+        }
+        
+        .side-title {
+            font-size: 1.125rem;
             font-weight: 600;
-            color: var(--neutral-700);
+        }
+        
+        .side-clinician .side-title { color: var(--role-clinician); }
+        .side-industry .side-title { color: var(--role-industry); }
+        
+        .side-objectives {
+            background: var(--ui-bg);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+        }
+        
+        .objective-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .objective-check {
+            color: var(--thorax-success);
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        
+        .bridge-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 0 2rem;
+        }
+        
+        .center-title {
+            font-weight: 600;
+            color: var(--ui-medium);
+            text-align: center;
+        }
+        
+        .common-ground {
+            background: linear-gradient(135deg, var(--role-clinician), var(--role-industry));
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            width: 100%;
+        }
+        
+        /* ===== ROLE-BASED PERMISSIONS ===== */
+        .permission-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--ui-bg);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .permission-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .badge-lead {
+            background: rgba(13, 139, 112, 0.1);
+            color: var(--role-lead);
+            border: 1px solid rgba(13, 139, 112, 0.2);
+        }
+        
+        .badge-clinician {
+            background: rgba(26, 95, 122, 0.1);
+            color: var(--role-clinician);
+            border: 1px solid rgba(26, 95, 122, 0.2);
+        }
+        
+        .badge-industry {
+            background: rgba(107, 91, 207, 0.1);
+            color: var(--role-industry);
+            border: 1px solid rgba(107, 91, 207, 0.2);
+        }
+        
+        /* ===== ORGANIZATION CONTEXT ===== */
+        .org-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        
+        .org-hospital {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--org-hospital);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        .org-pharma {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--org-pharma);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        
+        .org-academic {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--org-academic);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+        
+        .org-startup {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--org-startup);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        
+        /* ===== EVIDENCE-BASED DISCUSSIONS ===== */
+        .discussions-section {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+        }
+        
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .discussion-filters {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--ui-bg);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            color: var(--ui-medium);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: var(--ui-card);
+            border-color: var(--ui-light);
+        }
+        
+        .filter-btn.active {
+            background: var(--thorax-primary);
+            border-color: var(--thorax-primary);
+            color: white;
+        }
+        
+        .discussion-thread {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .discussion-thread:hover {
+            border-color: var(--thorax-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .thread-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .thread-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .avatar-clinician { background: var(--role-clinician); }
+        .avatar-industry { background: var(--role-industry); }
+        .avatar-lead { background: var(--role-lead); }
+        
+        .author-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            color: var(--ui-dark);
+        }
+        
+        .thread-type {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .type-clinical {
+            background: rgba(26, 95, 122, 0.1);
+            color: var(--role-clinician);
+        }
+        
+        .type-technical {
+            background: rgba(107, 91, 207, 0.1);
+            color: var(--role-industry);
+        }
+        
+        .type-joint {
+            background: linear-gradient(90deg, rgba(26, 95, 122, 0.1), rgba(107, 91, 207, 0.1));
+            color: var(--thorax-accent);
+        }
+        
+        .type-evidence {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--thorax-warning);
+        }
+        
+        .evidence-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--thorax-success);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .thread-content {
+            margin-bottom: 1rem;
+            color: var(--ui-medium);
+        }
+        
+        .thread-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--ui-border);
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--ui-bg);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            color: var(--ui-medium);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: var(--ui-card);
+            border-color: var(--ui-light);
+        }
+        
+        .action-btn.evidence {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--thorax-success);
+        }
+        
+        .action-btn.solution {
+            background: rgba(107, 91, 207, 0.1);
+            border-color: rgba(107, 91, 207, 0.2);
+            color: var(--role-industry);
+        }
+        
+        .action-btn.clarification {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+            color: var(--org-hospital);
+        }
+        
+        /* ===== DECISION TRACKING ===== */
+        .decisions-section {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+        }
+        
+        .decisions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .decision-card {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .decision-card:hover {
+            border-color: var(--thorax-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .decision-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 1rem;
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+        .status-open {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--org-hospital);
         }
         
-        .stat-item {
-            text-align: center;
+        .status-review {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--thorax-warning);
         }
         
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-bottom: 0.25rem;
+        .status-decided {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--thorax-success);
         }
         
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--neutral-500);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.active { display: flex; }
-        
-        .modal {
-            background: var(--white);
-            border-radius: var(--radius-xl);
-            padding: 2rem;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: var(--shadow-xl);
-        }
-        
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-        
-        .modal-title {
-            font-size: 1.25rem;
+        .decision-title {
             font-weight: 600;
-            color: var(--primary-blue);
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--neutral-500);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.25rem;
-            border-radius: var(--radius-sm);
-        }
-        
-        .modal-close:hover { color: var(--neutral-800); }
-        
-        .form-group { margin-bottom: 1rem; }
-        
-        .form-label {
-            display: block;
+            color: var(--ui-dark);
             margin-bottom: 0.5rem;
-            color: var(--neutral-700);
-            font-weight: 500;
         }
         
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--neutral-300);
-            border-radius: var(--radius-md);
-            font-size: 1rem;
+        .decision-progress {
+            margin: 1rem 0;
         }
         
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary-teal);
+        .progress-bar {
+            height: 4px;
+            background: var(--ui-border);
+            border-radius: 2px;
+            overflow: hidden;
         }
         
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
+        .progress-fill {
+            height: 100%;
+            background: var(--thorax-secondary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
         }
         
-        .form-actions {
+        .decision-meta {
             display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--ui-light);
+        }
+        
+        /* ===== KNOWLEDGE EXCHANGE ===== */
+        .knowledge-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        
+        .knowledge-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .knowledge-stat {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--ui-border);
+        }
+        
+        .knowledge-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1rem;
-            margin-top: 1.5rem;
         }
         
-        .btn {
-            flex: 1;
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
+        .knowledge-item {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            border: 1px solid var(--ui-border);
+            font-size: 0.875rem;
+        }
+        
+        .item-source {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            cursor: pointer;
-            border: none;
         }
         
-        .btn-secondary {
-            background: var(--neutral-100);
-            color: var(--neutral-700);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
-            color: var(--white);
-        }
-        
-        /* ===== TOAST ===== */
-        .toast-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 3000;
-        }
-        
-        .toast {
-            background: var(--white);
-            border-radius: var(--radius-md);
-            padding: 1rem 1.5rem;
-            box-shadow: var(--shadow-lg);
-            border-left: 4px solid var(--primary-teal);
-            margin-top: 0.5rem;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+        .source-clinical { color: var(--role-clinician); }
+        .source-industry { color: var(--role-industry); }
         
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .dashboard-grid {
+            .bridge-content {
                 grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .side-clinician,
+            .side-industry {
+                border: none;
+                padding: 0;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            .bridge-center {
+                order: -1;
+                padding: 0;
             }
         }
         
         @media (max-width: 768px) {
-            .header-container {
+            .project-header {
                 flex-direction: column;
                 gap: 1rem;
             }
             
-            .search-container {
-                max-width: 100%;
+            .discussion-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .discussion-filters {
+                flex-wrap: wrap;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <a href="/" class="logo">
-                <div class="logo-icon">TL</div>
-                <div class="logo-text">ThoraxLab</div>
+    <!-- Brand Header -->
+    <header class="brand-header">
+        <div class="brand-container">
+            <a href="index.html" class="thoraxlab-brand">
+                TH<span class="zero">Ø</span>RAXLAB
             </a>
-            
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" placeholder="Search projects, decisions, or teams..." id="searchInput">
-            </div>
-            
-            <div class="user-info">
-                <button class="create-project-btn" id="openCreateModal">
-                    <i class="fas fa-plus"></i> New Project
-                </button>
+            <div class="permission-indicator" id="permissionIndicator">
+                <!-- Dynamic permission info -->
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-container">
-        <h1 style="color: white; margin-bottom: 1rem;">Innovation Dashboard</h1>
-        <p style="color: rgba(255,255,255,0.8); margin-bottom: 2rem;">Track clinical-industry collaborations in real-time</p>
-        
-        <div class="dashboard-grid">
-            <!-- Projects Section -->
-            <section class="projects-section">
-                <div class="section-header">
-                    <h2 class="section-title">Active Projects</h2>
-                </div>
-                
-                <div class="projects-list" id="projectsList">
-                    <!-- Projects will be loaded here -->
-                </div>
-            </section>
-            
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="widget">
-                    <h3 class="widget-title">Platform Status</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value" id="activeProjects">0</div>
-                            <div class="stat-label">Projects</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="onlineUsers">1</div>
-                            <div class="stat-label">Online</div>
-                        </div>
+    <!-- Project Command Center -->
+    <section class="project-command">
+        <div class="command-container">
+            <div class="project-header">
+                <div>
+                    <h1 class="project-title" id="projectTitle">Loading Project...</h1>
+                    <div class="project-type-badge" id="projectType">
+                        <span id="typeIcon">⚕️</span>
+                        <span id="typeText">Clinical-Industry Collaboration</span>
                     </div>
                 </div>
-                
-                <div class="widget">
-                    <h3 class="widget-title">Quick Actions</h3>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <button class="btn-secondary" onclick="refreshProjects()" style="width: 100%;">
-                            <i class="fas fa-sync-alt"></i> Refresh Projects
-                        </button>
-                        <button class="btn-secondary" onclick="exportData()" style="width: 100%;">
-                            <i class="fas fa-download"></i> Export Data
-                        </button>
-                    </div>
+                <div class="project-actions" id="projectActions">
+                    <!-- Dynamic action buttons based on role -->
                 </div>
-            </aside>
-        </div>
-    </main>
-
-    <!-- Create Project Modal -->
-    <div class="modal-overlay" id="createModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Create New Project</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             
-            <form id="projectForm">
-                <div class="form-group">
-                    <label for="projectTitle" class="form-label">Project Title</label>
-                    <input type="text" id="projectTitle" class="form-input" required 
-                           placeholder="e.g., AI-Powered COPD Detection">
+            <p class="project-description" id="projectDescription" style="opacity: 0.9; max-width: 800px; margin-bottom: 1rem;">
+                Loading project description...
+            </p>
+            
+            <div class="command-stats">
+                <div class="command-stat">
+                    <div class="stat-value" id="engagementStat">0%</div>
+                    <div class="stat-label">Engagement Rate</div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="projectDescription" class="form-label">Description</label>
-                    <textarea id="projectDescription" class="form-textarea" required 
-                              placeholder="Describe the clinical challenge and innovation approach..."></textarea>
+                <div class="command-stat">
+                    <div class="stat-value" id="consensusStat">0%</div>
+                    <div class="stat-label">Consensus Level</div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="projectType" class="form-label">Project Type</label>
-                    <select id="projectType" class="form-input" required>
-                        <option value="">Select type...</option>
-                        <option value="clinical">Clinical Led</option>
-                        <option value="industry">Industry Led</option>
-                        <option value="collaborative">Joint Collaboration</option>
-                    </select>
+                <div class="command-stat">
+                    <div class="stat-value" id="velocityStat">0d</div>
+                    <div class="stat-label">Decision Velocity</div>
                 </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Project</button>
+                <div class="command-stat">
+                    <div class="stat-value" id="knowledgeStat">0</div>
+                    <div class="stat-label">Insights Shared</div>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Collaboration Bridge Visualization -->
+    <section class="collaboration-bridge">
+        <div class="bridge-visualization">
+            <div class="bridge-header">
+                <h2 class="bridge-title">Collaboration Bridge</h2>
+                <div class="bridge-meta">
+                    <span id="bridgeStatus">Active</span>
+                    •
+                    <span id="bridgeDuration">3 months</span>
+                </div>
+            </div>
+            
+            <div class="bridge-content">
+                <!-- Clinical Side -->
+                <div class="bridge-side side-clinician">
+                    <div>
+                        <div class="side-header">
+                            <div class="side-icon">⚕️</div>
+                            <h3 class="side-title">Clinical Side</h3>
+                        </div>
+                        <div class="side-team" id="clinicalTeam">
+                            <!-- Dynamic clinical team -->
+                        </div>
+                    </div>
+                    
+                    <div class="side-objectives">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--role-clinician);">
+                            Clinical Objectives
+                        </div>
+                        <div id="clinicalObjectives">
+                            <!-- Dynamic clinical objectives -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Center: Common Ground -->
+                <div class="bridge-center">
+                    <div class="common-ground">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Common Ground</div>
+                        <div id="commonObjectives">
+                            <!-- Dynamic shared objectives -->
+                        </div>
+                    </div>
+                    <div class="center-title">Clinical ↔ Industry Bridge</div>
+                </div>
+                
+                <!-- Industry Side -->
+                <div class="bridge-side side-industry">
+                    <div>
+                        <div class="side-header">
+                            <div class="side-icon">🏭</div>
+                            <h3 class="side-title">Industry Side</h3>
+                        </div>
+                        <div class="side-team" id="industryTeam">
+                            <!-- Dynamic industry team -->
+                        </div>
+                    </div>
+                    
+                    <div class="side-objectives">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--role-industry);">
+                            Industry Objectives
+                        </div>
+                        <div id="industryObjectives">
+                            <!-- Dynamic industry objectives -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Evidence-Based Discussions -->
+    <section class="discussions-section">
+        <div class="discussion-header">
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--ui-dark);">
+                Evidence-Based Discussions
+            </h2>
+            <div class="discussion-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="clinical">Clinical ⚕️</button>
+                <button class="filter-btn" data-filter="technical">Technical 🏭</button>
+                <button class="filter-btn" data-filter="joint">Joint ↔</button>
+                <button class="filter-btn" data-filter="evidence">Evidence 📄</button>
+            </div>
+        </div>
+        
+        <div class="discussion-list" id="discussionList">
+            <!-- Dynamic discussions will load here -->
+            <div class="loading-state" style="text-align: center; padding: 3rem;">
+                <div style="width: 40px; height: 40px; border: 3px solid var(--ui-border); border-top-color: var(--thorax-primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                <p>Loading discussions...</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="action-btn" id="newDiscussionBtn" style="padding: 0.75rem 1.5rem; font-weight: 600;">
+                <i class="fas fa-plus"></i> Start New Discussion
+            </button>
+        </div>
+    </section>
+
+    <!-- Decision Tracking -->
+    <section class="decisions-section">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--ui-dark); margin-bottom: 1.5rem;">
+            Decision Tracking
+        </h2>
+        
+        <div class="decisions-grid" id="decisionsGrid">
+            <!-- Dynamic decisions will load here -->
+        </div>
+    </section>
+
+    <!-- Knowledge Exchange -->
+    <section class="knowledge-section">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--ui-dark); margin-bottom: 1.5rem;">
+            Knowledge Exchange
+        </h2>
+        
+        <div class="knowledge-stats">
+            <div class="knowledge-stat">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--thorax-primary);" id="insightsShared">0</div>
+                <div style="font-size: 0.875rem; color: var(--ui-medium);">Insights Shared</div>
+            </div>
+            <div class="knowledge-stat">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--role-clinician);" id="clinicalInsights">0</div>
+                <div style="font-size: 0.875rem; color: var(--ui-medium);">Clinical Insights</div>
+            </div>
+            <div class="knowledge-stat">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--role-industry);" id="technicalSolutions">0</div>
+                <div style="font-size: 0.875rem; color: var(--ui-medium);">Technical Solutions</div>
+            </div>
+            <div class="knowledge-stat">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--thorax-success);" id="evidenceLinks">0</div>
+                <div style="font-size: 0.875rem; color: var(--ui-medium);">Evidence Links</div>
+            </div>
+        </div>
+        
+        <div class="knowledge-items" id="knowledgeItems">
+            <!-- Dynamic knowledge items will load here -->
+        </div>
+    </section>
 
     <script>
-        // ===== ALL JAVASCRIPT =====
-        class ThoraxLabPlatform {
+        class ThoraxLabProjectWorkspace {
             constructor() {
-                this.projects = [];
-                this.user = this.getCurrentUser();
-                this.ws = null;
+                this.projectId = this.getProjectId();
+                this.user = null;
+                this.project = null;
+                this.userRole = null;
                 this.init();
             }
             
-            async init() {
-                console.log('🚀 ThoraxLab Platform Initializing...');
-                await this.loadProjects();
+            init() {
+                this.loadProject();
                 this.setupEventListeners();
-                this.connectWebSocket();
-                this.updatePlatformStats();
+                this.setupSocket();
             }
             
-            getCurrentUser() {
-                return {
-                    id: localStorage.getItem('userId') || `user_${Date.now()}`,
-                    name: localStorage.getItem('userName') || 'Dr. Sarah Chen',
-                    role: localStorage.getItem('userRole') || 'clinician'
-                };
+            getProjectId() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('id');
             }
             
-            // ===== PROJECT MANAGEMENT =====
-            async loadProjects() {
-                try {
-                    const response = await fetch('/api/projects');
-                    if (!response.ok) throw new Error('Failed to load projects');
-                    
-                    this.projects = await response.json();
-                    this.renderProjects();
-                    this.updatePlatformStats();
-                    
-                } catch (error) {
-                    console.error('Error loading projects:', error);
-                    this.showToast('Failed to load projects', 'error');
-                    this.projects = [];
-                    this.renderProjects();
+            async loadProject() {
+                if (!this.projectId) {
+                    window.location.href = 'index.html';
+                    return;
                 }
-            }
-            
-            async createProject(projectData) {
+                
                 try {
-                    console.log('Creating project:', projectData);
-                    
-                    const response = await fetch('/api/projects', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(projectData)
+                    // Load project data
+                    const projectResponse = await fetch(`/api/projects/${this.projectId}`, {
+                        credentials: 'include'
                     });
                     
-                    const responseText = await response.text();
-                    console.log('Response:', response.status, responseText);
-                    
-                    if (!response.ok) {
-                        let errorData;
-                        try {
-                            errorData = JSON.parse(responseText);
-                        } catch {
-                            errorData = { error: responseText };
-                        }
-                        throw new Error(errorData.error || 'Failed to create project');
+                    if (!projectResponse.ok) {
+                        throw new Error('Project not found');
                     }
                     
-                    const project = JSON.parse(responseText);
-                    this.projects.unshift(project);
-                    this.renderProjects();
-                    this.updatePlatformStats();
+                    const projectData = await projectResponse.json();
+                    this.project = projectData.project;
                     
-                    this.showToast('Project created successfully', 'success');
-                    this.closeModal();
+                    // Load user data
+                    const userResponse = await fetch('/api/me', {
+                        credentials: 'include'
+                    });
                     
-                    return project;
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        this.user = userData.user;
+                        this.determineUserRole();
+                    }
+                    
+                    this.renderProject();
+                    this.loadDiscussions();
+                    this.loadDecisions();
+                    this.loadKnowledgeExchange();
                     
                 } catch (error) {
-                    console.error('Error creating project:', error);
-                    this.showToast(`Failed: ${error.message}`, 'error');
-                    throw error;
+                    console.error('Failed to load project:', error);
+                    window.location.href = 'index.html';
                 }
             }
             
-            renderProjects() {
-                const container = document.getElementById('projectsList');
+            determineUserRole() {
+                if (!this.project || !this.user) return;
                 
-                if (!this.projects || this.projects.length === 0) {
+                // Check if user is project lead
+                if (this.project.lead.id === this.user.id) {
+                    this.userRole = 'lead';
+                } 
+                // Check if user is clinical team member
+                else if (this.project.team.some(member => 
+                    member.id === this.user.id && 
+                    member.role.includes('clinical')
+                )) {
+                    this.userRole = 'clinician';
+                }
+                // Check if user is industry team member
+                else if (this.project.team.some(member => 
+                    member.id === this.user.id && 
+                    member.role.includes('industry')
+                )) {
+                    this.userRole = 'industry';
+                }
+                // Default to contributor
+                else {
+                    this.userRole = 'contributor';
+                }
+            }
+            
+            renderProject() {
+                if (!this.project) return;
+                
+                // Update title and description
+                document.getElementById('projectTitle').textContent = this.project.title;
+                document.getElementById('projectDescription').textContent = this.project.description;
+                
+                // Update project type
+                const typeIcon = document.getElementById('typeIcon');
+                const typeText = document.getElementById('typeText');
+                
+                switch(this.project.type) {
+                    case 'clinical':
+                        typeIcon.textContent = '⚕️';
+                        typeText.textContent = 'Clinical Led';
+                        break;
+                    case 'industry':
+                        typeIcon.textContent = '🏭';
+                        typeText.textContent = 'Industry Led';
+                        break;
+                    case 'collaborative':
+                        typeIcon.textContent = '↔';
+                        typeText.textContent = 'Clinical-Industry Collaboration';
+                        break;
+                }
+                
+                // Update stats
+                const stats = this.project.metrics || {};
+                document.getElementById('engagementStat').textContent = `${stats.engagement || 0}%`;
+                document.getElementById('consensusStat').textContent = `${stats.consensus || 0}%`;
+                document.getElementById('velocityStat').textContent = `${stats.velocity || 0}d`;
+                document.getElementById('knowledgeStat').textContent = stats.insights || 0;
+                
+                // Render permission indicator
+                this.renderPermissionIndicator();
+                
+                // Render collaboration bridge
+                this.renderCollaborationBridge();
+                
+                // Render action buttons based on role
+                this.renderActionButtons();
+            }
+            
+            renderPermissionIndicator() {
+                const container = document.getElementById('permissionIndicator');
+                if (!container) return;
+                
+                let badgeClass, badgeText, description;
+                
+                switch(this.userRole) {
+                    case 'lead':
+                        badgeClass = 'badge-lead';
+                        badgeText = 'Project Lead';
+                        description = 'You can edit project settings and make final decisions';
+                        break;
+                    case 'clinician':
+                        badgeClass = 'badge-clinician';
+                        badgeText = 'Clinical Contributor';
+                        description = 'You can start clinical discussions and provide evidence';
+                        break;
+                    case 'industry':
+                        badgeClass = 'badge-industry';
+                        badgeText = 'Industry Contributor';
+                        description = 'You can propose technical solutions and provide specifications';
+                        break;
+                    default:
+                        badgeClass = 'badge-clinician';
+                        badgeText = 'Contributor';
+                        description = 'You can participate in discussions and provide input';
+                }
+                
+                container.innerHTML = `
+                    <span class="permission-badge ${badgeClass}">${badgeText}</span>
+                    <span style="color: var(--ui-medium);">${description}</span>
+                `;
+            }
+            
+            renderCollaborationBridge() {
+                if (!this.project) return;
+                
+                // Separate team into clinical and industry
+                const clinicalTeam = this.project.team.filter(member => 
+                    member.role.includes('clinical') || member.role === 'lead'
+                );
+                
+                const industryTeam = this.project.team.filter(member => 
+                    member.role.includes('industry')
+                );
+                
+                // Render clinical team
+                const clinicalContainer = document.getElementById('clinicalTeam');
+                if (clinicalContainer) {
+                    clinicalContainer.innerHTML = clinicalTeam.map(member => `
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <div class="author-avatar avatar-${member.role.includes('lead') ? 'lead' : 'clinician'}">
+                                ${this.getInitials(member.name)}
+                            </div>
+                            <div style="font-size: 0.875rem;">
+                                <div style="font-weight: 500;">${this.escapeHtml(member.name)}</div>
+                                <div style="font-size: 0.75rem; color: var(--ui-light);">
+                                    ${this.getOrganizationBadge(member.organization)}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Render industry team
+                const industryContainer = document.getElementById('industryTeam');
+                if (industryContainer) {
+                    industryContainer.innerHTML = industryTeam.map(member => `
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <div class="author-avatar avatar-industry">
+                                ${this.getInitials(member.name)}
+                            </div>
+                            <div style="font-size: 0.875rem;">
+                                <div style="font-weight: 500;">${this.escapeHtml(member.name)}</div>
+                                <div style="font-size: 0.75rem; color: var(--ui-light);">
+                                    ${this.getOrganizationBadge(member.organization)}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Render objectives (simplified for now)
+                const objectives = this.project.objectives || [];
+                document.getElementById('clinicalObjectives').innerHTML = objectives
+                    .filter(obj => obj.type === 'clinical' || !obj.type)
+                    .slice(0, 3)
+                    .map(obj => `
+                        <div class="objective-item">
+                            <div class="objective-check">✓</div>
+                            <div>${this.escapeHtml(obj.text)}</div>
+                        </div>
+                    `).join('');
+                
+                document.getElementById('industryObjectives').innerHTML = objectives
+                    .filter(obj => obj.type === 'industry')
+                    .slice(0, 3)
+                    .map(obj => `
+                        <div class="objective-item">
+                            <div class="objective-check">✓</div>
+                            <div>${this.escapeHtml(obj.text)}</div>
+                        </div>
+                    `).join('');
+                
+                document.getElementById('commonObjectives').innerHTML = objectives
+                    .filter(obj => obj.type === 'shared')
+                    .slice(0, 2)
+                    .map(obj => `
+                        <div style="font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            ${this.escapeHtml(obj.text)}
+                        </div>
+                    `).join('');
+            }
+            
+            renderActionButtons() {
+                const container = document.getElementById('projectActions');
+                if (!container) return;
+                
+                const buttons = [];
+                
+                // All users can view team
+                buttons.push(`
+                    <button class="action-btn" onclick="workspace.viewTeam()">
+                        <i class="fas fa-users"></i> Team
+                    </button>
+                `);
+                
+                // Lead can edit project
+                if (this.userRole === 'lead') {
+                    buttons.push(`
+                        <button class="action-btn" onclick="workspace.editProject()">
+                            <i class="fas fa-edit"></i> Edit Project
+                        </button>
+                    `);
+                    
+                    buttons.push(`
+                        <button class="action-btn" onclick="workspace.inviteMembers()">
+                            <i class="fas fa-user-plus"></i> Invite
+                        </button>
+                    `);
+                }
+                
+                // Clinical contributors can start clinical discussions
+                if (this.userRole === 'clinician' || this.userRole === 'lead') {
+                    buttons.push(`
+                        <button class="action-btn evidence" onclick="workspace.startClinicalDiscussion()">
+                            <i class="fas fa-stethoscope"></i> Clinical Question
+                        </button>
+                    `);
+                }
+                
+                // Industry contributors can propose solutions
+                if (this.userRole === 'industry' || this.userRole === 'lead') {
+                    buttons.push(`
+                        <button class="action-btn solution" onclick="workspace.proposeSolution()">
+                            <i class="fas fa-cogs"></i> Propose Solution
+                        </button>
+                    `);
+                }
+                
+                container.innerHTML = buttons.join('');
+            }
+            
+            async loadDiscussions() {
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/discussions`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.renderDiscussions(data.discussions);
+                    }
+                } catch (error) {
+                    console.error('Failed to load discussions:', error);
+                }
+            }
+            
+            renderDiscussions(discussions) {
+                const container = document.getElementById('discussionList');
+                if (!container) return;
+                
+                if (!discussions || discussions.length === 0) {
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
-                            <i class="fas fa-project-diagram" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                            <p>No projects yet. Start by creating your first innovation project.</p>
+                        <div style="text-align: center; padding: 3rem; color: var(--ui-medium);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">💬</div>
+                            <p style="margin-bottom: 1rem;">No discussions yet</p>
+                            <p style="font-size: 0.875rem; margin-bottom: 1.5rem;">Start the first discussion to collaborate with the team</p>
+                            <button class="action-btn" onclick="workspace.startNewDiscussion()" style="padding: 0.75rem 1.5rem; font-weight: 600;">
+                                <i class="fas fa-plus"></i> Start Discussion
+                            </button>
                         </div>
                     `;
                     return;
                 }
                 
-                container.innerHTML = this.projects.map(project => `
-                    <div class="project-item" onclick="window.viewProject('${project.id}')">
-                        <div class="project-header">
-                            <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
-                            <span class="project-type type-${project.type || 'clinical'}">
-                                ${this.getTypeLabel(project.type)}
-                            </span>
+                container.innerHTML = discussions.map(discussion => `
+                    <div class="discussion-thread" data-type="${discussion.type}">
+                        <div class="thread-header">
+                            <div class="thread-author">
+                                <div class="author-avatar avatar-${discussion.author.role}">
+                                    ${this.getInitials(discussion.author.name)}
+                                </div>
+                                <div class="author-info">
+                                    <div class="author-name">${this.escapeHtml(discussion.author.name)}</div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;">
+                                        <span style="color: var(--ui-light);">
+                                            ${this.formatTimeAgo(discussion.createdAt)}
+                                        </span>
+                                        ${this.getOrganizationBadge(discussion.author.organization)}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="thread-type type-${discussion.type}">
+                                ${this.getDiscussionTypeLabel(discussion.type)}
+                                ${discussion.evidenceCount > 0 ? 
+                                    `<span class="evidence-badge">
+                                        <i class="fas fa-file-alt"></i> ${discussion.evidenceCount}
+                                    </span>` : ''
+                                }
+                            </div>
                         </div>
                         
-                        <p class="project-description">${this.escapeHtml(project.description)}</p>
+                        <div class="thread-content">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--ui-dark);">
+                                ${this.escapeHtml(discussion.title)}
+                            </h4>
+                            <p>${this.escapeHtml(discussion.content)}</p>
+                        </div>
                         
-                        <div class="project-meta">
-                            <span><i class="far fa-calendar"></i> ${this.formatDate(project.created_at)}</span>
-                            <span><i class="fas fa-chart-line"></i> ${project.pulse_score || 50}% Pulse</span>
+                        <div class="thread-actions">
+                            <button class="action-btn" onclick="workspace.replyToDiscussion('${discussion.id}')">
+                                <i class="fas fa-reply"></i> Reply
+                            </button>
+                            
+                            ${this.userRole === 'clinician' || this.userRole === 'lead' ? `
+                                <button class="action-btn evidence" onclick="workspace.addEvidence('${discussion.id}')">
+                                    <i class="fas fa-file-medical"></i> Add Evidence
+                                </button>
+                            ` : ''}
+                            
+                            ${this.userRole === 'industry' || this.userRole === 'lead' ? `
+                                <button class="action-btn solution" onclick="workspace.proposeTechnical('${discussion.id}')">
+                                    <i class="fas fa-lightbulb"></i> Propose Technical
+                                </button>
+                            ` : ''}
+                            
+                            <button class="action-btn clarification" onclick="workspace.requestClarification('${discussion.id}')">
+                                <i class="fas fa-question-circle"></i> Clarify
+                            </button>
+                            
+                            <div style="flex: 1; text-align: right; font-size: 0.875rem; color: var(--ui-light);">
+                                ${discussion.commentCount || 0} comments
+                            </div>
                         </div>
                     </div>
                 `).join('');
             }
             
-            // ===== WEB SOCKET =====
-            connectWebSocket() {
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}`;
-                
-                this.ws = new WebSocket(wsUrl);
-                
-                this.ws.onopen = () => {
-                    console.log('🔗 WebSocket connected');
-                    this.ws.send(JSON.stringify({
-                        type: 'authenticate',
-                        userId: this.user.id,
-                        userData: this.user
-                    }));
-                };
-                
-                this.ws.onmessage = (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        this.handleWebSocketMessage(data);
-                    } catch (error) {
-                        console.error('WebSocket message error:', error);
+            async loadDecisions() {
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/decisions`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.renderDecisions(data.decisions);
                     }
-                };
-                
-                this.ws.onclose = () => {
-                    console.log('🔌 WebSocket disconnected');
-                    setTimeout(() => this.connectWebSocket(), 5000);
-                };
-            }
-            
-            handleWebSocketMessage(data) {
-                switch (data.type) {
-                    case 'project_created':
-                        this.projects.unshift(data.project);
-                        this.renderProjects();
-                        this.updatePlatformStats();
-                        this.showToast(`New project: ${data.project.title}`, 'info');
-                        break;
-                        
-                    case 'platform_stats':
-                        document.getElementById('activeProjects').textContent = data.active_projects || 0;
-                        document.getElementById('onlineUsers').textContent = data.online_users || 1;
-                        break;
+                } catch (error) {
+                    console.error('Failed to load decisions:', error);
                 }
             }
             
-            // ===== UI UTILITIES =====
-            updatePlatformStats() {
-                document.getElementById('activeProjects').textContent = this.projects.length;
-            }
-            
-            showToast(message, type = 'info') {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.style.borderLeftColor = {
-                    success: 'var(--accent-green)',
-                    error: 'var(--accent-red)',
-                    warning: 'var(--accent-amber)',
-                    info: 'var(--primary-teal)'
-                }[type] || 'var(--primary-teal)';
+            renderDecisions(decisions) {
+                const container = document.getElementById('decisionsGrid');
+                if (!container) return;
                 
-                const icon = {
-                    success: '✅',
-                    error: '❌',
-                    warning: '⚠️',
-                    info: 'ℹ️'
-                }[type] || 'ℹ️';
-                
-                toast.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span>${icon}</span>
-                        <span>${message}</span>
-                    </div>
-                `;
-                
-                container.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(100%)';
-                    setTimeout(() => toast.remove(), 300);
-                }, 5000);
-            }
-            
-            openModal() {
-                document.getElementById('createModal').classList.add('active');
-            }
-            
-            closeModal() {
-                document.getElementById('createModal').classList.remove('active');
-                document.getElementById('projectForm').reset();
-            }
-            
-            // ===== EVENT LISTENERS =====
-            setupEventListeners() {
-                document.getElementById('projectForm').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const title = document.getElementById('projectTitle').value.trim();
-                    const description = document.getElementById('projectDescription').value.trim();
-                    const type = document.getElementById('projectType').value;
-                    
-                    if (!title || !description || !type) {
-                        this.showToast('Please fill in all fields', 'warning');
-                        return;
-                    }
-                    
-                    const submitBtn = e.target.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
-                    submitBtn.disabled = true;
-                    
-                    try {
-                        await this.createProject({ title, description, type });
-                    } finally {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                });
-                
-                document.getElementById('openCreateModal').addEventListener('click', () => this.openModal());
-                
-                document.getElementById('searchInput').addEventListener('input', (e) => {
-                    this.searchProjects(e.target.value);
-                });
-                
-                document.addEventListener('keydown', (e) => {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                        e.preventDefault();
-                        this.openModal();
-                    }
-                    if (e.key === 'Escape') this.closeModal();
-                });
-            }
-            
-            // ===== UTILITY FUNCTIONS =====
-            searchProjects(query) {
-                if (!query.trim()) {
-                    this.renderProjects();
-                    return;
-                }
-                
-                const filtered = this.projects.filter(project =>
-                    project.title.toLowerCase().includes(query.toLowerCase()) ||
-                    project.description.toLowerCase().includes(query.toLowerCase())
-                );
-                
-                const container = document.getElementById('projectsList');
-                
-                if (filtered.length === 0) {
+                if (!decisions || decisions.length === 0) {
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
-                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                            <p>No projects found matching "${this.escapeHtml(query)}"</p>
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--ui-medium);">
+                            <p>No formal decisions yet</p>
                         </div>
                     `;
                     return;
                 }
                 
-                const tempProjects = this.projects;
-                this.projects = filtered;
-                this.renderProjects();
-                this.projects = tempProjects;
+                container.innerHTML = decisions.map(decision => `
+                    <div class="decision-card">
+                        <div class="decision-status status-${decision.status}">
+                            <i class="fas ${this.getDecisionStatusIcon(decision.status)}"></i>
+                            ${decision.status.charAt(0).toUpperCase() + decision.status.slice(1)}
+                        </div>
+                        
+                        <h3 class="decision-title">${this.escapeHtml(decision.title)}</h3>
+                        <p style="font-size: 0.875rem; color: var(--ui-medium); margin-bottom: 1rem;">
+                            ${this.escapeHtml(decision.description.substring(0, 100))}...
+                        </p>
+                        
+                        <div class="decision-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${decision.progress || 0}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="decision-meta">
+                            <span>${decision.voteCount || 0} votes</span>
+                            <span>${this.formatTimeAgo(decision.updatedAt)}</span>
+                        </div>
+                    </div>
+                `).join('');
             }
             
-            getTypeLabel(type) {
-                const labels = {
-                    clinical: 'Clinical Led',
-                    industry: 'Industry Led',
-                    collaborative: 'Collaborative'
-                };
-                return labels[type] || 'Clinical Led';
+            async loadKnowledgeExchange() {
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/knowledge`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.renderKnowledgeExchange(data);
+                    }
+                } catch (error) {
+                    console.error('Failed to load knowledge exchange:', error);
+                }
             }
             
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            renderKnowledgeExchange(data) {
+                // Update stats
+                document.getElementById('insightsShared').textContent = data.totalInsights || 0;
+                document.getElementById('clinicalInsights').textContent = data.clinicalInsights || 0;
+                document.getElementById('technicalSolutions').textContent = data.technicalSolutions || 0;
+                document.getElementById('evidenceLinks').textContent = data.evidenceLinks || 0;
                 
-                if (diffDays === 0) return 'Today';
-                if (diffDays === 1) return 'Yesterday';
-                if (diffDays < 7) return `${diffDays} days ago`;
-                if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-                return date.toLocaleDateString();
+                // Render recent items
+                const container = document.getElementById('knowledgeItems');
+                if (!container || !data.recentItems) return;
+                
+                container.innerHTML = data.recentItems.map(item => `
+                    <div class="knowledge-item">
+                        <div class="item-source ${item.source === 'clinical' ? 'source-clinical' : 'source-industry'}">
+                            <i class="fas ${item.source === 'clinical' ? 'fa-stethoscope' : 'fa-cogs'}"></i>
+                            ${item.source === 'clinical' ? 'Clinical Insight' : 'Technical Solution'}
+                        </div>
+                        <div style="color: var(--ui-dark); margin-bottom: 0.5rem;">
+                            ${this.escapeHtml(item.content)}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--ui-light);">
+                            By ${this.escapeHtml(item.author)} • ${this.formatTimeAgo(item.createdAt)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            setupEventListeners() {
+                // Discussion filters
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        
+                        const filter = e.target.dataset.filter;
+                        this.filterDiscussions(filter);
+                    });
+                });
+                
+                // New discussion button
+                document.getElementById('newDiscussionBtn').addEventListener('click', () => {
+                    this.startNewDiscussion();
+                });
+            }
+            
+            setupSocket() {
+                // Initialize real-time socket connection
+                this.socket = io();
+                
+                this.socket.on('connect', () => {
+                    this.socket.emit('join:project', this.projectId);
+                });
+                
+                // Listen for new discussions
+                this.socket.on('discussion:created', (discussion) => {
+                    this.addDiscussionToView(discussion);
+                });
+                
+                // Listen for new comments
+                this.socket.on('comment:created', (comment) => {
+                    this.addCommentToView(comment);
+                });
+                
+                // Listen for decision updates
+                this.socket.on('decision:updated', (decision) => {
+                    this.updateDecisionView(decision);
+                });
+            }
+            
+            // ===== UTILITY METHODS =====
+            getInitials(name) {
+                if (!name) return '??';
+                return name.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+            }
+            
+            getOrganizationBadge(org) {
+                if (!org) return '';
+                
+                let orgType = 'hospital';
+                let orgName = org;
+                
+                // Simple type detection (in real app, this would come from backend)
+                if (org.toLowerCase().includes('pharma') || 
+                    org.toLowerCase().includes('inc') || 
+                    org.toLowerCase().includes('corp')) {
+                    orgType = 'pharma';
+                } else if (org.toLowerCase().includes('university') || 
+                          org.toLowerCase().includes('college') ||
+                          org.toLowerCase().includes('institute')) {
+                    orgType = 'academic';
+                } else if (org.toLowerCase().includes('startup') || 
+                          org.toLowerCase().includes('tech') ||
+                          org.toLowerCase().includes('digital')) {
+                    orgType = 'startup';
+                }
+                
+                return `<span class="org-badge org-${orgType}">${orgName}</span>`;
+            }
+            
+            getDiscussionTypeLabel(type) {
+                const labels = {
+                    clinical: 'Clinical Question ⚕️',
+                    technical: 'Technical Solution 🏭',
+                    joint: 'Joint Discussion ↔',
+                    evidence: 'Evidence Review 📄'
+                };
+                return labels[type] || 'Discussion';
+            }
+            
+            getDecisionStatusIcon(status) {
+                const icons = {
+                    open: 'fa-question-circle',
+                    review: 'fa-eye',
+                    decided: 'fa-check-circle'
+                };
+                return icons[status] || 'fa-question-circle';
+            }
+            
+            formatTimeAgo(timestamp) {
+                try {
+                    const date = new Date(timestamp);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+                    
+                    if (diffMins < 60) return `${diffMins}m ago`;
+                    if (diffHours < 24) return `${diffHours}h ago`;
+                    if (diffDays < 7) return `${diffDays}d ago`;
+                    return date.toLocaleDateString();
+                } catch {
+                    return 'Recently';
+                }
             }
             
             escapeHtml(text) {
@@ -868,37 +1513,72 @@
                 div.textContent = text;
                 return div.innerHTML;
             }
+            
+            // ===== ACTION METHODS (stubs for now) =====
+            viewTeam() {
+                alert('Team view would open here');
+            }
+            
+            editProject() {
+                alert('Edit project modal would open here');
+            }
+            
+            inviteMembers() {
+                alert('Invite members modal would open here');
+            }
+            
+            startClinicalDiscussion() {
+                alert('Start clinical discussion modal would open here');
+            }
+            
+            proposeSolution() {
+                alert('Propose solution modal would open here');
+            }
+            
+            startNewDiscussion() {
+                alert('New discussion modal would open here');
+            }
+            
+            filterDiscussions(filter) {
+                const discussions = document.querySelectorAll('.discussion-thread');
+                discussions.forEach(thread => {
+                    if (filter === 'all' || thread.dataset.type === filter) {
+                        thread.style.display = 'block';
+                    } else {
+                        thread.style.display = 'none';
+                    }
+                });
+            }
+            
+            addDiscussionToView(discussion) {
+                // Add new discussion to the top of the list
+                const container = document.getElementById('discussionList');
+                if (container && !container.innerHTML.includes(discussion.id)) {
+                    // Implementation would add the new discussion
+                }
+            }
+            
+            // Additional action stubs
+            replyToDiscussion(discussionId) {
+                alert(`Reply to discussion ${discussionId}`);
+            }
+            
+            addEvidence(discussionId) {
+                alert(`Add evidence to discussion ${discussionId}`);
+            }
+            
+            proposeTechnical(discussionId) {
+                alert(`Propose technical solution to discussion ${discussionId}`);
+            }
+            
+            requestClarification(discussionId) {
+                alert(`Request clarification for discussion ${discussionId}`);
+            }
         }
         
-        // ===== GLOBAL FUNCTIONS =====
-        function viewProject(projectId) {
-            window.location.href = `/project.html?id=${projectId}`;
-        }
-        
-        function refreshProjects() {
-            window.platform.loadProjects();
-            window.platform.showToast('Projects refreshed', 'success');
-        }
-        
-        function exportData() {
-            const data = JSON.stringify(window.platform.projects, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `thoraxlab-projects-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            window.platform.showToast('Data exported', 'success');
-        }
-        
-        function closeModal() {
-            window.platform.closeModal();
-        }
-        
-        // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', () => {
-            window.platform = new ThoraxLabPlatform();
+        // Initialize the workspace
+        window.addEventListener('DOMContentLoaded', () => {
+            window.workspace = new ThoraxLabProjectWorkspace();
         });
     </script>
 </body>
