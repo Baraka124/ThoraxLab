@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThoraxLab | Clinical-Industry Innovation Platform</title>
+    <title>ThoraxLab | Innovation Platform</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ===== PROFESSIONAL DESIGN SYSTEM ===== */
+        /* ===== ALL CSS ===== */
         :root {
             --primary-blue: #0A4D68;
             --primary-teal: #088F8F;
@@ -404,24 +404,6 @@
             color: var(--white);
         }
         
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .search-container {
-                max-width: 100%;
-            }
-        }
-        
         /* ===== TOAST ===== */
         .toast-container {
             position: fixed;
@@ -443,6 +425,24 @@
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-container {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -559,7 +559,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ===== PLATFORM CORE =====
+        // ===== ALL JAVASCRIPT =====
         class ThoraxLabPlatform {
             constructor() {
                 this.projects = [];
@@ -570,7 +570,7 @@
             
             async init() {
                 console.log('🚀 ThoraxLab Platform Initializing...');
-                this.loadProjects();
+                await this.loadProjects();
                 this.setupEventListeners();
                 this.connectWebSocket();
                 this.updatePlatformStats();
@@ -597,8 +597,6 @@
                 } catch (error) {
                     console.error('Error loading projects:', error);
                     this.showToast('Failed to load projects', 'error');
-                    
-                    // Fallback to empty state
                     this.projects = [];
                     this.renderProjects();
                 }
@@ -606,7 +604,7 @@
             
             async createProject(projectData) {
                 try {
-                    projectData.createdBy = this.user.id;
+                    console.log('Creating project:', projectData);
                     
                     const response = await fetch('/api/projects', {
                         method: 'POST',
@@ -614,11 +612,20 @@
                         body: JSON.stringify(projectData)
                     });
                     
-                    if (!response.ok) throw new Error('Failed to create project');
+                    const responseText = await response.text();
+                    console.log('Response:', response.status, responseText);
                     
-                    const project = await response.json();
+                    if (!response.ok) {
+                        let errorData;
+                        try {
+                            errorData = JSON.parse(responseText);
+                        } catch {
+                            errorData = { error: responseText };
+                        }
+                        throw new Error(errorData.error || 'Failed to create project');
+                    }
                     
-                    // Add to local state
+                    const project = JSON.parse(responseText);
                     this.projects.unshift(project);
                     this.renderProjects();
                     this.updatePlatformStats();
@@ -630,7 +637,7 @@
                     
                 } catch (error) {
                     console.error('Error creating project:', error);
-                    this.showToast('Failed to create project', 'error');
+                    this.showToast(`Failed: ${error.message}`, 'error');
                     throw error;
                 }
             }
@@ -694,7 +701,6 @@
                 
                 this.ws.onclose = () => {
                     console.log('🔌 WebSocket disconnected');
-                    // Attempt to reconnect after 5 seconds
                     setTimeout(() => this.connectWebSocket(), 5000);
                 };
             }
@@ -706,14 +712,6 @@
                         this.renderProjects();
                         this.updatePlatformStats();
                         this.showToast(`New project: ${data.project.title}`, 'info');
-                        break;
-                        
-                    case 'project_updated':
-                        const index = this.projects.findIndex(p => p.id === data.project.id);
-                        if (index > -1) {
-                            this.projects[index] = data.project;
-                            this.renderProjects();
-                        }
                         break;
                         
                     case 'platform_stats':
@@ -731,7 +729,7 @@
             showToast(message, type = 'info') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
+                toast.className = 'toast';
                 toast.style.borderLeftColor = {
                     success: 'var(--accent-green)',
                     error: 'var(--accent-red)',
@@ -773,7 +771,6 @@
             
             // ===== EVENT LISTENERS =====
             setupEventListeners() {
-                // Create project form
                 document.getElementById('projectForm').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     
@@ -799,24 +796,18 @@
                     }
                 });
                 
-                // Open modal button
                 document.getElementById('openCreateModal').addEventListener('click', () => this.openModal());
                 
-                // Search input
                 document.getElementById('searchInput').addEventListener('input', (e) => {
                     this.searchProjects(e.target.value);
                 });
                 
-                // Keyboard shortcuts
                 document.addEventListener('keydown', (e) => {
                     if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                         e.preventDefault();
                         this.openModal();
                     }
-                    
-                    if (e.key === 'Escape') {
-                        this.closeModal();
-                    }
+                    if (e.key === 'Escape') this.closeModal();
                 });
             }
             
@@ -898,8 +889,7 @@
             a.download = `thoraxlab-projects-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             URL.revokeObjectURL(url);
-            
-            window.platform.showToast('Data exported successfully', 'success');
+            window.platform.showToast('Data exported', 'success');
         }
         
         function closeModal() {
