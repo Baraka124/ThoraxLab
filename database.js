@@ -12,27 +12,28 @@ class ThoraxLabDatabase {
         const dataDir = path.join(__dirname, 'data');
         if (!fs.existsSync(dataDir)) {
             fs.mkdirSync(dataDir, { recursive: true });
+            console.log('📁 Created data directory:', dataDir);
         }
         
         this.DB_PATH = path.join(dataDir, 'thoraxlab.db');
+        console.log('📁 Database path:', this.DB_PATH);
         this.connected = false;
     }
 
     async connect() {
         if (this.connected) return this.db;
         
-        console.log('Connecting to database...');
+        console.log('🔌 Connecting to database...');
         
         try {
             this.db = await open({
                 filename: this.DB_PATH,
-                driver: sqlite3.Database,
-                mode: sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE
+                driver: sqlite3.Database
             });
             
             await this.initialize();
             this.connected = true;
-            console.log('✅ Database connected');
+            console.log('✅ Database connected successfully');
             
             return this.db;
         } catch (error) {
@@ -41,32 +42,43 @@ class ThoraxLabDatabase {
         }
     }
 
+    async getDB() {
+        if (!this.db) {
+            await this.connect();
+        }
+        return this.db;
+    }
+
     async initialize() {
-        await this.db.exec('PRAGMA journal_mode = WAL');
-        await this.db.exec('PRAGMA foreign_keys = ON');
+        const db = await this.getDB();
+        
+        // Enable WAL mode for better concurrency
+        await db.exec('PRAGMA journal_mode = WAL');
+        await db.exec('PRAGMA foreign_keys = ON');
+        await db.exec('PRAGMA busy_timeout = 5000');
         
         // Users table
-        await this.db.exec(`
+        await db.exec(`
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
                 email TEXT UNIQUE NOT NULL,
                 name TEXT NOT NULL,
-                role TEXT CHECK(role IN ('clinician', 'industry', 'public', 'admin')) DEFAULT 'clinician',
+                role TEXT NOT NULL DEFAULT 'clinician',
                 avatar_color TEXT DEFAULT '#0A4D68',
                 status TEXT DEFAULT 'offline',
                 last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
+            )
         `);
 
         // Projects table
-        await this.db.exec(`
+        await db.exec(`
             CREATE TABLE IF NOT EXISTS projects (
                 id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
                 description TEXT NOT NULL,
-                type TEXT CHECK(type IN ('clinical', 'industry', 'collaborative')) DEFAULT 'clinical',
-                status TEXT DEFAULT 'active',
+                type TEXT NOT NULL DEFAULT 'clinical',
+                status TEXT NOT NULL DEFAULT 'active',
                 created_by TEXT NOT NULL,
                 pulse_score INTEGER DEFAULT 75,
                 total_interactions INTEGER DEFAULT 0,
@@ -76,11 +88,11 @@ class ThoraxLabDatabase {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 last_activity_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (created_by) REFERENCES users(id)
-            );
+            )
         `);
 
         // Project members
-        await this.db.exec(`
+        await db.exec(`
             CREATE TABLE IF NOT EXISTS project_members (
                 project_id TEXT NOT NULL,
                 user_id TEXT NOT NULL,
@@ -89,11 +101,11 @@ class ThoraxLabDatabase {
                 PRIMARY KEY (project_id, user_id),
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            );
+            )
         `);
 
         // Comments
-        await this.db.exec(`
+        await db.exec(`
             CREATE TABLE IF NOT EXISTS comments (
                 id TEXT PRIMARY KEY,
                 project_id TEXT NOT NULL,
@@ -102,11 +114,11 @@ class ThoraxLabDatabase {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
                 FOREIGN KEY (user_id) REFERENCES users(id)
-            );
+            )
         `);
 
         // Timeline events
-        await this.db.exec(`
+        await db.exec(`
             CREATE TABLE IF NOT EXISTS timeline_events (
                 id TEXT PRIMARY KEY,
                 project_id TEXT NOT NULL,
@@ -116,39 +128,11 @@ class ThoraxLabDatabase {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
                 FOREIGN KEY (user_id) REFERENCES users(id)
-            );
+            )
         `);
-
-        // Interactions
-        await this.db.exec(`
-            CREATE TABLE IF NOT EXISTS interactions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                project_id TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                action TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id)
-            );
-        `);
-
-        // Create default admin user if needed
-        const adminExists = await this.db.get(
-            "SELECT id FROM users WHERE email = 'admin@thoraxlab.local'"
-        );
-        
-        if (!adminExists) {
-            const adminId = uuidv4();
-            await this.db.run(
-                `INSERT INTO users (id, email, name, role, avatar_color, status) 
-                 VALUES (?, ?, ?, ?, ?, ?)`,
-                [adminId, 'admin@thoraxlab.local', 'ThoraxLab Admin', 'admin', '#0A4D68', 'online']
-            );
-        }
 
         // Create indexes
-        await this.db.exec(`
-            CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+        await db.exec(`
             CREATE INDEX IF NOT EXISTS idx_projects_created ON projects(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_comments_project ON comments(project_id, created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_timeline_project ON timeline_events(project_id, created_at DESC);
@@ -161,69 +145,114 @@ class ThoraxLabDatabase {
     
     async checkConnection() {
         try {
-            if (!this.db) await this.connect();
-            await this.db.get('SELECT 1');
+            const db = await this.getDB();
+            await db.get('SELECT 1');
             return true;
         } catch (error) {
             return false;
         }
     }
 
-    async getPlatformStatus() {
+    async getPlatformStats() {
         try {
-            const stats = await this.db.get(`
+            const db = await this.getDB();
+            
+            const projectStats = await db.get(`
                 SELECT 
-                    COUNT(DISTINCT id) as active_projects,
-                    COUNT(DISTINCT created_by) as active_users,
-                    COALESCE(SUM(total_interactions), 0) as total_interactions
+                    COUNT(*) as total_projects,
+                    COALESCE(SUM(total_comments), 0) as total_comments,
+                    COALESCE(AVG(pulse_score), 75) as avg_pulse
                 FROM projects 
                 WHERE status = 'active'
             `);
 
+            const userStats = await db.get(`
+                SELECT COUNT(*) as total_users FROM users
+            `);
+
             return {
                 health_score: 100,
-                active_projects: stats?.active_projects || 0,
-                online_users: 1, // Default for now
-                total_interactions: stats?.total_interactions || 0,
+                active_projects: projectStats?.total_projects || 0,
+                online_users: 1,
+                total_interactions: 0,
+                total_comments: projectStats?.total_comments || 0,
+                avg_pulse_score: Math.round(projectStats?.avg_pulse || 75),
+                total_users: userStats?.total_users || 1,
                 updated_at: new Date().toISOString(),
                 status: 'excellent'
             };
         } catch (error) {
-            console.error('Platform status error:', error);
-            return this.getDefaultMetrics();
+            console.error('Platform stats error:', error);
+            return {
+                health_score: 100,
+                active_projects: 0,
+                online_users: 1,
+                total_interactions: 0,
+                total_comments: 0,
+                avg_pulse_score: 75,
+                total_users: 1,
+                updated_at: new Date().toISOString(),
+                status: 'excellent'
+            };
         }
     }
 
-    getDefaultMetrics() {
-        return {
-            health_score: 100,
-            active_projects: 0,
-            online_users: 1,
-            total_interactions: 0,
-            updated_at: new Date().toISOString(),
-            status: 'excellent'
-        };
+    // ===== USER METHODS =====
+    
+    async ensureUserExists(userId, name, role, email) {
+        const db = await this.getDB();
+        
+        try {
+            const existing = await db.get('SELECT id FROM users WHERE id = ?', [userId]);
+            
+            if (!existing) {
+                const avatarColors = ['#0A4D68', '#088F8F', '#05BFDB', '#8E44AD'];
+                const randomColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+                
+                await db.run(
+                    `INSERT INTO users (id, email, name, role, avatar_color, status) 
+                     VALUES (?, ?, ?, ?, ?, 'online')`,
+                    [userId, email, name, role, randomColor]
+                );
+                console.log(`✅ Created user: ${name} (${userId})`);
+            }
+            
+            return userId;
+        } catch (error) {
+            console.error('Ensure user exists error:', error);
+            throw error;
+        }
     }
 
-    async updatePlatformMetrics() {
-        // Update any platform metrics if needed
-        console.log('📊 Platform metrics updated');
+    async getUser(userId) {
+        const db = await this.getDB();
+        
+        try {
+            const user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
+            return user || null;
+        } catch (error) {
+            console.error('Get user error:', error);
+            return null;
+        }
     }
 
     // ===== PROJECT METHODS =====
     
-    async getAllProjects(status = 'active', limit = 50, offset = 0) {
-        const db = await this.connect();
+    async getAllProjects() {
+        const db = await this.getDB();
         
         try {
             const projects = await db.all(`
-                SELECT p.*, u.name as creator_name, u.avatar_color as creator_color
+                SELECT 
+                    p.*,
+                    u.name as creator_name,
+                    u.avatar_color as creator_color
                 FROM projects p
                 LEFT JOIN users u ON p.created_by = u.id
-                WHERE p.status = ?
+                WHERE p.status = 'active'
                 ORDER BY p.last_activity_at DESC
-                LIMIT ? OFFSET ?
-            `, [status, parseInt(limit), parseInt(offset)]);
+                LIMIT 100
+            `);
             
             return projects || [];
         } catch (error) {
@@ -233,7 +262,7 @@ class ThoraxLabDatabase {
     }
 
     async getProject(projectId) {
-        const db = await this.connect();
+        const db = await this.getDB();
         
         try {
             const project = await db.get(`
@@ -256,11 +285,17 @@ class ThoraxLabDatabase {
     }
 
     async createProject(data) {
-        const db = await this.connect();
+        const db = await this.getDB();
         const projectId = `proj_${uuidv4()}`;
         const now = new Date().toISOString();
         
+        console.log('Creating project in database:', { projectId, data });
+        
         try {
+            // Start transaction
+            await db.run('BEGIN TRANSACTION');
+            
+            // Insert project
             await db.run(
                 `INSERT INTO projects (
                     id, title, description, type, created_by, 
@@ -275,69 +310,44 @@ class ThoraxLabDatabase {
                 [projectId, data.createdBy, 'owner']
             );
             
+            // Commit transaction
+            await db.run('COMMIT');
+            
+            console.log('✅ Project created successfully:', projectId);
+            
+            // Return the created project
             const project = await this.getProject(projectId);
             return project;
             
         } catch (error) {
-            console.error('Create project error:', error);
+            await db.run('ROLLBACK');
+            console.error('❌ Create project error:', error);
+            console.error('Error stack:', error.stack);
             throw error;
         }
     }
 
-    async updateProject(projectId, updates) {
-        const db = await this.connect();
-        const allowedFields = ['title', 'description', 'type', 'status', 'pulse_score'];
-        const updateFields = [];
-        const updateValues = [];
-        
-        Object.keys(updates).forEach(key => {
-            if (allowedFields.includes(key)) {
-                updateFields.push(`${key} = ?`);
-                updateValues.push(updates[key]);
-            }
-        });
-        
-        if (updateFields.length === 0) {
-            throw new Error('No valid fields to update');
-        }
-        
-        updateFields.push('updated_at = CURRENT_TIMESTAMP');
-        updateValues.push(projectId);
-        
-        await db.run(
-            `UPDATE projects SET ${updateFields.join(', ')} WHERE id = ?`,
-            updateValues
-        );
-        
-        return await this.getProject(projectId);
-    }
-
-    async isProjectMember(projectId, userId) {
-        const db = await this.connect();
+    async incrementProjectCounter(projectId, field) {
+        const db = await this.getDB();
         
         try {
-            const member = await db.get(
-                'SELECT * FROM project_members WHERE project_id = ? AND user_id = ?',
-                [projectId, userId]
+            await db.run(
+                `UPDATE projects SET ${field} = ${field} + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+                [projectId]
             );
-            
-            return !!member;
+            return true;
         } catch (error) {
-            console.error('Check project member error:', error);
+            console.error('Increment project counter error:', error);
             return false;
         }
     }
 
     // ===== COMMENT METHODS =====
     
-    async getProjectComments(projectId, limit = 100, offset = 0, parentId = null, userId = '') {
-        const db = await this.connect();
+    async getProjectComments(projectId) {
+        const db = await this.getDB();
         
         try {
-            const whereClause = parentId ? 'c.project_id = ? AND c.parent_id = ?' : 'c.project_id = ? AND c.parent_id IS NULL';
-            const params = parentId ? [projectId, parentId, parseInt(limit), parseInt(offset)] 
-                                  : [projectId, parseInt(limit), parseInt(offset)];
-            
             const comments = await db.all(`
                 SELECT 
                     c.*,
@@ -346,10 +356,10 @@ class ThoraxLabDatabase {
                     u.avatar_color
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
-                WHERE ${whereClause}
+                WHERE c.project_id = ?
                 ORDER BY c.created_at DESC
-                LIMIT ? OFFSET ?
-            `, params);
+                LIMIT 100
+            `, [projectId]);
             
             return comments || [];
         } catch (error) {
@@ -359,7 +369,7 @@ class ThoraxLabDatabase {
     }
 
     async createComment(data) {
-        const db = await this.connect();
+        const db = await this.getDB();
         const commentId = `comment_${uuidv4()}`;
         const now = new Date().toISOString();
         
@@ -371,7 +381,10 @@ class ThoraxLabDatabase {
             );
             
             // Get user info for response
-            const user = await db.get('SELECT name, role, avatar_color FROM users WHERE id = ?', [data.userId]);
+            const user = await db.get(
+                'SELECT name, role, avatar_color FROM users WHERE id = ?', 
+                [data.userId]
+            );
             
             return {
                 id: commentId,
@@ -393,7 +406,7 @@ class ThoraxLabDatabase {
     // ===== TEAM METHODS =====
     
     async getProjectTeam(projectId) {
-        const db = await this.connect();
+        const db = await this.getDB();
         
         try {
             const team = await db.all(`
@@ -417,40 +430,10 @@ class ThoraxLabDatabase {
         }
     }
 
-    async addProjectMember(projectId, userId, role = 'contributor') {
-        const db = await this.connect();
-        
-        try {
-            const existing = await db.get(
-                'SELECT * FROM project_members WHERE project_id = ? AND user_id = ?',
-                [projectId, userId]
-            );
-            
-            if (existing) {
-                throw new Error('Already a member');
-            }
-            
-            await db.run(
-                `INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)`,
-                [projectId, userId, role]
-            );
-            
-            await db.run(
-                `UPDATE projects SET total_members = total_members + 1 WHERE id = ?`,
-                [projectId]
-            );
-            
-            return true;
-        } catch (error) {
-            console.error('Add project member error:', error);
-            throw error;
-        }
-    }
-
     // ===== TIMELINE METHODS =====
     
-    async getProjectTimeline(projectId, limit = 50, offset = 0) {
-        const db = await this.connect();
+    async getProjectTimeline(projectId) {
+        const db = await this.getDB();
         
         try {
             const timeline = await db.all(`
@@ -462,8 +445,8 @@ class ThoraxLabDatabase {
                 LEFT JOIN users u ON te.user_id = u.id
                 WHERE te.project_id = ?
                 ORDER BY te.created_at DESC
-                LIMIT ? OFFSET ?
-            `, [projectId, parseInt(limit), parseInt(offset)]);
+                LIMIT 50
+            `, [projectId]);
             
             return timeline || [];
         } catch (error) {
@@ -473,7 +456,7 @@ class ThoraxLabDatabase {
     }
 
     async addTimelineEvent(projectId, eventType, description, userId = null) {
-        const db = await this.connect();
+        const db = await this.getDB();
         const eventId = uuidv4();
         
         try {
@@ -490,157 +473,8 @@ class ThoraxLabDatabase {
         }
     }
 
-    // ===== USER METHODS =====
+    // ===== CLEANUP =====
     
-    async createUser(email, name, role = 'clinician') {
-        const db = await this.connect();
-        const userId = `user_${uuidv4()}`;
-        const avatarColors = ['#0A4D68', '#088F8F', '#05BFDB', '#8E44AD'];
-        const randomColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
-        
-        try {
-            await db.run(
-                `INSERT INTO users (id, email, name, role, avatar_color, status) 
-                 VALUES (?, ?, ?, ?, ?, 'online')`,
-                [userId, email, name, role, randomColor]
-            );
-            
-            return await this.getUser(userId);
-        } catch (error) {
-            console.error('Create user error:', error);
-            throw error;
-        }
-    }
-
-    async getUser(userId) {
-        const db = await this.connect();
-        
-        try {
-            const user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
-            return user || null;
-        } catch (error) {
-            console.error('Get user error:', error);
-            return null;
-        }
-    }
-
-    async getUserByEmail(email) {
-        const db = await this.connect();
-        
-        try {
-            const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
-            return user || null;
-        } catch (error) {
-            console.error('Get user by email error:', error);
-            return null;
-        }
-    }
-
-    async getOnlineUsers() {
-        const db = await this.connect();
-        
-        try {
-            const users = await db.all(`
-                SELECT id, name, role, avatar_color, last_active
-                FROM users 
-                WHERE status = 'online'
-                ORDER BY last_active DESC
-                LIMIT 20
-            `);
-            
-            return users || [];
-        } catch (error) {
-            console.error('Get online users error:', error);
-            return [];
-        }
-    }
-
-    async updateUserStatus(userId, status) {
-        const db = await this.connect();
-        
-        try {
-            await db.run(
-                'UPDATE users SET status = ?, last_active = CURRENT_TIMESTAMP WHERE id = ?',
-                [status, userId]
-            );
-            return true;
-        } catch (error) {
-            console.error('Update user status error:', error);
-            return false;
-        }
-    }
-
-    // ===== INTERACTION METHODS =====
-    
-    async recordInteraction(projectId, userId, action, entityType = null, entityId = null) {
-        const db = await this.connect();
-        
-        try {
-            await db.run(
-                `INSERT INTO interactions (project_id, user_id, action) 
-                 VALUES (?, ?, ?)`,
-                [projectId, userId, action]
-            );
-            
-            await db.run(
-                `UPDATE projects 
-                 SET total_interactions = total_interactions + 1,
-                     last_activity_at = CURRENT_TIMESTAMP
-                 WHERE id = ?`,
-                [projectId]
-            );
-            
-            return true;
-        } catch (error) {
-            console.error('Record interaction error:', error);
-            return false;
-        }
-    }
-
-    async incrementProjectCounter(projectId, field) {
-        const db = await this.connect();
-        
-        try {
-            await db.run(
-                `UPDATE projects SET ${field} = ${field} + 1 WHERE id = ?`,
-                [projectId]
-            );
-            return true;
-        } catch (error) {
-            console.error('Increment project counter error:', error);
-            return false;
-        }
-    }
-
-    // ===== MAINTENANCE =====
-    
-    async performMaintenance() {
-        const db = await this.connect();
-        
-        try {
-            // Update user statuses
-            await db.run(`
-                UPDATE users SET status = 
-                    CASE 
-                        WHEN last_active > datetime('now', '-5 minutes') THEN 'online'
-                        WHEN last_active > datetime('now', '-30 minutes') THEN 'away'
-                        ELSE 'offline'
-                    END
-            `);
-            
-            // Clean up old interactions
-            await db.run(
-                `DELETE FROM interactions WHERE created_at < datetime('now', '-90 days')`
-            );
-            
-            console.log('✅ Database maintenance completed');
-            return true;
-        } catch (error) {
-            console.error('Maintenance error:', error);
-            return false;
-        }
-    }
-
     async close() {
         if (this.db) {
             await this.db.close();
