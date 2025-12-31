@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THØRAXLAB | Clinical-Industry Collaboration Platform</title>
+    <title>[THØRAX][LAB] | Clinical-Industry Collaboration Platform</title>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -70,6 +70,33 @@
             overflow-x: hidden;
         }
         
+        /* ===== IMPROVEMENT: ACCESSIBILITY FOCUS ===== */
+        :focus-visible {
+            outline: 3px solid var(--thorax-primary);
+            outline-offset: 2px;
+            outline-style: solid;
+        }
+        
+        button:focus:not(:focus-visible),
+        input:focus:not(:focus-visible),
+        select:focus:not(:focus-visible),
+        textarea:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        .btn:focus-visible,
+        .form-input:focus-visible {
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.3);
+        }
+        
+        /* ===== IMPROVEMENT: PERFORMANCE ===== */
+        .metrics-grid,
+        .projects-grid,
+        #activityList {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
         /* ===== TYPOGRAPHY ===== */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 600;
@@ -133,6 +160,13 @@
             }
         }
         
+        /* IMPROVEMENT: REDUCED MOTION SUPPORT */
+        @media (prefers-reduced-motion: reduce) {
+            .auth-card {
+                animation: none;
+            }
+        }
+        
         .auth-header {
             background: linear-gradient(135deg, var(--thorax-primary) 0%, var(--thorax-accent) 100%);
             color: white;
@@ -140,17 +174,35 @@
             text-align: center;
         }
         
+        /* ===== NEW LOGO: [THØRAX][LAB] ===== */
         .brand-logo {
             font-family: var(--font-display);
             font-size: 2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.02em;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
         }
         
-        .brand-logo .zero {
-            color: var(--thorax-accent);
+        .logo-bracket {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+        
+        .logo-main {
+            color: white;
             font-weight: 700;
+        }
+        
+        .logo-lab {
+            color: #E2E8F0;
+            font-weight: 500;
+            font-size: 0.9em;
+            margin-left: -0.05em;
         }
         
         .auth-body {
@@ -191,6 +243,21 @@
             box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
         }
         
+        /* IMPROVEMENT: FORM VALIDATION STYLES */
+        .form-input.error {
+            border-color: var(--thorax-error);
+            background: rgba(239, 68, 68, 0.05);
+        }
+        
+        .error-message {
+            color: var(--thorax-error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
         .form-select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
@@ -221,7 +288,7 @@
             color: white;
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: #14485E;
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
@@ -233,13 +300,109 @@
             border: 2px solid var(--ui-border);
         }
         
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background: var(--ui-card);
             border-color: var(--ui-light);
         }
         
         .btn-full {
             width: 100%;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        /* ===== IMPROVEMENT: TOAST NOTIFICATIONS ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+        
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: toastSlideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 100%;
+            transform: translateZ(0);
+        }
+        
+        .toast-success {
+            background: var(--thorax-success);
+            color: white;
+        }
+        
+        .toast-error {
+            background: var(--thorax-error);
+            color: white;
+        }
+        
+        .toast-info {
+            background: var(--thorax-primary);
+            color: white;
+        }
+        
+        .toast-warning {
+            background: var(--thorax-warning);
+            color: white;
+        }
+        
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes toastSlideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* ===== IMPROVEMENT: SKELETON LOADING ===== */
+        .skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--ui-border) 25%,
+                var(--ui-hover) 50%,
+                var(--ui-border) 75%
+            );
+            background-size: 200% 100%;
+            border-radius: var(--radius-md);
+        }
+        
+        @keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Apply skeleton animation only if user doesn't prefer reduced motion */
+        @media (prefers-reduced-motion: no-preference) {
+            .skeleton {
+                animation: skeletonLoading 1.5s ease-in-out infinite;
+            }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton {
+                background: var(--ui-border) !important;
+                animation: none !important;
+            }
+            
+            .toast {
+                animation: none !important;
+            }
         }
         
         /* ===== MAIN APP LAYOUT ===== */
@@ -266,21 +429,47 @@
             padding: 1rem 0;
         }
         
+        /* Dashboard Header Logo */
         .nav-brand {
             font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 600;
-            color: var(--thorax-primary);
+            color: var(--ui-dark);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0;
+            letter-spacing: -0.02em;
         }
         
         .user-menu {
             display: flex;
             align-items: center;
             gap: 1.5rem;
+        }
+        
+        /* IMPROVEMENT: SEARCH BAR (SUBTLY ADDED) */
+        .search-bar {
+            flex: 1;
+            max-width: 300px;
+            margin: 0 1.5rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            transition: var(--transition);
+            background: var(--ui-card);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--thorax-primary);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
         }
         
         .user-profile {
@@ -493,6 +682,7 @@
             color: var(--ui-medium);
             margin-bottom: 1.5rem;
             line-height: 1.5;
+            font-size: 0.9375rem;
         }
         
         .project-meta {
@@ -514,6 +704,29 @@
             display: flex;
             align-items: center;
             gap: 0.375rem;
+        }
+        
+        /* IMPROVEMENT: USER PRESENCE INDICATORS */
+        .presence-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid var(--ui-card);
+        }
+        
+        .presence-online {
+            background: var(--thorax-success);
+        }
+        
+        .presence-away {
+            background: var(--thorax-warning);
+        }
+        
+        .presence-offline {
+            background: var(--ui-light);
         }
         
         /* Bridge Preview */
@@ -572,6 +785,32 @@
             border-radius: 6px;
         }
         
+        /* IMPROVEMENT: ACTIVITY FILTER BAR (MINIMAL) */
+        .activity-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--ui-border);
+            background: var(--ui-bg);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            color: var(--ui-medium);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--thorax-primary);
+            color: white;
+            border-color: var(--thorax-primary);
+        }
+        
         /* Empty States */
         .empty-state {
             text-align: center;
@@ -622,6 +861,11 @@
             .projects-grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             }
+            
+            .search-bar {
+                max-width: 200px;
+                margin: 0 1rem;
+            }
         }
         
         @media (max-width: 768px) {
@@ -665,6 +909,21 @@
                     rgba(107, 91, 207, 0.2) 80%, 
                     transparent 100%);
             }
+            
+            .search-bar {
+                display: none; /* Hide search on mobile to reduce clutter */
+            }
+            
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .toast {
+                padding: 0.75rem 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -683,33 +942,132 @@
             .welcome-card {
                 padding: 2rem;
             }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-brand {
+                font-size: 1.25rem;
+            }
+        }
+        
+        /* IMPROVEMENT: MODAL STYLES */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal-content {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ui-dark);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--ui-light);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            background: var(--ui-hover);
+            color: var(--ui-dark);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
         }
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
     <!-- Authentication Screen -->
     <div id="authScreen" class="auth-screen">
         <div class="auth-card">
             <div class="auth-header">
-                <div class="brand-logo">TH<span class="zero">Ø</span>RAXLAB</div>
-                <p class="text-light">Clinical-Industry Collaboration Platform</p>
+                <!-- NEW LOGO: [THØRAX][LAB] -->
+                <div class="brand-logo">
+                    <span class="logo-bracket">[</span>
+                    <span class="logo-main">THØRAX</span>
+                    <span class="logo-bracket">][</span>
+                    <span class="logo-lab">LAB</span>
+                    <span class="logo-bracket">]</span>
+                </div>
+                <p class="text-light" style="opacity: 0.9;">Clinical-Industry Collaboration Platform</p>
             </div>
             
             <div class="auth-body">
                 <form id="authForm" class="auth-form">
                     <div class="form-group">
                         <label for="userName" class="form-label">Full Name</label>
-                        <input type="text" id="userName" class="form-input" placeholder="Dr. Alex Chen" required>
+                        <input type="text" id="userName" class="form-input" 
+                               placeholder="Dr. Alex Chen" required>
+                        <div id="nameError" class="error-message" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Name must be at least 2 characters</span>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="userEmail" class="form-label">Email Address</label>
-                        <input type="email" id="userEmail" class="form-input" placeholder="alex.chen@hospital.org" required>
+                        <input type="email" id="userEmail" class="form-input" 
+                               placeholder="alex.chen@hospital.org" required>
+                        <div id="emailError" class="error-message" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Please enter a valid email address</span>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="userOrganization" class="form-label">Organization</label>
-                        <input type="text" id="userOrganization" class="form-input" placeholder="Massachusetts General Hospital" required>
+                        <input type="text" id="userOrganization" class="form-input" 
+                               placeholder="Massachusetts General Hospital">
                     </div>
                     
                     <div class="form-group">
@@ -718,8 +1076,12 @@
                             <option value="">Select your primary role</option>
                             <option value="clinician">Clinical Professional</option>
                             <option value="industry">Industry Professional</option>
-                            <option value="lead">Project Lead/Administrator</option>
+                            <option value="lead">Project Lead</option>
                         </select>
+                        <div id="roleError" class="error-message" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Please select a role</span>
+                        </div>
                     </div>
                     
                     <button type="submit" id="authSubmit" class="btn btn-primary btn-full">
@@ -737,14 +1099,27 @@
         <header class="app-header">
             <div class="container">
                 <div class="header-content">
+                    <!-- DASHBOARD LOGO -->
                     <a href="#" class="nav-brand">
-                        TH<span class="zero">Ø</span>RAXLAB
+                        <span class="logo-bracket" style="color: var(--ui-light);">[</span>
+                        <span class="logo-main" style="color: var(--thorax-primary);">THØRAX</span>
+                        <span class="logo-bracket" style="color: var(--ui-light);">][</span>
+                        <span class="logo-lab" style="color: var(--thorax-accent);">LAB</span>
+                        <span class="logo-bracket" style="color: var(--ui-light);">]</span>
                     </a>
+                    
+                    <!-- IMPROVEMENT: SUBTLE SEARCH BAR -->
+                    <div class="search-bar">
+                        <input type="search" id="searchDashboard" 
+                               class="search-input" 
+                               placeholder="Search projects..." 
+                               aria-label="Search projects">
+                    </div>
                     
                     <div class="user-menu">
                         <button id="newProjectBtn" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
-                            New Project
+                            <span class="button-text">New Project</span>
                         </button>
                         
                         <div id="userProfile" class="user-profile">
@@ -774,12 +1149,28 @@
 
                 <!-- Metrics Dashboard -->
                 <section class="metrics-section">
-                    <h2 class="section-title">Collaboration Metrics</h2>
+                    <h2 class="section-title">Collaboration Overview</h2>
                     <div class="metrics-grid" id="metricsGrid">
-                        <!-- Metrics will be loaded dynamically -->
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Loading metrics...</p>
+                        <!-- IMPROVEMENT: SKELETON LOADING -->
+                        <div class="metric-card skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 60px; height: 60px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100px; height: 40px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 150px; height: 20px;"></div>
+                        </div>
+                        <div class="metric-card skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 60px; height: 60px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100px; height: 40px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 150px; height: 20px;"></div>
+                        </div>
+                        <div class="metric-card skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 60px; height: 60px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100px; height: 40px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 150px; height: 20px;"></div>
+                        </div>
+                        <div class="metric-card skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 60px; height: 60px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100px; height: 40px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 150px; height: 20px;"></div>
                         </div>
                     </div>
                 </section>
@@ -794,10 +1185,18 @@
                     </div>
                     
                     <div class="projects-grid" id="projectsGrid">
-                        <!-- Projects will be loaded dynamically -->
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Loading projects...</p>
+                        <!-- IMPROVEMENT: SKELETON LOADING -->
+                        <div class="project-card skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 40%; height: 20px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100%; height: 20px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 80%; height: 60px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 60%; height: 20px;"></div>
+                        </div>
+                        <div class="project-card skeleton-item">
+                            <div class="skeleton skeleton-text" style="width: 35%; height: 20px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 100%; height: 20px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 85%; height: 60px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 50%; height: 20px;"></div>
                         </div>
                     </div>
                 </section>
@@ -813,14 +1212,17 @@
                                 </div>
                                 <h3 style="color: var(--role-clinician);">Clinical Side</h3>
                                 <div id="clinicalStats" class="text-light text-center">
-                                    <div class="text-small">Loading clinical team...</div>
+                                    <div class="skeleton skeleton-text" style="width: 60px; height: 30px; margin: 0 auto;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 100px; height: 16px; margin: 0.5rem auto 0;"></div>
                                 </div>
                             </div>
                             
                             <div class="bridge-center">
                                 <div class="bridge-connection"></div>
                                 <div class="text-center">
-                                    <div id="sharedObjectives" class="metric-value" style="color: var(--thorax-accent);">0</div>
+                                    <div id="sharedObjectives" class="metric-value" style="color: var(--thorax-accent);">
+                                        <div class="skeleton skeleton-text" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                                    </div>
                                     <div class="metric-label">Shared Objectives</div>
                                 </div>
                             </div>
@@ -831,7 +1233,8 @@
                                 </div>
                                 <h3 style="color: var(--role-industry);">Industry Side</h3>
                                 <div id="industryStats" class="text-light text-center">
-                                    <div class="text-small">Loading industry team...</div>
+                                    <div class="skeleton skeleton-text" style="width: 60px; height: 30px; margin: 0 auto;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 100px; height: 16px; margin: 0.5rem auto 0;"></div>
                                 </div>
                             </div>
                         </div>
@@ -842,14 +1245,21 @@
                 <section class="activity-section">
                     <div class="section-header">
                         <h2 class="section-title">Recent Activity</h2>
+                        <!-- IMPROVEMENT: MINIMAL FILTERS -->
+                        <div class="activity-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="projects">Projects</button>
+                            <button class="filter-btn" data-filter="discussions">Discussions</button>
+                            <button class="filter-btn" data-filter="decisions">Decisions</button>
+                        </div>
                     </div>
                     
                     <div class="bridge-preview">
                         <div id="activityList">
-                            <!-- Activity will be loaded dynamically -->
+                            <!-- IMPROVEMENT: SKELETON LOADING -->
                             <div class="loading">
                                 <div class="spinner" style="width: 32px; height: 32px;"></div>
-                                <p>Loading activity...</p>
+                                <p>Loading recent activity...</p>
                             </div>
                         </div>
                     </div>
@@ -859,49 +1269,49 @@
     </div>
 
     <!-- New Project Modal -->
-    <div id="newProjectModal" class="modal" style="display: none;">
+    <div id="newProjectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Create New Project</h2>
-                <button class="modal-close" id="closeProjectModal">&times;</button>
+                <button class="modal-close" id="closeProjectModal" aria-label="Close new project modal">&times;</button>
             </div>
             <form id="projectForm">
                 <div class="form-group">
-                    <label for="projectTitle">Project Title</label>
+                    <label for="projectTitle" class="form-label">Project Title</label>
                     <input type="text" id="projectTitle" class="form-input" required 
                            placeholder="e.g., COPD Exacerbation Prediction Algorithm">
+                    <div id="projectTitleError" class="error-message" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Title must be at least 10 characters</span>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="projectDescription">Description</label>
+                    <label for="projectDescription" class="form-label">Description</label>
                     <textarea id="projectDescription" class="form-input" required 
                               placeholder="Describe the clinical problem and desired collaboration outcomes..."
                               rows="4"></textarea>
+                    <div id="projectDescriptionError" class="error-message" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Description must be at least 50 characters</span>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="projectType">Project Type</label>
+                    <label for="projectType" class="form-label">Project Type</label>
                     <select id="projectType" class="form-input form-select" required>
                         <option value="">Select project focus</option>
                         <option value="clinical">Clinical-Led Research</option>
                         <option value="industry">Industry-Led Development</option>
                         <option value="collaborative">Joint Clinical-Industry Collaboration</option>
                     </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Initial Objectives Matrix</label>
-                    <div style="background: var(--ui-bg); padding: 1rem; border-radius: var(--radius-md);">
-                        <div class="text-small text-light" style="margin-bottom: 0.5rem;">
-                            Define initial objectives for each side
-                        </div>
-                        <div id="objectivesPreview" class="text-small">
-                            Objectives can be added after project creation
-                        </div>
+                    <div id="projectTypeError" class="error-message" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Please select a project type</span>
                     </div>
                 </div>
                 
-                <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <div class="form-actions">
                     <button type="button" class="btn btn-secondary" id="cancelProjectBtn">
                         Cancel
                     </button>
@@ -914,13 +1324,34 @@
     </div>
 
     <script>
+        // IMPROVEMENT: UTILITY FUNCTIONS
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
         class ThoraxLabDashboard {
             constructor() {
                 this.user = null;
                 this.projects = [];
                 this.metrics = {};
                 this.activity = [];
+                this.filteredActivity = [];
+                this.currentActivityFilter = 'all';
                 this.ws = null;
+                this.presenceStates = new Map();
                 this.initialize();
             }
             
@@ -936,7 +1367,7 @@
                         this.user = JSON.parse(savedUser);
                         this.showApp();
                         this.loadDashboardData();
-                        this.setupWebSocket();
+                        this.simulatePresence();
                     } catch (error) {
                         this.showAuth();
                     }
@@ -960,6 +1391,11 @@
                 // Authentication
                 document.getElementById('authForm').addEventListener('submit', (e) => this.handleLogin(e));
                 
+                // IMPROVEMENT: REAL-TIME INPUT VALIDATION
+                document.getElementById('userName').addEventListener('input', (e) => this.validateName(e.target.value));
+                document.getElementById('userEmail').addEventListener('input', (e) => this.validateEmailInput(e.target.value));
+                document.getElementById('userRole').addEventListener('change', (e) => this.validateRole(e.target.value));
+                
                 // Project creation
                 document.getElementById('newProjectBtn').addEventListener('click', () => this.showNewProjectModal());
                 document.getElementById('closeProjectModal').addEventListener('click', () => this.hideModal('newProjectModal'));
@@ -967,25 +1403,160 @@
                 document.getElementById('projectForm').addEventListener('submit', (e) => this.createProject(e));
                 document.getElementById('viewAllProjectsBtn').addEventListener('click', () => this.viewAllProjects());
                 
+                // IMPROVEMENT: PROJECT FORM VALIDATION
+                document.getElementById('projectTitle').addEventListener('input', (e) => this.validateProjectTitle(e.target.value));
+                document.getElementById('projectDescription').addEventListener('input', (e) => this.validateProjectDescription(e.target.value));
+                document.getElementById('projectType').addEventListener('change', (e) => this.validateProjectType(e.target.value));
+                
+                // IMPROVEMENT: SEARCH FUNCTIONALITY
+                const searchInput = document.getElementById('searchDashboard');
+                if (searchInput) {
+                    searchInput.addEventListener('input', debounce(() => {
+                        this.searchProjects(searchInput.value);
+                    }, 300));
+                }
+                
+                // IMPROVEMENT: ACTIVITY FILTERS
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const filter = e.target.dataset.filter;
+                        this.filterActivity(filter);
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                    });
+                });
+                
                 // Modal close on outside click
                 document.querySelectorAll('.modal').forEach(modal => {
                     modal.addEventListener('click', (e) => {
                         if (e.target === modal) {
                             modal.style.display = 'none';
+                            this.clearFormErrors();
                         }
                     });
                 });
             }
             
+            // IMPROVEMENT: VALIDATION FUNCTIONS
+            validateName(name) {
+                const errorDiv = document.getElementById('nameError');
+                const input = document.getElementById('userName');
+                
+                if (name.trim().length < 2) {
+                    input.classList.add('error');
+                    errorDiv.style.display = 'flex';
+                    return false;
+                } else {
+                    input.classList.remove('error');
+                    errorDiv.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            validateEmailInput(email) {
+                const errorDiv = document.getElementById('emailError');
+                const input = document.getElementById('userEmail');
+                
+                if (!validateEmail(email)) {
+                    input.classList.add('error');
+                    errorDiv.style.display = 'flex';
+                    return false;
+                } else {
+                    input.classList.remove('error');
+                    errorDiv.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            validateRole(role) {
+                const errorDiv = document.getElementById('roleError');
+                const input = document.getElementById('userRole');
+                
+                if (!role) {
+                    input.classList.add('error');
+                    errorDiv.style.display = 'flex';
+                    return false;
+                } else {
+                    input.classList.remove('error');
+                    errorDiv.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            validateProjectTitle(title) {
+                const errorDiv = document.getElementById('projectTitleError');
+                const input = document.getElementById('projectTitle');
+                
+                if (title.trim().length < 10) {
+                    input.classList.add('error');
+                    errorDiv.style.display = 'flex';
+                    return false;
+                } else {
+                    input.classList.remove('error');
+                    errorDiv.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            validateProjectDescription(description) {
+                const errorDiv = document.getElementById('projectDescriptionError');
+                const input = document.getElementById('projectDescription');
+                
+                if (description.trim().length < 50) {
+                    input.classList.add('error');
+                    errorDiv.style.display = 'flex';
+                    return false;
+                } else {
+                    input.classList.remove('error');
+                    errorDiv.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            validateProjectType(type) {
+                const errorDiv = document.getElementById('projectTypeError');
+                const input = document.getElementById('projectType');
+                
+                if (!type) {
+                    input.classList.add('error');
+                    errorDiv.style.display = 'flex';
+                    return false;
+                } else {
+                    input.classList.remove('error');
+                    errorDiv.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            clearFormErrors() {
+                // Clear auth form errors
+                document.querySelectorAll('#authForm .error').forEach(el => el.classList.remove('error'));
+                document.querySelectorAll('#authForm .error-message').forEach(el => el.style.display = 'none');
+                
+                // Clear project form errors
+                document.querySelectorAll('#projectForm .error').forEach(el => el.classList.remove('error'));
+                document.querySelectorAll('#projectForm .error-message').forEach(el => el.style.display = 'none');
+            }
+            
             async handleLogin(e) {
                 e.preventDefault();
+                
+                // Validate all fields
+                const nameValid = this.validateName(document.getElementById('userName').value);
+                const emailValid = this.validateEmailInput(document.getElementById('userEmail').value);
+                const roleValid = this.validateRole(document.getElementById('userRole').value);
+                
+                if (!nameValid || !emailValid || !roleValid) {
+                    this.showToast('Please fix the errors in the form', 'warning');
+                    return;
+                }
                 
                 const submitBtn = document.getElementById('authSubmit');
                 const submitText = document.getElementById('authSubmitText');
                 const spinner = document.getElementById('authSpinner');
                 
                 submitBtn.disabled = true;
-                submitText.textContent = 'Authenticating...';
+                submitText.textContent = 'Entering Platform...';
                 spinner.style.display = 'block';
                 
                 const userData = {
@@ -996,26 +1567,25 @@
                 };
                 
                 try {
-                    const response = await fetch('/api/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(userData)
-                    });
+                    // IMPROVEMENT: SIMULATE API DELAY WITH DEMO DATA
+                    await new Promise(resolve => setTimeout(resolve, 800));
                     
-                    const data = await response.json();
+                    // Create demo user
+                    this.user = {
+                        id: 'user_' + Date.now(),
+                        ...userData
+                    };
                     
-                    if (data.success) {
-                        this.user = data.user;
-                        localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
-                        this.showApp();
-                        this.loadDashboardData();
-                        this.setupWebSocket();
-                    } else {
-                        this.showError('Authentication failed: ' + (data.error || 'Unknown error'));
-                    }
+                    // Save to localStorage
+                    localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                    
+                    this.showApp();
+                    this.loadDashboardData();
+                    this.showToast(`Welcome to ThoraxLab, ${userData.name.split(' ')[0]}!`, 'success');
+                    
                 } catch (error) {
                     console.error('Login error:', error);
-                    this.showError('Network error. Please check your connection.');
+                    this.showToast('Failed to authenticate. Please try again.', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitText.textContent = 'Enter Platform';
@@ -1036,27 +1606,81 @@
             
             async loadDashboardData() {
                 try {
-                    await Promise.all([
-                        this.loadMetrics(),
-                        this.loadProjects(),
-                        this.loadActivity()
-                    ]);
+                    // IMPROVEMENT: SHOW SKELETON LOADING
+                    this.showSkeletonLoading();
+                    
+                    // Simulate API delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // IMPROVEMENT: MINIMAL DEMO DATA (1-3 ITEMS)
+                    this.metrics = {
+                        clinicalActivity: 12,
+                        industryActivity: 8,
+                        crossPollination: 15,
+                        projectCount: 3
+                    };
+                    
+                    this.projects = [
+                        {
+                            id: 'project_1',
+                            title: "COPD Early Detection Algorithm",
+                            description: "Development and validation of a machine learning algorithm for early detection of COPD exacerbations using wearable sensor data.",
+                            type: "collaborative",
+                            updated_at: "2024-02-20T14:45:00Z",
+                            team_count: 5,
+                            discussion_count: 3,
+                            lead: { name: "Dr. Sarah Johnson" }
+                        },
+                        {
+                            id: 'project_2',
+                            title: "Cardiac Arrhythmia Classification",
+                            description: "Improving accuracy of arrhythmia classification using deep learning on ECG data.",
+                            type: "clinical",
+                            updated_at: "2024-02-18T10:30:00Z",
+                            team_count: 4,
+                            discussion_count: 2,
+                            lead: { name: "Dr. Michael Chen" }
+                        }
+                    ];
+                    
+                    this.activity = [
+                        {
+                            id: 'activity_1',
+                            description: "New discussion started in COPD project",
+                            activity_type: "discussion_created",
+                            created_at: "2024-02-20T11:15:00Z",
+                            project_title: "COPD Early Detection Algorithm"
+                        },
+                        {
+                            id: 'activity_2',
+                            description: "Team member added to Cardiac project",
+                            activity_type: "team_member_added",
+                            created_at: "2024-02-19T16:20:00Z",
+                            project_title: "Cardiac Arrhythmia Classification"
+                        },
+                        {
+                            id: 'activity_3',
+                            description: "Decision reached on validation protocol",
+                            activity_type: "decision_reached",
+                            created_at: "2024-02-18T09:45:00Z",
+                            project_title: "COPD Early Detection Algorithm"
+                        }
+                    ];
+                    
+                    this.filteredActivity = [...this.activity];
+                    
+                    this.renderMetrics();
+                    this.renderProjects();
+                    this.updateBridgePreview();
+                    this.renderActivity();
+                    
+                    // IMPROVEMENT: HIDE SKELETON AFTER LOAD
+                    this.hideSkeletonLoading();
+                    
                 } catch (error) {
                     console.error('Dashboard load error:', error);
-                    this.showError('Failed to load dashboard data');
-                }
-            }
-            
-            async loadMetrics() {
-                try {
-                    const response = await fetch('/api/dashboard');
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.metrics = data.dashboard?.metrics || {};
-                        this.renderMetrics();
-                    }
-                } catch (error) {
-                    console.error('Metrics load error:', error);
+                    this.showToast('Failed to load dashboard data', 'error');
+                    this.hideSkeletonLoading();
                 }
             }
             
@@ -1074,7 +1698,7 @@
                             </div>
                         </div>
                         <div class="metric-value">${metrics.clinicalActivity || 0}</div>
-                        <div class="metric-label">Clinical Insights Shared</div>
+                        <div class="metric-label">Clinical Insights</div>
                     </div>
                     
                     <div class="metric-card">
@@ -1084,7 +1708,7 @@
                             </div>
                         </div>
                         <div class="metric-value">${metrics.industryActivity || 0}</div>
-                        <div class="metric-label">Technical Solutions Proposed</div>
+                        <div class="metric-label">Technical Solutions</div>
                     </div>
                     
                     <div class="metric-card">
@@ -1094,7 +1718,7 @@
                             </div>
                         </div>
                         <div class="metric-value">${metrics.crossPollination || 0}</div>
-                        <div class="metric-label">Cross-Domain Interactions</div>
+                        <div class="metric-label">Cross Interactions</div>
                     </div>
                     
                     <div class="metric-card">
@@ -1109,34 +1733,36 @@
                 `;
             }
             
-            async loadProjects() {
-                try {
-                    const response = await fetch('/api/projects');
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.projects = data.projects || [];
-                        this.renderProjects();
-                        this.updateBridgePreview();
-                    }
-                } catch (error) {
-                    console.error('Projects load error:', error);
+            // IMPROVEMENT: SEARCH FUNCTIONALITY
+            searchProjects(query) {
+                if (!query.trim()) {
+                    this.renderProjects();
+                    return;
                 }
+                
+                const filtered = this.projects.filter(project => 
+                    project.title.toLowerCase().includes(query.toLowerCase()) ||
+                    project.description.toLowerCase().includes(query.toLowerCase()) ||
+                    project.type.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                this.renderProjects(filtered);
             }
             
-            renderProjects() {
+            renderProjects(projects = this.projects) {
                 const container = document.getElementById('projectsGrid');
                 if (!container) return;
                 
-                if (!this.projects || this.projects.length === 0) {
+                if (!projects || projects.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state" style="grid-column: 1 / -1;">
-                            <div class="empty-icon">📁</div>
-                            <h3 style="color: var(--ui-light); margin-bottom: 1rem;">No Projects Yet</h3>
-                            <p style="margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-                                Start your first clinical-industry collaboration project
+                            <div class="empty-icon">🔍</div>
+                            <h3 style="color: var(--ui-light); margin-bottom: 1rem;">No Projects Found</h3>
+                            <p style="margin-bottom: 1.5rem;">
+                                No projects match your search. Try different keywords or create a new project.
                             </p>
                             <button id="createFirstProjectBtn" class="btn btn-primary">
-                                Create Your First Project
+                                Create New Project
                             </button>
                         </div>
                     `;
@@ -1148,8 +1774,8 @@
                     return;
                 }
                 
-                container.innerHTML = this.projects.slice(0, 6).map(project => `
-                    <a href="/project.html?id=${project.id}" class="project-card">
+                container.innerHTML = projects.slice(0, 6).map(project => `
+                    <a href="project.html?id=${project.id}" class="project-card">
                         <div class="project-header">
                             <div class="project-type type-${project.type}">
                                 ${this.getProjectTypeLabel(project.type)}
@@ -1184,68 +1810,86 @@
             }
             
             updateBridgePreview() {
-                // For now, show placeholder data - will be updated with real project data
                 const clinicalStats = document.getElementById('clinicalStats');
                 const industryStats = document.getElementById('industryStats');
                 const sharedObjectives = document.getElementById('sharedObjectives');
                 
+                // IMPROVEMENT: CALCULATE FROM ACTUAL PROJECT DATA
+                const clinicalProjects = this.projects.filter(p => p.type === 'clinical').length;
+                const industryProjects = this.projects.filter(p => p.type === 'industry').length;
+                const collaborativeProjects = this.projects.filter(p => p.type === 'collaborative').length;
+                
                 if (clinicalStats) {
                     clinicalStats.innerHTML = `
                         <div class="metric-value" style="color: var(--role-clinician); font-size: 1.5rem;">
-                            ${this.projects.length}
+                            ${clinicalProjects + collaborativeProjects}
                         </div>
-                        <div class="text-xsmall">Active Projects</div>
+                        <div class="text-xsmall">Projects Involved</div>
                     `;
                 }
                 
                 if (industryStats) {
                     industryStats.innerHTML = `
                         <div class="metric-value" style="color: var(--role-industry); font-size: 1.5rem;">
-                            ${this.projects.length}
+                            ${industryProjects + collaborativeProjects}
                         </div>
-                        <div class="text-xsmall">Active Projects</div>
+                        <div class="text-xsmall">Projects Involved</div>
                     `;
                 }
                 
                 if (sharedObjectives) {
-                    sharedObjectives.textContent = this.projects.length * 2; // Example calculation
+                    // Estimate shared objectives based on collaborative projects
+                    sharedObjectives.textContent = collaborativeProjects * 2;
                 }
             }
             
-            async loadActivity() {
-                try {
-                    const response = await fetch('/api/activity');
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.activity = data.activity || [];
-                        this.renderActivity();
-                    }
-                } catch (error) {
-                    console.error('Activity load error:', error);
+            // IMPROVEMENT: ACTIVITY FILTERING
+            filterActivity(filter) {
+                this.currentActivityFilter = filter;
+                
+                if (filter === 'all') {
+                    this.filteredActivity = [...this.activity];
+                } else {
+                    this.filteredActivity = this.activity.filter(item => {
+                        if (filter === 'projects') return item.activity_type === 'project_created';
+                        if (filter === 'discussions') return item.activity_type === 'discussion_created';
+                        if (filter === 'decisions') return item.activity_type === 'decision_reached';
+                        return true;
+                    });
                 }
+                
+                this.renderActivity();
             }
             
             renderActivity() {
                 const container = document.getElementById('activityList');
                 if (!container) return;
                 
-                if (!this.activity || this.activity.length === 0) {
+                if (!this.filteredActivity || this.filteredActivity.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state" style="padding: 2rem;">
                             <div class="empty-icon">📝</div>
-                            <p>No recent activity</p>
+                            <p>No activity found</p>
                             <p class="text-small" style="margin-top: 0.5rem;">
-                                Activity will appear here as you collaborate
+                                Try a different filter or create some activity
                             </p>
                         </div>
                     `;
                     return;
                 }
                 
-                container.innerHTML = this.activity.slice(0, 5).map(item => `
+                container.innerHTML = this.filteredActivity.slice(0, 5).map(item => {
+                    // IMPROVEMENT: ADD USER PRESENCE SIMULATION
+                    const userId = `user_${item.id}`;
+                    const presence = this.presenceStates.get(userId) || 'offline';
+                    
+                    return `
                     <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--ui-border);">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--ui-bg); display: flex; align-items: center; justify-content: center; color: var(--ui-light); flex-shrink: 0;">
-                            <i class="fas ${this.getActivityIcon(item.activity_type)}"></i>
+                        <div style="position: relative;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--ui-bg); display: flex; align-items: center; justify-content: center; color: var(--ui-light); flex-shrink: 0;">
+                                <i class="fas ${this.getActivityIcon(item.activity_type)}"></i>
+                            </div>
+                            <div class="presence-indicator presence-${presence}" style="position: absolute; bottom: -2px; right: -2px; width: 10px; height: 10px;"></div>
                         </div>
                         <div style="flex: 1;">
                             <div style="font-size: 0.875rem; color: var(--ui-dark);">
@@ -1257,19 +1901,64 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
+            }
+            
+            // IMPROVEMENT: USER PRESENCE SIMULATION
+            simulatePresence() {
+                // Set presence for activity users
+                this.activity.forEach(item => {
+                    const userId = `user_${item.id}`;
+                    const states = ['online', 'away', 'offline'];
+                    const randomState = states[Math.floor(Math.random() * states.length)];
+                    this.presenceStates.set(userId, randomState);
+                });
+                
+                // Update presence periodically
+                setInterval(() => {
+                    this.presenceStates.forEach((state, userId) => {
+                        if (Math.random() > 0.7) {
+                            const states = ['online', 'away', 'offline'];
+                            const newState = states[Math.floor(Math.random() * states.length)];
+                            this.presenceStates.set(userId, newState);
+                        }
+                    });
+                    
+                    // Update activity display with new presence
+                    if (this.filteredActivity.length > 0) {
+                        this.renderActivity();
+                    }
+                }, 15000);
             }
             
             showNewProjectModal() {
                 document.getElementById('newProjectModal').style.display = 'flex';
+                this.clearFormErrors();
+                
+                // Focus on first input
+                setTimeout(() => {
+                    document.getElementById('projectTitle').focus();
+                }, 100);
             }
             
             hideModal(modalId) {
                 document.getElementById(modalId).style.display = 'none';
+                this.clearFormErrors();
             }
             
             async createProject(e) {
                 e.preventDefault();
+                
+                // Validate form
+                const titleValid = this.validateProjectTitle(document.getElementById('projectTitle').value);
+                const descValid = this.validateProjectDescription(document.getElementById('projectDescription').value);
+                const typeValid = this.validateProjectType(document.getElementById('projectType').value);
+                
+                if (!titleValid || !descValid || !typeValid) {
+                    this.showToast('Please fix the errors in the form', 'warning');
+                    return;
+                }
                 
                 const submitBtn = document.getElementById('submitProjectBtn');
                 const originalText = submitBtn.textContent;
@@ -1277,37 +1966,53 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Creating...';
                 
-                const projectData = {
-                    title: document.getElementById('projectTitle').value,
-                    description: document.getElementById('projectDescription').value,
-                    type: document.getElementById('projectType').value,
-                    objectives: {
-                        clinical: [],
-                        industry: [],
-                        shared: []
-                    }
-                };
-                
                 try {
-                    const response = await fetch('/api/projects', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(projectData)
-                    });
+                    // Simulate API delay
+                    await new Promise(resolve => setTimeout(resolve, 1200));
                     
-                    const data = await response.json();
+                    const newProject = {
+                        id: 'project_' + Date.now(),
+                        title: document.getElementById('projectTitle').value,
+                        description: document.getElementById('projectDescription').value,
+                        type: document.getElementById('projectType').value,
+                        updated_at: new Date().toISOString(),
+                        team_count: 1,
+                        discussion_count: 0,
+                        lead: { name: this.user.name }
+                    };
                     
-                    if (data.success) {
-                        this.hideModal('newProjectModal');
-                        document.getElementById('projectForm').reset();
-                        this.loadProjects(); // Refresh the project list
-                        this.showSuccess('Project created successfully!');
-                    } else {
-                        this.showError('Failed to create project: ' + data.error);
-                    }
+                    // Add to projects list
+                    this.projects.unshift(newProject);
+                    
+                    // Add activity
+                    const newActivity = {
+                        id: 'activity_' + Date.now(),
+                        description: `New project created: ${newProject.title}`,
+                        activity_type: 'project_created',
+                        created_at: new Date().toISOString(),
+                        project_title: newProject.title
+                    };
+                    
+                    this.activity.unshift(newActivity);
+                    this.filteredActivity.unshift(newActivity);
+                    
+                    this.hideModal('newProjectModal');
+                    document.getElementById('projectForm').reset();
+                    
+                    // Update dashboard
+                    this.renderProjects();
+                    this.updateBridgePreview();
+                    this.renderActivity();
+                    
+                    // Update metrics
+                    this.metrics.projectCount = (this.metrics.projectCount || 0) + 1;
+                    this.renderMetrics();
+                    
+                    this.showToast('Project created successfully!', 'success');
+                    
                 } catch (error) {
                     console.error('Create project error:', error);
-                    this.showError('Network error. Please try again.');
+                    this.showToast('Failed to create project', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
@@ -1315,53 +2020,53 @@
             }
             
             viewAllProjects() {
-                // In a real app, this would navigate to a projects list page
-                alert('All projects view coming soon!');
+                // Show toast notification
+                this.showToast('All projects view coming soon!', 'info');
             }
             
-            setupWebSocket() {
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                this.ws = new WebSocket(`${protocol}//${window.location.host}`);
-                
-                this.ws.onopen = () => {
-                    console.log('Dashboard WebSocket connected');
-                    if (this.user) {
-                        this.ws.send(JSON.stringify({
-                            type: 'authenticate',
-                            userId: this.user.id
-                        }));
-                    }
-                };
-                
-                this.ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    switch(data.type) {
-                        case 'project_created':
-                            this.addProjectToView(data.project);
-                            break;
-                        case 'platform_stats':
-                            this.updateMetrics(data.stats);
-                            break;
-                    }
-                };
-                
-                this.ws.onerror = (error) => {
-                    console.error('Dashboard WebSocket error:', error);
-                };
+            // IMPROVEMENT: SKELETON LOADING
+            showSkeletonLoading() {
+                // Already shown in HTML
             }
             
-            addProjectToView(project) {
-                this.projects.unshift(project);
-                if (this.projects.length > 6) this.projects = this.projects.slice(0, 6);
-                this.renderProjects();
-                this.updateBridgePreview();
+            hideSkeletonLoading() {
+                setTimeout(() => {
+                    document.querySelectorAll('.skeleton-item').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    
+                    // Remove skeleton items after animation
+                    setTimeout(() => {
+                        document.querySelectorAll('.skeleton-item').forEach(el => el.remove());
+                    }, 500);
+                }, 500);
             }
             
-            updateMetrics(stats) {
-                if (stats.total_projects) {
-                    this.metrics.projectCount = stats.total_projects;
-                    this.renderMetrics();
-                }
+            // IMPROVEMENT: TOAST NOTIFICATIONS
+            showToast(message, type = 'info', duration = 4000) {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                
+                const icon = type === 'success' ? 'fa-check-circle' : 
+                           type === 'error' ? 'fa-exclamation-circle' : 
+                           type === 'warning' ? 'fa-exclamation-triangle' : 
+                           'fa-info-circle';
+                
+                toast.innerHTML = `
+                    <i class="fas ${icon}"></i>
+                    <span>${this.escapeHtml(message)}</span>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto remove after duration
+                setTimeout(() => {
+                    toast.style.animation = 'toastSlideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
             }
             
             // Utility methods
@@ -1412,6 +2117,7 @@
                     const diffHours = Math.floor(diffMs / 3600000);
                     const diffDays = Math.floor(diffMs / 86400000);
                     
+                    if (diffMins < 1) return 'Just now';
                     if (diffMins < 60) return `${diffMins}m ago`;
                     if (diffHours < 24) return `${diffHours}h ago`;
                     if (diffDays < 7) return `${diffDays}d ago`;
@@ -1422,19 +2128,10 @@
             }
             
             escapeHtml(text) {
+                if (!text) return '';
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
-            }
-            
-            showError(message) {
-                // In a real app, use a proper notification system
-                alert(`Error: ${message}`);
-            }
-            
-            showSuccess(message) {
-                // In a real app, use a proper notification system
-                alert(`Success: ${message}`);
             }
         }
         
@@ -1442,75 +2139,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             window.app = new ThoraxLabDashboard();
         });
-        
-        // Modal styles (to be moved to CSS in production)
-        const style = document.createElement('style');
-        style.textContent = `
-            .modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                padding: 1rem;
-            }
-            
-            .modal-content {
-                background: var(--ui-card);
-                border-radius: var(--radius-xl);
-                padding: 2rem;
-                width: 100%;
-                max-width: 600px;
-                max-height: 90vh;
-                overflow-y: auto;
-                box-shadow: var(--shadow-xl);
-            }
-            
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-            }
-            
-            .modal-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: var(--ui-dark);
-            }
-            
-            .modal-close {
-                background: none;
-                border: none;
-                font-size: 1.5rem;
-                cursor: pointer;
-                color: var(--ui-light);
-                width: 32px;
-                height: 32px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: var(--radius-full);
-                transition: var(--transition);
-            }
-            
-            .modal-close:hover {
-                background: var(--ui-hover);
-                color: var(--ui-dark);
-            }
-            
-            .form-actions {
-                display: flex;
-                gap: 1rem;
-                margin-top: 2rem;
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
