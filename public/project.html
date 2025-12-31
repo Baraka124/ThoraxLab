@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project | ThoraxLab</title>
+    <title>ThoraxLab | Innovation Platform</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* ===== ALL CSS ===== */
         :root {
             --primary-blue: #0A4D68;
             --primary-teal: #088F8F;
@@ -43,84 +44,98 @@
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html { font-size: 16px; }
+        
         body {
             font-family: var(--font-primary);
-            background: var(--white);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            min-height: 100vh;
             color: var(--neutral-800);
         }
         
         /* ===== HEADER ===== */
-        .project-header {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
-            color: var(--white);
-            padding: 2rem 0;
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-sm);
         }
         
         .header-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
-        }
-        
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--white);
-            text-decoration: none;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-        }
-        
-        .back-link:hover { opacity: 1; }
-        
-        .project-title-section {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 2rem;
-            margin-bottom: 1rem;
         }
         
-        .project-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .project-type {
-            display: inline-block;
-            padding: 0.25rem 1rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .action-btn {
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-md);
-            color: var(--white);
-            cursor: pointer;
+        .logo {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
+            gap: 1rem;
+            text-decoration: none;
         }
         
-        .action-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-full);
+            font-size: 0.9375rem;
+            background: var(--neutral-100);
+            transition: all var(--transition-fast);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: var(--white);
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 3px rgba(8, 143, 143, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-500);
         }
         
         /* ===== MAIN CONTENT ===== */
@@ -130,166 +145,146 @@
             padding: 2rem;
         }
         
-        .project-layout {
+        /* ===== DASHBOARD GRID ===== */
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 350px;
+            grid-template-columns: 1fr 300px;
             gap: 2rem;
+            margin-top: 2rem;
         }
         
-        /* ===== PROJECT DETAILS ===== */
-        .project-details {
+        /* ===== PROJECTS SECTION ===== */
+        .projects-section {
             background: var(--white);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
         }
         
-        .details-section {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--neutral-200);
-        }
-        
-        .details-section:last-child {
-            border-bottom: none;
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
         }
         
         .section-title {
-            font-size: 1.125rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--primary-blue);
-            margin-bottom: 1rem;
+        }
+        
+        .create-project-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: all var(--transition-fast);
         }
         
-        .project-description {
-            color: var(--neutral-700);
-            line-height: 1.6;
-            margin-bottom: 1rem;
+        .create-project-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         
-        /* ===== DISCUSSION ===== */
-        .comment-form {
-            background: var(--neutral-50);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .comment-input {
-            width: 100%;
-            min-height: 100px;
-            padding: 1rem;
-            border: 1px solid var(--neutral-300);
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            resize: vertical;
-        }
-        
-        .comment-input:focus {
-            outline: none;
-            border-color: var(--primary-teal);
-        }
-        
-        .comment-actions {
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .submit-comment {
-            padding: 0.5rem 1.5rem;
-            background: var(--primary-blue);
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .submit-comment:hover {
-            background: var(--primary-teal);
-        }
-        
-        .comments-list {
+        /* ===== PROJECTS LIST ===== */
+        .projects-list {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
         
-        .comment-item {
-            padding: 1rem;
+        .project-item {
             background: var(--neutral-50);
-            border-radius: var(--radius-md);
             border: 1px solid var(--neutral-200);
-        }
-        
-        .comment-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .comment-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--primary-teal);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-        
-        .comment-author {
-            font-weight: 600;
-            color: var(--neutral-800);
-        }
-        
-        .comment-time {
-            color: var(--neutral-500);
-            font-size: 0.875rem;
-        }
-        
-        .comment-content {
-            color: var(--neutral-700);
-            line-height: 1.5;
-        }
-        
-        /* ===== SIDEBAR ===== */
-        .sidebar-section {
-            background: var(--white);
             border-radius: var(--radius-lg);
-            border: 1px solid var(--neutral-200);
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
         }
         
-        .sidebar-title {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--neutral-200);
+        .project-item:hover {
+            background: var(--white);
+            border-color: var(--primary-teal);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .project-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .project-title {
+            font-size: 1.125rem;
             font-weight: 600;
             color: var(--primary-blue);
         }
         
-        .sidebar-content {
-            padding: 1.5rem;
+        .project-type {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
         }
         
-        .project-stats {
+        .type-clinical { background: rgba(10, 77, 104, 0.1); color: var(--primary-blue); }
+        .type-industry { background: rgba(8, 143, 143, 0.1); color: var(--primary-teal); }
+        
+        .project-description {
+            color: var(--neutral-600);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--neutral-500);
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .widget {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .widget-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
         
-        .stat-box {
+        .stat-item {
             text-align: center;
-            padding: 1rem;
-            background: var(--neutral-50);
-            border-radius: var(--radius-md);
         }
         
         .stat-value {
@@ -306,60 +301,107 @@
             letter-spacing: 0.05em;
         }
         
-        .team-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .member-avatar {
-            width: 36px;
-            height: 36px;
-            background: var(--primary-teal);
-            border-radius: 50%;
-            display: flex;
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
-            color: var(--white);
+        }
+        
+        .modal-overlay.active { display: flex; }
+        
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            font-size: 0.875rem;
+            color: var(--primary-blue);
         }
         
-        .member-info {
-            flex: 1;
-        }
-        
-        .member-name {
-            font-weight: 600;
-            color: var(--neutral-800);
-        }
-        
-        .member-role {
-            font-size: 0.875rem;
+        .modal-close {
+            background: none;
+            border: none;
             color: var(--neutral-500);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: var(--radius-sm);
         }
         
-        .timeline-item {
-            padding: 0.75rem;
-            border-left: 2px solid var(--neutral-300);
-            margin-left: 0.5rem;
-        }
+        .modal-close:hover { color: var(--neutral-800); }
         
-        .timeline-content {
+        .form-group { margin-bottom: 1rem; }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
             color: var(--neutral-700);
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
+            font-weight: 500;
         }
         
-        .timeline-time {
-            color: var(--neutral-500);
-            font-size: 0.75rem;
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: var(--neutral-100);
+            color: var(--neutral-700);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            color: var(--white);
         }
         
         /* ===== TOAST ===== */
@@ -387,336 +429,252 @@
         
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .project-layout {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
             }
         }
         
         @media (max-width: 768px) {
-            .project-title-section {
+            .header-container {
                 flex-direction: column;
+                gap: 1rem;
             }
             
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
+            .search-container {
+                max-width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Project Header -->
-    <header class="project-header">
+    <!-- Header -->
+    <header class="header">
         <div class="header-container">
-            <a href="/" class="back-link">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <a href="/" class="logo">
+                <div class="logo-icon">TL</div>
+                <div class="logo-text">ThoraxLab</div>
             </a>
             
-            <div class="project-title-section">
-                <div>
-                    <h1 class="project-title" id="projectTitle">Loading...</h1>
-                    <span class="project-type" id="projectType">Clinical Led</span>
-                </div>
-                
-                <div class="header-actions">
-                    <button class="action-btn" id="editProjectBtn">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="action-btn" id="shareProjectBtn">
-                        <i class="fas fa-share"></i> Share
-                    </button>
-                </div>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search projects, decisions, or teams..." id="searchInput">
+            </div>
+            
+            <div class="user-info">
+                <button class="create-project-btn" id="openCreateModal">
+                    <i class="fas fa-plus"></i> New Project
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-container">
-        <div class="project-layout">
-            <!-- Main Content -->
-            <div class="project-content">
-                <!-- Project Details -->
-                <section class="project-details">
-                    <div class="details-section">
-                        <h2 class="section-title"><i class="fas fa-info-circle"></i> Project Overview</h2>
-                        <p class="project-description" id="projectDescription">Loading...</p>
-                        
-                        <div class="project-meta" style="display: flex; gap: 2rem; color: var(--neutral-600); font-size: 0.875rem;">
-                            <div>
-                                <strong>Created:</strong> <span id="projectCreated">Loading...</span>
-                            </div>
-                            <div>
-                                <strong>Last Updated:</strong> <span id="projectUpdated">Loading...</span>
-                            </div>
-                            <div>
-                                <strong>Status:</strong> <span id="projectStatus" style="color: var(--accent-green); font-weight: 600;">Active</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Discussion -->
-                    <div class="details-section">
-                        <h2 class="section-title"><i class="fas fa-comments"></i> Discussion</h2>
-                        
-                        <!-- Comment Form -->
-                        <div class="comment-form">
-                            <textarea class="comment-input" id="commentInput" 
-                                      placeholder="Add your comment or question..."></textarea>
-                            <div class="comment-actions">
-                                <button class="submit-comment" id="submitComment">Post Comment</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Comments List -->
-                        <div class="comments-list" id="commentsList">
-                            <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
-                                <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                                <p>No comments yet. Start the discussion!</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
+        <h1 style="color: white; margin-bottom: 1rem;">Innovation Dashboard</h1>
+        <p style="color: rgba(255,255,255,0.8); margin-bottom: 2rem;">Track clinical-industry collaborations in real-time</p>
+        
+        <div class="dashboard-grid">
+            <!-- Projects Section -->
+            <section class="projects-section">
+                <div class="section-header">
+                    <h2 class="section-title">Active Projects</h2>
+                </div>
+                
+                <div class="projects-list" id="projectsList">
+                    <!-- Projects will be loaded here -->
+                </div>
+            </section>
             
             <!-- Sidebar -->
             <aside class="sidebar">
-                <!-- Project Stats -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Project Metrics</div>
-                    <div class="sidebar-content">
-                        <div class="project-stats">
-                            <div class="stat-box">
-                                <div class="stat-value" id="pulseScore">75%</div>
-                                <div class="stat-label">Pulse</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value" id="teamSize">1</div>
-                                <div class="stat-label">Team</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value" id="commentCount">0</div>
-                                <div class="stat-label">Comments</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value" id="decisionCount">0</div>
-                                <div class="stat-label">Decisions</div>
-                            </div>
+                <div class="widget">
+                    <h3 class="widget-title">Platform Status</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="activeProjects">0</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="onlineUsers">1</div>
+                            <div class="stat-label">Online</div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Team Members -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Project Team</div>
-                    <div class="sidebar-content">
-                        <div class="team-list" id="teamList">
-                            <div class="team-member">
-                                <div class="member-avatar">SC</div>
-                                <div class="member-info">
-                                    <div class="member-name">Dr. Sarah Chen</div>
-                                    <div class="member-role">Project Lead</div>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="inviteMemberBtn" style="width: 100%; margin-top: 1rem; padding: 0.5rem; background: var(--neutral-100); border: 1px solid var(--neutral-300); border-radius: var(--radius-md); cursor: pointer;">
-                            <i class="fas fa-user-plus"></i> Invite Member
+                <div class="widget">
+                    <h3 class="widget-title">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn-secondary" onclick="refreshProjects()" style="width: 100%;">
+                            <i class="fas fa-sync-alt"></i> Refresh Projects
                         </button>
-                    </div>
-                </div>
-                
-                <!-- Recent Activity -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Recent Activity</div>
-                    <div class="sidebar-content">
-                        <div class="timeline" id="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-content">Project created</div>
-                                <div class="timeline-time">Just now</div>
-                            </div>
-                        </div>
+                        <button class="btn-secondary" onclick="exportData()" style="width: 100%;">
+                            <i class="fas fa-download"></i> Export Data
+                        </button>
                     </div>
                 </div>
             </aside>
         </div>
     </main>
 
+    <!-- Create Project Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Project</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="projectForm">
+                <div class="form-group">
+                    <label for="projectTitle" class="form-label">Project Title</label>
+                    <input type="text" id="projectTitle" class="form-input" required 
+                           placeholder="e.g., AI-Powered COPD Detection">
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDescription" class="form-label">Description</label>
+                    <textarea id="projectDescription" class="form-textarea" required 
+                              placeholder="Describe the clinical challenge and innovation approach..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectType" class="form-label">Project Type</label>
+                    <select id="projectType" class="form-input" required>
+                        <option value="">Select type...</option>
+                        <option value="clinical">Clinical Led</option>
+                        <option value="industry">Industry Led</option>
+                        <option value="collaborative">Joint Collaboration</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ===== PROJECT DETAIL MANAGER =====
-        class ProjectDetailManager {
+        // ===== ALL JAVASCRIPT =====
+        class ThoraxLabPlatform {
             constructor() {
-                this.projectId = this.getProjectId();
-                this.project = null;
-                this.comments = [];
-                this.team = [];
-                this.timeline = [];
+                this.projects = [];
+                this.user = this.getCurrentUser();
                 this.ws = null;
                 this.init();
             }
             
-            getProjectId() {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('id') || '';
-            }
-            
             async init() {
-                if (!this.projectId) {
-                    this.showError('No project ID specified');
-                    return;
-                }
-                
-                console.log(`Loading project: ${this.projectId}`);
-                await this.loadProject();
-                await this.loadComments();
+                console.log('🚀 ThoraxLab Platform Initializing...');
+                await this.loadProjects();
                 this.setupEventListeners();
                 this.connectWebSocket();
+                this.updatePlatformStats();
             }
             
-            // ===== LOAD DATA =====
-            async loadProject() {
+            getCurrentUser() {
+                return {
+                    id: localStorage.getItem('userId') || `user_${Date.now()}`,
+                    name: localStorage.getItem('userName') || 'Dr. Sarah Chen',
+                    role: localStorage.getItem('userRole') || 'clinician'
+                };
+            }
+            
+            // ===== PROJECT MANAGEMENT =====
+            async loadProjects() {
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}`);
-                    if (!response.ok) throw new Error('Failed to load project');
+                    const response = await fetch('/api/projects');
+                    if (!response.ok) throw new Error('Failed to load projects');
                     
-                    this.project = await response.json();
-                    this.renderProject();
+                    this.projects = await response.json();
+                    this.renderProjects();
+                    this.updatePlatformStats();
                     
                 } catch (error) {
-                    console.error('Error loading project:', error);
-                    this.showError('Failed to load project');
+                    console.error('Error loading projects:', error);
+                    this.showToast('Failed to load projects', 'error');
+                    this.projects = [];
+                    this.renderProjects();
                 }
             }
             
-            async loadComments() {
+            async createProject(projectData) {
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}/comments`);
-                    if (response.ok) {
-                        this.comments = await response.json();
+                    console.log('Creating project:', projectData);
+                    
+                    const response = await fetch('/api/projects', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(projectData)
+                    });
+                    
+                    const responseText = await response.text();
+                    console.log('Response:', response.status, responseText);
+                    
+                    if (!response.ok) {
+                        let errorData;
+                        try {
+                            errorData = JSON.parse(responseText);
+                        } catch {
+                            errorData = { error: responseText };
+                        }
+                        throw new Error(errorData.error || 'Failed to create project');
                     }
-                    this.renderComments();
+                    
+                    const project = JSON.parse(responseText);
+                    this.projects.unshift(project);
+                    this.renderProjects();
+                    this.updatePlatformStats();
+                    
+                    this.showToast('Project created successfully', 'success');
+                    this.closeModal();
+                    
+                    return project;
                     
                 } catch (error) {
-                    console.error('Error loading comments:', error);
+                    console.error('Error creating project:', error);
+                    this.showToast(`Failed: ${error.message}`, 'error');
+                    throw error;
                 }
             }
             
-            // ===== RENDER =====
-            renderProject() {
-                if (!this.project) return;
+            renderProjects() {
+                const container = document.getElementById('projectsList');
                 
-                document.getElementById('projectTitle').textContent = this.project.title;
-                document.getElementById('projectDescription').textContent = this.project.description;
-                document.getElementById('projectType').textContent = this.getTypeLabel(this.project.type);
-                document.getElementById('projectCreated').textContent = this.formatDate(this.project.created_at);
-                document.getElementById('projectUpdated').textContent = this.formatDate(this.project.updated_at);
-                document.getElementById('pulseScore').textContent = `${this.project.pulse_score || 75}%`;
-                document.getElementById('commentCount').textContent = this.project.total_comments || 0;
-            }
-            
-            renderComments() {
-                const container = document.getElementById('commentsList');
-                
-                if (!this.comments || this.comments.length === 0) {
+                if (!this.projects || this.projects.length === 0) {
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
-                            <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                            <p>No comments yet. Start the discussion!</p>
+                        <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
+                            <i class="fas fa-project-diagram" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>No projects yet. Start by creating your first innovation project.</p>
                         </div>
                     `;
                     return;
                 }
                 
-                container.innerHTML = this.comments.map(comment => `
-                    <div class="comment-item">
-                        <div class="comment-header">
-                            <div class="comment-avatar">${comment.user_name?.substring(0, 2) || 'U'}</div>
-                            <div style="flex: 1;">
-                                <div class="comment-author">${comment.user_name || 'User'}</div>
-                                <div class="comment-time">${this.formatRelativeTime(comment.created_at)}</div>
-                            </div>
+                container.innerHTML = this.projects.map(project => `
+                    <div class="project-item" onclick="window.viewProject('${project.id}')">
+                        <div class="project-header">
+                            <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
+                            <span class="project-type type-${project.type || 'clinical'}">
+                                ${this.getTypeLabel(project.type)}
+                            </span>
                         </div>
-                        <div class="comment-content">${this.escapeHtml(comment.content)}</div>
+                        
+                        <p class="project-description">${this.escapeHtml(project.description)}</p>
+                        
+                        <div class="project-meta">
+                            <span><i class="far fa-calendar"></i> ${this.formatDate(project.created_at)}</span>
+                            <span><i class="fas fa-chart-line"></i> ${project.pulse_score || 50}% Pulse</span>
+                        </div>
                     </div>
                 `).join('');
             }
             
-            // ===== ACTIONS =====
-            async submitComment() {
-                const input = document.getElementById('commentInput');
-                const content = input.value.trim();
-                
-                if (!content) {
-                    this.showToast('Please enter a comment', 'warning');
-                    return;
-                }
-                
-                try {
-                    const user = this.getCurrentUser();
-                    
-                    const response = await fetch('/api/comments', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            projectId: this.projectId,
-                            content,
-                            userId: user.id
-                        })
-                    });
-                    
-                    if (!response.ok) throw new Error('Failed to post comment');
-                    
-                    const comment = await response.json();
-                    this.comments.unshift(comment);
-                    this.renderComments();
-                    
-                    input.value = '';
-                    this.showToast('Comment posted', 'success');
-                    
-                } catch (error) {
-                    console.error('Error posting comment:', error);
-                    this.showToast('Failed to post comment', 'error');
-                }
-            }
-            
-            async editProject() {
-                const newTitle = prompt('Enter new project title:', this.project?.title);
-                if (!newTitle || newTitle === this.project?.title) return;
-                
-                try {
-                    const response = await fetch(`/api/projects/${this.projectId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ title: newTitle })
-                    });
-                    
-                    if (!response.ok) throw new Error('Failed to update project');
-                    
-                    this.project.title = newTitle;
-                    this.renderProject();
-                    this.showToast('Project updated', 'success');
-                    
-                } catch (error) {
-                    console.error('Error updating project:', error);
-                    this.showToast('Failed to update project', 'error');
-                }
-            }
-            
-            shareProject() {
-                const url = window.location.href;
-                navigator.clipboard.writeText(url);
-                this.showToast('Project link copied to clipboard', 'success');
-            }
-            
-            inviteMember() {
-                const email = prompt('Enter email address to invite:');
-                if (!email) return;
-                
-                this.showToast(`Invitation sent to ${email}`, 'success');
-            }
-            
-            // ===== WEBSOCKET =====
+            // ===== WEB SOCKET =====
             connectWebSocket() {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 const wsUrl = `${protocol}//${window.location.host}`;
@@ -724,9 +682,11 @@
                 this.ws = new WebSocket(wsUrl);
                 
                 this.ws.onopen = () => {
+                    console.log('🔗 WebSocket connected');
                     this.ws.send(JSON.stringify({
-                        type: 'subscribe_project',
-                        projectId: this.projectId
+                        type: 'authenticate',
+                        userId: this.user.id,
+                        userData: this.user
                     }));
                 };
                 
@@ -738,105 +698,38 @@
                         console.error('WebSocket message error:', error);
                     }
                 };
+                
+                this.ws.onclose = () => {
+                    console.log('🔌 WebSocket disconnected');
+                    setTimeout(() => this.connectWebSocket(), 5000);
+                };
             }
             
             handleWebSocketMessage(data) {
                 switch (data.type) {
-                    case 'comment_added':
-                        if (data.comment.projectId === this.projectId) {
-                            this.comments.unshift(data.comment);
-                            this.renderComments();
-                        }
+                    case 'project_created':
+                        this.projects.unshift(data.project);
+                        this.renderProjects();
+                        this.updatePlatformStats();
+                        this.showToast(`New project: ${data.project.title}`, 'info');
                         break;
                         
-                    case 'project_updated':
-                        if (data.project.id === this.projectId) {
-                            this.project = data.project;
-                            this.renderProject();
-                        }
+                    case 'platform_stats':
+                        document.getElementById('activeProjects').textContent = data.active_projects || 0;
+                        document.getElementById('onlineUsers').textContent = data.online_users || 1;
                         break;
                 }
             }
             
-            // ===== EVENT LISTENERS =====
-            setupEventListeners() {
-                // Submit comment
-                document.getElementById('submitComment').addEventListener('click', () => {
-                    this.submitComment();
-                });
-                
-                // Comment input - Ctrl+Enter to submit
-                document.getElementById('commentInput').addEventListener('keydown', (e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                        this.submitComment();
-                    }
-                });
-                
-                // Edit project
-                document.getElementById('editProjectBtn').addEventListener('click', () => {
-                    this.editProject();
-                });
-                
-                // Share project
-                document.getElementById('shareProjectBtn').addEventListener('click', () => {
-                    this.shareProject();
-                });
-                
-                // Invite member
-                document.getElementById('inviteMemberBtn').addEventListener('click', () => {
-                    this.inviteMember();
-                });
-            }
-            
-            // ===== UTILITIES =====
-            getCurrentUser() {
-                return {
-                    id: localStorage.getItem('userId') || `user_${Date.now()}`,
-                    name: localStorage.getItem('userName') || 'Dr. Sarah Chen',
-                    role: localStorage.getItem('userRole') || 'clinician'
-                };
-            }
-            
-            getTypeLabel(type) {
-                const labels = {
-                    clinical: 'Clinical Led',
-                    industry: 'Industry Led',
-                    collaborative: 'Collaborative'
-                };
-                return labels[type] || 'Clinical Led';
-            }
-            
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            }
-            
-            formatRelativeTime(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffMins = Math.floor(diffMs / (1000 * 60));
-                
-                if (diffMins < 1) return 'just now';
-                if (diffMins < 60) return `${diffMins}m ago`;
-                if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
-                return `${Math.floor(diffMins / 1440)}d ago`;
-            }
-            
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
+            // ===== UI UTILITIES =====
+            updatePlatformStats() {
+                document.getElementById('activeProjects').textContent = this.projects.length;
             }
             
             showToast(message, type = 'info') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
-                toast.className = `toast`;
+                toast.className = 'toast';
                 toast.style.borderLeftColor = {
                     success: 'var(--accent-green)',
                     error: 'var(--accent-red)',
@@ -867,23 +760,145 @@
                 }, 5000);
             }
             
-            showError(message) {
-                document.querySelector('.main-container').innerHTML = `
-                    <div style="text-align: center; padding: 4rem; color: var(--neutral-500);">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-red);"></i>
-                        <h2 style="margin-bottom: 1rem;">Error Loading Project</h2>
-                        <p style="margin-bottom: 2rem;">${message}</p>
-                        <a href="/" style="padding: 0.75rem 1.5rem; background: var(--primary-blue); color: white; text-decoration: none; border-radius: var(--radius-md);">
-                            Return to Dashboard
-                        </a>
-                    </div>
-                `;
+            openModal() {
+                document.getElementById('createModal').classList.add('active');
             }
+            
+            closeModal() {
+                document.getElementById('createModal').classList.remove('active');
+                document.getElementById('projectForm').reset();
+            }
+            
+            // ===== EVENT LISTENERS =====
+            setupEventListeners() {
+                document.getElementById('projectForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const title = document.getElementById('projectTitle').value.trim();
+                    const description = document.getElementById('projectDescription').value.trim();
+                    const type = document.getElementById('projectType').value;
+                    
+                    if (!title || !description || !type) {
+                        this.showToast('Please fill in all fields', 'warning');
+                        return;
+                    }
+                    
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                    submitBtn.disabled = true;
+                    
+                    try {
+                        await this.createProject({ title, description, type });
+                    } finally {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+                
+                document.getElementById('openCreateModal').addEventListener('click', () => this.openModal());
+                
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.searchProjects(e.target.value);
+                });
+                
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        this.openModal();
+                    }
+                    if (e.key === 'Escape') this.closeModal();
+                });
+            }
+            
+            // ===== UTILITY FUNCTIONS =====
+            searchProjects(query) {
+                if (!query.trim()) {
+                    this.renderProjects();
+                    return;
+                }
+                
+                const filtered = this.projects.filter(project =>
+                    project.title.toLowerCase().includes(query.toLowerCase()) ||
+                    project.description.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                const container = document.getElementById('projectsList');
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
+                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>No projects found matching "${this.escapeHtml(query)}"</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const tempProjects = this.projects;
+                this.projects = filtered;
+                this.renderProjects();
+                this.projects = tempProjects;
+            }
+            
+            getTypeLabel(type) {
+                const labels = {
+                    clinical: 'Clinical Led',
+                    industry: 'Industry Led',
+                    collaborative: 'Collaborative'
+                };
+                return labels[type] || 'Clinical Led';
+            }
+            
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+                return date.toLocaleDateString();
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+        
+        // ===== GLOBAL FUNCTIONS =====
+        function viewProject(projectId) {
+            window.location.href = `/project.html?id=${projectId}`;
+        }
+        
+        function refreshProjects() {
+            window.platform.loadProjects();
+            window.platform.showToast('Projects refreshed', 'success');
+        }
+        
+        function exportData() {
+            const data = JSON.stringify(window.platform.projects, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `thoraxlab-projects-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            window.platform.showToast('Data exported', 'success');
+        }
+        
+        function closeModal() {
+            window.platform.closeModal();
         }
         
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            window.projectManager = new ProjectDetailManager();
+            window.platform = new ThoraxLabPlatform();
         });
     </script>
 </body>
