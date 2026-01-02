@@ -7,14 +7,21 @@ class ThoraxLabDatabase {
     constructor() {
         this.db = null;
         this.connected = false;
-        const dataDir = path.join(__dirname, 'data');
+        
+        const dataDir = process.env.DB_PATH ? 
+            path.dirname(process.env.DB_PATH) : 
+            path.join(__dirname, 'data');
+        
         if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-        this.DB_PATH = path.join(dataDir, 'thoraxlab.db');
+        
+        this.DB_PATH = process.env.DB_PATH || path.join(dataDir, 'thoraxlab.db');
     }
 
     async connect() {
         if (this.connected) return this.db;
+        
         console.log('🔌 Connecting to database...');
+        
         return new Promise((resolve, reject) => {
             this.db = new sqlite3.Database(this.DB_PATH, (err) => {
                 if (err) {
@@ -23,7 +30,9 @@ class ThoraxLabDatabase {
                 } else {
                     console.log('✅ Database connected');
                     this.connected = true;
-                    this.initializeSchema().then(() => resolve(this.db)).catch(reject);
+                    this.initializeSchema()
+                        .then(() => resolve(this.db))
+                        .catch(reject);
                 }
             });
         });
@@ -31,8 +40,28 @@ class ThoraxLabDatabase {
 
     async initializeSchema() {
         await this.run('PRAGMA foreign_keys = ON');
+        await this.run('PRAGMA journal_mode = WAL');
         
-        // ===== ENHANCED: USER SESSIONS TABLE =====
+        // USERS
+        await this.run(`
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                email TEXT UNIQUE NOT NULL,
+                name TEXT NOT NULL,
+                organization TEXT NOT NULL,
+                role TEXT NOT NULL CHECK(role IN ('clinician', 'industry', 'lead')),
+                specialty TEXT,
+                avatar_color TEXT DEFAULT '#1A5F7A',
+                avatar_initials TEXT,
+                impact_score INTEGER DEFAULT 100,
+                is_active BOOLEAN DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // SESSIONS
         await this.run(`
             CREATE TABLE IF NOT EXISTS user_sessions (
                 id TEXT PRIMARY KEY,
@@ -45,53 +74,7 @@ class ThoraxLabDatabase {
             )
         `);
 
-        // ===== ENHANCED: USER PRESENCE TRACKING =====
-        await this.run(`
-            CREATE TABLE IF NOT EXISTS user_presence (
-                user_id TEXT PRIMARY KEY,
-                status TEXT NOT NULL DEFAULT 'offline' CHECK(status IN ('online', 'away', 'offline')),
-                last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                current_project TEXT,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `);
-
-        // ===== ENHANCED: USER NOTIFICATIONS =====
-        await this.run(`
-            CREATE TABLE IF NOT EXISTS user_notifications (
-                id TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL,
-                type TEXT NOT NULL,
-                title TEXT NOT NULL,
-                message TEXT,
-                read BOOLEAN DEFAULT 0,
-                metadata TEXT DEFAULT '{}',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `);
-
-        // Users table (enhanced)
-        await this.run(`
-            CREATE TABLE IF NOT EXISTS users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                name TEXT NOT NULL,
-                organization TEXT NOT NULL,
-                role TEXT NOT NULL CHECK(role IN ('clinician', 'industry', 'lead')),
-                specialty TEXT,
-                avatar_color TEXT DEFAULT '#1A5F7A',
-                avatar_initials TEXT,
-                impact_score INTEGER DEFAULT 100,
-                is_admin BOOLEAN DEFAULT 0,
-                is_active BOOLEAN DEFAULT 1,
-                status TEXT DEFAULT 'offline',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
-
-        // Projects table with objectives matrix
+        // PROJECTS
         await this.run(`
             CREATE TABLE IF NOT EXISTS projects (
                 id TEXT PRIMARY KEY,
@@ -100,20 +83,15 @@ class ThoraxLabDatabase {
                 type TEXT NOT NULL CHECK(type IN ('clinical', 'industry', 'collaborative')),
                 status TEXT NOT NULL DEFAULT 'planning' CHECK(status IN ('planning', 'active', 'completed', 'archived')),
                 lead_id TEXT NOT NULL,
-                lead_name TEXT NOT NULL,
-                lead_email TEXT NOT NULL,
                 objectives TEXT DEFAULT '{"clinical":[],"industry":[],"shared":[]}',
                 methodology TEXT,
-                start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                estimated_duration TEXT,
-                progress INTEGER DEFAULT 0,
-                consensus_score INTEGER DEFAULT 0,
-                engagement_score INTEGER DEFAULT 0,
+                cover_color TEXT DEFAULT '#1A5F7A',
                 discussion_count INTEGER DEFAULT 0,
+                team_count INTEGER DEFAULT 0,
                 comment_count INTEGER DEFAULT 0,
                 decision_count INTEGER DEFAULT 0,
+                consensus_score INTEGER DEFAULT 0,
                 is_archived BOOLEAN DEFAULT 0,
-                cover_color TEXT DEFAULT '#1A5F7A',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 last_activity_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -121,7 +99,7 @@ class ThoraxLabDatabase {
             )
         `);
 
-        // Project team
+        // PROJECT TEAM
         await this.run(`
             CREATE TABLE IF NOT EXISTS project_team (
                 id TEXT PRIMARY KEY,
@@ -136,7 +114,7 @@ class ThoraxLabDatabase {
             )
         `);
 
-        // Discussions with type enforcement
+        // DISCUSSIONS
         await this.run(`
             CREATE TABLE IF NOT EXISTS discussions (
                 id TEXT PRIMARY KEY,
@@ -145,18 +123,14 @@ class ThoraxLabDatabase {
                 content TEXT NOT NULL,
                 type TEXT NOT NULL CHECK(type IN ('clinical_question', 'technical_solution', 'joint_review')),
                 author_id TEXT NOT NULL,
-                author_name TEXT NOT NULL,
-                author_role TEXT NOT NULL,
-                author_organization TEXT,
                 evidence_count INTEGER DEFAULT 0,
+                comment_count INTEGER DEFAULT 0,
+                consensus_status TEXT DEFAULT 'pending' CHECK(consensus_status IN ('pending', 'low', 'medium', 'high', 'decided')),
                 clinical_agree_count INTEGER DEFAULT 0,
                 clinical_disagree_count INTEGER DEFAULT 0,
                 technical_feasible_count INTEGER DEFAULT 0,
                 technical_infeasible_count INTEGER DEFAULT 0,
                 needs_evidence_count INTEGER DEFAULT 0,
-                comment_count INTEGER DEFAULT 0,
-                consensus_status TEXT DEFAULT 'pending' CHECK(consensus_status IN ('pending', 'low', 'medium', 'high', 'decided')),
-                tags TEXT DEFAULT '[]',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
@@ -164,7 +138,7 @@ class ThoraxLabDatabase {
             )
         `);
 
-        // Discussion votes for consensus tracking
+        // DISCUSSION VOTES
         await this.run(`
             CREATE TABLE IF NOT EXISTS discussion_votes (
                 id TEXT PRIMARY KEY,
@@ -173,33 +147,13 @@ class ThoraxLabDatabase {
                 vote_type TEXT NOT NULL CHECK(vote_type IN ('clinical_agree', 'clinical_disagree', 'technical_feasible', 'technical_infeasible', 'needs_evidence')),
                 user_role TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(discussion_id, user_id, vote_type),
+                UNIQUE(discussion_id, user_id),
                 FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )
         `);
 
-        // Evidence links
-        await this.run(`
-            CREATE TABLE IF NOT EXISTS evidence_links (
-                id TEXT PRIMARY KEY,
-                discussion_id TEXT,
-                comment_id TEXT,
-                decision_id TEXT,
-                evidence_type TEXT NOT NULL CHECK(evidence_type IN ('pubmed', 'clinical_trial', 'guideline', 'regulatory', 'other')),
-                source_id TEXT NOT NULL,
-                title TEXT,
-                url TEXT,
-                added_by TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
-                FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
-                FOREIGN KEY (decision_id) REFERENCES decisions(id) ON DELETE CASCADE,
-                FOREIGN KEY (added_by) REFERENCES users(id)
-            )
-        `);
-
-        // Comments
+        // COMMENTS
         await this.run(`
             CREATE TABLE IF NOT EXISTS comments (
                 id TEXT PRIMARY KEY,
@@ -207,9 +161,6 @@ class ThoraxLabDatabase {
                 project_id TEXT NOT NULL,
                 content TEXT NOT NULL,
                 author_id TEXT NOT NULL,
-                author_name TEXT NOT NULL,
-                author_role TEXT NOT NULL,
-                author_organization TEXT,
                 evidence_count INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
@@ -218,7 +169,25 @@ class ThoraxLabDatabase {
             )
         `);
 
-        // Decisions from consensus
+        // EVIDENCE LINKS
+        await this.run(`
+            CREATE TABLE IF NOT EXISTS evidence_links (
+                id TEXT PRIMARY KEY,
+                discussion_id TEXT,
+                comment_id TEXT,
+                evidence_type TEXT NOT NULL CHECK(evidence_type IN ('pubmed', 'clinical_trial', 'guideline', 'regulatory', 'other')),
+                source_id TEXT NOT NULL,
+                title TEXT,
+                url TEXT,
+                added_by TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
+                FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
+                FOREIGN KEY (added_by) REFERENCES users(id)
+            )
+        `);
+
+        // DECISIONS
         await this.run(`
             CREATE TABLE IF NOT EXISTS decisions (
                 id TEXT PRIMARY KEY,
@@ -241,7 +210,7 @@ class ThoraxLabDatabase {
             )
         `);
 
-        // Activity log
+        // ACTIVITY LOG
         await this.run(`
             CREATE TABLE IF NOT EXISTS activity_log (
                 id TEXT PRIMARY KEY,
@@ -256,17 +225,22 @@ class ThoraxLabDatabase {
             )
         `);
 
-        console.log('✅ Schema initialized with enhancements');
-        
-        // Create admin user if none exists
-        const userCount = await this.get('SELECT COUNT(*) as count FROM users');
-        if (userCount.count === 0) {
-            await this.run(`
-                INSERT INTO users (id, email, name, organization, role, is_admin, avatar_color, avatar_initials)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `, ['admin', 'admin@thoraxlab.org', 'Platform Admin', 'ThoraxLab', 'lead', 1, '#1A5F7A', 'PA']);
-            console.log('✅ Created admin user');
-        }
+        // NOTIFICATIONS
+        await this.run(`
+            CREATE TABLE IF NOT EXISTS notifications (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                message TEXT,
+                read BOOLEAN DEFAULT 0,
+                metadata TEXT DEFAULT '{}',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `);
+
+        console.log('✅ Database schema initialized');
     }
 
     // ===== CORE METHODS =====
@@ -297,15 +271,83 @@ class ThoraxLabDatabase {
         });
     }
 
-    // ===== ENHANCED: SESSION MANAGEMENT =====
+    // ===== USER METHODS =====
+    async createUser(userData) {
+        const userId = `user_${uuidv4()}`;
+        const initials = this.getInitials(userData.name);
+        
+        await this.run(`
+            INSERT INTO users (id, email, name, organization, role, avatar_color, avatar_initials)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [
+            userId,
+            userData.email.toLowerCase().trim(),
+            userData.name.trim(),
+            userData.organization || 'Not specified',
+            userData.role || 'clinician',
+            userData.avatar_color || '#1A5F7A',
+            initials
+        ]);
+        
+        return this.getUser(userId);
+    }
+
+    async getUser(userId) {
+        return this.get('SELECT * FROM users WHERE id = ?', [userId]);
+    }
+
+    async findUserByEmail(email) {
+        return this.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase().trim()]);
+    }
+
+    async searchUsers(query, excludeUserId = null) {
+        let sql = `
+            SELECT id, name, email, organization, role, avatar_color, avatar_initials
+            FROM users 
+            WHERE (name LIKE ? OR email LIKE ? OR organization LIKE ?)
+            AND is_active = 1
+        `;
+        const params = [`%${query}%`, `%${query}%`, `%${query}%`];
+        
+        if (excludeUserId) {
+            sql += ' AND id != ?';
+            params.push(excludeUserId);
+        }
+        
+        sql += ' LIMIT 20';
+        return this.all(sql, params);
+    }
+
+    async updateUser(userId, updates) {
+        const allowedFields = ['name', 'organization', 'specialty', 'avatar_color'];
+        const setClause = [];
+        const values = [];
+        
+        for (const [key, value] of Object.entries(updates)) {
+            if (allowedFields.includes(key) && value !== undefined) {
+                setClause.push(`${key} = ?`);
+                values.push(value);
+            }
+        }
+        
+        if (setClause.length === 0) return this.getUser(userId);
+        
+        setClause.push('updated_at = CURRENT_TIMESTAMP');
+        values.push(userId);
+        
+        await this.run(`UPDATE users SET ${setClause.join(', ')} WHERE id = ?`, values);
+        return this.getUser(userId);
+    }
+
+    // ===== SESSION METHODS =====
     async createSession(userId, token, expiresInHours = 24) {
         const sessionId = `sess_${uuidv4()}`;
-        const expiresAt = new Date(Date.now() + expiresInHours * 60 * 60 * 1000).toISOString();
+        const expiresAt = new Date(Date.now() + expiresInHours * 60 * 60 * 1000);
         
         await this.run(`
             INSERT INTO user_sessions (id, user_id, token, expires_at)
             VALUES (?, ?, ?, ?)
-        `, [sessionId, userId, token, expiresAt]);
+        `, [sessionId, userId, token, expiresAt.toISOString()]);
         
         return this.getSessionByToken(token);
     }
@@ -314,7 +356,7 @@ class ThoraxLabDatabase {
         const session = await this.get('SELECT * FROM user_sessions WHERE token = ?', [token]);
         if (!session) return null;
         
-        // Check if session is expired
+        // Check expiration
         const now = new Date();
         const expiresAt = new Date(session.expires_at);
         if (now > expiresAt) {
@@ -324,7 +366,6 @@ class ThoraxLabDatabase {
         
         // Update last activity
         await this.run('UPDATE user_sessions SET last_activity = CURRENT_TIMESTAMP WHERE id = ?', [session.id]);
-        
         return session;
     }
 
@@ -333,326 +374,142 @@ class ThoraxLabDatabase {
         return true;
     }
 
-    async deleteAllUserSessions(userId) {
-        await this.run('DELETE FROM user_sessions WHERE user_id = ?', [userId]);
-        return true;
-    }
-
-    // ===== ENHANCED: USER METHODS =====
-    async createUser(userData) {
-        const userId = `user_${uuidv4()}`;
-        const now = new Date().toISOString();
-        const initials = this.getUserInitials(userData.name);
-        
-        await this.run(`
-            INSERT INTO users (id, email, name, organization, role, specialty, avatar_color, avatar_initials, created_at, last_activity)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-            userId,
-            userData.email.trim().toLowerCase(),
-            userData.name.trim(),
-            userData.organization || 'Medical Center',
-            userData.role || 'clinician',
-            userData.specialty || 'general',
-            userData.avatar_color || '#1A5F7A',
-            initials,
-            now,
-            now
-        ]);
-
-        // Initialize presence record
-        await this.run(`
-            INSERT INTO user_presence (user_id, status, last_seen)
-            VALUES (?, 'offline', ?)
-        `, [userId, now]);
-
-        await this.logActivity(null, userId, 'user_registered', 'User registered on platform');
-        return this.getUser(userId);
-    }
-
-    async getUser(userId) {
-        const user = await this.get('SELECT * FROM users WHERE id = ?', [userId]);
-        if (user) {
-            // Get presence status
-            const presence = await this.get('SELECT * FROM user_presence WHERE user_id = ?', [userId]);
-            user.presence = presence || { status: 'offline', last_seen: user.last_activity };
-        }
-        return user;
-    }
-
-    async findUserByEmail(email) {
-        return this.get('SELECT * FROM users WHERE email = ?', [email.trim().toLowerCase()]);
-    }
-
-    async getAllUsers() {
-        const users = await this.all('SELECT * FROM users WHERE is_active = 1 ORDER BY created_at DESC');
-        
-        // Add presence data to each user
-        for (const user of users) {
-            const presence = await this.get('SELECT * FROM user_presence WHERE user_id = ?', [user.id]);
-            user.presence = presence || { status: 'offline', last_seen: user.last_activity };
-        }
-        
-        return users;
-    }
-
-    async updateUserActivity(userId) {
-        await this.run(`
-            UPDATE users SET last_activity = CURRENT_TIMESTAMP WHERE id = ?
-        `, [userId]);
-        return true;
-    }
-
-    async updateUserPresence(userId, status, currentProject = null) {
-        await this.run(`
-            INSERT OR REPLACE INTO user_presence (user_id, status, last_seen, current_project)
-            VALUES (?, ?, CURRENT_TIMESTAMP, ?)
-        `, [userId, status, currentProject]);
-        
-        // Also update user status in users table
-        await this.run(`
-            UPDATE users SET status = ?, last_activity = CURRENT_TIMESTAMP WHERE id = ?
-        `, [status, userId]);
-        
-        return this.get('SELECT * FROM user_presence WHERE user_id = ?', [userId]);
-    }
-
-    async getUsersByPresence(status = null) {
-        let query = `
-            SELECT u.*, up.status as presence_status, up.last_seen, up.current_project
-            FROM users u
-            JOIN user_presence up ON u.id = up.user_id
-            WHERE u.is_active = 1
-        `;
-        
-        const params = [];
-        if (status) {
-            query += ' AND up.status = ?';
-            params.push(status);
-        }
-        
-        query += ' ORDER BY up.last_seen DESC';
-        
-        return this.all(query, params);
-    }
-
-    // ===== ENHANCED: PROJECT METHODS =====
+    // ===== PROJECT METHODS =====
     async createProject(projectData, userId) {
         const projectId = `project_${uuidv4()}`;
-        const now = new Date().toISOString();
         const user = await this.getUser(userId);
         if (!user) throw new Error('User not found');
-
-        const coverColors = ['#1A5F7A', '#0D8B70', '#6D5ACF', '#F59E0B', '#10B981'];
-        const randomColor = coverColors[Math.floor(Math.random() * coverColors.length)];
-
+        
+        const objectives = projectData.objectives ? 
+            JSON.stringify(projectData.objectives) : 
+            '{"clinical":[],"industry":[],"shared":[]}';
+        
         await this.run(`
-            INSERT INTO projects (id, title, description, type, status, lead_id, lead_name, lead_email, 
-                                  objectives, methodology, cover_color, start_date, created_at, updated_at, last_activity_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO projects (
+                id, title, description, type, lead_id, 
+                objectives, methodology, cover_color
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, [
             projectId,
             projectData.title.trim(),
             projectData.description.trim(),
             projectData.type || 'clinical',
-            projectData.status || 'planning',
             userId,
-            user.name,
-            user.email,
-            JSON.stringify(projectData.objectives || { clinical: [], industry: [], shared: [] }),
+            objectives,
             projectData.methodology || '',
-            randomColor,
-            now,
-            now,
-            now,
-            now
+            projectData.cover_color || '#1A5F7A'
         ]);
-
+        
+        // Add creator as lead team member
         await this.addTeamMember(projectId, userId, 'lead', user.organization);
+        
         await this.logActivity(projectId, userId, 'project_created', `Created project: ${projectData.title}`);
-
         return this.getProject(projectId);
     }
 
     async getProject(projectId) {
         const project = await this.get(`
-            SELECT p.*,
-                   (SELECT COUNT(*) FROM project_team WHERE project_id = p.id) as team_count,
-                   (SELECT COUNT(*) FROM discussions WHERE project_id = p.id) as discussion_count,
-                   (SELECT COUNT(*) FROM comments WHERE project_id = p.id) as comment_count,
-                   (SELECT COUNT(*) FROM decisions WHERE project_id = p.id) as decision_count
+            SELECT p.*, u.name as lead_name, u.email as lead_email
             FROM projects p
+            JOIN users u ON p.lead_id = u.id
             WHERE p.id = ? AND p.is_archived = 0
         `, [projectId]);
-
+        
         if (!project) return null;
         
-        // Parse objectives JSON
-        if (project.objectives) {
-            try {
-                project.objectives = JSON.parse(project.objectives);
-            } catch {
-                project.objectives = { clinical: [], industry: [], shared: [] };
-            }
+        try {
+            project.objectives = JSON.parse(project.objectives);
+        } catch {
+            project.objectives = { clinical: [], industry: [], shared: [] };
         }
-
-        // Calculate consensus score from discussions
-        const discussions = await this.getProjectDiscussions(projectId);
-        const totalConsensus = discussions.reduce((sum, d) => {
-            const consensus = d.consensus || { clinicalAgreement: 0, technicalFeasibility: 0 };
-            return sum + (consensus.clinicalAgreement + consensus.technicalFeasibility) / 2;
-        }, 0);
         
-        project.consensus_score = discussions.length > 0 ? Math.round(totalConsensus / discussions.length) : 0;
-
         return project;
     }
 
-    async getAllProjects(options = {}) {
-        let query = `
-            SELECT p.*, u.name as lead_name,
-                   (SELECT COUNT(*) FROM project_team WHERE project_id = p.id) as team_count,
-                   (SELECT COUNT(*) FROM discussions WHERE project_id = p.id) as discussion_count
-            FROM projects p
-            LEFT JOIN users u ON p.lead_id = u.id
-            WHERE p.is_archived = 0
-        `;
+    async updateProject(projectId, updates) {
+        const allowedFields = ['title', 'description', 'type', 'status', 'methodology', 'cover_color'];
+        const setClause = [];
+        const values = [];
         
-        const params = [];
-        
-        if (options.search) {
-            query += ' AND (p.title LIKE ? OR p.description LIKE ?)';
-            const searchTerm = `%${options.search}%`;
-            params.push(searchTerm, searchTerm);
-        }
-        
-        if (options.type) {
-            query += ' AND p.type = ?';
-            params.push(options.type);
-        }
-        
-        if (options.status) {
-            query += ' AND p.status = ?';
-            params.push(options.status);
-        }
-        
-        if (options.userId) {
-            query += ` AND p.id IN (SELECT project_id FROM project_team WHERE user_id = ?)`;
-            params.push(options.userId);
-        }
-        
-        query += ' ORDER BY p.last_activity_at DESC';
-        
-        if (options.limit) {
-            query += ' LIMIT ?';
-            params.push(options.limit);
-        }
-
-        const projects = await this.all(query, params);
-
-        return projects.map(p => {
-            if (p.objectives) {
-                try {
-                    p.objectives = JSON.parse(p.objectives);
-                } catch {
-                    p.objectives = { clinical: [], industry: [], shared: [] };
+        for (const [key, value] of Object.entries(updates)) {
+            if (allowedFields.includes(key) && value !== undefined) {
+                if (key === 'objectives') {
+                    setClause.push(`${key} = ?`);
+                    values.push(JSON.stringify(value));
+                } else {
+                    setClause.push(`${key} = ?`);
+                    values.push(value);
                 }
             }
-            return p;
-        });
+        }
+        
+        if (setClause.length === 0) return this.getProject(projectId);
+        
+        setClause.push('updated_at = CURRENT_TIMESTAMP');
+        values.push(projectId);
+        
+        await this.run(`UPDATE projects SET ${setClause.join(', ')} WHERE id = ?`, values);
+        
+        if (updates.title) {
+            await this.logActivity(projectId, 'system', 'project_updated', `Updated project: ${updates.title}`);
+        }
+        
+        return this.getProject(projectId);
     }
 
-    async getProjectsForUser(userId, options = {}) {
-        return this.all(`
+    async updateProjectObjectives(projectId, objectives) {
+        const objectivesStr = JSON.stringify(objectives);
+        await this.run(
+            'UPDATE projects SET objectives = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [objectivesStr, projectId]
+        );
+        
+        await this.logActivity(projectId, 'system', 'objectives_updated', 'Updated project objectives');
+        return this.getProject(projectId);
+    }
+
+    async archiveProject(projectId) {
+        await this.run(
+            'UPDATE projects SET is_archived = 1, status = "archived", updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [projectId]
+        );
+        
+        await this.logActivity(projectId, 'system', 'project_archived', 'Archived project');
+        return this.getProject(projectId);
+    }
+
+    async getProjectsForUser(userId) {
+        const projects = await this.all(`
             SELECT p.*, pt.role as user_role
             FROM projects p
             JOIN project_team pt ON p.id = pt.project_id
             WHERE pt.user_id = ? AND p.is_archived = 0
             ORDER BY p.last_activity_at DESC
         `, [userId]);
-    }
-
-    async updateProject(projectId, updates) {
-        const setClause = [];
-        const values = [];
         
-        Object.keys(updates).forEach(key => {
-            if (updates[key] !== undefined && key !== 'id') {
-                if (key === 'objectives') {
-                    setClause.push(`${key} = ?`);
-                    values.push(JSON.stringify(updates[key]));
-                } else {
-                    setClause.push(`${key} = ?`);
-                    values.push(updates[key]);
-                }
+        return projects.map(p => {
+            try {
+                p.objectives = JSON.parse(p.objectives);
+            } catch {
+                p.objectives = { clinical: [], industry: [], shared: [] };
             }
+            return p;
         });
-
-        if (setClause.length === 0) return this.getProject(projectId);
-
-        setClause.push('updated_at = CURRENT_TIMESTAMP');
-        values.push(projectId);
-
-        await this.run(`UPDATE projects SET ${setClause.join(', ')} WHERE id = ?`, values);
-        return this.getProject(projectId);
     }
 
-    async archiveProject(projectId) {
-        await this.run(`
-            UPDATE projects 
-            SET is_archived = 1, status = 'archived', updated_at = CURRENT_TIMESTAMP 
-            WHERE id = ?
-        `, [projectId]);
-        return this.getProject(projectId);
+    async searchProjects(userId, query) {
+        return this.all(`
+            SELECT DISTINCT p.*, pt.role as user_role
+            FROM projects p
+            JOIN project_team pt ON p.id = pt.project_id
+            WHERE pt.user_id = ? 
+            AND p.is_archived = 0
+            AND (p.title LIKE ? OR p.description LIKE ?)
+            ORDER BY p.last_activity_at DESC
+        `, [userId, `%${query}%`, `%${query}%`]);
     }
 
-    async getProjectStats(projectId) {
-        const project = await this.getProject(projectId);
-        if (!project) return null;
-
-        const team = await this.getProjectTeam(projectId);
-        const discussions = await this.getProjectDiscussions(projectId);
-        const decisions = await this.getProjectDecisions(projectId);
-        
-        // Calculate metrics
-        const clinicalTeam = team.filter(m => m.role === 'clinician').length;
-        const industryTeam = team.filter(m => m.role === 'industry').length;
-        
-        const clinicalDiscussions = discussions.filter(d => d.type === 'clinical_question').length;
-        const technicalDiscussions = discussions.filter(d => d.type === 'technical_solution').length;
-        const jointDiscussions = discussions.filter(d => d.type === 'joint_review').length;
-        
-        const openDecisions = decisions.filter(d => d.status === 'open').length;
-        const implementedDecisions = decisions.filter(d => d.status === 'implemented').length;
-
-        return {
-            team: {
-                total: team.length,
-                clinical: clinicalTeam,
-                industry: industryTeam,
-                contributors: team.length - clinicalTeam - industryTeam
-            },
-            discussions: {
-                total: discussions.length,
-                clinical: clinicalDiscussions,
-                technical: technicalDiscussions,
-                joint: jointDiscussions
-            },
-            decisions: {
-                total: decisions.length,
-                open: openDecisions,
-                implemented: implementedDecisions,
-                completionRate: decisions.length > 0 ? Math.round((implementedDecisions / decisions.length) * 100) : 0
-            },
-            consensus: project.consensus_score,
-            activity: {
-                last_activity: project.last_activity_at,
-                days_active: Math.ceil((new Date() - new Date(project.created_at)) / (1000 * 60 * 60 * 24))
-            }
-        };
-    }
-
-    // ===== ENHANCED: TEAM METHODS =====
+    // ===== TEAM METHODS =====
     async addTeamMember(projectId, userId, role, organization = null) {
         const teamId = `team_${uuidv4()}`;
         
@@ -660,25 +517,25 @@ class ThoraxLabDatabase {
             INSERT INTO project_team (id, project_id, user_id, role, organization)
             VALUES (?, ?, ?, ?, ?)
         `, [teamId, projectId, userId, role, organization]);
-
-        await this.run(`
-            UPDATE projects SET updated_at = CURRENT_TIMESTAMP, last_activity_at = CURRENT_TIMESTAMP WHERE id = ?
-        `, [projectId]);
-
+        
+        await this.run(
+            'UPDATE projects SET team_count = team_count + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [projectId]
+        );
+        
         const user = await this.getUser(userId);
         await this.logActivity(projectId, userId, 'team_member_added', 
-            `${user?.name || 'User'} joined as ${role}`);
-
-        return { id: teamId, project_id: projectId, user_id: userId, role, organization };
+            `Added ${user.name} to team as ${role}`);
+        
+        return { id: teamId, project_id: projectId, user_id: userId, role };
     }
 
     async getProjectTeam(projectId) {
         return this.all(`
-            SELECT pt.*, u.name, u.email, u.role as user_role, u.avatar_color, u.avatar_initials, u.specialty,
-                   up.status as presence_status, up.last_seen as last_active
+            SELECT pt.*, u.name, u.email, u.role as user_role, 
+                   u.avatar_color, u.avatar_initials
             FROM project_team pt
-            LEFT JOIN users u ON pt.user_id = u.id
-            LEFT JOIN user_presence up ON u.id = up.user_id
+            JOIN users u ON pt.user_id = u.id
             WHERE pt.project_id = ?
             ORDER BY 
                 CASE WHEN pt.role = 'lead' THEN 1
@@ -690,107 +547,146 @@ class ThoraxLabDatabase {
     }
 
     async removeTeamMember(projectId, userId) {
-        await this.run('DELETE FROM project_team WHERE project_id = ? AND user_id = ?', [projectId, userId]);
+        await this.run(
+            'DELETE FROM project_team WHERE project_id = ? AND user_id = ?',
+            [projectId, userId]
+        );
+        
+        await this.run(
+            'UPDATE projects SET team_count = team_count - 1 WHERE id = ?',
+            [projectId]
+        );
+        
+        await this.logActivity(projectId, 'system', 'team_member_removed', 'Removed team member');
         return true;
     }
 
-    // ===== ENHANCED: DISCUSSION METHODS =====
+    async isUserInProject(projectId, userId) {
+        const result = await this.get(
+            'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
+            [projectId, userId]
+        );
+        return !!result;
+    }
+
+    // ===== DISCUSSION METHODS =====
     async createDiscussion(discussionData) {
         const discussionId = `disc_${uuidv4()}`;
-        const now = new Date().toISOString();
-
+        
         await this.run(`
-            INSERT INTO discussions (id, project_id, title, content, type, author_id, author_name, author_role, author_organization, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO discussions (id, project_id, title, content, type, author_id)
+            VALUES (?, ?, ?, ?, ?, ?)
         `, [
             discussionId,
             discussionData.projectId,
             discussionData.title.trim(),
             discussionData.content.trim(),
             discussionData.type,
-            discussionData.author.id,
-            discussionData.author.name,
-            discussionData.author.role,
-            discussionData.author.organization,
-            now,
-            now
+            discussionData.authorId
         ]);
-
-        // Add evidence links if provided
+        
+        await this.run(
+            'UPDATE projects SET discussion_count = discussion_count + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [discussionData.projectId]
+        );
+        
         if (discussionData.evidenceLinks && discussionData.evidenceLinks.length > 0) {
             for (const evidence of discussionData.evidenceLinks) {
-                await this.addEvidence(discussionId, null, null, {
+                await this.addEvidence({
+                    discussionId,
                     evidenceType: evidence.type || 'other',
-                    sourceId: evidence.id || evidence.url,
+                    sourceId: evidence.sourceId || evidence.url,
                     title: evidence.title,
                     url: evidence.url,
-                    addedBy: discussionData.author.id
+                    addedBy: discussionData.authorId
                 });
             }
             await this.updateDiscussionEvidenceCount(discussionId);
         }
-
-        // Update project metrics
-        await this.run(`
-            UPDATE projects 
-            SET discussion_count = discussion_count + 1,
-                updated_at = CURRENT_TIMESTAMP,
-                last_activity_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        `, [discussionData.projectId]);
-
-        await this.logActivity(discussionData.projectId, discussionData.author.id, 
-            'discussion_created', `Started ${discussionData.type}: ${discussionData.title}`);
-
+        
+        await this.logActivity(discussionData.projectId, discussionData.authorId,
+            'discussion_created', `Started discussion: ${discussionData.title}`);
+        
         return this.getDiscussion(discussionId);
     }
 
     async getDiscussion(discussionId) {
-        const discussion = await this.get('SELECT * FROM discussions WHERE id = ?', [discussionId]);
+        const discussion = await this.get(`
+            SELECT d.*, u.name as author_name, u.role as author_role, 
+                   u.organization as author_organization
+            FROM discussions d
+            JOIN users u ON d.author_id = u.id
+            WHERE d.id = ?
+        `, [discussionId]);
+        
         if (discussion) {
             discussion.evidence = await this.getDiscussionEvidence(discussionId);
             discussion.consensus = await this.calculateConsensus(discussionId);
         }
+        
         return discussion;
     }
 
     async getProjectDiscussions(projectId, options = {}) {
-        let query = `
-            SELECT * FROM discussions 
-            WHERE project_id = ?
+        let sql = `
+            SELECT d.*, u.name as author_name, u.role as author_role, 
+                   u.organization as author_organization
+            FROM discussions d
+            JOIN users u ON d.author_id = u.id
+            WHERE d.project_id = ?
         `;
         
         const params = [projectId];
         
         if (options.type) {
-            query += ' AND type = ?';
+            sql += ' AND d.type = ?';
             params.push(options.type);
         }
         
         if (options.search) {
-            query += ' AND (title LIKE ? OR content LIKE ?)';
-            const searchTerm = `%${options.search}%`;
-            params.push(searchTerm, searchTerm);
+            sql += ' AND (d.title LIKE ? OR d.content LIKE ?)';
+            params.push(`%${options.search}%`, `%${options.search}%`);
         }
         
-        query += ' ORDER BY created_at DESC';
+        sql += ' ORDER BY d.created_at DESC';
         
         if (options.limit) {
-            query += ' LIMIT ?';
+            sql += ' LIMIT ?';
             params.push(options.limit);
         }
-
-        const discussions = await this.all(query, params);
-
-        // Add evidence and consensus data
+        
+        const discussions = await this.all(sql, params);
+        
         for (const discussion of discussions) {
             discussion.evidence = await this.getDiscussionEvidence(discussion.id);
             discussion.consensus = await this.calculateConsensus(discussion.id);
         }
-
+        
         return discussions;
     }
 
+    async updateDiscussion(discussionId, updates) {
+        const allowedFields = ['title', 'content'];
+        const setClause = [];
+        const values = [];
+        
+        for (const [key, value] of Object.entries(updates)) {
+            if (allowedFields.includes(key) && value !== undefined) {
+                setClause.push(`${key} = ?`);
+                values.push(value);
+            }
+        }
+        
+        if (setClause.length === 0) return this.getDiscussion(discussionId);
+        
+        setClause.push('updated_at = CURRENT_TIMESTAMP');
+        values.push(discussionId);
+        
+        await this.run(`UPDATE discussions SET ${setClause.join(', ')} WHERE id = ?`, values);
+        return this.getDiscussion(discussionId);
+    }
+
+    // ===== VOTING METHODS =====
     async addDiscussionVote(discussionId, userId, voteType, userRole) {
         const voteId = `vote_${uuidv4()}`;
         
@@ -799,61 +695,48 @@ class ThoraxLabDatabase {
                 INSERT INTO discussion_votes (id, discussion_id, user_id, vote_type, user_role)
                 VALUES (?, ?, ?, ?, ?)
             `, [voteId, discussionId, userId, voteType, userRole]);
-
-            // Update discussion vote counts
-            const voteColumn = this.getVoteColumnName(voteType);
-            if (voteColumn) {
-                await this.run(`
-                    UPDATE discussions 
-                    SET ${voteColumn} = ${voteColumn} + 1,
-                        updated_at = CURRENT_TIMESTAMP
-                    WHERE id = ?
-                `, [discussionId]);
-            }
-
-            return { id: voteId, discussion_id: discussionId, user_id: userId, vote_type: voteType };
         } catch (error) {
-            // User already voted, update vote
             if (error.message.includes('UNIQUE constraint failed')) {
-                const existingVote = await this.get(
-                    'SELECT * FROM discussion_votes WHERE discussion_id = ? AND user_id = ? AND vote_type = ?',
-                    [discussionId, userId, voteType]
+                await this.run(
+                    'DELETE FROM discussion_votes WHERE discussion_id = ? AND user_id = ?',
+                    [discussionId, userId]
                 );
-                return existingVote;
+                return this.addDiscussionVote(discussionId, userId, voteType, userRole);
             }
             throw error;
         }
+        
+        const voteColumn = this.getVoteColumnName(voteType);
+        if (voteColumn) {
+            await this.run(`UPDATE discussions SET ${voteColumn} = ${voteColumn} + 1 WHERE id = ?`, [discussionId]);
+        }
+        
+        return { id: voteId, discussion_id: discussionId, user_id: userId, vote_type: voteType };
     }
 
     async calculateConsensus(discussionId) {
         const discussion = await this.getDiscussion(discussionId);
         if (!discussion) return null;
-
+        
         const team = await this.getProjectTeam(discussion.project_id);
         const clinicalTeam = team.filter(m => m.role === 'clinician');
         const industryTeam = team.filter(m => m.role === 'industry');
-
-        const votes = await this.all(
-            'SELECT * FROM discussion_votes WHERE discussion_id = ?',
-            [discussionId]
-        );
-
+        
+        const votes = await this.all('SELECT * FROM discussion_votes WHERE discussion_id = ?', [discussionId]);
+        
         const clinicalVotes = votes.filter(v => v.user_role === 'clinician');
         const industryVotes = votes.filter(v => v.user_role === 'industry');
-
-        // Calculate clinical agreement
+        
         const clinicalAgrees = clinicalVotes.filter(v => v.vote_type === 'clinical_agree').length;
         const clinicalAgreement = clinicalTeam.length > 0 
             ? Math.round((clinicalAgrees / clinicalTeam.length) * 100) 
             : 0;
-
-        // Calculate technical feasibility
+        
         const technicalFeasible = industryVotes.filter(v => v.vote_type === 'technical_feasible').length;
         const technicalFeasibility = industryTeam.length > 0
             ? Math.round((technicalFeasible / industryTeam.length) * 100)
             : 0;
-
-        // Overall consensus status
+        
         let consensusStatus = 'pending';
         if (clinicalAgreement >= 70 && technicalFeasibility >= 70) {
             consensusStatus = 'high';
@@ -862,7 +745,7 @@ class ThoraxLabDatabase {
         } else if (clinicalAgreement > 0 || technicalFeasibility > 0) {
             consensusStatus = 'low';
         }
-
+        
         return {
             clinicalAgreement,
             technicalFeasibility,
@@ -874,160 +757,85 @@ class ThoraxLabDatabase {
         };
     }
 
-    // ===== ENHANCED: EVIDENCE METHODS =====
-    async addEvidence(discussionId, commentId, decisionId, evidenceData) {
+    // ===== EVIDENCE METHODS =====
+    async addEvidence(evidenceData) {
         const evidenceId = `ev_${uuidv4()}`;
         
-        // Generate URL if not provided
         let url = evidenceData.url;
-        if (!url && evidenceData.evidenceType) {
-            url = this.generateEvidenceUrl(evidenceData.evidenceType, evidenceData.sourceId);
+        if (!url && evidenceData.evidenceType === 'pubmed' && evidenceData.sourceId) {
+            url = `https://pubmed.ncbi.nlm.nih.gov/${evidenceData.sourceId}/`;
         }
         
         await this.run(`
-            INSERT INTO evidence_links (id, discussion_id, comment_id, decision_id, evidence_type, source_id, title, url, added_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO evidence_links (id, discussion_id, comment_id, evidence_type, source_id, title, url, added_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, [
             evidenceId,
-            discussionId,
-            commentId,
-            decisionId,
+            evidenceData.discussionId || null,
+            evidenceData.commentId || null,
             evidenceData.evidenceType,
             evidenceData.sourceId,
             evidenceData.title,
             url,
-            evidenceData.addedBy || 'system'
+            evidenceData.addedBy
         ]);
-
+        
+        if (evidenceData.discussionId) {
+            await this.updateDiscussionEvidenceCount(evidenceData.discussionId);
+        }
+        
         return this.get('SELECT * FROM evidence_links WHERE id = ?', [evidenceId]);
     }
 
-    generateEvidenceUrl(evidenceType, sourceId) {
-        if (!sourceId) return '';
-        
-        switch(evidenceType) {
-            case 'pubmed':
-                return `https://pubmed.ncbi.nlm.nih.gov/${sourceId}/`;
-            case 'clinical_trial':
-                return `https://clinicaltrials.gov/ct2/show/${sourceId}`;
-            case 'guideline':
-                return sourceId.startsWith('http') ? sourceId : '';
-            case 'regulatory':
-                return sourceId.startsWith('http') ? sourceId : '';
-            default:
-                return sourceId.startsWith('http') ? sourceId : '';
-        }
-    }
-
     async getDiscussionEvidence(discussionId) {
-        return this.all(`
-            SELECT * FROM evidence_links 
-            WHERE discussion_id = ? 
-            ORDER BY created_at DESC
-        `, [discussionId]);
+        return this.all('SELECT * FROM evidence_links WHERE discussion_id = ? ORDER BY created_at DESC', [discussionId]);
     }
 
     async updateDiscussionEvidenceCount(discussionId) {
-        const count = await this.get(
-            'SELECT COUNT(*) as count FROM evidence_links WHERE discussion_id = ?',
-            [discussionId]
-        );
-        
-        await this.run(
-            'UPDATE discussions SET evidence_count = ? WHERE id = ?',
-            [count.count, discussionId]
-        );
-        
+        const count = await this.get('SELECT COUNT(*) as count FROM evidence_links WHERE discussion_id = ?', [discussionId]);
+        await this.run('UPDATE discussions SET evidence_count = ? WHERE id = ?', [count.count, discussionId]);
         return count.count;
     }
 
-    // ===== ENHANCED: COMMENT METHODS =====
+    // ===== COMMENT METHODS =====
     async createComment(commentData) {
         const commentId = `comment_${uuidv4()}`;
-        const now = new Date().toISOString();
-
+        
         await this.run(`
-            INSERT INTO comments (id, discussion_id, project_id, content, author_id, author_name, author_role, author_organization, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO comments (id, discussion_id, project_id, content, author_id)
+            VALUES (?, ?, ?, ?, ?)
         `, [
             commentId,
             commentData.discussionId,
             commentData.projectId,
             commentData.content.trim(),
-            commentData.author.id,
-            commentData.author.name,
-            commentData.author.role,
-            commentData.author.organization,
-            now
+            commentData.authorId
         ]);
-
-        // Add evidence links if provided
-        if (commentData.evidenceLinks && commentData.evidenceLinks.length > 0) {
-            for (const evidence of commentData.evidenceLinks) {
-                await this.addEvidence(null, commentId, null, {
-                    evidenceType: evidence.type || 'other',
-                    sourceId: evidence.id || evidence.url,
-                    title: evidence.title,
-                    url: evidence.url,
-                    addedBy: commentData.author.id
-                });
-            }
-        }
-
-        // Update discussion comment count
-        await this.run(`
-            UPDATE discussions 
-            SET comment_count = comment_count + 1,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        `, [commentData.discussionId]);
-
-        // Update project metrics
-        await this.run(`
-            UPDATE projects 
-            SET comment_count = comment_count + 1,
-                updated_at = CURRENT_TIMESTAMP,
-                last_activity_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        `, [commentData.projectId]);
-
-        await this.logActivity(commentData.projectId, commentData.author.id, 
-            'comment_added', 'Added a comment');
-
-        return this.getComment(commentId);
-    }
-
-    async getComment(commentId) {
+        
+        await this.run('UPDATE discussions SET comment_count = comment_count + 1 WHERE id = ?', [commentData.discussionId]);
+        await this.run('UPDATE projects SET updated_at = CURRENT_TIMESTAMP WHERE id = ?', [commentData.projectId]);
+        
+        await this.logActivity(commentData.projectId, commentData.authorId, 'comment_added', 'Added a comment');
         return this.get('SELECT * FROM comments WHERE id = ?', [commentId]);
     }
 
     async getDiscussionComments(discussionId) {
-        const comments = await this.all(`
-            SELECT * FROM comments 
-            WHERE discussion_id = ?
-            ORDER BY created_at ASC
+        return this.all(`
+            SELECT c.*, u.name as author_name, u.role as author_role, u.organization as author_organization
+            FROM comments c
+            JOIN users u ON c.author_id = u.id
+            WHERE c.discussion_id = ?
+            ORDER BY c.created_at ASC
         `, [discussionId]);
-
-        // Add evidence to each comment
-        for (const comment of comments) {
-            comment.evidence = await this.all(
-                'SELECT * FROM evidence_links WHERE comment_id = ? ORDER BY created_at DESC',
-                [comment.id]
-            );
-        }
-
-        return comments;
     }
 
-    // ===== ENHANCED: DECISION METHODS =====
+    // ===== DECISION METHODS =====
     async createDecision(decisionData) {
         const decisionId = `dec_${uuidv4()}`;
-        const now = new Date().toISOString();
-
+        
         await this.run(`
-            INSERT INTO decisions (id, discussion_id, project_id, title, description, decision_type, 
-                                  status, priority, impact_score, consensus_data, created_by, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO decisions (id, discussion_id, project_id, title, description, decision_type, consensus_data, created_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, [
             decisionId,
             decisionData.discussionId,
@@ -1035,55 +843,48 @@ class ThoraxLabDatabase {
             decisionData.title.trim(),
             decisionData.description.trim(),
             decisionData.decisionType || 'joint',
-            decisionData.status || 'open',
-            decisionData.priority || 'medium',
-            decisionData.impactScore || 0,
             JSON.stringify(decisionData.consensusData || {}),
-            decisionData.createdBy || 'system',
-            now,
-            now
+            decisionData.createdBy
         ]);
-
-        // Update project decision count
-        await this.run(`
-            UPDATE projects 
-            SET decision_count = decision_count + 1,
-                updated_at = CURRENT_TIMESTAMP,
-                last_activity_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        `, [decisionData.projectId]);
-
-        // Update discussion consensus status
-        await this.run(`
-            UPDATE discussions 
-            SET consensus_status = 'decided',
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        `, [decisionData.discussionId]);
-
-        await this.logActivity(decisionData.projectId, decisionData.createdBy, 
-            'decision_reached', `Decision reached: ${decisionData.title}`);
-
+        
+        await this.run('UPDATE projects SET decision_count = decision_count + 1 WHERE id = ?', [decisionData.projectId]);
+        await this.run('UPDATE discussions SET consensus_status = "decided" WHERE id = ?', [decisionData.discussionId]);
+        
+        await this.logActivity(decisionData.projectId, decisionData.createdBy, 'decision_reached', 
+            `Decision reached: ${decisionData.title}`);
+        
         return this.get('SELECT * FROM decisions WHERE id = ?', [decisionId]);
     }
 
     async getProjectDecisions(projectId) {
-        return this.all(`
-            SELECT * FROM decisions 
-            WHERE project_id = ?
-            ORDER BY 
-                CASE priority 
-                    WHEN 'critical' THEN 1
-                    WHEN 'high' THEN 2
-                    WHEN 'medium' THEN 3
-                    WHEN 'low' THEN 4
-                    ELSE 5
-                END,
-                created_at DESC
-        `, [projectId]);
+        return this.all('SELECT * FROM decisions WHERE project_id = ? ORDER BY created_at DESC', [projectId]);
     }
 
-    // ===== ENHANCED: ACTIVITY METHODS =====
+    async updateDecision(decisionId, updates) {
+        const allowedFields = ['status', 'priority', 'impact_score'];
+        const setClause = [];
+        const values = [];
+        
+        for (const [key, value] of Object.entries(updates)) {
+            if (allowedFields.includes(key) && value !== undefined) {
+                setClause.push(`${key} = ?`);
+                values.push(value);
+            }
+        }
+        
+        if (setClause.length === 0) return this.get('SELECT * FROM decisions WHERE id = ?', [decisionId]);
+        
+        setClause.push('updated_at = CURRENT_TIMESTAMP');
+        if (updates.status === 'implemented') {
+            setClause.push('implemented_at = CURRENT_TIMESTAMP');
+        }
+        values.push(decisionId);
+        
+        await this.run(`UPDATE decisions SET ${setClause.join(', ')} WHERE id = ?`, values);
+        return this.get('SELECT * FROM decisions WHERE id = ?', [decisionId]);
+    }
+
+    // ===== ACTIVITY & NOTIFICATION METHODS =====
     async logActivity(projectId, userId, activityType, description, metadata = {}) {
         const activityId = `act_${uuidv4()}`;
         
@@ -1091,51 +892,29 @@ class ThoraxLabDatabase {
             INSERT INTO activity_log (id, project_id, user_id, activity_type, description, metadata)
             VALUES (?, ?, ?, ?, ?, ?)
         `, [activityId, projectId, userId, activityType, description, JSON.stringify(metadata)]);
-
+        
         return activityId;
     }
 
-    async getRecentActivity(userId, options = {}) {
-        let query = `
-            SELECT al.*, p.title as project_title, u.name as user_name, u.avatar_color, u.avatar_initials
+    async getRecentActivity(userId, limit = 20) {
+        return this.all(`
+            SELECT al.*, p.title as project_title, u.name as user_name, u.avatar_color
             FROM activity_log al
             LEFT JOIN projects p ON al.project_id = p.id
             LEFT JOIN users u ON al.user_id = u.id
             WHERE al.user_id = ? OR al.project_id IN (
                 SELECT project_id FROM project_team WHERE user_id = ?
             )
-        `;
-        
-        const params = [userId, userId];
-        
-        if (options.projectId) {
-            query += ' AND al.project_id = ?';
-            params.push(options.projectId);
-        }
-        
-        if (options.activityType) {
-            query += ' AND al.activity_type = ?';
-            params.push(options.activityType);
-        }
-        
-        query += ' ORDER BY al.created_at DESC';
-        
-        if (options.limit) {
-            query += ' LIMIT ?';
-            params.push(options.limit);
-        } else {
-            query += ' LIMIT 20';
-        }
-
-        return this.all(query, params);
+            ORDER BY al.created_at DESC
+            LIMIT ?
+        `, [userId, userId, limit]);
     }
 
-    // ===== ENHANCED: NOTIFICATION METHODS =====
     async createNotification(notificationData) {
         const notificationId = `notif_${uuidv4()}`;
         
         await this.run(`
-            INSERT INTO user_notifications (id, user_id, type, title, message, metadata)
+            INSERT INTO notifications (id, user_id, type, title, message, metadata)
             VALUES (?, ?, ?, ?, ?, ?)
         `, [
             notificationId,
@@ -1146,30 +925,66 @@ class ThoraxLabDatabase {
             JSON.stringify(notificationData.metadata || {})
         ]);
         
-        return this.get('SELECT * FROM user_notifications WHERE id = ?', [notificationId]);
+        return this.get('SELECT * FROM notifications WHERE id = ?', [notificationId]);
     }
 
     async getUserNotifications(userId, unreadOnly = false) {
-        let query = 'SELECT * FROM user_notifications WHERE user_id = ?';
+        let sql = 'SELECT * FROM notifications WHERE user_id = ?';
         const params = [userId];
         
         if (unreadOnly) {
-            query += ' AND read = 0';
+            sql += ' AND read = 0';
         }
         
-        query += ' ORDER BY created_at DESC LIMIT 50';
-        
-        return this.all(query, params);
+        sql += ' ORDER BY created_at DESC LIMIT 50';
+        return this.all(sql, params);
     }
 
     async markNotificationRead(notificationId) {
-        await this.run('UPDATE user_notifications SET read = 1 WHERE id = ?', [notificationId]);
+        await this.run('UPDATE notifications SET read = 1 WHERE id = ?', [notificationId]);
         return true;
     }
 
     async markAllNotificationsRead(userId) {
-        await this.run('UPDATE user_notifications SET read = 1 WHERE user_id = ? AND read = 0', [userId]);
+        await this.run('UPDATE notifications SET read = 1 WHERE user_id = ? AND read = 0', [userId]);
         return true;
+    }
+
+    // ===== DASHBOARD METHODS =====
+    async getDashboardData(userId) {
+        const projects = await this.getProjectsForUser(userId);
+        const recentActivity = await this.getRecentActivity(userId, 10);
+        const notifications = await this.getUserNotifications(userId, true);
+        
+        let clinicalActivity = 0;
+        let industryActivity = 0;
+        let crossPollination = 0;
+        
+        for (const project of projects) {
+            const discussions = await this.getProjectDiscussions(project.id);
+            clinicalActivity += discussions.filter(d => d.type === 'clinical_question').length;
+            industryActivity += discussions.filter(d => d.type === 'technical_solution').length;
+            
+            for (const discussion of discussions) {
+                const consensus = await this.calculateConsensus(discussion.id);
+                if (consensus.clinicalVotes > 0 && consensus.industryVotes > 0) {
+                    crossPollination++;
+                }
+            }
+        }
+        
+        return {
+            metrics: {
+                clinicalActivity,
+                industryActivity,
+                crossPollination,
+                projectCount: projects.length,
+                unreadNotifications: notifications.length
+            },
+            activeProjects: projects.slice(0, 6),
+            recentActivity,
+            notifications: notifications.slice(0, 5)
+        };
     }
 
     // ===== UTILITY METHODS =====
@@ -1184,7 +999,7 @@ class ThoraxLabDatabase {
         return mapping[voteType];
     }
 
-    getUserInitials(name) {
+    getInitials(name) {
         if (!name) return '??';
         return name.split(' ')
             .map(n => n[0])
@@ -1197,20 +1012,19 @@ class ThoraxLabDatabase {
         try {
             await this.get('SELECT 1');
             return true;
-        } catch (error) {
+        } catch {
             return false;
         }
     }
 
     async close() {
         if (this.db) {
-            await new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 this.db.close((err) => {
                     if (err) reject(err);
                     else {
                         this.db = null;
                         this.connected = false;
-                        console.log('🔌 Database closed');
                         resolve();
                     }
                 });
