@@ -822,7 +822,7 @@
                 if (!this.token || this.ws) return;
                 
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}`;
+                const wsUrl = `${protocol}//${window.location.host}/ws`;
                 
                 this.ws = new WebSocket(wsUrl);
                 
@@ -840,8 +840,9 @@
                         case 'notifications':
                             // Handle real-time notifications
                             break;
-                        case 'project_updated':
-                            // Refresh if current project updated
+                        case 'project_created':
+                            this.loadProjects();
+                            this.loadDashboard();
                             break;
                     }
                 };
