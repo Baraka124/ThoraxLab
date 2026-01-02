@@ -21,6 +21,12 @@
             --ui-border: #E2E8F0;
             --radius-md: 10px;
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --ui-disabled: #F1F5F9;
+            --ui-text-disabled: #94A3B8;
+            --ui-success: #10B981;
+            --ui-warning: #F59E0B;
+            --ui-error: #EF4444;
+            --ui-info: #3B82F6;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,7 +34,7 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* Auth Screen */
+        /* Auth Screen - unchanged */
         .auth-screen {
             min-height: 100vh;
             display: flex;
@@ -110,12 +116,36 @@
             box-shadow: var(--shadow-md);
         }
         
+        .btn-secondary {
+            background: white;
+            color: var(--ui-dark);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--ui-bg);
+            border-color: var(--ui-light);
+        }
+        
+        .btn-disabled {
+            background: var(--ui-disabled);
+            color: var(--ui-text-disabled);
+            cursor: not-allowed;
+            border: 1px solid var(--ui-border);
+        }
+        
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+            background: var(--ui-disabled);
+        }
+        
         .btn-full { width: 100%; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .hidden { display: none !important; }
-        .error { border-color: #EF4444 !important; background: rgba(239, 68, 68, 0.05) !important; }
-        .error-message { color: #EF4444; font-size: 0.875rem; margin-top: 0.25rem; display: none; }
+        .error { border-color: var(--ui-error) !important; background: rgba(239, 68, 68, 0.05) !important; }
+        .error-message { color: var(--ui-error); font-size: 0.875rem; margin-top: 0.25rem; display: none; }
         
         /* Toast */
         .toast-container {
@@ -140,6 +170,11 @@
             background: var(--thorax-primary);
             color: white;
         }
+        
+        .toast-info { background: var(--ui-info); }
+        .toast-success { background: var(--ui-success); }
+        .toast-warning { background: var(--ui-warning); }
+        .toast-error { background: var(--ui-error); }
         
         @keyframes toastSlideIn {
             from { transform: translateX(100%); opacity: 0; }
@@ -175,6 +210,12 @@
             font-weight: 600;
             color: var(--ui-dark);
             text-decoration: none;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         
         .user-profile {
@@ -215,6 +256,95 @@
             margin-bottom: 2rem;
         }
         
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--ui-light);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+        
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ui-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state-description {
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Implementation Guide */
+        .implementation-guide {
+            background: var(--ui-bg);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .guide-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--ui-dark);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .guide-step {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--ui-border);
+        }
+        
+        .guide-step:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--thorax-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: var(--ui-dark);
+        }
+        
+        .step-description {
+            font-size: 0.875rem;
+            color: var(--ui-light);
+            line-height: 1.5;
+        }
+        
+        /* Metrics Grid - Updated */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -228,6 +358,7 @@
             padding: 1.75rem;
             border: 1px solid var(--ui-border);
             transition: all 0.2s;
+            position: relative;
         }
         
         .metric-card:hover {
@@ -244,11 +375,43 @@
             color: var(--ui-dark);
         }
         
+        .metric-value.empty {
+            color: var(--ui-text-disabled);
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+        
         .metric-label {
             font-size: 0.875rem;
             color: var(--ui-light);
         }
         
+        .metric-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .status-required {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--ui-error);
+        }
+        
+        .status-optional {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--ui-warning);
+        }
+        
+        .status-ready {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--ui-success);
+        }
+        
+        /* Projects Grid - Updated */
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -286,6 +449,7 @@
             line-height: 1.5;
         }
         
+        /* Loading */
         .loading {
             display: flex;
             flex-direction: column;
@@ -309,13 +473,7 @@
             to { transform: rotate(360deg); }
         }
         
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--ui-light);
-            grid-column: 1 / -1;
-        }
-        
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -364,6 +522,79 @@
             gap: 1rem;
             margin-top: 2rem;
         }
+        
+        /* Backend Status */
+        .backend-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--ui-bg);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-connected { background: var(--ui-success); }
+        .status-disconnected { background: var(--ui-error); }
+        .status-pending { background: var(--ui-warning); }
+        
+        /* Code Block for API Docs */
+        .api-docs {
+            background: #1E293B;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+        
+        .code {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
+            color: #E2E8F0;
+            line-height: 1.5;
+        }
+        
+        .code-comment { color: #64748B; }
+        .code-keyword { color: #F472B6; }
+        .code-string { color: #34D399; }
+        .code-number { color: #60A5FA; }
+        .code-function { color: #FBBF24; }
+        
+        /* Feature Status */
+        .feature-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-implemented {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--ui-success);
+        }
+        
+        .status-backend-required {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--ui-error);
+        }
+        
+        .status-partial {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--ui-warning);
+        }
     </style>
 </head>
 <body>
@@ -377,9 +608,18 @@
                     <span>[THØRAX][LAB]</span>
                 </div>
                 <p style="opacity: 0.9;">Clinical-Industry Collaboration Platform</p>
+                <div style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
+                    <span class="feature-status status-implemented">Frontend Ready</span>
+                    <span class="feature-status status-backend-required" style="margin-left: 0.5rem;">Backend Required</span>
+                </div>
             </div>
             
             <div class="auth-body">
+                <div class="backend-status">
+                    <div class="status-indicator status-pending"></div>
+                    <span>Backend API: Not Connected</span>
+                </div>
+                
                 <form id="authForm" class="auth-form">
                     <div class="form-group">
                         <label for="userName" class="form-label">Full Name</label>
@@ -421,10 +661,28 @@
                     </div>
                     
                     <button type="submit" id="authSubmit" class="btn btn-primary btn-full">
-                        <span id="authSubmitText">Enter Platform</span>
+                        <span id="authSubmitText">Enter Platform (Demo Mode)</span>
                         <i id="authSpinner" class="fas fa-spinner fa-spin hidden"></i>
                     </button>
                 </form>
+                
+                <div class="implementation-guide">
+                    <div class="guide-title">Backend Implementation Required</div>
+                    <div class="guide-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Create Authentication Endpoint</div>
+                            <div class="step-description">POST /api/login to validate users and return JWT tokens</div>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Implement User Storage</div>
+                            <div class="step-description">Store user profiles and authentication state</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -443,10 +701,10 @@
                         </button>
                         
                         <div id="userProfile" class="user-profile">
-                            <div id="userAvatar" class="user-avatar">AC</div>
+                            <div id="userAvatar" class="user-avatar">?</div>
                             <div class="user-info">
-                                <div id="userDisplayName" class="user-name">Dr. Alex Chen</div>
-                                <div id="userDisplayRole" class="user-role">Clinical Professional</div>
+                                <div id="userDisplayName" class="user-name">Demo User</div>
+                                <div id="userDisplayRole" class="user-role">Frontend Demo</div>
                             </div>
                         </div>
                     </div>
@@ -463,16 +721,110 @@
                         <p id="welcomeDescription" style="opacity: 0.9; max-width: 600px;">
                             Connect clinical expertise with industry innovation to solve complex medical challenges.
                         </p>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="feature-status status-implemented">UI Complete</span>
+                            <span class="feature-status status-backend-required">Backend Required</span>
+                            <span class="feature-status status-partial">Partially Implemented</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Backend Status -->
+                <section class="backend-status-section" style="margin-bottom: 2rem;">
+                    <div class="backend-status">
+                        <div class="status-indicator status-disconnected"></div>
+                        <span>Backend API: Not Connected - Running in Demo Mode</span>
+                        <button id="toggleMockMode" class="btn btn-secondary" style="margin-left: auto; font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                            Toggle Mock Mode
+                        </button>
+                    </div>
+                    
+                    <div class="implementation-guide">
+                        <div class="guide-title">Required Backend Endpoints</div>
+                        <div class="guide-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">POST /api/login</div>
+                                <div class="step-description">User authentication and JWT issuance</div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">GET /api/dashboard</div>
+                                <div class="step-description">Dashboard metrics and project overview</div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">POST /api/projects</div>
+                                <div class="step-description">Create and manage collaboration projects</div>
+                            </div>
+                        </div>
+                        <div class="api-docs">
+                            <pre class="code"><span class="code-comment">// Example response for /api/dashboard</span>
+<span class="code-keyword">GET</span> /api/dashboard
+<span class="code-keyword">Authorization</span>: Bearer &lt;jwt_token&gt;
+
+<span class="code-comment">// Expected response format:</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"dashboard"</span>: {
+    <span class="code-string">"metrics"</span>: {
+      <span class="code-string">"clinicalActivity"</span>: <span class="code-number">0</span>,
+      <span class="code-string">"industryActivity"</span>: <span class="code-number">0</span>,
+      <span class="code-string">"crossPollination"</span>: <span class="code-number">0</span>,
+      <span class="code-string">"projectCount"</span>: <span class="code-number">0</span>
+    },
+    <span class="code-string">"activeProjects"</span>: []
+  }
+}</pre>
+                        </div>
                     </div>
                 </section>
 
                 <!-- Metrics Dashboard -->
                 <section class="metrics-section">
-                    <h2 style="margin-bottom: 2rem;">Collaboration Overview</h2>
+                    <h2 style="margin-bottom: 2rem;">
+                        Collaboration Overview
+                        <span class="feature-status status-backend-required" style="margin-left: 1rem;">Requires Backend</span>
+                    </h2>
                     <div class="metrics-grid" id="metricsGrid">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Loading dashboard metrics...</p>
+                        <div class="metric-card">
+                            <div class="metric-status status-required">No Data</div>
+                            <div class="metric-value empty">--</div>
+                            <div class="metric-label">Clinical Insights</div>
+                            <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                                Requires: /api/dashboard → metrics.clinicalActivity
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-status status-required">No Data</div>
+                            <div class="metric-value empty">--</div>
+                            <div class="metric-label">Technical Solutions</div>
+                            <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                                Requires: /api/dashboard → metrics.industryActivity
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-status status-required">No Data</div>
+                            <div class="metric-value empty">--</div>
+                            <div class="metric-label">Cross Interactions</div>
+                            <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                                Requires: /api/dashboard → metrics.crossPollination
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-status status-required">No Data</div>
+                            <div class="metric-value empty">--</div>
+                            <div class="metric-label">Active Projects</div>
+                            <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                                Requires: /api/dashboard → metrics.projectCount
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -480,17 +832,59 @@
                 <!-- Active Projects -->
                 <section class="projects-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <h2>Your Active Projects</h2>
-                        <button id="refreshProjectsBtn" class="btn btn-secondary">
-                            <i class="fas fa-sync-alt"></i>
-                            Refresh
-                        </button>
+                        <h2>
+                            Your Active Projects
+                            <span class="feature-status status-partial" style="margin-left: 1rem;">Frontend Only</span>
+                        </h2>
+                        <div style="display: flex; gap: 1rem;">
+                            <button id="refreshProjectsBtn" class="btn btn-secondary" disabled>
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh (No Backend)
+                            </button>
+                            <button id="viewApiDocs" class="btn btn-secondary">
+                                <i class="fas fa-code"></i>
+                                View API Specs
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="projects-grid" id="projectsGrid">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Loading your projects...</p>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📂</div>
+                            <h3 class="empty-state-title">No Projects Yet</h3>
+                            <p class="empty-state-description">
+                                Create your first collaboration project to bridge clinical and industry expertise.
+                                Currently running in demo mode - projects are stored locally only.
+                            </p>
+                            <button id="createFirstProjectBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Create Demo Project
+                            </button>
+                            
+                            <div class="implementation-guide">
+                                <div class="guide-title">To Enable Persistent Projects</div>
+                                <div class="guide-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Implement Project Database</div>
+                                        <div class="step-description">Create project schema with title, description, type, status</div>
+                                    </div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Create Project Endpoints</div>
+                                        <div class="step-description">POST /api/projects (create), GET /api/projects (list), GET /api/projects/:id (details)</div>
+                                    </div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Add User-Project Relationships</div>
+                                        <div class="step-description">Link projects to creators and team members</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -502,10 +896,20 @@
     <div id="newProjectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Create New Project</h2>
+                <h2 class="modal-title">Create New Project (Demo Mode)</h2>
                 <button class="modal-close" id="closeProjectModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ui-light);">&times;</button>
             </div>
             <form id="projectForm">
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--ui-warning); font-size: 0.875rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Demo Mode Active</strong>
+                    </div>
+                    <p style="font-size: 0.875rem; color: var(--ui-light); margin-top: 0.5rem;">
+                        Projects created here are stored locally only. To enable persistent storage, implement the backend API.
+                    </p>
+                </div>
+                
                 <div class="form-group">
                     <label for="projectTitle" class="form-label">Project Title</label>
                     <input type="text" id="projectTitle" class="form-input" required 
@@ -534,7 +938,7 @@
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary" id="submitProjectBtn">
-                        Create Project
+                        Create Demo Project
                     </button>
                 </div>
             </form>
@@ -544,8 +948,10 @@
     <script>
         class ThoraxLabDashboard {
             constructor() {
+                this.mockMode = true; // Default to mock mode since no backend
                 this.token = localStorage.getItem('thoraxlab_token');
                 this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
+                this.localProjects = JSON.parse(localStorage.getItem('thoraxlab_projects') || '[]');
                 this.ws = null;
                 this.initialize();
             }
@@ -556,10 +962,10 @@
             }
             
             checkAuth() {
-                if (this.token && this.user) {
+                // In mock mode, we always show the app
+                if (this.mockMode || (this.token && this.user)) {
                     this.showApp();
                     this.loadDashboard();
-                    this.connectWebSocket();
                 } else {
                     this.showAuth();
                 }
@@ -577,15 +983,21 @@
             }
             
             updateUserDisplay() {
-                if (!this.user) return;
-                
-                document.getElementById('userDisplayName').textContent = this.user.name;
-                document.getElementById('userDisplayRole').textContent = 
-                    this.user.role === 'clinician' ? 'Clinical Professional' : 'Industry Professional';
-                document.getElementById('userAvatar').textContent = 
-                    this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
-                document.getElementById('welcomeMessage').textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
+                if (this.user) {
+                    document.getElementById('userDisplayName').textContent = this.user.name;
+                    document.getElementById('userDisplayRole').textContent = 
+                        this.user.role === 'clinician' ? 'Clinical Professional' : 'Industry Professional';
+                    document.getElementById('userAvatar').textContent = 
+                        this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    
+                    document.getElementById('welcomeMessage').textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
+                } else {
+                    // Demo mode user
+                    document.getElementById('userDisplayName').textContent = 'Demo User';
+                    document.getElementById('userDisplayRole').textContent = 'Frontend Demo';
+                    document.getElementById('userAvatar').textContent = '?';
+                    document.getElementById('welcomeMessage').textContent = 'Welcome to ThoraxLab Demo';
+                }
             }
             
             setupEventListeners() {
@@ -598,8 +1010,27 @@
                 document.getElementById('cancelProjectBtn').addEventListener('click', () => this.hideModal('newProjectModal'));
                 document.getElementById('projectForm').addEventListener('submit', (e) => this.createProject(e));
                 
-                // Refresh
-                document.getElementById('refreshProjectsBtn').addEventListener('click', () => this.loadProjects());
+                // Create first project button
+                document.addEventListener('click', (e) => {
+                    if (e.target && e.target.id === 'createFirstProjectBtn') {
+                        this.showNewProjectModal();
+                    }
+                });
+                
+                // Toggle mock mode
+                document.getElementById('toggleMockMode').addEventListener('click', () => {
+                    this.mockMode = !this.mockMode;
+                    this.updateBackendStatus();
+                    this.showToast(
+                        this.mockMode ? 'Switched to Demo Mode' : 'Switched to API Mode', 
+                        'info'
+                    );
+                });
+                
+                // View API docs
+                document.getElementById('viewApiDocs').addEventListener('click', () => {
+                    this.showApiDocsModal();
+                });
                 
                 // Modal close on outside click
                 document.querySelectorAll('.modal').forEach(modal => {
@@ -619,80 +1050,71 @@
                 const spinner = document.getElementById('authSpinner');
                 
                 submitBtn.disabled = true;
-                submitText.textContent = 'Entering Platform...';
+                submitText.textContent = 'Entering Demo Mode...';
                 spinner.classList.remove('hidden');
                 
                 try {
-                    const response = await fetch('/api/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
+                    // In mock mode, create a fake user
+                    if (this.mockMode) {
+                        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+                        
+                        const userData = {
                             name: document.getElementById('userName').value,
                             email: document.getElementById('userEmail').value,
                             organization: document.getElementById('userOrganization').value,
-                            role: document.getElementById('userRole').value
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.token = data.token;
-                        this.user = data.user;
+                            role: document.getElementById('userRole').value,
+                            id: Date.now().toString()
+                        };
                         
-                        localStorage.setItem('thoraxlab_token', data.token);
-                        localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
+                        this.user = userData;
+                        this.token = 'demo-token-' + Date.now();
+                        
+                        localStorage.setItem('thoraxlab_token', this.token);
+                        localStorage.setItem('thoraxlab_user', JSON.stringify(userData));
                         
                         this.showApp();
                         this.loadDashboard();
-                        this.connectWebSocket();
                         
-                        this.showToast(`Welcome to ThoraxLab, ${data.user.name.split(' ')[0]}!`, 'success');
+                        this.showToast(`Welcome to ThoraxLab Demo, ${userData.name.split(' ')[0]}!`, 'success');
                     } else {
-                        this.showToast(data.error || 'Login failed', 'error');
+                        // Real API call would go here
+                        // const response = await fetch('/api/login', {...});
+                        this.showToast('Backend not implemented. Enable Demo Mode.', 'warning');
                     }
                 } catch (error) {
                     console.error('Login error:', error);
                     this.showToast('Connection error. Please try again.', 'error');
                 } finally {
                     submitBtn.disabled = false;
-                    submitText.textContent = 'Enter Platform';
+                    submitText.textContent = 'Enter Platform (Demo Mode)';
                     spinner.classList.add('hidden');
                 }
             }
             
             async loadDashboard() {
                 try {
-                    const response = await fetch('/api/dashboard', {
-                        headers: { 'Authorization': `Bearer ${this.token}` }
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.renderMetrics(data.dashboard.metrics);
-                        this.renderProjects(data.dashboard.activeProjects);
+                    if (this.mockMode) {
+                        // Mock dashboard data
+                        const mockData = {
+                            metrics: {
+                                clinicalActivity: 0, // No data until backend implemented
+                                industryActivity: 0,
+                                crossPollination: 0,
+                                projectCount: this.localProjects.length
+                            },
+                            activeProjects: this.localProjects.slice(0, 3) // Show first 3 projects
+                        };
+                        
+                        this.renderMetrics(mockData.metrics);
+                        this.renderProjects(mockData.activeProjects);
+                    } else {
+                        // Real API call would go here
+                        // const response = await fetch('/api/dashboard', {...});
+                        this.showToast('Backend not implemented. Enable Demo Mode.', 'warning');
                     }
                 } catch (error) {
                     console.error('Dashboard load error:', error);
                     this.showToast('Failed to load dashboard', 'error');
-                }
-            }
-            
-            async loadProjects() {
-                try {
-                    const response = await fetch('/api/projects', {
-                        headers: { 'Authorization': `Bearer ${this.token}` }
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.renderProjects(data.projects);
-                    }
-                } catch (error) {
-                    console.error('Projects load error:', error);
-                    this.showToast('Failed to load projects', 'error');
                 }
             }
             
@@ -702,23 +1124,55 @@
                 
                 container.innerHTML = `
                     <div class="metric-card">
-                        <div class="metric-value">${metrics.clinicalActivity || 0}</div>
+                        <div class="metric-status ${metrics.clinicalActivity > 0 ? 'status-ready' : 'status-required'}">
+                            ${metrics.clinicalActivity > 0 ? 'Live Data' : 'No Data'}
+                        </div>
+                        <div class="metric-value ${metrics.clinicalActivity > 0 ? '' : 'empty'}">
+                            ${metrics.clinicalActivity > 0 ? metrics.clinicalActivity : '--'}
+                        </div>
                         <div class="metric-label">Clinical Insights</div>
+                        <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                            ${metrics.clinicalActivity > 0 ? 'From: /api/dashboard' : 'Requires: /api/dashboard → metrics.clinicalActivity'}
+                        </div>
                     </div>
                     
                     <div class="metric-card">
-                        <div class="metric-value">${metrics.industryActivity || 0}</div>
+                        <div class="metric-status ${metrics.industryActivity > 0 ? 'status-ready' : 'status-required'}">
+                            ${metrics.industryActivity > 0 ? 'Live Data' : 'No Data'}
+                        </div>
+                        <div class="metric-value ${metrics.industryActivity > 0 ? '' : 'empty'}">
+                            ${metrics.industryActivity > 0 ? metrics.industryActivity : '--'}
+                        </div>
                         <div class="metric-label">Technical Solutions</div>
+                        <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                            ${metrics.industryActivity > 0 ? 'From: /api/dashboard' : 'Requires: /api/dashboard → metrics.industryActivity'}
+                        </div>
                     </div>
                     
                     <div class="metric-card">
-                        <div class="metric-value">${metrics.crossPollination || 0}</div>
+                        <div class="metric-status ${metrics.crossPollination > 0 ? 'status-ready' : 'status-required'}">
+                            ${metrics.crossPollination > 0 ? 'Live Data' : 'No Data'}
+                        </div>
+                        <div class="metric-value ${metrics.crossPollination > 0 ? '' : 'empty'}">
+                            ${metrics.crossPollination > 0 ? metrics.crossPollination : '--'}
+                        </div>
                         <div class="metric-label">Cross Interactions</div>
+                        <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                            ${metrics.crossPollination > 0 ? 'From: /api/dashboard' : 'Requires: /api/dashboard → metrics.crossPollination'}
+                        </div>
                     </div>
                     
                     <div class="metric-card">
-                        <div class="metric-value">${metrics.projectCount || 0}</div>
+                        <div class="metric-status ${metrics.projectCount > 0 ? 'status-ready' : 'status-required'}">
+                            ${metrics.projectCount > 0 ? 'Live Data' : 'No Data'}
+                        </div>
+                        <div class="metric-value ${metrics.projectCount > 0 ? '' : 'empty'}">
+                            ${metrics.projectCount > 0 ? metrics.projectCount : '--'}
+                        </div>
                         <div class="metric-label">Active Projects</div>
+                        <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.5rem;">
+                            ${metrics.projectCount > 0 ? 'From: /api/dashboard' : 'Requires: /api/dashboard → metrics.projectCount'}
+                        </div>
                     </div>
                 `;
             }
@@ -730,33 +1184,59 @@
                 if (!projects || projects.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
-                            <div style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.3;">📂</div>
-                            <h3 style="color: var(--ui-light); margin-bottom: 1rem;">No Projects Yet</h3>
-                            <p style="margin-bottom: 1.5rem;">
-                                Start your first collaboration project to bridge clinical and industry expertise.
+                            <div class="empty-state-icon">📂</div>
+                            <h3 class="empty-state-title">No Projects Yet</h3>
+                            <p class="empty-state-description">
+                                Create your first collaboration project to bridge clinical and industry expertise.
+                                Currently running in demo mode - projects are stored locally only.
                             </p>
                             <button id="createFirstProjectBtn" class="btn btn-primary">
-                                Create Your First Project
+                                <i class="fas fa-plus"></i>
+                                Create Demo Project
                             </button>
+                            
+                            <div class="implementation-guide">
+                                <div class="guide-title">To Enable Persistent Projects</div>
+                                <div class="guide-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Implement Project Database</div>
+                                        <div class="step-description">Create project schema with title, description, type, status</div>
+                                    </div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Create Project Endpoints</div>
+                                        <div class="step-description">POST /api/projects (create), GET /api/projects (list), GET /api/projects/:id (details)</div>
+                                    </div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Add User-Project Relationships</div>
+                                        <div class="step-description">Link projects to creators and team members</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
-                    
-                    document.getElementById('createFirstProjectBtn').addEventListener('click', () => {
-                        this.showNewProjectModal();
-                    });
                     
                     return;
                 }
                 
                 container.innerHTML = projects.map(project => `
-                    <a href="/project.html?id=${project.id}" class="project-card">
+                    <a href="project.html?id=${project.id}" class="project-card">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span class="feature-status status-partial">Local Demo</span>
+                        </div>
                         <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
                         <p class="project-description">
                             ${this.escapeHtml(project.description.substring(0, 120))}${project.description.length > 120 ? '...' : ''}
                         </p>
                         <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.25rem; border-top: 1px solid var(--ui-border); font-size: 0.875rem;">
                             <div style="color: var(--ui-light);">
-                                <i class="fas fa-users"></i> ${project.team_count || 0} members
+                                <i class="fas fa-users"></i> 0 members (backend required)
                             </div>
                             <div style="color: var(--ui-light);">
                                 ${new Date(project.created_at).toLocaleDateString()}
@@ -786,70 +1266,250 @@
                 submitBtn.textContent = 'Creating...';
                 
                 try {
-                    const response = await fetch('/api/projects', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
+                    if (this.mockMode) {
+                        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+                        
+                        const projectData = {
+                            id: Date.now().toString(),
                             title: document.getElementById('projectTitle').value,
                             description: document.getElementById('projectDescription').value,
-                            type: document.getElementById('projectType').value
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
+                            type: document.getElementById('projectType').value,
+                            status: 'active',
+                            created_at: new Date().toISOString(),
+                            creator_id: this.user?.id || 'demo-user',
+                            creator_name: this.user?.name || 'Demo User',
+                            team_count: 0,
+                            metrics: {
+                                threads: 0,
+                                comments: 0,
+                                files: 0
+                            }
+                        };
+                        
+                        // Save locally
+                        this.localProjects.unshift(projectData); // Add to beginning
+                        localStorage.setItem('thoraxlab_projects', JSON.stringify(this.localProjects));
+                        
                         this.hideModal('newProjectModal');
-                        this.loadProjects();
-                        this.loadDashboard();
-                        this.showToast('Project created successfully!', 'success');
+                        this.loadDashboard(); // Refresh the dashboard
+                        
+                        this.showToast('Demo project created (stored locally)', 'success');
                     } else {
-                        this.showToast(data.error || 'Failed to create project', 'error');
+                        // Real API call would go here
+                        this.showToast('Backend not implemented. Enable Demo Mode.', 'warning');
                     }
                 } catch (error) {
                     console.error('Create project error:', error);
-                    this.showToast('Connection error', 'error');
+                    this.showToast('Error creating project', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
                 }
             }
             
-            connectWebSocket() {
-                if (!this.token || this.ws) return;
+            updateBackendStatus() {
+                const statusIndicator = document.querySelector('.backend-status .status-indicator');
+                const statusText = document.querySelector('.backend-status span:nth-child(2)');
                 
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}/ws`;
-                
-                this.ws = new WebSocket(wsUrl);
-                
-                this.ws.onopen = () => {
-                    this.ws.send(JSON.stringify({
-                        type: 'authenticate',
-                        token: this.token
-                    }));
-                };
-                
-                this.ws.onmessage = (event) => {
-                    const message = JSON.parse(event.data);
+                if (this.mockMode) {
+                    statusIndicator.className = 'status-indicator status-disconnected';
+                    statusText.textContent = 'Backend API: Not Connected - Running in Demo Mode';
                     
-                    switch (message.type) {
-                        case 'notifications':
-                            // Handle real-time notifications
-                            break;
-                        case 'project_created':
-                            this.loadProjects();
-                            this.loadDashboard();
-                            break;
+                    // Update buttons
+                    document.getElementById('refreshProjectsBtn').disabled = true;
+                    document.getElementById('refreshProjectsBtn').innerHTML = '<i class="fas fa-sync-alt"></i> Refresh (No Backend)';
+                    
+                    // Update welcome message
+                    document.getElementById('welcomeMessage').textContent = 'Welcome to ThoraxLab Demo';
+                } else {
+                    statusIndicator.className = 'status-indicator status-pending';
+                    statusText.textContent = 'Backend API: Attempting Connection...';
+                    
+                    document.getElementById('refreshProjectsBtn').disabled = false;
+                    document.getElementById('refreshProjectsBtn').innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                    
+                    document.getElementById('welcomeMessage').textContent = 'Welcome to ThoraxLab';
+                    
+                    // Try to connect to real backend
+                    setTimeout(() => {
+                        this.attemptBackendConnection();
+                    }, 1000);
+                }
+            }
+            
+            async attemptBackendConnection() {
+                try {
+                    // Try to hit a basic endpoint
+                    const response = await fetch('/api/health', { 
+                        method: 'GET',
+                        timeout: 3000 
+                    });
+                    
+                    if (response.ok) {
+                        const statusIndicator = document.querySelector('.backend-status .status-indicator');
+                        const statusText = document.querySelector('.backend-status span:nth-child(2)');
+                        
+                        statusIndicator.className = 'status-indicator status-connected';
+                        statusText.textContent = 'Backend API: Connected';
+                        
+                        this.showToast('Connected to backend API', 'success');
+                        
+                        // Load real data
+                        this.loadDashboard();
+                    } else {
+                        this.showToast('Backend returned error', 'warning');
+                        this.mockMode = true;
+                        this.updateBackendStatus();
                     }
-                };
+                } catch (error) {
+                    this.showToast('Cannot connect to backend', 'error');
+                    this.mockMode = true;
+                    this.updateBackendStatus();
+                }
+            }
+            
+            showApiDocsModal() {
+                // Create a modal with API documentation
+                const modalHtml = `
+                    <div class="modal" id="apiDocsModal" style="display: flex;">
+                        <div class="modal-content" style="max-width: 800px;">
+                            <div class="modal-header">
+                                <h2 class="modal-title">API Implementation Guide</h2>
+                                <button class="close-modal" onclick="document.getElementById('apiDocsModal').style.display='none'" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ui-light);">&times;</button>
+                            </div>
+                            
+                            <div class="implementation-guide">
+                                <div class="guide-title">Required Endpoints</div>
+                                
+                                <div class="guide-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Authentication</div>
+                                        <div class="step-description">
+                                            <div class="api-docs">
+                                                <pre class="code"><span class="code-comment">// POST /api/login</span>
+<span class="code-keyword">Request</span>:
+{
+  <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span>,
+  <span class="code-string">"email"</span>: <span class="code-string">"alex.chen@hospital.org"</span>,
+  <span class="code-string">"organization"</span>: <span class="code-string">"Massachusetts General Hospital"</span>,
+  <span class="code-string">"role"</span>: <span class="code-string">"clinician"</span>
+}
+
+<span class="code-comment">// Response:</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"token"</span>: <span class="code-string">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+  <span class="code-string">"user"</span>: {
+    <span class="code-string">"id"</span>: <span class="code-string">"user_123"</span>,
+    <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span>,
+    <span class="code-string">"email"</span>: <span class="code-string">"alex.chen@hospital.org"</span>,
+    <span class="code-string">"role"</span>: <span class="code-string">"clinician"</span>,
+    <span class="code-string">"organization"</span>: <span class="code-string">"Massachusetts General Hospital"</span>
+  }
+}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="guide-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Dashboard Data</div>
+                                        <div class="step-description">
+                                            <div class="api-docs">
+                                                <pre class="code"><span class="code-comment">// GET /api/dashboard</span>
+<span class="code-keyword">Headers</span>: Authorization: Bearer &lt;token&gt;
+
+<span class="code-comment">// Response:</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"dashboard"</span>: {
+    <span class="code-string">"metrics"</span>: {
+      <span class="code-string">"clinicalActivity"</span>: <span class="code-number">42</span>,
+      <span class="code-string">"industryActivity"</span>: <span class="code-number">28</span>,
+      <span class="code-string">"crossPollination"</span>: <span class="code-number">15</span>,
+      <span class="code-string">"projectCount"</span>: <span class="code-number">8</span>
+    },
+    <span class="code-string">"activeProjects"</span>: [
+      {
+        <span class="code-string">"id"</span>: <span class="code-string">"proj_123"</span>,
+        <span class="code-string">"title"</span>: <span class="code-string">"COPD Prediction Algorithm"</span>,
+        <span class="code-string">"description"</span>: <span class="code-string">"Machine learning for exacerbation prediction"</span>,
+        <span class="code-string">"type"</span>: <span class="code-string">"collaborative"</span>,
+        <span class="code-string">"status"</span>: <span class="code-string">"active"</span>,
+        <span class="code-string">"created_at"</span>: <span class="code-string">"2024-01-15T10:30:00Z"</span>,
+        <span class="code-string">"team_count"</span>: <span class="code-number">5</span>
+      }
+    ]
+  }
+}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="guide-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Project Management</div>
+                                        <div class="step-description">
+                                            <div class="api-docs">
+                                                <pre class="code"><span class="code-comment">// POST /api/projects</span>
+<span class="code-keyword">Request</span>:
+{
+  <span class="code-string">"title"</span>: <span class="code-string">"Project Title"</span>,
+  <span class="code-string">"description"</span>: <span class="code-string">"Project description..."</span>,
+  <span class="code-string">"type"</span>: <span class="code-string">"clinical|industry|collaborative"</span>
+}
+
+<span class="code-comment">// GET /api/projects/:id</span>
+<span class="code-keyword">Response</span>:
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"project"</span>: {
+    <span class="code-string">"id"</span>: <span class="code-string">"proj_123"</span>,
+    <span class="code-string">"title"</span>: <span class="code-string">"Project Title"</span>,
+    <span class="code-string">"description"</span>: <span class="code-string">"Full description..."</span>,
+    <span class="code-string">"type"</span>: <span class="code-string">"collaborative"</span>,
+    <span class="code-string">"status"</span>: <span class="code-string">"active"</span>,
+    <span class="code-string">"created_at"</span>: <span class="code-string">"2024-01-15T10:30:00Z"</span>,
+    <span class="code-string">"team"</span>: [
+      {
+        <span class="code-string">"id"</span>: <span class="code-string">"user_123"</span>,
+        <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span>,
+        <span class="code-string">"role"</span>: <span class="code-string">"clinician"</span>,
+        <span class="code-string">"specialty"</span>: <span class="code-string">"Pulmonology"</span>
+      }
+    ],
+    <span class="code-string">"metrics"</span>: {
+      <span class="code-string">"threads"</span>: <span class="code-number">12</span>,
+      <span class="code-string">"comments"</span>: <span class="code-number">47</span>,
+      <span class="code-string">"members"</span>: <span class="code-number">8</span>,
+      <span class="code-string">"files"</span>: <span class="code-number">6</span>
+    }
+  }
+}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('apiDocsModal').style.display='none'">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
                 
-                this.ws.onclose = () => {
-                    setTimeout(() => this.connectWebSocket(), 3000);
-                };
+                // Add modal to body
+                const modalContainer = document.createElement('div');
+                modalContainer.innerHTML = modalHtml;
+                document.body.appendChild(modalContainer.firstElementChild);
             }
             
             showToast(message, type = 'info') {
@@ -857,11 +1517,7 @@
                 if (!container) return;
                 
                 const toast = document.createElement('div');
-                toast.className = `toast`;
-                toast.style.background = type === 'success' ? '#10B981' : 
-                                       type === 'error' ? '#EF4444' : 
-                                       type === 'warning' ? '#F59E0B' : 
-                                       '#1A5F7A';
+                toast.className = `toast toast-${type}`;
                 
                 const icon = type === 'success' ? 'fa-check-circle' : 
                            type === 'error' ? 'fa-exclamation-circle' : 
