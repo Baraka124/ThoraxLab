@@ -14,7 +14,6 @@ class ThoraxLabDatabase {
         if (this.connected) return this.db;
         
         return new Promise((resolve, reject) => {
-            // Create data directory if needed
             const dataDir = path.dirname(this.DB_PATH);
             if (!fs.existsSync(dataDir)) {
                 fs.mkdirSync(dataDir, { recursive: true });
@@ -36,7 +35,6 @@ class ThoraxLabDatabase {
     async initializeSchema() {
         await this.run('PRAGMA foreign_keys = ON');
         
-        // Core tables only - no bloat
         await this.run(`
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
@@ -67,6 +65,7 @@ class ThoraxLabDatabase {
                 description TEXT NOT NULL,
                 type TEXT NOT NULL,
                 lead_id TEXT NOT NULL,
+                status TEXT DEFAULT 'active',
                 objectives TEXT DEFAULT '{"clinical":[],"industry":[],"shared":[]}',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -144,7 +143,6 @@ class ThoraxLabDatabase {
         console.log('Database schema ready');
     }
 
-    // Core database methods
     run(sql, params = []) {
         return new Promise((resolve, reject) => {
             this.db.run(sql, params, function(err) {
@@ -169,7 +167,6 @@ class ThoraxLabDatabase {
         });
     }
 
-    // ===== USER METHODS =====
     async createUser(userData) {
         const userId = `user_${uuidv4()}`;
         const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -190,7 +187,6 @@ class ThoraxLabDatabase {
         return this.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase()]);
     }
 
-    // ===== SESSION METHODS =====
     async createSession(userId, token, expiresInHours = 24) {
         const sessionId = `sess_${uuidv4()}`;
         const expiresAt = new Date(Date.now() + expiresInHours * 3600000);
@@ -207,7 +203,6 @@ class ThoraxLabDatabase {
         const session = await this.get('SELECT * FROM sessions WHERE token = ?', [token]);
         if (!session) return null;
         
-        // Check expiration
         if (new Date() > new Date(session.expires_at)) {
             await this.run('DELETE FROM sessions WHERE id = ?', [session.id]);
             return null;
@@ -221,7 +216,6 @@ class ThoraxLabDatabase {
         return true;
     }
 
-    // ===== PROJECT METHODS =====
     async createProject(projectData, userId) {
         const projectId = `project_${uuidv4()}`;
         const user = await this.getUser(userId);
@@ -234,7 +228,6 @@ class ThoraxLabDatabase {
              JSON.stringify(projectData.objectives || {clinical: [], industry: [], shared: []})]
         );
         
-        // Add creator as lead
         await this.addTeamMember(projectId, userId, 'lead');
         
         return this.getProject(projectId);
@@ -276,7 +269,110 @@ class ThoraxLabDatabase {
         });
     }
 
-    // ===== TEAM METHODS =====
+    async updateProject(projectId, updates) {
+        const fields = [];
+        const values = [];
+        
+        if (updates.title !== undefined) {
+            fields.push('title = ?');
+            values.push(updates.title);
+        }
+        if (updates.description !== undefined) {
+            fields.push('description = ?');
+            values.push(updates.description);
+        }
+        if (updates.status !== undefined) {
+            fields.push('status = ?');
+            values.push(updates.status);
+        }
+        if (updates.type !== undefined) {
+            fields.push('type = ?');
+            values.push(updates.type);
+        }
+        
+        fields.push('updated_at = CURRENT_TIMESTAMP');
+        
+        if (fields.length > 0) {
+            const sql = `UPDATE projects SET ${fields.join(', ')} WHERE id = ?`;
+            values.push(projectId);
+            await this.run(sql, values);
+        }
+        
+        return this.getProject(projectId);
+    }
+
+    async getProjectMetrics(projectId) {
+        const threadCount = await this.get(
+            'SELECT COUNT(*) as count FROM discussions WHERE project_id = ?',
+            [projectId]
+        );
+        
+        const commentCount = await this.get(`
+            SELECT COUNT(*) as count FROM comments 
+            WHERE discussion_id IN (SELECT id FROM discussions WHERE project_id = ?)
+        `, [projectId]);
+        
+        const memberCount = await this.get(
+            'SELECT COUNT(*) as count FROM project_team WHERE project_id = ?',
+            [projectId]
+        );
+        
+        const upvoteCount = await this.get(`
+            SELECT COUNT(*) as count FROM discussion_votes 
+            WHERE vote_type = 'upvote' 
+            AND discussion_id IN (SELECT id FROM discussions WHERE project_id = ?)
+        `, [projectId]);
+        
+        return {
+            threads: threadCount?.count || 0,
+            comments: commentCount?.count || 0,
+            members: memberCount?.count || 0,
+            files: 0,
+            upvotes: upvoteCount?.count || 0
+        };
+    }
+
+    async getProjectActivity(projectId, limit = 10) {
+        const discussions = await this.all(`
+            SELECT d.*, u.name as author_name, 'discussion' as type
+            FROM discussions d
+            JOIN users u ON d.author_id = u.id
+            WHERE d.project_id = ?
+            ORDER BY d.created_at DESC
+            LIMIT ?
+        `, [projectId, Math.floor(limit / 2)]);
+        
+        const comments = await this.all(`
+            SELECT c.*, u.name as author_name, d.title as discussion_title, 'comment' as type
+            FROM comments c
+            JOIN users u ON c.author_id = u.id
+            JOIN discussions d ON c.discussion_id = d.id
+            WHERE d.project_id = ?
+            ORDER BY c.created_at DESC
+            LIMIT ?
+        `, [projectId, Math.floor(limit / 2)]);
+        
+        const activity = [...discussions, ...comments]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, limit);
+        
+        return activity;
+    }
+
+    async getProjectThreads(projectId) {
+        const threads = await this.all(`
+            SELECT d.*, u.name as author_name, u.role as author_role,
+                   (SELECT COUNT(*) FROM comments WHERE discussion_id = d.id) as comment_count,
+                   (SELECT COUNT(*) FROM discussion_votes WHERE discussion_id = d.id AND vote_type = 'upvote') as upvotes
+            FROM discussions d
+            JOIN users u ON d.author_id = u.id
+            WHERE d.project_id = ?
+            ORDER BY d.created_at DESC
+        `, [projectId]);
+        
+        return threads;
+    }
+
     async addTeamMember(projectId, userId, role) {
         const teamId = `team_${uuidv4()}`;
         
@@ -306,7 +402,6 @@ class ThoraxLabDatabase {
         return !!result;
     }
 
-    // ===== DISCUSSION METHODS =====
     async createDiscussion(discussionData) {
         const discussionId = `disc_${uuidv4()}`;
         
@@ -351,7 +446,6 @@ class ThoraxLabDatabase {
         return discussions;
     }
 
-    // ===== VOTE METHODS =====
     async addDiscussionVote(discussionId, userId, voteType) {
         const voteId = `vote_${uuidv4()}`;
         
@@ -361,7 +455,6 @@ class ThoraxLabDatabase {
                 [voteId, discussionId, userId, voteType]
             );
         } catch (error) {
-            // Update if already voted
             if (error.message.includes('UNIQUE constraint failed')) {
                 await this.run(
                     'UPDATE discussion_votes SET vote_type = ? WHERE discussion_id = ? AND user_id = ?',
@@ -379,7 +472,6 @@ class ThoraxLabDatabase {
         return this.all('SELECT * FROM discussion_votes WHERE discussion_id = ?', [discussionId]);
     }
 
-    // ===== COMMENT METHODS =====
     async createComment(commentData) {
         const commentId = `comment_${uuidv4()}`;
         
@@ -388,7 +480,6 @@ class ThoraxLabDatabase {
             [commentId, commentData.discussionId, commentData.content, commentData.authorId]
         );
         
-        // Update discussion comment count
         await this.run(
             'UPDATE discussions SET comment_count = comment_count + 1 WHERE id = ?',
             [commentData.discussionId]
@@ -407,7 +498,6 @@ class ThoraxLabDatabase {
         `, [discussionId]);
     }
 
-    // ===== DECISION METHODS =====
     async createDecision(decisionData) {
         const decisionId = `dec_${uuidv4()}`;
         
@@ -429,13 +519,12 @@ class ThoraxLabDatabase {
         `, [projectId]);
     }
 
-    // ===== DASHBOARD METHODS =====
     async getDashboardData(userId) {
         const projects = await this.getProjectsForUser(userId);
         const projectCount = projects.length;
         
         let discussionCount = 0;
-        let voteCount = 0;
+        let upvoteCount = 0;
         
         for (const project of projects) {
             const discussions = await this.getProjectDiscussions(project.id);
@@ -443,16 +532,18 @@ class ThoraxLabDatabase {
             
             for (const discussion of discussions) {
                 const votes = await this.getDiscussionVotes(discussion.id);
-                voteCount += votes.length;
+                upvoteCount += votes.filter(v => v.vote_type === 'upvote').length;
             }
         }
+        
+        const teamCount = await this.getUserTeamCount(userId);
         
         return {
             metrics: {
                 projectCount,
                 discussionCount,
-                voteCount,
-                teamMembers: await this.getUserTeamCount(userId)
+                upvoteCount,
+                teamMembers: teamCount
             },
             recentProjects: projects.slice(0, 5),
             recentActivity: await this.getRecentActivity(userId, 10)
@@ -460,7 +551,6 @@ class ThoraxLabDatabase {
     }
 
     async getRecentActivity(userId, limit = 10) {
-        // Get recent discussions from user's projects
         return this.all(`
             SELECT d.*, p.title as project_title, u.name as author_name
             FROM discussions d
@@ -474,8 +564,8 @@ class ThoraxLabDatabase {
 
     async getUserTeamCount(userId) {
         const result = await this.get(
-            'SELECT COUNT(DISTINCT pt2.user_id) as count FROM project_team pt1 JOIN project_team pt2 ON pt1.project_id = pt2.project_id WHERE pt1.user_id = ?',
-            [userId]
+            'SELECT COUNT(DISTINCT pt2.user_id) as count FROM project_team pt1 JOIN project_team pt2 ON pt1.project_id = pt2.project_id WHERE pt1.user_id = ? AND pt2.user_id != ?',
+            [userId, userId]
         );
         return result?.count || 0;
     }
