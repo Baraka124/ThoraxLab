@@ -12,21 +12,35 @@ const server = require('http').createServer(app);
 // ===== WebSocket Server =====
 const wss = new WebSocket.Server({ server });
 const clients = new Map();
+const projectConnections = new Map();
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
     const clientId = `client_${uuidv4()}`;
-    clients.set(clientId, { ws, userId: null });
+    clients.set(clientId, { ws, userId: null, projectId: null });
 
     ws.on('message', async (data) => {
         try {
             const message = JSON.parse(data.toString());
             
-            if (message.type === 'authenticate' && message.token) {
+            if (message.type === 'authenticate') {
                 const session = await database.getSessionByToken(message.token);
                 if (session) {
                     const client = clients.get(clientId);
                     client.userId = session.user_id;
-                    ws.send(JSON.stringify({ type: 'authenticated', userId: session.user_id }));
+                    
+                    if (message.project_id) {
+                        client.projectId = message.project_id;
+                        if (!projectConnections.has(message.project_id)) {
+                            projectConnections.set(message.project_id, new Set());
+                        }
+                        projectConnections.get(message.project_id).add(clientId);
+                    }
+                    
+                    ws.send(JSON.stringify({ 
+                        type: 'authenticated', 
+                        userId: session.user_id,
+                        projectId: message.project_id 
+                    }));
                 }
             }
         } catch (error) {
@@ -35,20 +49,33 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
+        const client = clients.get(clientId);
+        if (client && client.projectId) {
+            const projectClients = projectConnections.get(client.projectId);
+            if (projectClients) {
+                projectClients.delete(clientId);
+                if (projectClients.size === 0) {
+                    projectConnections.delete(client.projectId);
+                }
+            }
+        }
         clients.delete(clientId);
     });
 });
 
-function broadcastToUser(userId, message) {
-    clients.forEach((client) => {
-        if (client.userId === userId && client.ws.readyState === WebSocket.OPEN) {
-            client.ws.send(JSON.stringify(message));
-        }
-    });
+function broadcastToProject(projectId, message) {
+    const projectClients = projectConnections.get(projectId);
+    if (projectClients) {
+        projectClients.forEach(clientId => {
+            const client = clients.get(clientId);
+            if (client && client.ws.readyState === WebSocket.OPEN) {
+                client.ws.send(JSON.stringify(message));
+            }
+        });
+    }
 }
 
 // ===== Express Setup =====
-// Disable CSP for inline scripts - Railway requirement
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -100,7 +127,6 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ error: 'Name and email required' });
         }
         
-        // Find or create user
         let user = await database.findUserByEmail(email);
         if (!user) {
             user = await database.createUser({
@@ -111,7 +137,6 @@ app.post('/api/login', async (req, res) => {
             });
         }
         
-        // Create session
         const token = `tok_${uuidv4()}`;
         const session = await database.createSession(user.id, token);
         
@@ -204,7 +229,6 @@ app.post('/api/projects', authenticateToken, async (req, res) => {
             objectives
         }, req.user.id);
         
-        // Notify user via WebSocket
         broadcastToUser(req.user.id, {
             type: 'project_created',
             project,
@@ -223,7 +247,6 @@ app.get('/api/projects/:id', authenticateToken, async (req, res) => {
     try {
         const projectId = req.params.id;
         
-        // Check access
         const hasAccess = await database.isUserInProject(projectId, req.user.id);
         if (!hasAccess) {
             return res.status(403).json({ error: 'No access to project' });
@@ -237,17 +260,80 @@ app.get('/api/projects/:id', authenticateToken, async (req, res) => {
         const team = await database.getProjectTeam(projectId);
         const discussions = await database.getProjectDiscussions(projectId);
         const decisions = await database.getProjectDecisions(projectId);
+        const metrics = await database.getProjectMetrics(projectId);
         
         res.json({
             success: true,
             project,
             team,
             discussions,
-            decisions
+            decisions,
+            metrics
         });
     } catch (error) {
         console.error('Get project error:', error);
         res.status(500).json({ error: 'Failed to load project' });
+    }
+});
+
+// Update project
+app.put('/api/projects/:id', authenticateToken, async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        
+        const hasAccess = await database.isUserInProject(projectId, req.user.id);
+        if (!hasAccess) {
+            return res.status(403).json({ error: 'No access to project' });
+        }
+        
+        const project = await database.updateProject(projectId, req.body);
+        
+        broadcastToProject(projectId, {
+            type: 'project_updated',
+            project,
+            timestamp: new Date().toISOString()
+        });
+        
+        res.json({ success: true, project });
+    } catch (error) {
+        console.error('Update project error:', error);
+        res.status(500).json({ error: 'Failed to update project' });
+    }
+});
+
+// Get project activity
+app.get('/api/projects/:id/activity', authenticateToken, async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        
+        const hasAccess = await database.isUserInProject(projectId, req.user.id);
+        if (!hasAccess) {
+            return res.status(403).json({ error: 'No access to project' });
+        }
+        
+        const activity = await database.getProjectActivity(projectId);
+        res.json({ success: true, activity });
+    } catch (error) {
+        console.error('Get activity error:', error);
+        res.status(500).json({ error: 'Failed to load activity' });
+    }
+});
+
+// Get project threads
+app.get('/api/projects/:id/threads', authenticateToken, async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        
+        const hasAccess = await database.isUserInProject(projectId, req.user.id);
+        if (!hasAccess) {
+            return res.status(403).json({ error: 'No access to project' });
+        }
+        
+        const threads = await database.getProjectThreads(projectId);
+        res.json({ success: true, threads });
+    } catch (error) {
+        console.error('Get threads error:', error);
+        res.status(500).json({ error: 'Failed to load threads' });
     }
 });
 
@@ -263,7 +349,6 @@ app.post('/api/projects/:id/discussions', authenticateToken, async (req, res) =>
             return res.status(400).json({ error: 'Title, content and type required' });
         }
         
-        // Check access
         const hasAccess = await database.isUserInProject(projectId, req.user.id);
         if (!hasAccess) {
             return res.status(403).json({ error: 'No access to project' });
@@ -277,14 +362,10 @@ app.post('/api/projects/:id/discussions', authenticateToken, async (req, res) =>
             authorId: req.user.id
         });
         
-        // Notify team via WebSocket
-        const team = await database.getProjectTeam(projectId);
-        team.forEach(member => {
-            broadcastToUser(member.user_id, {
-                type: 'discussion_created',
-                discussion,
-                timestamp: new Date().toISOString()
-            });
+        broadcastToProject(projectId, {
+            type: 'new_thread',
+            thread: discussion,
+            timestamp: new Date().toISOString()
         });
         
         res.status(201).json({ success: true, discussion });
@@ -309,7 +390,6 @@ app.post('/api/discussions/:id/vote', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'Discussion not found' });
         }
         
-        // Check access to project
         const hasAccess = await database.isUserInProject(discussion.project_id, req.user.id);
         if (!hasAccess) {
             return res.status(403).json({ error: 'No access to discussion' });
@@ -317,15 +397,11 @@ app.post('/api/discussions/:id/vote', authenticateToken, async (req, res) => {
         
         const vote = await database.addDiscussionVote(discussionId, req.user.id, voteType);
         
-        // Notify via WebSocket
-        const team = await database.getProjectTeam(discussion.project_id);
-        team.forEach(member => {
-            broadcastToUser(member.user_id, {
-                type: 'vote_added',
-                discussionId,
-                vote,
-                timestamp: new Date().toISOString()
-            });
+        broadcastToProject(discussion.project_id, {
+            type: 'vote_added',
+            discussionId,
+            vote,
+            timestamp: new Date().toISOString()
         });
         
         res.json({ success: true, vote });
@@ -351,7 +427,6 @@ app.post('/api/comments', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'Discussion not found' });
         }
         
-        // Check access
         const hasAccess = await database.isUserInProject(discussion.project_id, req.user.id);
         if (!hasAccess) {
             return res.status(403).json({ error: 'No access to discussion' });
@@ -363,14 +438,11 @@ app.post('/api/comments', authenticateToken, async (req, res) => {
             authorId: req.user.id
         });
         
-        // Notify via WebSocket
-        const team = await database.getProjectTeam(discussion.project_id);
-        team.forEach(member => {
-            broadcastToUser(member.user_id, {
-                type: 'comment_added',
-                comment,
-                timestamp: new Date().toISOString()
-            });
+        broadcastToProject(discussion.project_id, {
+            type: 'new_comment',
+            comment,
+            discussionId,
+            timestamp: new Date().toISOString()
         });
         
         res.status(201).json({ success: true, comment });
@@ -396,7 +468,6 @@ app.post('/api/decisions', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'Discussion not found' });
         }
         
-        // Check access
         const hasAccess = await database.isUserInProject(discussion.project_id, req.user.id);
         if (!hasAccess) {
             return res.status(403).json({ error: 'No access to discussion' });
@@ -409,14 +480,10 @@ app.post('/api/decisions', authenticateToken, async (req, res) => {
             createdBy: req.user.id
         });
         
-        // Notify team
-        const team = await database.getProjectTeam(discussion.project_id);
-        team.forEach(member => {
-            broadcastToUser(member.user_id, {
-                type: 'decision_created',
-                decision,
-                timestamp: new Date().toISOString()
-            });
+        broadcastToProject(discussion.project_id, {
+            type: 'decision_created',
+            decision,
+            timestamp: new Date().toISOString()
         });
         
         res.status(201).json({ success: true, decision });
@@ -453,6 +520,15 @@ async function startServer() {
         console.error('Failed to start server:', error);
         process.exit(1);
     }
+}
+
+// Helper function
+function broadcastToUser(userId, message) {
+    clients.forEach((client) => {
+        if (client.userId === userId && client.ws.readyState === WebSocket.OPEN) {
+            client.ws.send(JSON.stringify(message));
+        }
+    });
 }
 
 // Graceful shutdown
