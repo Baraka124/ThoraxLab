@@ -3,118 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[THØRAX][LAB] | Smart Project View</title>
+    <title>[THØRAX][LAB] | Clinical-Industry Project Collaboration</title>
     
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Variables & Reset */
+        /* ====== VARIABLES ====== */
         :root {
+            /* Brand Colors */
             --thorax-blue: #1A5F7A;
+            --thorax-blue-light: rgba(26, 95, 122, 0.1);
             --thorax-teal: #0D8B70;
+            --thorax-teal-light: rgba(13, 139, 112, 0.1);
             --thorax-purple: #6D5ACF;
+            --thorax-purple-light: rgba(109, 90, 207, 0.1);
+            
+            /* UI Colors */
             --ui-dark: #1E293B;
             --ui-mid: #64748B;
-            --ui-light: #F8FAFC;
+            --ui-light: #94A3B8;
+            --ui-bg: #F8FAFC;
             --ui-card: #FFFFFF;
             --ui-border: #E2E8F0;
-            --radius: 10px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --clinical: rgba(26, 95, 122, 0.1);
-            --technical: rgba(109, 90, 207, 0.1);
-            --both: rgba(13, 139, 112, 0.1);
+            --ui-hover: #F1F5F9;
+            
+            /* Status Colors */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+            
+            /* Effects */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--ui-light); color: var(--ui-dark); }
+        /* ====== RESET & BASE ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--ui-bg);
+            color: var(--ui-dark);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
         
-        /* Header */
-        .header {
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* ====== TYPOGRAPHY ====== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+        h4 { font-size: 1.125rem; }
+        
+        .text-small { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        
+        .text-muted { color: var(--ui-mid); }
+        .text-light { color: var(--ui-light); }
+        
+        .font-mono {
+            font-family: 'SF Mono', monospace;
+        }
+        
+        /* ====== LAYOUT ====== */
+        .app-header {
             background: var(--ui-card);
             border-bottom: 1px solid var(--ui-border);
-            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98);
         }
         
         .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 1rem 0;
+            gap: 1rem;
         }
         
-        .logo {
-            font-family: 'SF Mono', monospace;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-            text-decoration: none;
-        }
-        
-        /* Main Layout */
-        .project-view {
+        .main-content {
             padding: 2rem 0;
+        }
+        
+        .project-layout {
             display: grid;
             grid-template-columns: 1fr 350px;
             gap: 2rem;
         }
         
         @media (max-width: 1024px) {
-            .project-view { grid-template-columns: 1fr; }
+            .project-layout {
+                grid-template-columns: 1fr;
+            }
         }
         
-        /* Cards */
-        .card {
-            background: var(--ui-card);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            border: 1px solid var(--ui-border);
-            margin-bottom: 1.5rem;
-        }
+        /* ====== COMPONENTS ====== */
         
-        /* Tabs */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--ui-border);
-            margin-bottom: 2rem;
+        /* Brand Logo */
+        .brand-logo {
+            font-family: 'SF Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ui-dark);
+            text-decoration: none;
+            letter-spacing: -0.02em;
         }
-        
-        .tab {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            color: var(--ui-mid);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-        
-        .tab.active {
-            color: var(--thorax-blue);
-            border-bottom-color: var(--thorax-blue);
-        }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
         
         /* Buttons */
         .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
+            border-radius: var(--radius-md);
             font-family: inherit;
+            font-size: 0.875rem;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            white-space: nowrap;
         }
         
         .btn-primary {
@@ -122,10 +162,10 @@
             color: white;
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: #14485E;
             transform: translateY(-1px);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-md);
         }
         
         .btn-secondary {
@@ -134,7 +174,352 @@
             border: 1px solid var(--ui-border);
         }
         
-        /* KNOWLEDGE BRIDGE STYLES */
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--ui-hover);
+            border-color: var(--ui-mid);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            padding: 1.5rem;
+            transition: all var(--transition-normal);
+        }
+        
+        .card:hover {
+            border-color: var(--thorax-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--ui-border);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--ui-mid);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .tab:hover {
+            color: var(--thorax-blue);
+        }
+        
+        .tab.active {
+            color: var(--thorax-blue);
+            border-bottom-color: var(--thorax-blue);
+        }
+        
+        .tab-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .badge-live { background: var(--success); }
+        .badge-demo { background: var(--warning); }
+        .badge-beta { background: var(--info); }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Tags */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            user-select: none;
+        }
+        
+        .tag:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .tag-clinical {
+            background: var(--thorax-blue-light);
+            color: var(--thorax-blue);
+            border-color: var(--thorax-blue-light);
+        }
+        
+        .tag-technical {
+            background: var(--thorax-purple-light);
+            color: var(--thorax-purple);
+            border-color: var(--thorax-purple-light);
+        }
+        
+        .tag-both {
+            background: var(--thorax-teal-light);
+            color: var(--thorax-teal);
+            border-color: var(--thorax-teal-light);
+        }
+        
+        .tag-selected {
+            border-color: currentColor;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-live {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-demo {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        /* Project Header */
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .project-title-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .project-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--ui-dark);
+        }
+        
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--ui-mid);
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        /* ====== DOCUMENTATION TAGGING SYSTEM ====== */
+        .tagging-system {
+            background: var(--ui-bg);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .tag-category {
+            margin-bottom: 1.5rem;
+        }
+        
+        .tag-category:last-child {
+            margin-bottom: 0;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ui-mid);
+        }
+        
+        .category-title {
+            font-weight: 600;
+            color: var(--ui-dark);
+            font-size: 0.875rem;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        /* Document Cards */
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .document-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .document-card {
+            padding: 1.25rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+        
+        .document-card:hover {
+            border-color: var(--thorax-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .document-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .icon-clinical { background: var(--thorax-blue-light); color: var(--thorax-blue); }
+        .icon-technical { background: var(--thorax-purple-light); color: var(--thorax-purple); }
+        .icon-both { background: var(--thorax-teal-light); color: var(--thorax-teal); }
+        
+        .document-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            margin-top: 0.75rem;
+        }
+        
+        /* Filter System */
+        .filter-system {
+            background: var(--ui-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--ui-border);
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 40px;
+            align-items: center;
+        }
+        
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: var(--ui-hover);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+        }
+        
+        .filter-remove {
+            cursor: pointer;
+            color: var(--ui-light);
+        }
+        
+        .filter-remove:hover {
+            color: var(--error);
+        }
+        
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--ui-mid);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        /* ====== KNOWLEDGE BRIDGE ====== */
         .knowledge-bridge {
             background: linear-gradient(135deg, var(--thorax-blue) 0%, var(--thorax-purple) 100%);
             color: white;
@@ -149,557 +534,893 @@
         }
         
         .bridge-icon {
-            font-size: 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
             width: 48px;
             height: 48px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .bridge-title {
+            color: white;
+            font-size: 1.25rem;
+        }
+        
+        .bridge-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
         }
         
         .bridge-directions {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
         
-        .bridge-direction {
+        .direction-btn {
             flex: 1;
             text-align: center;
             padding: 0.75rem;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all var(--transition-fast);
         }
         
-        .bridge-direction:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+        .direction-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
         }
         
-        .bridge-direction.active {
-            background: rgba(255, 255, 255, 0.3);
+        .direction-btn.active {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+        
+        .bridge-input-container {
+            position: relative;
+            margin-bottom: 1rem;
         }
         
         .bridge-input {
             width: 100%;
             padding: 1rem;
-            border-radius: var(--radius);
-            border: none;
+            padding-left: 3rem;
             background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
             color: white;
             font-family: inherit;
             font-size: 1rem;
-            margin-bottom: 1rem;
+        }
+        
+        .bridge-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
         }
         
         .bridge-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
         }
         
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
         .bridge-output {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin-top: 1rem;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
             display: none;
         }
         
         .bridge-output.show {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: slideUp 0.3s ease;
         }
         
-        @keyframes fadeIn {
+        @keyframes slideUp {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .translation-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .badge-clinical { background: var(--clinical); color: var(--thorax-blue); }
-        .badge-technical { background: var(--technical); color: var(--thorax-purple); }
-        .badge-both { background: var(--both); color: var(--thorax-teal); }
-        
-        /* DOCUMENTATION TAGGING SYSTEM */
-        .tagging-system {
-            background: var(--ui-card);
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius);
-            padding: 1rem;
-        }
-        
-        .tag-category {
+        .translation-result {
             margin-bottom: 1.5rem;
         }
         
-        .category-title {
-            font-weight: 600;
-            color: var(--ui-dark);
-            margin-bottom: 0.75rem;
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .result-content {
+            line-height: 1.6;
+        }
+        
+        .analogy-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1.5rem;
+        }
+        
+        .analogy-header {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
         }
         
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+        .analogy-text {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
         }
         
-        .tag {
-            padding: 0.5rem 1rem;
-            background: var(--ui-light);
-            border: 1px solid var(--ui-border);
-            border-radius: 9999px;
-            font-size: 0.875rem;
+        /* Translation History */
+        .history-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--ui-border);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all var(--transition-fast);
         }
         
-        .tag:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+        .history-item:hover {
+            background: var(--ui-hover);
         }
         
-        .tag.selected {
-            background: var(--thorax-blue);
+        .history-term {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .history-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--ui-mid);
+            font-size: 0.75rem;
+        }
+        
+        /* ====== SIDEBAR COMPONENTS ====== */
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        
+        .team-member:hover {
+            background: var(--ui-hover);
+        }
+        
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--thorax-blue), var(--thorax-purple));
             color: white;
-            border-color: var(--thorax-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
         }
         
-        .tag-clinical { border-left: 4px solid var(--thorax-blue); }
-        .tag-technical { border-left: 4px solid var(--thorax-purple); }
-        .tag-both { border-left: 4px solid var(--thorax-teal); }
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
         
-        .document-list {
+        .member-name {
+            font-weight: 500;
+            margin-bottom: 0.125rem;
+        }
+        
+        .member-role {
+            font-size: 0.75rem;
+            color: var(--ui-mid);
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            background: var(--ui-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--ui-mid);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .document-card {
-            padding: 1rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius);
-            transition: all 0.2s;
-        }
-        
-        .document-card:hover {
-            border-color: var(--thorax-blue);
-            transform: translateX(4px);
-        }
-        
-        .document-tags {
-            display: flex;
-            flex-wrap: wrap;
             gap: 0.5rem;
-            margin-top: 0.75rem;
         }
         
-        /* Filter System */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+        /* ====== MODALS ====== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
             padding: 1rem;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
             background: var(--ui-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
         }
         
-        .filter-group {
+        .modal-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
         
-        .filter-tag {
-            padding: 0.25rem 0.75rem;
-            background: var(--ui-light);
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .remove-filter {
-            cursor: pointer;
-            opacity: 0.6;
-        }
-        
-        .remove-filter:hover {
-            opacity: 1;
-        }
-        
-        /* Status Indicators */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+        .modal-title {
+            font-size: 1.25rem;
             font-weight: 600;
+            color: var(--ui-dark);
         }
         
-        .status-live { background: var(--both); color: var(--thorax-teal); }
-        .status-demo { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--ui-light);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+        }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .project-view { gap: 1rem; }
-            .tabs { overflow-x: auto; }
-            .tab { padding: 0.75rem 1rem; }
+        .modal-close:hover {
+            background: var(--ui-hover);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--ui-dark);
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            background: var(--ui-card);
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--thorax-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+        
+        /* ====== UTILITY CLASSES ====== */
+        .hidden {
+            display: none !important;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .gap-1 { gap: 0.25rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        
+        .ml-auto {
+            margin-left: auto;
+        }
+        
+        /* ====== DEMO WARNING ====== */
+        .demo-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .demo-icon {
+            color: var(--warning);
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        
+        .demo-title {
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: 0.25rem;
+        }
+        
+        .demo-description {
+            font-size: 0.875rem;
+            color: var(--ui-mid);
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
+    <!-- Toast Container -->
+    <div id="toastContainer" class="container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+    
+    <!-- App Header -->
+    <header class="app-header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo">[THØRAX][LAB]</a>
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <span class="status-badge status-demo">
+                <a href="index.html" class="brand-logo">[THØRAX][LAB]</a>
+                
+                <div class="flex items-center gap-4">
+                    <div class="status-badge status-demo">
                         <i class="fas fa-flask"></i>
                         Demo Mode
-                    </span>
-                    <button class="btn btn-secondary">
+                    </div>
+                    
+                    <a href="index.html" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
-                        Back to Dashboard
-                    </button>
+                        Dashboard
+                    </a>
                 </div>
             </div>
         </div>
     </header>
-
-    <main class="container">
-        <!-- Project Header -->
-        <div style="margin: 2rem 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Demo Warning -->
+            <div class="demo-warning">
+                <div class="demo-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
                 <div>
-                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">COPD Exacerbation Prediction</h1>
-                    <div style="color: var(--ui-mid); display: flex; gap: 1rem; font-size: 0.875rem;">
-                        <span>Clinical-Industry Collaboration</span>
-                        <span>•</span>
-                        <span>Started Jan 15, 2024</span>
+                    <div class="demo-title">Frontend Demo Mode</div>
+                    <div class="demo-description">
+                        All data is stored locally. Documentation tagging and knowledge bridge features are fully functional in demo mode.
+                        Implement backend APIs for production deployment.
                     </div>
                 </div>
-                <button class="btn btn-primary" id="uploadDocumentBtn">
-                    <i class="fas fa-upload"></i>
-                    Upload Document
-                </button>
             </div>
             
-            <div class="filter-bar" id="filterBar">
-                <div style="font-weight: 600; color: var(--ui-dark);">Active Filters:</div>
-                <!-- Active filters will appear here -->
-                <div id="activeFilters"></div>
-                <button class="btn btn-secondary" id="clearFilters" style="margin-left: auto; font-size: 0.875rem;">
-                    Clear All
-                </button>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="project-view">
-            <!-- Left Column -->
-            <div>
-                <!-- Tabs -->
-                <div class="tabs">
-                    <button class="tab active" data-tab="documents">
-                        <i class="fas fa-file-alt"></i>
-                        Documents
+            <!-- Project Header -->
+            <div class="project-header">
+                <div class="project-title-section">
+                    <h1 class="project-title">COPD Exacerbation Prediction Algorithm</h1>
+                    <div class="project-meta">
+                        <span class="text-muted">Clinical-Industry Collaboration</span>
+                        <span class="text-light">•</span>
+                        <span class="text-muted">Started Jan 15, 2024</span>
+                        <span class="text-light">•</span>
+                        <span class="status-badge status-live">
+                            <i class="fas fa-circle"></i>
+                            Active
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="project-actions">
+                    <button class="btn btn-secondary" id="quickTranslateBtn">
+                        <i class="fas fa-language"></i>
+                        Quick Translate
                     </button>
-                    <button class="tab" data-tab="discussions">
-                        <i class="fas fa-comments"></i>
-                        Discussions
-                    </button>
-                    <button class="tab" data-tab="knowledge">
-                        <i class="fas fa-bridge"></i>
-                        Knowledge Bridge
+                    <button class="btn btn-primary" id="uploadDocumentBtn">
+                        <i class="fas fa-upload"></i>
+                        Upload Document
                     </button>
                 </div>
-
-                <!-- Documents Tab -->
-                <div id="documentsTab" class="tab-content active">
-                    <div class="card">
-                        <h2 style="margin-bottom: 1.5rem;">Project Documents</h2>
-                        <p style="color: var(--ui-mid); margin-bottom: 1.5rem;">
-                            Filter documents by audience, specialty, and content type. Click tags to filter.
-                        </p>
-                        
+            </div>
+            
+            <!-- Filter System -->
+            <div class="filter-system">
+                <div class="filter-header">
+                    <div>
+                        <div class="text-small font-600 mb-1">Active Filters</div>
+                        <div class="text-xs text-muted">Click tags to filter documents</div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="clearFiltersBtn">
+                        Clear All
+                    </button>
+                </div>
+                <div class="active-filters" id="activeFilters">
+                    <!-- Active filters will appear here -->
+                    <div class="text-muted text-small">No active filters</div>
+                </div>
+            </div>
+            
+            <!-- Main Layout -->
+            <div class="project-layout">
+                <!-- Left Column -->
+                <div>
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab active" data-tab="documents">
+                            <i class="fas fa-file-alt"></i>
+                            Documents
+                            <div class="tab-badge badge-live"></div>
+                        </button>
+                        <button class="tab" data-tab="discussions">
+                            <i class="fas fa-comments"></i>
+                            Discussions
+                            <div class="tab-badge badge-beta"></div>
+                        </button>
+                        <button class="tab" data-tab="knowledge">
+                            <i class="fas fa-bridge"></i>
+                            Knowledge Bridge
+                            <div class="tab-badge badge-live"></div>
+                        </button>
+                        <button class="tab" data-tab="timeline">
+                            <i class="fas fa-history"></i>
+                            Timeline
+                            <div class="tab-badge badge-demo"></div>
+                        </button>
+                    </div>
+                    
+                    <!-- Documents Tab -->
+                    <div id="documentsTab" class="tab-content active">
                         <!-- Tagging System -->
                         <div class="tagging-system">
                             <div class="tag-category">
-                                <div class="category-title">
-                                    <i class="fas fa-users"></i>
-                                    <span>Primary Audience</span>
+                                <div class="category-header">
+                                    <div class="category-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="category-title">Primary Audience</div>
                                 </div>
                                 <div class="tag-cloud">
-                                    <div class="tag tag-clinical" data-filter="audience:clinical">Clinical Team</div>
-                                    <div class="tag tag-technical" data-filter="audience:technical">Technical Team</div>
-                                    <div class="tag tag-both" data-filter="audience:both">Both Audiences</div>
-                                    <div class="tag" data-filter="audience:regulatory">Regulatory</div>
+                                    <div class="tag tag-clinical" data-filter="audience:clinical" data-category="audience">
+                                        <i class="fas fa-user-md"></i>
+                                        Clinical Team
+                                    </div>
+                                    <div class="tag tag-technical" data-filter="audience:technical" data-category="audience">
+                                        <i class="fas fa-code"></i>
+                                        Technical Team
+                                    </div>
+                                    <div class="tag tag-both" data-filter="audience:both" data-category="audience">
+                                        <i class="fas fa-users"></i>
+                                        Both Audiences
+                                    </div>
+                                    <div class="tag" data-filter="audience:regulatory" data-category="audience">
+                                        <i class="fas fa-gavel"></i>
+                                        Regulatory
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="tag-category">
-                                <div class="category-title">
-                                    <i class="fas fa-stethoscope"></i>
-                                    <span>Clinical Specialties</span>
+                                <div class="category-header">
+                                    <div class="category-icon">
+                                        <i class="fas fa-stethoscope"></i>
+                                    </div>
+                                    <div class="category-title">Clinical Specialties</div>
                                 </div>
                                 <div class="tag-cloud">
-                                    <div class="tag tag-clinical" data-filter="specialty:pulmonology">Pulmonology</div>
-                                    <div class="tag tag-clinical" data-filter="specialty:critical-care">Critical Care</div>
-                                    <div class="tag tag-clinical" data-filter="specialty:radiology">Radiology</div>
-                                    <div class="tag tag-clinical" data-filter="specialty:pharmacology">Pharmacology</div>
+                                    <div class="tag tag-clinical" data-filter="specialty:pulmonology" data-category="specialty">
+                                        Pulmonology
+                                    </div>
+                                    <div class="tag tag-clinical" data-filter="specialty:critical-care" data-category="specialty">
+                                        Critical Care
+                                    </div>
+                                    <div class="tag tag-clinical" data-filter="specialty:radiology" data-category="specialty">
+                                        Radiology
+                                    </div>
+                                    <div class="tag tag-clinical" data-filter="specialty:pharmacology" data-category="specialty">
+                                        Pharmacology
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="tag-category">
-                                <div class="category-title">
-                                    <i class="fas fa-cogs"></i>
-                                    <span>Technical Domains</span>
+                                <div class="category-header">
+                                    <div class="category-icon">
+                                        <i class="fas fa-cogs"></i>
+                                    </div>
+                                    <div class="category-title">Technical Domains</div>
                                 </div>
                                 <div class="tag-cloud">
-                                    <div class="tag tag-technical" data-filter="domain:ml">Machine Learning</div>
-                                    <div class="tag tag-technical" data-filter="domain:data">Data Engineering</div>
-                                    <div class="tag tag-technical" data-filter="domain:backend">Backend Systems</div>
-                                    <div class="tag tag-technical" data-filter="domain:security">Security & Compliance</div>
+                                    <div class="tag tag-technical" data-filter="domain:ml" data-category="domain">
+                                        Machine Learning
+                                    </div>
+                                    <div class="tag tag-technical" data-filter="domain:data" data-category="domain">
+                                        Data Engineering
+                                    </div>
+                                    <div class="tag tag-technical" data-filter="domain:backend" data-category="domain">
+                                        Backend Systems
+                                    </div>
+                                    <div class="tag tag-technical" data-filter="domain:security" data-category="domain">
+                                        Security & Compliance
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="tag-category">
-                                <div class="category-title">
-                                    <i class="fas fa-file"></i>
-                                    <span>Document Types</span>
+                                <div class="category-header">
+                                    <div class="category-icon">
+                                        <i class="fas fa-file"></i>
+                                    </div>
+                                    <div class="category-title">Document Types</div>
                                 </div>
                                 <div class="tag-cloud">
-                                    <div class="tag tag-both" data-filter="type:protocol">Protocol</div>
-                                    <div class="tag" data-filter="type:dataset">Dataset</div>
-                                    <div class="tag tag-technical" data-filter="type:api">API Documentation</div>
-                                    <div class="tag tag-clinical" data-filter="type:analysis">Clinical Analysis</div>
-                                    <div class="tag" data-filter="type:regulatory">Regulatory Submission</div>
+                                    <div class="tag tag-both" data-filter="type:protocol" data-category="type">
+                                        Protocol
+                                    </div>
+                                    <div class="tag" data-filter="type:dataset" data-category="type">
+                                        Dataset
+                                    </div>
+                                    <div class="tag tag-technical" data-filter="type:api" data-category="type">
+                                        API Documentation
+                                    </div>
+                                    <div class="tag tag-clinical" data-filter="type:analysis" data-category="type">
+                                        Clinical Analysis
+                                    </div>
+                                    <div class="tag" data-filter="type:regulatory" data-category="type">
+                                        Regulatory Submission
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Document List -->
-                        <div class="document-list" id="documentList" style="margin-top: 2rem;">
-                            <!-- Documents will be dynamically inserted here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Knowledge Bridge Tab -->
-                <div id="knowledgeTab" class="tab-content">
-                    <div class="card knowledge-bridge">
-                        <div class="bridge-header">
-                            <div class="bridge-icon">
-                                <i class="fas fa-bridge"></i>
-                            </div>
-                            <div>
-                                <h2 style="color: white; margin-bottom: 0.25rem;">Knowledge Bridge</h2>
-                                <p style="color: rgba(255, 255, 255, 0.8);">Translate between clinical and technical concepts</p>
-                            </div>
-                        </div>
-                        
-                        <div class="bridge-directions">
-                            <div class="bridge-direction" data-direction="clinical-to-technical">
-                                <i class="fas fa-user-md"></i>
-                                <div>Clinical → Technical</div>
-                            </div>
-                            <div class="bridge-direction active" data-direction="technical-to-clinical">
-                                <i class="fas fa-code"></i>
-                                <div>Technical → Clinical</div>
-                            </div>
-                            <div class="bridge-direction" data-direction="both-ways">
-                                <i class="fas fa-exchange-alt"></i>
-                                <div>Explain Both Ways</div>
-                            </div>
-                        </div>
-                        
-                        <input type="text" class="bridge-input" id="bridgeInput" 
-                               placeholder="Enter a clinical or technical concept to translate...">
-                        
-                        <button class="btn btn-primary" id="translateBtn" style="width: 100%; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);">
-                            <i class="fas fa-language"></i>
-                            Translate Concept
-                        </button>
-                        
-                        <div class="bridge-output" id="bridgeOutput">
-                            <!-- Translation results will appear here -->
+                        <!-- Document Grid -->
+                        <h3 class="mb-4">Project Documents</h3>
+                        <div class="document-grid" id="documentGrid">
+                            <!-- Documents will be dynamically loaded here -->
                         </div>
                     </div>
                     
-                    <!-- Recent Translations -->
-                    <div class="card">
-                        <h3 style="margin-bottom: 1rem;">Recent Translations</h3>
-                        <div id="translationHistory">
-                            <!-- History items will appear here -->
+                    <!-- Knowledge Bridge Tab -->
+                    <div id="knowledgeTab" class="tab-content">
+                        <div class="card knowledge-bridge">
+                            <div class="bridge-header">
+                                <div class="bridge-icon">
+                                    <i class="fas fa-bridge"></i>
+                                </div>
+                                <div>
+                                    <h2 class="bridge-title">Knowledge Bridge</h2>
+                                    <div class="bridge-subtitle">Translate clinical concepts to technical implementations and vice versa</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bridge-directions">
+                                <div class="direction-btn active" data-direction="clinical-to-technical">
+                                    <i class="fas fa-user-md"></i>
+                                    <div>Clinical → Technical</div>
+                                    <div class="text-xs" style="opacity: 0.8;">Explain medical terms</div>
+                                </div>
+                                <div class="direction-btn" data-direction="technical-to-clinical">
+                                    <i class="fas fa-code"></i>
+                                    <div>Technical → Clinical</div>
+                                    <div class="text-xs" style="opacity: 0.8;">Explain technical terms</div>
+                                </div>
+                                <div class="direction-btn" data-direction="both-ways">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <div>Both Ways</div>
+                                    <div class="text-xs" style="opacity: 0.8;">Full perspective</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bridge-input-container">
+                                <div class="input-icon">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <input type="text" class="bridge-input" id="bridgeInput" 
+                                       placeholder="Enter a clinical or technical concept to translate...">
+                            </div>
+                            
+                            <button class="btn btn-primary" id="translateBtn" style="width: 100%; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);">
+                                <i class="fas fa-language"></i>
+                                Translate Concept
+                            </button>
+                            
+                            <div class="bridge-output" id="bridgeOutput">
+                                <!-- Translation results will appear here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Translation History -->
+                        <div class="card mt-6">
+                            <h3 class="mb-4">
+                                <i class="fas fa-history"></i>
+                                Recent Translations
+                            </h3>
+                            <div id="translationHistory">
+                                <!-- History will be dynamically loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Discussions Tab -->
+                    <div id="discussionsTab" class="tab-content">
+                        <div class="card">
+                            <div class="empty-state">
+                                <div class="empty-icon">💬</div>
+                                <h3 class="mb-2">Discussion System</h3>
+                                <p class="text-muted mb-4">Real-time discussions require backend implementation with WebSocket support.</p>
+                                <button class="btn btn-primary" id="startDiscussionBtn">
+                                    <i class="fas fa-plus"></i>
+                                    Start First Discussion
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Tab -->
+                    <div id="timelineTab" class="tab-content">
+                        <div class="card">
+                            <div class="empty-state">
+                                <div class="empty-icon">📅</div>
+                                <h3 class="mb-2">Project Timeline</h3>
+                                <p class="text-muted">Timeline will be auto-generated from project activity and milestones.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Discussions Tab -->
-                <div id="discussionsTab" class="tab-content">
+                <!-- Right Column (Sidebar) -->
+                <div>
+                    <!-- Project Team -->
+                    <div class="card mb-6">
+                        <h3 class="mb-4">
+                            <i class="fas fa-users"></i>
+                            Project Team
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="team-member">
+                                <div class="member-avatar">AC</div>
+                                <div class="member-info">
+                                    <div class="member-name">Dr. Alex Chen</div>
+                                    <div class="member-role">
+                                        <span class="tag tag-clinical" style="padding: 0.125rem 0.375rem; font-size: 0.625rem;">Clinician</span>
+                                        Lead Pulmonologist
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="team-member">
+                                <div class="member-avatar">SR</div>
+                                <div class="member-info">
+                                    <div class="member-name">Sarah Rodriguez</div>
+                                    <div class="member-role">
+                                        <span class="tag tag-technical" style="padding: 0.125rem 0.375rem; font-size: 0.625rem;">Technical</span>
+                                        ML Research Lead
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="team-member">
+                                <div class="member-avatar">MP</div>
+                                <div class="member-info">
+                                    <div class="member-name">Dr. Maria Perez</div>
+                                    <div class="member-role">
+                                        <span class="tag tag-clinical" style="padding: 0.125rem 0.375rem; font-size: 0.625rem;">Clinician</span>
+                                        Clinical Trial Director
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Collaboration Stats -->
+                    <div class="card mb-6">
+                        <h3 class="mb-4">
+                            <i class="fas fa-chart-line"></i>
+                            Collaboration Metrics
+                        </h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--thorax-blue);" id="clinicalCount">0</div>
+                                <div class="stat-label">Clinical Inputs</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--thorax-purple);" id="technicalCount">0</div>
+                                <div class="stat-label">Technical Solutions</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--thorax-teal);" id="crossDomainCount">0</div>
+                                <div class="stat-label">Cross-Domain</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--ui-dark);" id="totalDocuments">0</div>
+                                <div class="stat-label">Total Documents</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
                     <div class="card">
-                        <h2 style="margin-bottom: 1.5rem;">Project Discussions</h2>
-                        <p style="color: var(--ui-mid);">Discussion system requires backend implementation.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column -->
-            <div>
-                <!-- Project Team -->
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem;">
-                        <i class="fas fa-users"></i>
-                        Project Team
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--clinical); border-radius: var(--radius);">
-                            <div style="width: 40px; height: 40px; background: var(--thorax-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                AC
-                            </div>
-                            <div>
-                                <div style="font-weight: 600;">Dr. Alex Chen</div>
-                                <div style="font-size: 0.875rem; color: var(--ui-mid);">Lead Pulmonologist</div>
-                            </div>
+                        <h3 class="mb-4">
+                            <i class="fas fa-bolt"></i>
+                            Quick Actions
+                        </h3>
+                        <div class="quick-actions">
+                            <button class="btn btn-secondary" id="filterClinicalBtn">
+                                <i class="fas fa-user-md"></i>
+                                Show Clinical View
+                            </button>
+                            <button class="btn btn-secondary" id="filterTechnicalBtn">
+                                <i class="fas fa-code"></i>
+                                Show Technical View
+                            </button>
+                            <button class="btn btn-secondary" id="viewAllBtn">
+                                <i class="fas fa-eye"></i>
+                                Show All Documents
+                            </button>
+                            <button class="btn btn-secondary" id="apiDocsBtn">
+                                <i class="fas fa-code"></i>
+                                View API Specs
+                            </button>
                         </div>
-                        
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--technical); border-radius: var(--radius);">
-                            <div style="width: 40px; height: 40px; background: var(--thorax-purple); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                SR
-                            </div>
-                            <div>
-                                <div style="font-weight: 600;">Dr. Sarah Rodriguez</div>
-                                <div style="font-size: 0.8758rem; color: var(--ui-mid);">ML Research Lead</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Stats -->
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem;">
-                        <i class="fas fa-chart-line"></i>
-                        Collaboration Stats
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: var(--ui-mid);">Clinical Inputs</span>
-                                <span style="font-weight: 600; color: var(--thorax-blue);">24</span>
-                            </div>
-                            <div style="height: 4px; background: var(--ui-border); border-radius: 2px; margin-top: 0.25rem;">
-                                <div style="width: 60%; height: 100%; background: var(--thorax-blue); border-radius: 2px;"></div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: var(--ui-mid);">Technical Solutions</span>
-                                <span style="font-weight: 600; color: var(--thorax-purple);">18</span>
-                            </div>
-                            <div style="height: 4px; background: var(--ui-border); border-radius: 2px; margin-top: 0.25rem;">
-                                <div style="width: 45%; height: 100%; background: var(--thorax-purple); border-radius: 2px;"></div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: var(--ui-mid);">Cross-Domain</span>
-                                <span style="font-weight: 600; color: var(--thorax-teal);">12</span>
-                            </div>
-                            <div style="height: 4px; background: var(--ui-border); border-radius: 2px; margin-top: 0.25rem;">
-                                <div style="width: 30%; height: 100%; background: var(--thorax-teal); border-radius: 2px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem;">
-                        <i class="fas fa-bolt"></i>
-                        Quick Actions
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <button class="btn btn-secondary" id="quickTranslate">
-                            <i class="fas fa-language"></i>
-                            Quick Translation
-                        </button>
-                        <button class="btn btn-secondary" id="filterClinical">
-                            <i class="fas fa-user-md"></i>
-                            Clinical View
-                        </button>
-                        <button class="btn btn-secondary" id="filterTechnical">
-                            <i class="fas fa-code"></i>
-                            Technical View
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
+    
     <!-- Upload Document Modal -->
-    <div id="uploadModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; padding: 1rem;">
-        <div class="card" style="max-width: 500px; max-height: 90vh; overflow-y: auto; width: 100%;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2>Upload New Document</h2>
-                <button id="closeModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ui-mid);">&times;</button>
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Upload Document</h2>
+                <button class="modal-close" id="closeUploadModal">
+                    &times;
+                </button>
             </div>
             
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Document Title</label>
-                <input type="text" id="docTitle" style="width: 100%; padding: 0.75rem; border: 1px solid var(--ui-border); border-radius: var(--radius); font-family: inherit;">
-            </div>
-            
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Select Tags</label>
-                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                    <div class="tag selected">Clinical Team</div>
-                    <div class="tag">Technical Team</div>
-                    <div class="tag">Pulmonology</div>
-                    <div class="tag">Machine Learning</div>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="documentTitle" class="form-label">Document Title *</label>
+                    <input type="text" id="documentTitle" class="form-input" required 
+                           placeholder="e.g., COPD Clinical Trial Protocol v2.1">
                 </div>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button class="btn btn-secondary" id="cancelUpload">Cancel</button>
-                <button class="btn btn-primary" id="submitDocument">Upload Document</button>
-            </div>
+                
+                <div class="form-group">
+                    <label for="documentDescription" class="form-label">Description</label>
+                    <textarea id="documentDescription" class="form-input form-textarea" 
+                              placeholder="Brief description of the document's purpose and content..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Select Tags</label>
+                    <div class="tag-cloud mb-2">
+                        <div class="tag tag-clinical" data-modal-tag="clinical">Clinical</div>
+                        <div class="tag tag-technical" data-modal-tag="technical">Technical</div>
+                        <div class="tag tag-both" data-modal-tag="both">Both</div>
+                    </div>
+                    <div class="text-xs text-muted">Click to select/deselect tags</div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelUpload">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitDocument">
+                        <i class="fas fa-upload"></i>
+                        Upload Document
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-
+    
     <script>
-        // ====================
-        // DOCUMENTATION SYSTEM
-        // ====================
+        // ============================================
+        // DOCUMENTATION TAGGING SYSTEM
+        // ============================================
         
         class DocumentationSystem {
             constructor() {
                 this.activeFilters = new Set();
                 this.documents = this.getSampleDocuments();
+                this.selectedTags = new Set(['clinical', 'technical', 'both']);
                 this.initialize();
             }
             
@@ -707,6 +1428,7 @@
                 this.setupEventListeners();
                 this.renderDocuments();
                 this.updateFilterDisplay();
+                this.updateStats();
             }
             
             getSampleDocuments() {
@@ -714,117 +1436,170 @@
                     {
                         id: 1,
                         title: "COPD Clinical Trial Protocol v2.1",
-                        description: "Phase III trial design for exacerbation prediction algorithm",
-                        tags: ["audience:clinical", "specialty:pulmonology", "type:protocol", "audience:both"],
+                        description: "Phase III trial design for exacerbation prediction algorithm validation in real-world settings.",
+                        tags: ["audience:clinical", "specialty:pulmonology", "type:protocol"],
+                        audience: "clinical",
                         date: "2024-01-15",
                         author: "Dr. Alex Chen",
-                        badge: "clinical"
+                        icon: "fas fa-file-medical"
                     },
                     {
                         id: 2,
                         title: "Spirometry Data Pipeline Architecture",
-                        description: "Technical specification for data ingestion and preprocessing",
-                        tags: ["audience:technical", "domain:data", "type:api", "specialty:pulmonology"],
+                        description: "Technical specification for real-time data ingestion, preprocessing, and quality validation.",
+                        tags: ["audience:technical", "domain:data", "type:api"],
+                        audience: "technical",
                         date: "2024-01-20",
                         author: "Sarah Rodriguez",
-                        badge: "technical"
+                        icon: "fas fa-database"
                     },
                     {
                         id: 3,
                         title: "ML Model Performance Report",
-                        description: "Validation results for exacerbation prediction models",
-                        tags: ["audience:both", "domain:ml", "type:analysis", "specialty:critical-care"],
+                        description: "Validation results showing 87% accuracy in predicting exacerbations 48 hours in advance.",
+                        tags: ["audience:both", "domain:ml", "type:analysis", "specialty:pulmonology"],
+                        audience: "both",
                         date: "2024-01-25",
-                        author: "ML Team",
-                        badge: "both"
+                        author: "ML Research Team",
+                        icon: "fas fa-chart-line"
                     },
                     {
                         id: 4,
                         title: "FDA Submission Framework",
-                        description: "Regulatory pathway for algorithm approval",
-                        tags: ["audience:regulatory", "type:regulatory", "audience:clinical"],
+                        description: "Regulatory pathway and documentation requirements for algorithm approval.",
+                        tags: ["audience:regulatory", "type:regulatory", "specialty:pulmonology"],
+                        audience: "clinical",
                         date: "2024-01-28",
                         author: "Regulatory Team",
-                        badge: "clinical"
+                        icon: "fas fa-gavel"
                     },
                     {
                         id: 5,
                         title: "API Documentation v1.0",
-                        description: "REST API endpoints for clinical data access",
+                        description: "REST API endpoints for secure clinical data access with HIPAA compliance.",
                         tags: ["audience:technical", "domain:backend", "type:api", "domain:security"],
+                        audience: "technical",
                         date: "2024-02-01",
                         author: "Engineering Team",
-                        badge: "technical"
+                        icon: "fas fa-code"
                     },
                     {
                         id: 6,
                         title: "Clinical Validation Study Design",
-                        description: "Methodology for real-world evidence collection",
-                        tags: ["audience:both", "specialty:pulmonology", "type:protocol", "domain:data"],
+                        description: "Methodology for collecting real-world evidence from 500+ COPD patients.",
+                        tags: ["audience:both", "specialty:pulmonology", "type:protocol", "specialty:critical-care"],
+                        audience: "both",
                         date: "2024-02-05",
-                        author: "Dr. Maria Santos",
-                        badge: "both"
+                        author: "Dr. Maria Perez",
+                        icon: "fas fa-clipboard-check"
+                    },
+                    {
+                        id: 7,
+                        title: "Data Privacy & Security Protocol",
+                        description: "HIPAA-compliant data handling procedures and encryption standards.",
+                        tags: ["audience:both", "domain:security", "type:protocol"],
+                        audience: "both",
+                        date: "2024-02-08",
+                        author: "Security Team",
+                        icon: "fas fa-shield-alt"
+                    },
+                    {
+                        id: 8,
+                        title: "Radiology Image Analysis Guide",
+                        description: "Protocol for chest X-ray and CT scan analysis in COPD diagnosis.",
+                        tags: ["audience:clinical", "specialty:radiology", "type:analysis"],
+                        audience: "clinical",
+                        date: "2024-02-10",
+                        author: "Dr. James Wilson",
+                        icon: "fas fa-x-ray"
                     }
                 ];
             }
             
             setupEventListeners() {
                 // Tag filtering
-                document.querySelectorAll('.tag').forEach(tag => {
+                document.querySelectorAll('[data-filter]').forEach(tag => {
                     tag.addEventListener('click', (e) => {
-                        const filter = e.target.dataset.filter;
-                        if (filter) {
-                            this.toggleFilter(filter);
-                        }
+                        const filter = e.currentTarget.dataset.filter;
+                        this.toggleFilter(filter);
                     });
                 });
                 
                 // Clear filters
-                document.getElementById('clearFilters').addEventListener('click', () => {
+                document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+                
+                // Quick filter buttons
+                document.getElementById('filterClinicalBtn').addEventListener('click', () => {
+                    this.setFilter('audience:clinical');
+                });
+                
+                document.getElementById('filterTechnicalBtn').addEventListener('click', () => {
+                    this.setFilter('audience:technical');
+                });
+                
+                document.getElementById('viewAllBtn').addEventListener('click', () => {
                     this.clearFilters();
                 });
                 
                 // Tab switching
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', (e) => {
-                        const tabId = e.target.dataset.tab;
+                        const tabId = e.currentTarget.dataset.tab;
                         this.switchTab(tabId);
                     });
                 });
                 
-                // Quick filter buttons
-                document.getElementById('filterClinical').addEventListener('click', () => {
-                    this.setFilter('audience:clinical');
-                });
-                
-                document.getElementById('filterTechnical').addEventListener('click', () => {
-                    this.setFilter('audience:technical');
-                });
-                
                 // Modal controls
-                const modal = document.getElementById('uploadModal');
+                const uploadModal = document.getElementById('uploadModal');
+                const closeModal = document.getElementById('closeUploadModal');
+                const cancelUpload = document.getElementById('cancelUpload');
+                
                 document.getElementById('uploadDocumentBtn').addEventListener('click', () => {
-                    modal.style.display = 'flex';
+                    uploadModal.classList.add('active');
                 });
                 
-                document.getElementById('closeModal').addEventListener('click', () => {
-                    modal.style.display = 'none';
+                closeModal.addEventListener('click', () => {
+                    uploadModal.classList.remove('active');
                 });
                 
-                document.getElementById('cancelUpload').addEventListener('click', () => {
-                    modal.style.display = 'none';
+                cancelUpload.addEventListener('click', () => {
+                    uploadModal.classList.remove('active');
                 });
                 
-                document.getElementById('submitDocument').addEventListener('click', () => {
-                    this.addDocument();
-                    modal.style.display = 'none';
-                });
-                
-                // Close modal on outside click
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
+                uploadModal.addEventListener('click', (e) => {
+                    if (e.target === uploadModal) {
+                        uploadModal.classList.remove('active');
                     }
+                });
+                
+                // Modal tag selection
+                document.querySelectorAll('[data-modal-tag]').forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const tagType = e.currentTarget.dataset.modalTag;
+                        e.currentTarget.classList.toggle('tag-selected');
+                    });
+                });
+                
+                // Form submission
+                document.getElementById('uploadForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addDocument();
+                });
+                
+                // Quick translate button
+                document.getElementById('quickTranslateBtn').addEventListener('click', () => {
+                    this.switchToKnowledgeTab();
+                    setTimeout(() => {
+                        document.getElementById('bridgeInput').value = "FEV1 variability in COPD patients";
+                        document.getElementById('translateBtn').click();
+                    }, 100);
+                });
+                
+                // API docs button
+                document.getElementById('apiDocsBtn').addEventListener('click', () => {
+                    this.showToast('API documentation available in backend implementation', 'info');
                 });
             }
             
@@ -837,133 +1612,210 @@
                 
                 this.updateFilterDisplay();
                 this.renderDocuments();
+                this.updateStats();
+                
+                // Update tag selection state
+                document.querySelectorAll(`[data-filter="${filter}"]`).forEach(tag => {
+                    tag.classList.toggle('tag-selected', this.activeFilters.has(filter));
+                });
             }
             
             setFilter(filter) {
+                // Clear all filters first
                 this.activeFilters.clear();
+                
+                // Add the new filter
                 this.activeFilters.add(filter);
+                
                 this.updateFilterDisplay();
                 this.renderDocuments();
+                this.updateStats();
+                
+                // Update UI
+                document.querySelectorAll('.tag').forEach(tag => {
+                    tag.classList.remove('tag-selected');
+                });
+                
+                document.querySelectorAll(`[data-filter="${filter}"]`).forEach(tag => {
+                    tag.classList.add('tag-selected');
+                });
             }
             
             clearFilters() {
                 this.activeFilters.clear();
                 this.updateFilterDisplay();
                 this.renderDocuments();
+                this.updateStats();
+                
+                // Update UI
+                document.querySelectorAll('.tag').forEach(tag => {
+                    tag.classList.remove('tag-selected');
+                });
             }
             
             updateFilterDisplay() {
                 const container = document.getElementById('activeFilters');
-                container.innerHTML = '';
                 
                 if (this.activeFilters.size === 0) {
-                    document.getElementById('filterBar').style.display = 'none';
+                    container.innerHTML = '<div class="text-muted text-small">No active filters</div>';
                     return;
                 }
                 
-                document.getElementById('filterBar').style.display = 'flex';
+                let html = '';
                 
                 this.activeFilters.forEach(filter => {
-                    const [type, value] = filter.split(':');
-                    const filterElement = document.createElement('div');
-                    filterElement.className = 'filter-tag';
-                    filterElement.innerHTML = `
-                        ${this.getFilterIcon(type)}
-                        ${this.formatFilterName(type, value)}
-                        <span class="remove-filter" data-filter="${filter}">&times;</span>
+                    const [category, value] = filter.split(':');
+                    const displayName = this.formatFilterName(category, value);
+                    const icon = this.getFilterIcon(category);
+                    
+                    html += `
+                        <div class="filter-tag">
+                            <i class="${icon}"></i>
+                            ${displayName}
+                            <span class="filter-remove" data-filter="${filter}">&times;</span>
+                        </div>
                     `;
-                    container.appendChild(filterElement);
                 });
                 
+                container.innerHTML = html;
+                
                 // Add event listeners to remove buttons
-                document.querySelectorAll('.remove-filter').forEach(btn => {
+                document.querySelectorAll('.filter-remove').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const filter = e.target.dataset.filter;
                         this.activeFilters.delete(filter);
                         this.updateFilterDisplay();
                         this.renderDocuments();
+                        this.updateStats();
+                        
+                        // Update tag selection state
+                        document.querySelectorAll(`[data-filter="${filter}"]`).forEach(tag => {
+                            tag.classList.remove('tag-selected');
+                        });
                     });
                 });
             }
             
-            getFilterIcon(type) {
+            formatFilterName(category, value) {
+                const names = {
+                    'audience': {
+                        'clinical': 'Clinical Team',
+                        'technical': 'Technical Team',
+                        'both': 'Both Audiences',
+                        'regulatory': 'Regulatory'
+                    },
+                    'specialty': {
+                        'pulmonology': 'Pulmonology',
+                        'critical-care': 'Critical Care',
+                        'radiology': 'Radiology',
+                        'pharmacology': 'Pharmacology'
+                    },
+                    'domain': {
+                        'ml': 'Machine Learning',
+                        'data': 'Data Engineering',
+                        'backend': 'Backend Systems',
+                        'security': 'Security & Compliance'
+                    },
+                    'type': {
+                        'protocol': 'Protocol',
+                        'dataset': 'Dataset',
+                        'api': 'API Documentation',
+                        'analysis': 'Clinical Analysis',
+                        'regulatory': 'Regulatory Submission'
+                    }
+                };
+                
+                return names[category]?.[value] || value;
+            }
+            
+            getFilterIcon(category) {
                 const icons = {
                     'audience': 'fas fa-users',
                     'specialty': 'fas fa-stethoscope',
                     'domain': 'fas fa-cogs',
                     'type': 'fas fa-file'
                 };
-                return `<i class="${icons[type] || 'fas fa-tag'}" style="font-size: 0.75rem;"></i>`;
-            }
-            
-            formatFilterName(type, value) {
-                const names = {
-                    'clinical': 'Clinical Team',
-                    'technical': 'Technical Team',
-                    'both': 'Both Audiences',
-                    'regulatory': 'Regulatory',
-                    'pulmonology': 'Pulmonology',
-                    'ml': 'Machine Learning',
-                    'protocol': 'Protocol',
-                    'analysis': 'Analysis'
-                };
-                return names[value] || value;
+                
+                return icons[category] || 'fas fa-tag';
             }
             
             renderDocuments() {
-                const container = document.getElementById('documentList');
+                const container = document.getElementById('documentGrid');
                 const filteredDocs = this.getFilteredDocuments();
                 
                 if (filteredDocs.length === 0) {
                     container.innerHTML = `
-                        <div class="card" style="text-align: center; padding: 3rem;">
-                            <div style="font-size: 3rem; color: var(--ui-mid); margin-bottom: 1rem;">📂</div>
-                            <h3 style="margin-bottom: 0.5rem;">No Documents Match Filters</h3>
-                            <p style="color: var(--ui-mid); margin-bottom: 1.5rem;">Try adjusting your filter criteria</p>
-                            <button class="btn btn-secondary" id="clearFiltersInline">Clear Filters</button>
+                        <div class="empty-state" style="grid-column: 1 / -1;">
+                            <div class="empty-icon">📂</div>
+                            <h3 class="mb-2">No Documents Found</h3>
+                            <p class="text-muted mb-4">Try adjusting your filter criteria or upload a new document.</p>
+                            <button class="btn btn-primary" id="uploadEmptyBtn">
+                                <i class="fas fa-upload"></i>
+                                Upload First Document
+                            </button>
                         </div>
                     `;
                     
-                    document.getElementById('clearFiltersInline').addEventListener('click', () => {
-                        this.clearFilters();
+                    document.getElementById('uploadEmptyBtn').addEventListener('click', () => {
+                        document.getElementById('uploadModal').classList.add('active');
                     });
                     
                     return;
                 }
                 
                 container.innerHTML = filteredDocs.map(doc => `
-                    <div class="document-card">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                            <h4 style="font-weight: 600;">${doc.title}</h4>
-                            <span class="translation-badge badge-${doc.badge}">
-                                ${doc.badge === 'clinical' ? 'Clinical' : doc.badge === 'technical' ? 'Technical' : 'Both'}
+                    <div class="document-card" data-doc-id="${doc.id}">
+                        <div class="document-header">
+                            <div class="document-icon ${this.getAudienceClass(doc.audience)}">
+                                <i class="${doc.icon}"></i>
+                            </div>
+                            <span class="tag ${this.getAudienceTagClass(doc.audience)}">
+                                ${doc.audience === 'both' ? 'Both' : doc.audience === 'clinical' ? 'Clinical' : 'Technical'}
                             </span>
                         </div>
                         
-                        <p style="color: var(--ui-mid); font-size: 0.875rem; margin-bottom: 0.75rem;">
-                            ${doc.description}
+                        <h4 class="mb-2">${this.escapeHtml(doc.title)}</h4>
+                        
+                        <p class="text-small text-muted mb-3">
+                            ${this.escapeHtml(doc.description)}
                         </p>
                         
                         <div class="document-tags">
                             ${doc.tags.map(tag => {
-                                const [type, value] = tag.split(':');
-                                return `<span class="tag" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" data-filter="${tag}">
-                                    ${this.getFilterIcon(type)} ${this.formatFilterName(type, value)}
-                                </span>`;
+                                const [category, value] = tag.split(':');
+                                const displayName = this.formatFilterName(category, value);
+                                return `
+                                    <span class="tag ${this.getTagClass(category, value)}" 
+                                          style="font-size: 0.625rem; padding: 0.125rem 0.375rem;"
+                                          data-filter="${tag}">
+                                        ${displayName}
+                                    </span>
+                                `;
                             }).join('')}
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.75rem; color: var(--ui-mid);">
+                        <div class="flex justify-between mt-4 text-xs text-muted">
                             <span>By ${doc.author}</span>
                             <span>${doc.date}</span>
                         </div>
                     </div>
                 `).join('');
                 
+                // Add event listeners to document cards
+                document.querySelectorAll('.document-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.tag') && !e.target.closest('button')) {
+                            const docId = card.dataset.docId;
+                            this.showToast('Document preview requires backend implementation', 'info');
+                        }
+                    });
+                });
+                
                 // Re-add event listeners to tags in documents
-                container.querySelectorAll('.tag').forEach(tag => {
+                document.querySelectorAll('.document-card .tag').forEach(tag => {
                     tag.addEventListener('click', (e) => {
-                        const filter = e.target.dataset.filter;
+                        e.stopPropagation();
+                        const filter = e.currentTarget.dataset.filter;
                         if (filter) {
                             this.toggleFilter(filter);
                         }
@@ -983,6 +1835,40 @@
                 });
             }
             
+            getAudienceClass(audience) {
+                return audience === 'clinical' ? 'icon-clinical' : 
+                       audience === 'technical' ? 'icon-technical' : 'icon-both';
+            }
+            
+            getAudienceTagClass(audience) {
+                return audience === 'clinical' ? 'tag-clinical' : 
+                       audience === 'technical' ? 'tag-technical' : 'tag-both';
+            }
+            
+            getTagClass(category, value) {
+                // Simple mapping for demo
+                if (value === 'clinical' || category === 'specialty') return 'tag-clinical';
+                if (value === 'technical' || category === 'domain') return 'tag-technical';
+                if (value === 'both') return 'tag-both';
+                return '';
+            }
+            
+            updateStats() {
+                const filteredDocs = this.getFilteredDocuments();
+                const totalDocs = filteredDocs.length;
+                
+                // Count documents by audience
+                const clinicalCount = filteredDocs.filter(doc => doc.audience === 'clinical').length;
+                const technicalCount = filteredDocs.filter(doc => doc.audience === 'technical').length;
+                const bothCount = filteredDocs.filter(doc => doc.audience === 'both').length;
+                
+                // Update display
+                document.getElementById('clinicalCount').textContent = clinicalCount;
+                document.getElementById('technicalCount').textContent = technicalCount;
+                document.getElementById('crossDomainCount').textContent = bothCount;
+                document.getElementById('totalDocuments').textContent = totalDocs;
+            }
+            
             switchTab(tabId) {
                 // Update active tab
                 document.querySelectorAll('.tab').forEach(tab => {
@@ -993,48 +1879,172 @@
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.toggle('active', content.id === `${tabId}Tab`);
                 });
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            switchToKnowledgeTab() {
+                this.switchTab('knowledge');
             }
             
             addDocument() {
-                const title = document.getElementById('docTitle').value.trim();
-                if (!title) return;
+                const title = document.getElementById('documentTitle').value.trim();
+                if (!title) {
+                    this.showToast('Please enter a document title', 'warning');
+                    return;
+                }
                 
+                const description = document.getElementById('documentDescription').value.trim();
+                
+                // Get selected tags from modal
+                const selectedTags = [];
+                document.querySelectorAll('[data-modal-tag].tag-selected').forEach(tag => {
+                    const tagType = tag.dataset.modalTag;
+                    selectedTags.push(`audience:${tagType}`);
+                });
+                
+                if (selectedTags.length === 0) {
+                    selectedTags.push('audience:both');
+                }
+                
+                // Add a default specialty tag
+                selectedTags.push('specialty:pulmonology');
+                
+                // Determine audience for stats
+                const audience = selectedTags.includes('audience:clinical') ? 
+                                (selectedTags.includes('audience:technical') ? 'both' : 'clinical') : 
+                                'technical';
+                
+                // Create new document
                 const newDoc = {
                     id: this.documents.length + 1,
                     title: title,
-                    description: "Newly uploaded document - add description in full implementation",
-                    tags: ["audience:both", "type:protocol"],
+                    description: description || "New document uploaded to the project.",
+                    tags: selectedTags,
+                    audience: audience,
                     date: new Date().toISOString().split('T')[0],
                     author: "Current User",
-                    badge: "both"
+                    icon: audience === 'clinical' ? 'fas fa-file-medical' : 
+                          audience === 'technical' ? 'fas fa-code' : 'fas fa-file-alt'
                 };
                 
+                // Add to documents array
                 this.documents.unshift(newDoc);
+                
+                // Save to localStorage for demo persistence
+                localStorage.setItem('thoraxlab_documents', JSON.stringify(this.documents));
+                
+                // Reset form
+                document.getElementById('uploadForm').reset();
+                
+                // Close modal
+                document.getElementById('uploadModal').classList.remove('active');
+                
+                // Update UI
                 this.renderDocuments();
-                document.getElementById('docTitle').value = '';
+                this.updateStats();
+                
+                // Clear any active filters to show new document
+                this.clearFilters();
+                
+                this.showToast('Document uploaded successfully!', 'success');
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = 'card';
+                toast.style.cssText = `
+                    animation: slideIn 0.3s ease;
+                    margin-bottom: 0.5rem;
+                    border-left: 4px solid ${this.getToastColor(type)};
+                `;
+                
+                const icon = {
+                    'success': 'fas fa-check-circle',
+                    'error': 'fas fa-exclamation-circle',
+                    'warning': 'fas fa-exclamation-triangle',
+                    'info': 'fas fa-info-circle'
+                }[type] || 'fas fa-info-circle';
+                
+                toast.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="${icon}" style="color: ${this.getToastColor(type)};"></i>
+                        <div style="flex: 1;">
+                            <div class="text-small font-600">${this.escapeHtml(message)}</div>
+                        </div>
+                        <button class="modal-close" onclick="this.parentElement.parentElement.remove()" style="font-size: 1rem;">&times;</button>
+                    </div>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto-remove after 4 seconds
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 4000);
+                
+                // Add CSS for animations
+                if (!document.getElementById('toast-animations')) {
+                    const style = document.createElement('style');
+                    style.id = 'toast-animations';
+                    style.textContent = `
+                        @keyframes slideIn {
+                            from { transform: translateX(100%); opacity: 0; }
+                            to { transform: translateX(0); opacity: 1; }
+                        }
+                        @keyframes slideOut {
+                            from { transform: translateX(0); opacity: 1; }
+                            to { transform: translateX(100%); opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+            
+            getToastColor(type) {
+                const colors = {
+                    'success': '#10B981',
+                    'error': '#EF4444',
+                    'warning': '#F59E0B',
+                    'info': '#3B82F6'
+                };
+                return colors[type] || '#64748B';
             }
         }
         
-        // ====================
+        // ============================================
         // KNOWLEDGE BRIDGE
-        // ====================
+        // ============================================
         
         class KnowledgeBridge {
             constructor() {
-                this.direction = 'technical-to-clinical';
+                this.direction = 'clinical-to-technical';
                 this.history = [];
                 this.initialize();
             }
             
             initialize() {
                 this.setupEventListeners();
-                this.loadSampleHistory();
+                this.loadHistory();
             }
             
             setupEventListeners() {
                 // Direction selection
-                document.querySelectorAll('.bridge-direction').forEach(dir => {
-                    dir.addEventListener('click', (e) => {
+                document.querySelectorAll('.direction-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
                         this.setDirection(e.currentTarget.dataset.direction);
                     });
                 });
@@ -1044,18 +2054,17 @@
                     this.performTranslation();
                 });
                 
-                // Quick translate
-                document.getElementById('quickTranslate').addEventListener('click', () => {
-                    this.switchToKnowledgeTab();
-                    document.getElementById('bridgeInput').value = "FEV1 variability over time";
-                    setTimeout(() => this.performTranslation(), 100);
-                });
-                
                 // Enter key in input
                 document.getElementById('bridgeInput').addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
+                        e.preventDefault();
                         this.performTranslation();
                     }
+                });
+                
+                // Start discussion button
+                document.getElementById('startDiscussionBtn')?.addEventListener('click', () => {
+                    window.docs?.showToast('Discussion system requires backend implementation', 'info');
                 });
             }
             
@@ -1063,23 +2072,26 @@
                 this.direction = direction;
                 
                 // Update UI
-                document.querySelectorAll('.bridge-direction').forEach(dir => {
-                    dir.classList.toggle('active', dir.dataset.direction === direction);
+                document.querySelectorAll('.direction-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.direction === direction);
                 });
                 
                 // Update placeholder
                 const input = document.getElementById('bridgeInput');
                 const placeholders = {
-                    'clinical-to-technical': 'Enter a clinical concept (e.g., "COPD exacerbation")...',
-                    'technical-to-clinical': 'Enter a technical concept (e.g., "random forest classifier")...',
-                    'both-ways': 'Enter any concept to see both perspectives...'
+                    'clinical-to-technical': 'Enter a clinical concept (e.g., "COPD exacerbation", "FEV1 variability")...',
+                    'technical-to-clinical': 'Enter a technical concept (e.g., "random forest", "anomaly detection")...',
+                    'both-ways': 'Enter any concept to see both clinical and technical perspectives...'
                 };
                 input.placeholder = placeholders[direction] || 'Enter a concept to translate...';
             }
             
             performTranslation() {
                 const input = document.getElementById('bridgeInput').value.trim();
-                if (!input) return;
+                if (!input) {
+                    window.docs?.showToast('Please enter a concept to translate', 'warning');
+                    return;
+                }
                 
                 const translation = this.generateTranslation(input);
                 this.displayTranslation(translation);
@@ -1087,52 +2099,73 @@
             }
             
             generateTranslation(input) {
+                // Pre-defined translations for common terms
                 const translations = {
                     // Clinical to Technical
-                    'COPD exacerbation': {
-                        technical: "Time-series classification of multivariate physiological signals for early detection of chronic obstructive pulmonary disease deterioration events.",
-                        clinical: "A sudden worsening of COPD symptoms requiring medical intervention.",
-                        analogy: "Like a weather forecast predicting storms before they hit, but for lung function."
+                    'copd exacerbation': {
+                        term: 'COPD Exacerbation',
+                        clinical: 'A sudden worsening of COPD symptoms including increased breathlessness, cough, and sputum production requiring medical intervention.',
+                        technical: 'Time-series classification problem detecting deterioration patterns in multivariate physiological signals (spirometry, heart rate, oxygen saturation) using ensemble machine learning models.',
+                        analogy: 'Like a car engine warning light - detects early signs of trouble before complete breakdown.'
                     },
-                    'FEV1 variability': {
-                        technical: "Standard deviation in forced expiratory volume measurements over time, used as a feature in respiratory disease progression models.",
-                        clinical: "Changes in how much air a patient can forcefully exhale in one second, indicating lung function stability.",
-                        analogy: "Like monitoring battery life degradation patterns in smartphones."
+                    'fev1 variability': {
+                        term: 'FEV1 Variability',
+                        clinical: 'Changes in Forced Expiratory Volume in 1 second measurements over time, indicating lung function stability or deterioration in respiratory diseases.',
+                        technical: 'Standard deviation and trend analysis of time-series pulmonary function data, used as a feature in predictive models for disease progression.',
+                        analogy: 'Like monitoring battery degradation patterns in smartphones - small changes over time predict future failure.'
                     },
                     'spirometry data': {
-                        technical: "Time-series pulmonary function test results including flow-volume loops, FVC, FEV1, and PEF metrics for respiratory analytics.",
-                        clinical: "Breathing test results that measure how well lungs are working.",
-                        analogy: "Like a car's diagnostic report showing engine performance metrics."
+                        term: 'Spirometry Data',
+                        clinical: 'Breathing test results measuring lung function, including FVC, FEV1, and PEF metrics for diagnosing and monitoring respiratory conditions.',
+                        technical: 'Time-series pulmonary function measurements requiring preprocessing (noise removal, calibration), feature extraction, and secure storage for predictive analytics.',
+                        analogy: 'Like a car diagnostic report showing engine performance metrics under different conditions.'
+                    },
+                    'patient deterioration': {
+                        term: 'Patient Deterioration',
+                        clinical: 'Gradual or sudden decline in patient health status requiring increased medical attention or intervention.',
+                        technical: 'Anomaly detection in multivariate clinical time-series data using threshold-based rules or machine learning models to trigger alerts.',
+                        analogy: 'Like weather forecasting - combining multiple data sources to predict storms before they hit.'
                     },
                     
                     // Technical to Clinical
                     'random forest classifier': {
-                        clinical: "A decision-making tool that combines multiple expert opinions to predict medical outcomes more accurately.",
-                        technical: "Ensemble learning method using multiple decision trees for classification tasks.",
-                        analogy: "Like getting a second (and third, and fourth) opinion from different specialists."
+                        term: 'Random Forest Classifier',
+                        technical: 'Ensemble learning method using multiple decision trees for classification tasks, providing robust predictions and feature importance analysis.',
+                        clinical: 'A decision-making tool that combines multiple expert opinions (like consulting several specialists) to provide more accurate predictions about patient outcomes.',
+                        analogy: 'Like getting a second, third, and fourth opinion from different medical specialists.'
                     },
                     'anomaly detection': {
-                        clinical: "Spotting unusual patterns in patient data that might indicate early signs of health problems.",
-                        technical: "Identification of rare items, events or observations which differ significantly from the majority of the data.",
-                        analogy: "Like a nurse noticing subtle changes in a patient's condition before vital signs change dramatically."
+                        term: 'Anomaly Detection',
+                        technical: 'Identification of rare items, events or observations which differ significantly from majority of the data, using statistical methods or machine learning.',
+                        clinical: 'Spotting unusual patterns in patient data that might indicate early signs of health problems requiring attention.',
+                        analogy: 'Like a nurse noticing subtle changes in a patient\'s condition before vital signs change dramatically.'
                     },
                     'feature engineering': {
-                        clinical: "Creating meaningful measurements from raw patient data that help predict health outcomes.",
-                        technical: "Process of using domain knowledge to create features that make machine learning algorithms work better.",
-                        analogy: "Like a chef preparing ingredients in specific ways to make a better dish."
+                        term: 'Feature Engineering',
+                        technical: 'Process of using domain knowledge to create features that make machine learning algorithms work better, including transformations and combinations.',
+                        clinical: 'Creating meaningful measurements from raw patient data (like calculating trends from vital signs) that help predict health outcomes.',
+                        analogy: 'Like a chef preparing ingredients in specific ways (chopping, marinating) to make a better dish.'
+                    },
+                    'time-series analysis': {
+                        term: 'Time-Series Analysis',
+                        technical: 'Statistical techniques for analyzing time-ordered data points to extract meaningful statistics and identify characteristics.',
+                        clinical: 'Tracking how patient measurements change over time to identify patterns, trends, and predict future health states.',
+                        analogy: 'Like monitoring a patient\'s recovery progress through repeated measurements rather than single snapshots.'
                     }
                 };
                 
-                // Find best match
+                // Find best match (case-insensitive)
+                const lowerInput = input.toLowerCase();
                 let bestMatch = null;
+                
                 for (const [key, value] of Object.entries(translations)) {
-                    if (input.toLowerCase().includes(key.toLowerCase())) {
-                        bestMatch = { term: key, ...value };
+                    if (lowerInput.includes(key) || key.includes(lowerInput)) {
+                        bestMatch = { ...value };
                         break;
                     }
                 }
                 
-                // If no match, generate a dynamic translation
+                // If no exact match, generate a dynamic translation
                 if (!bestMatch) {
                     return this.generateDynamicTranslation(input);
                 }
@@ -1142,24 +2175,36 @@
             
             generateDynamicTranslation(input) {
                 const isClinical = this.looksClinical(input);
+                const term = input.charAt(0).toUpperCase() + input.slice(1);
                 
-                return {
-                    term: input,
-                    technical: isClinical ? 
-                        `Technical implementation would involve ${input.toLowerCase()} monitoring through sensor data analysis, predictive modeling, and automated alert systems.` :
-                        `${input} involves algorithm design, data pipeline construction, validation protocols, and deployment infrastructure.`,
-                    clinical: !isClinical ?
-                        `Clinically, ${input.toLowerCase()} helps monitor patient health, predict deterioration, and guide treatment decisions.` :
-                        `${input} is assessed through patient symptoms, diagnostic tests, treatment response, and long-term outcomes.`,
-                    analogy: isClinical ?
-                        "Like a car's dashboard warning lights - early indicators that maintenance is needed." :
-                        "Like building a bridge - requires solid foundations, careful engineering, and regular inspections."
-                };
+                if (this.direction === 'clinical-to-technical') {
+                    return {
+                        term: term,
+                        clinical: `${term} is assessed through patient symptoms, diagnostic tests, treatment response monitoring, and long-term outcome tracking.`,
+                        technical: `Technical implementation involves ${input.toLowerCase()} monitoring through sensor data analysis, predictive modeling algorithms, automated alert systems, and integration with clinical workflows.`,
+                        analogy: 'Like building a weather station network - collecting data from multiple sources to predict conditions before they occur.'
+                    };
+                } else if (this.direction === 'technical-to-clinical') {
+                    return {
+                        term: term,
+                        technical: `${term} involves algorithm design, data pipeline construction, validation protocols, deployment infrastructure, and performance monitoring.`,
+                        clinical: `Clinically, ${input.toLowerCase()} helps monitor patient health status, predict deterioration risks, guide treatment decisions, and improve healthcare outcomes through data-driven insights.`,
+                        analogy: 'Like a medical diagnostic tool - requires calibration, validation, and integration into clinical practice.'
+                    };
+                } else {
+                    return {
+                        term: term,
+                        clinical: `From a clinical perspective, ${input.toLowerCase()} relates to patient assessment, diagnostic criteria, treatment protocols, and outcome measurement in healthcare delivery.`,
+                        technical: `From a technical perspective, ${input.toLowerCase()} involves data collection systems, algorithm development, validation frameworks, and integration with existing healthcare IT infrastructure.`,
+                        analogy: 'Like a bridge between two cities - requires solid foundations on both sides and careful engineering to connect them.'
+                    };
+                }
             }
             
             looksClinical(text) {
-                const clinicalTerms = ['patient', 'symptom', 'treatment', 'clinical', 'disease', 'therapy', 'medical', 'health', 'care'];
-                return clinicalTerms.some(term => text.toLowerCase().includes(term));
+                const clinicalTerms = ['patient', 'symptom', 'treatment', 'clinical', 'disease', 'therapy', 'medical', 'health', 'care', 'diagnosis', 'prognosis', 'outcome', 'intervention'];
+                const lowerText = text.toLowerCase();
+                return clinicalTerms.some(term => lowerText.includes(term));
             }
             
             displayTranslation(translation) {
@@ -1169,60 +2214,84 @@
                 
                 if (this.direction === 'both-ways') {
                     content = `
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span class="translation-badge badge-clinical">Clinical Perspective</span>
-                                <i class="fas fa-arrow-right"></i>
-                                <span class="translation-badge badge-technical">Technical Perspective</span>
+                        <div class="translation-result">
+                            <div class="result-header mb-4">
+                                <div class="result-badges">
+                                    <span class="tag tag-clinical">Clinical</span>
+                                    <i class="fas fa-exchange-alt" style="color: rgba(255, 255, 255, 0.6);"></i>
+                                    <span class="tag tag-technical">Technical</span>
+                                </div>
                             </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
-                                <strong>${translation.term}</strong>
+                            
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                                <div style="font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">${translation.term}</div>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                                 <div>
-                                    <div class="translation-badge badge-clinical" style="margin-bottom: 0.5rem;">Clinical View</div>
-                                    <p style="font-size: 0.875rem;">${translation.clinical}</p>
+                                    <div class="tag tag-clinical mb-2">Clinical Perspective</div>
+                                    <div class="result-content" style="font-size: 0.875rem;">
+                                        ${translation.clinical}
+                                    </div>
                                 </div>
                                 <div>
-                                    <div class="translation-badge badge-technical" style="margin-bottom: 0.5rem;">Technical View</div>
-                                    <p style="font-size: 0.875rem;">${translation.technical}</p>
+                                    <div class="tag tag-technical mb-2">Technical Perspective</div>
+                                    <div class="result-content" style="font-size: 0.875rem;">
+                                        ${translation.technical}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     `;
                 } else if (this.direction === 'clinical-to-technical') {
                     content = `
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span class="translation-badge badge-clinical">Clinical</span>
-                                <i class="fas fa-arrow-right"></i>
-                                <span class="translation-badge badge-technical">Technical</span>
+                        <div class="translation-result">
+                            <div class="result-header mb-4">
+                                <div class="result-badges">
+                                    <span class="tag tag-clinical">Clinical</span>
+                                    <i class="fas fa-arrow-right" style="color: rgba(255, 255, 255, 0.6);"></i>
+                                    <span class="tag tag-technical">Technical</span>
+                                </div>
                             </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
-                                <strong>${translation.term}</strong>
-                                <p style="margin-top: 0.5rem; font-size: 0.875rem;">${translation.clinical}</p>
+                            
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                                <div style="font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">${translation.term}</div>
+                                <div style="font-size: 0.875rem; opacity: 0.9;">
+                                    ${translation.clinical}
+                                </div>
                             </div>
+                            
                             <div>
-                                <div class="translation-badge badge-technical" style="margin-bottom: 0.5rem;">Technical Translation</div>
-                                <p>${translation.technical}</p>
+                                <div class="tag tag-technical mb-2">Technical Implementation</div>
+                                <div class="result-content">
+                                    ${translation.technical}
+                                </div>
                             </div>
                         </div>
                     `;
                 } else {
                     content = `
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span class="translation-badge badge-technical">Technical</span>
-                                <i class="fas fa-arrow-right"></i>
-                                <span class="translation-badge badge-clinical">Clinical</span>
+                        <div class="translation-result">
+                            <div class="result-header mb-4">
+                                <div class="result-badges">
+                                    <span class="tag tag-technical">Technical</span>
+                                    <i class="fas fa-arrow-right" style="color: rgba(255, 255, 255, 0.6);"></i>
+                                    <span class="tag tag-clinical">Clinical</span>
+                                </div>
                             </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
-                                <strong>${translation.term}</strong>
-                                <p style="margin-top: 0.5rem; font-size: 0.875rem;">${translation.technical}</p>
+                            
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                                <div style="font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">${translation.term}</div>
+                                <div style="font-size: 0.875rem; opacity: 0.9;">
+                                    ${translation.technical}
+                                </div>
                             </div>
+                            
                             <div>
-                                <div class="translation-badge badge-clinical" style="margin-bottom: 0.5rem;">Clinical Translation</div>
-                                <p>${translation.clinical}</p>
+                                <div class="tag tag-clinical mb-2">Clinical Application</div>
+                                <div class="result-content">
+                                    ${translation.clinical}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1231,12 +2300,14 @@
                 // Add analogy if available
                 if (translation.analogy) {
                     content += `
-                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div class="analogy-section">
+                            <div class="analogy-header">
                                 <i class="fas fa-lightbulb" style="color: #FBBF24;"></i>
-                                <div class="translation-badge" style="background: rgba(251, 191, 36, 0.2); color: #FBBF24;">Analogy</div>
+                                <span style="font-weight: 600;">Helpful Analogy</span>
                             </div>
-                            <p style="font-size: 0.875rem; font-style: italic;">"${translation.analogy}"</p>
+                            <div class="analogy-text">
+                                "${translation.analogy}"
+                            </div>
                         </div>
                     `;
                 }
@@ -1246,6 +2317,9 @@
                 
                 // Scroll to output
                 output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // Clear input
+                document.getElementById('bridgeInput').value = '';
             }
             
             addToHistory(input, translation) {
@@ -1257,26 +2331,27 @@
                 };
                 
                 this.history.unshift(historyItem);
-                if (this.history.length > 5) this.history.pop();
+                
+                // Keep only last 5 items
+                if (this.history.length > 5) {
+                    this.history.pop();
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('thoraxlab_translation_history', JSON.stringify(this.history));
                 
                 this.updateHistoryDisplay();
             }
             
-            loadSampleHistory() {
-                this.history = [
-                    {
-                        input: "random forest classifier",
-                        translation: this.generateTranslation("random forest classifier"),
-                        direction: "technical-to-clinical",
-                        timestamp: "10:30 AM"
-                    },
-                    {
-                        input: "spirometry data quality",
-                        translation: this.generateTranslation("spirometry data"),
-                        direction: "both-ways",
-                        timestamp: "09:45 AM"
+            loadHistory() {
+                const saved = localStorage.getItem('thoraxlab_translation_history');
+                if (saved) {
+                    try {
+                        this.history = JSON.parse(saved);
+                    } catch (e) {
+                        this.history = [];
                     }
-                ];
+                }
                 
                 this.updateHistoryDisplay();
             }
@@ -1284,46 +2359,86 @@
             updateHistoryDisplay() {
                 const container = document.getElementById('translationHistory');
                 
-                if (this.history.length === 0) {
+                if (!this.history || this.history.length === 0) {
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 2rem; color: var(--ui-mid);">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💭</div>
-                            <p>No translations yet</p>
+                        <div class="empty-state" style="padding: 2rem;">
+                            <div class="empty-icon">💭</div>
+                            <p class="text-muted">No translation history yet</p>
                         </div>
                     `;
                     return;
                 }
                 
                 container.innerHTML = this.history.map(item => `
-                    <div style="padding: 0.75rem; border-bottom: 1px solid var(--ui-border);">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
-                            <div style="font-weight: 600; font-size: 0.875rem;">${item.input}</div>
-                            <div style="font-size: 0.75rem; color: var(--ui-mid);">${item.timestamp}</div>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--ui-mid);">
-                            ${item.direction === 'clinical-to-technical' ? 'Clinical → Technical' : 
-                              item.direction === 'technical-to-clinical' ? 'Technical → Clinical' : 'Both Directions'}
+                    <div class="history-item" data-history-index="${this.history.indexOf(item)}">
+                        <div class="history-term">${this.escapeHtml(item.input)}</div>
+                        <div class="history-meta">
+                            <span>
+                                ${item.direction === 'clinical-to-technical' ? 'Clinical → Technical' : 
+                                  item.direction === 'technical-to-clinical' ? 'Technical → Clinical' : 'Both Directions'}
+                            </span>
+                            <span>${item.timestamp}</span>
                         </div>
                     </div>
                 `).join('');
+                
+                // Add click listeners to history items
+                document.querySelectorAll('.history-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const index = parseInt(item.dataset.historyIndex);
+                        const historyItem = this.history[index];
+                        
+                        // Set direction
+                        this.setDirection(historyItem.direction);
+                        
+                        // Set input value
+                        document.getElementById('bridgeInput').value = historyItem.input;
+                        
+                        // Perform translation
+                        setTimeout(() => {
+                            this.displayTranslation(historyItem.translation);
+                        }, 100);
+                    });
+                });
             }
             
-            switchToKnowledgeTab() {
-                // Simulate clicking the knowledge tab
-                document.querySelector('[data-tab="knowledge"]').click();
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
         }
         
-        // ====================
+        // ============================================
         // INITIALIZATION
-        // ====================
+        // ============================================
         
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize both systems
             window.docs = new DocumentationSystem();
             window.bridge = new KnowledgeBridge();
             
-            // Initialize filter bar visibility
-            document.getElementById('filterBar').style.display = 'none';
+            // Load saved documents from localStorage
+            const savedDocs = localStorage.getItem('thoraxlab_documents');
+            if (savedDocs) {
+                try {
+                    window.docs.documents = JSON.parse(savedDocs);
+                    window.docs.renderDocuments();
+                    window.docs.updateStats();
+                } catch (e) {
+                    console.log('Using sample documents');
+                }
+            }
+            
+            // Set default direction for knowledge bridge
+            window.bridge.setDirection('clinical-to-technical');
+            
+            // Add some sample translations to history if empty
+            if (window.bridge.history.length === 0) {
+                const sampleTranslation = window.bridge.generateTranslation('COPD exacerbation');
+                window.bridge.addToHistory('COPD exacerbation', sampleTranslation);
+            }
         });
     </script>
 </body>
