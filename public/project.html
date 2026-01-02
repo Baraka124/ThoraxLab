@@ -3,61 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[THØRAX][LAB] | Project</title>
+    <title>[THØRAX][LAB] | Smart Project View</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* Variables & Reset */
         :root {
-            --thorax-primary: #1A5F7A;
-            --thorax-secondary: #0D8B70;
-            --thorax-accent: #6D5ACF;
+            --thorax-blue: #1A5F7A;
+            --thorax-teal: #0D8B70;
+            --thorax-purple: #6D5ACF;
             --ui-dark: #1E293B;
-            --ui-light: #64748B;
-            --ui-bg: #F8FAFC;
+            --ui-mid: #64748B;
+            --ui-light: #F8FAFC;
             --ui-card: #FFFFFF;
             --ui-border: #E2E8F0;
-            --radius-md: 10px;
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --ui-disabled: #F1F5F9;
-            --ui-text-disabled: #94A3B8;
-            --ui-success: #10B981;
-            --ui-warning: #F59E0B;
-            --ui-error: #EF4444;
-            --ui-info: #3B82F6;
+            --radius: 10px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --clinical: rgba(26, 95, 122, 0.1);
+            --technical: rgba(109, 90, 207, 0.1);
+            --both: rgba(13, 139, 112, 0.1);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--ui-bg); 
-            color: var(--ui-dark);
-            min-height: 100vh;
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--ui-light); color: var(--ui-dark); }
         
         .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
         
         /* Header */
-        .app-header {
+        .header {
             background: var(--ui-card);
             border-bottom: 1px solid var(--ui-border);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
         }
         
         .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1rem 0;
         }
         
-        .nav-brand {
+        .logo {
             font-family: 'SF Mono', monospace;
             font-size: 1.5rem;
             font-weight: 600;
@@ -65,617 +56,28 @@
             text-decoration: none;
         }
         
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 9999px;
-            background: var(--ui-bg);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        
-        .user-profile:hover { background: var(--ui-border); }
-        
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-accent));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-        
-        .user-name { font-weight: 600; font-size: 0.875rem; }
-        .user-role { font-size: 0.75rem; color: var(--ui-light); }
-        
-        /* Buttons */
-        .btn {
-            padding: 0.875rem 1.5rem;
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-        
-        .btn-primary {
-            background: var(--thorax-primary);
-            color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: #14485E;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: var(--ui-dark);
-            border: 1px solid var(--ui-border);
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--ui-bg);
-            border-color: var(--thorax-primary);
-        }
-        
-        .btn-disabled {
-            background: var(--ui-disabled);
-            color: var(--ui-text-disabled);
-            cursor: not-allowed;
-            border: 1px solid var(--ui-border);
-        }
-        
-        .btn-disabled:hover {
-            transform: none;
-            box-shadow: none;
-            background: var(--ui-disabled);
-        }
-        
-        /* Project container */
-        .project-container {
+        /* Main Layout */
+        .project-view {
             padding: 2rem 0;
-        }
-        
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--thorax-primary);
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-md);
-            transition: all 0.2s;
-        }
-        
-        .back-button:hover {
-            background: rgba(26, 95, 122, 0.1);
-        }
-        
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-        
-        .project-title-section {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .project-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--ui-dark);
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-        
-        .project-meta {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            color: var(--ui-light);
-            font-size: 0.875rem;
-            flex-wrap: wrap;
-        }
-        
-        .project-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-weight: 500;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .status-active {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10B981;
-        }
-        
-        .status-demo {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--ui-warning);
-        }
-        
-        .project-actions {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        /* Two-column layout */
-        .project-layout {
             display: grid;
             grid-template-columns: 1fr 350px;
             gap: 2rem;
         }
         
         @media (max-width: 1024px) {
-            .project-layout {
-                grid-template-columns: 1fr;
-            }
+            .project-view { grid-template-columns: 1fr; }
         }
         
-        .project-main {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .project-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        /* Project sections */
-        .project-section {
+        /* Cards */
+        .card {
             background: var(--ui-card);
-            border-radius: 14px;
-            padding: 1.75rem;
-            border: 1px solid var(--ui-border);
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-        }
-        
-        .project-description {
-            color: var(--ui-dark);
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--ui-light);
-        }
-        
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.3;
-        }
-        
-        .empty-state-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .empty-state-description {
-            max-width: 500px;
-            margin: 0 auto 1.5rem;
-            line-height: 1.6;
-        }
-        
-        /* Implementation Guide */
-        .implementation-guide {
-            background: var(--ui-bg);
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius);
             padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
-        .guide-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .guide-step {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--ui-border);
-        }
-        
-        .guide-step:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .step-number {
-            width: 24px;
-            height: 24px;
-            background: var(--thorax-primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-        
-        .step-content {
-            flex: 1;
-        }
-        
-        .step-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            color: var(--ui-dark);
-        }
-        
-        .step-description {
-            font-size: 0.875rem;
-            color: var(--ui-light);
-            line-height: 1.5;
-        }
-        
-        /* Team section */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: var(--radius-md);
             border: 1px solid var(--ui-border);
-            transition: all 0.2s;
-        }
-        
-        .team-member.empty {
-            background: var(--ui-bg);
-            border-style: dashed;
-            color: var(--ui-light);
-            justify-content: center;
-            min-height: 80px;
-        }
-        
-        .member-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-accent));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-        
-        .member-info {
-            flex: 1;
-        }
-        
-        .member-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .member-role {
-            font-size: 0.875rem;
-            color: var(--ui-light);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .role-badge {
-            padding: 0.125rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .role-clinician {
-            background: rgba(26, 95, 122, 0.1);
-            color: var(--thorax-primary);
-        }
-        
-        .role-industry {
-            background: rgba(109, 90, 207, 0.1);
-            color: var(--thorax-accent);
-        }
-        
-        /* Timeline - Empty */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 9px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--ui-border);
-        }
-        
-        .timeline-empty {
-            position: relative;
-            padding-left: 2rem;
             margin-bottom: 1.5rem;
         }
         
-        .timeline-dot {
-            position: absolute;
-            left: -2rem;
-            top: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--ui-border);
-            border: 3px solid var(--ui-card);
-        }
-        
-        .timeline-content {
-            padding: 0.75rem;
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--ui-border);
-            color: var(--ui-light);
-        }
-        
-        /* Engagement Preview */
-        .engagement-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .stat-card {
-            text-align: center;
-            padding: 1rem;
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--ui-border);
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--thorax-primary);
-            margin-bottom: 0.25rem;
-        }
-        
-        .stat-value.empty {
-            color: var(--ui-text-disabled);
-            font-size: 1.25rem;
-            font-weight: 400;
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--ui-light);
-        }
-        
-        /* Toast */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 400px;
-        }
-        
-        .toast {
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-md);
-            animation: toastSlideIn 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: var(--thorax-primary);
-            color: white;
-        }
-        
-        .toast-info { background: var(--ui-info); }
-        .toast-success { background: var(--ui-success); }
-        .toast-warning { background: var(--ui-warning); }
-        .toast-error { background: var(--ui-error); }
-        
-        @keyframes toastSlideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* Loading states */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
-            color: var(--ui-light);
-            grid-column: 1 / -1;
-        }
-        
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--ui-border);
-            border-top-color: var(--thorax-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Error state */
-        .error-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--ui-light);
-        }
-        
-        .error-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.3;
-        }
-        
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
-        
-        .modal-content {
-            background: var(--ui-card);
-            border-radius: 18px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--ui-light);
-            padding: 0.5rem;
-            line-height: 1;
-        }
-        
-        /* Form styles */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            font-weight: 500;
-            color: var(--ui-dark);
-            font-size: 0.875rem;
-        }
-        
-        .form-input, .form-select, .form-textarea {
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 1rem;
-            background: var(--ui-card);
-        }
-        
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--thorax-primary);
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-        }
-        
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-        
-        .hidden { display: none !important; }
-        
-        /* Tab navigation */
+        /* Tabs */
         .tabs {
             display: flex;
             border-bottom: 1px solid var(--ui-border);
@@ -688,1276 +90,1240 @@
             border: none;
             font-family: inherit;
             font-size: 1rem;
-            font-weight: 500;
-            color: var(--ui-light);
+            color: var(--ui-mid);
             cursor: pointer;
             border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-            position: relative;
-        }
-        
-        .tab:hover {
-            color: var(--thorax-primary);
         }
         
         .tab.active {
-            color: var(--thorax-primary);
-            border-bottom-color: var(--thorax-primary);
+            color: var(--thorax-blue);
+            border-bottom-color: var(--thorax-blue);
         }
         
-        .tab-status {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            width: 8px;
-            height: 8px;
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--thorax-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #14485E;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-secondary {
+            background: var(--ui-card);
+            color: var(--ui-dark);
+            border: 1px solid var(--ui-border);
+        }
+        
+        /* KNOWLEDGE BRIDGE STYLES */
+        .knowledge-bridge {
+            background: linear-gradient(135deg, var(--thorax-blue) 0%, var(--thorax-purple) 100%);
+            color: white;
+            border: none;
+        }
+        
+        .bridge-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .bridge-icon {
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .tab-content {
+        .bridge-directions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .bridge-direction {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .bridge-direction:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .bridge-direction.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .bridge-input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius);
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .bridge-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .bridge-output {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1rem;
             display: none;
         }
         
-        .tab-content.active {
+        .bridge-output.show {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
         
-        /* Feature Status */
-        .feature-status {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .translation-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-clinical { background: var(--clinical); color: var(--thorax-blue); }
+        .badge-technical { background: var(--technical); color: var(--thorax-purple); }
+        .badge-both { background: var(--both); color: var(--thorax-teal); }
+        
+        /* DOCUMENTATION TAGGING SYSTEM */
+        .tagging-system {
+            background: var(--ui-card);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+        
+        .tag-category {
+            margin-bottom: 1.5rem;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            color: var(--ui-dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tag {
+            padding: 0.5rem 1rem;
+            background: var(--ui-light);
+            border: 1px solid var(--ui-border);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tag:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .tag.selected {
+            background: var(--thorax-blue);
+            color: white;
+            border-color: var(--thorax-blue);
+        }
+        
+        .tag-clinical { border-left: 4px solid var(--thorax-blue); }
+        .tag-technical { border-left: 4px solid var(--thorax-purple); }
+        .tag-both { border-left: 4px solid var(--thorax-teal); }
+        
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .document-card {
+            padding: 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+        
+        .document-card:hover {
+            border-color: var(--thorax-blue);
+            transform: translateX(4px);
+        }
+        
+        .document-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        /* Filter System */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--ui-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--ui-light);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .remove-filter {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        
+        .remove-filter:hover {
+            opacity: 1;
+        }
+        
+        /* Status Indicators */
+        .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .status-implemented {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--ui-success);
-        }
-        
-        .status-backend-required {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--ui-error);
-        }
-        
-        .status-partial {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--ui-warning);
-        }
-        
-        .status-disabled {
-            background: rgba(148, 163, 184, 0.1);
-            color: var(--ui-text-disabled);
-        }
-        
-        /* Backend Status */
-        .backend-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--ui-bg);
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        
-        .status-connected { background: var(--ui-success); }
-        .status-disconnected { background: var(--ui-error); }
-        .status-pending { background: var(--ui-warning); }
-        
-        /* API Documentation */
-        .api-docs {
-            background: #1E293B;
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-top: 1rem;
-            overflow-x: auto;
-        }
-        
-        .code {
-            font-family: 'SF Mono', monospace;
-            font-size: 0.875rem;
-            color: #E2E8F0;
-            line-height: 1.5;
-        }
-        
-        .code-comment { color: #64748B; }
-        .code-keyword { color: #F472B6; }
-        .code-string { color: #34D399; }
-        .code-number { color: #60A5FA; }
-        .code-function { color: #FBBF24; }
-        
-        /* Thread Preview */
-        .thread-preview {
-            padding: 1rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .thread-preview:hover:not(.empty) {
-            border-color: var(--thorax-primary);
-            transform: translateX(2px);
-        }
-        
-        .thread-preview.empty {
-            background: var(--ui-bg);
-            border-style: dashed;
-            cursor: default;
-            text-align: center;
-            color: var(--ui-light);
-        }
-        
-        .thread-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-        
-        .thread-title {
             font-weight: 600;
-            color: var(--ui-dark);
-            flex: 1;
         }
         
-        .thread-meta {
-            font-size: 0.875rem;
-            color: var(--ui-light);
-        }
+        .status-live { background: var(--both); color: var(--thorax-teal); }
+        .status-demo { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
         
-        .thread-excerpt {
-            color: var(--ui-light);
-            font-size: 0.875rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-        
-        .thread-engagement {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: var(--ui-light);
-        }
-        
-        .engagement-item {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        /* Warning Banner */
-        .warning-banner {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        
-        .warning-icon {
-            color: var(--ui-warning);
-            flex-shrink: 0;
-            margin-top: 0.25rem;
-        }
-        
-        .warning-content {
-            flex: 1;
-        }
-        
-        .warning-title {
-            font-weight: 600;
-            color: var(--ui-warning);
-            margin-bottom: 0.25rem;
-        }
-        
-        .warning-description {
-            font-size: 0.875rem;
-            color: var(--ui-light);
-            line-height: 1.5;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .project-view { gap: 1rem; }
+            .tabs { overflow-x: auto; }
+            .tab { padding: 0.75rem 1rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Toast container -->
-    <div id="toastContainer" class="toast-container"></div>
-    
     <!-- Header -->
-    <header class="app-header">
+    <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="nav-brand">[THØRAX][LAB]</a>
-                
+                <a href="index.html" class="logo">[THØRAX][LAB]</a>
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div class="backend-status">
-                        <div class="status-indicator status-disconnected"></div>
-                        <span>Demo Mode Active</span>
-                    </div>
-                    
-                    <a href="index.html" class="btn btn-secondary">
+                    <span class="status-badge status-demo">
+                        <i class="fas fa-flask"></i>
+                        Demo Mode
+                    </span>
+                    <button class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
                         Back to Dashboard
-                    </a>
-                    
-                    <div id="userProfile" class="user-profile">
-                        <div id="userAvatar" class="user-avatar">?</div>
-                        <div class="user-info">
-                            <div id="userDisplayName" class="user-name">Demo User</div>
-                            <div id="userDisplayRole" class="user-role">Frontend Preview</div>
-                        </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
-    
-    <!-- Main project content -->
-    <main class="project-container">
-        <div class="container">
-            <!-- Loading state -->
-            <div id="loadingState" class="loading">
-                <div class="spinner"></div>
-                <p>Loading project details...</p>
-            </div>
-            
-            <!-- Error state -->
-            <div id="errorState" class="error-state hidden">
-                <div class="error-icon">⚠️</div>
-                <h3 style="color: var(--ui-dark); margin-bottom: 0.5rem;">Project Not Found</h3>
-                <p style="margin-bottom: 1.5rem;">This project doesn't exist or you don't have access.</p>
-                <a href="index.html" class="btn btn-primary">
-                    <i class="fas fa-home"></i>
-                    Return to Dashboard
-                </a>
-            </div>
-            
-            <!-- Project content (hidden until loaded) -->
-            <div id="projectContent" class="hidden">
-                <!-- Warning banner -->
-                <div class="warning-banner">
-                    <div class="warning-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="warning-content">
-                        <div class="warning-title">Frontend Preview Mode</div>
-                        <div class="warning-description">
-                            This project view is running in demo mode. All data is stored locally and will be lost on page refresh. 
-                            To enable persistent projects, discussions, and team collaboration, implement the backend API endpoints.
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Back navigation -->
-                <a href="index.html" class="back-button">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to All Projects
-                </a>
-                
-                <!-- Project header -->
-                <div class="project-header">
-                    <div class="project-title-section">
-                        <h1 id="projectTitle" class="project-title">Project Title</h1>
-                        <div class="project-meta">
-                            <span id="projectType">Demo Project</span>
-                            <span>•</span>
-                            <span id="projectCreated">Created just now</span>
-                            <span>•</span>
-                            <span id="projectStatus" class="project-status status-demo">
-                                <i class="fas fa-flask"></i>
-                                Demo Mode
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="project-actions">
-                        <button id="editProjectBtn" class="btn btn-disabled" title="Requires backend implementation">
-                            <i class="fas fa-edit"></i>
-                            Edit (Disabled)
-                        </button>
-                        <button id="newThreadBtn" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Start Discussion (Demo)
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Two-column layout -->
-                <div class="project-layout">
-                    <!-- Main content -->
-                    <div class="project-main">
-                        <!-- Tab navigation -->
-                        <div class="tabs">
-                            <button class="tab active" data-tab="overview">
-                                Overview
-                                <div class="tab-status status-partial"></div>
-                            </button>
-                            <button class="tab" data-tab="discussions">
-                                Discussions
-                                <div class="tab-status status-backend-required"></div>
-                            </button>
-                            <button class="tab" data-tab="documents">
-                                Documents
-                                <div class="tab-status status-backend-required"></div>
-                            </button>
-                            <button class="tab" data-tab="timeline">
-                                Timeline
-                                <div class="tab-status status-backend-required"></div>
-                            </button>
-                        </div>
-                        
-                        <!-- Overview tab -->
-                        <div id="overviewTab" class="tab-content active">
-                            <div class="project-section">
-                                <div class="section-header">
-                                    <h2 class="section-title">Project Description</h2>
-                                </div>
-                                <div id="projectDescription" class="project-description">
-                                    <p>This project description will appear here once you create or load a project.</p>
-                                    <p><strong>Demo Note:</strong> In a full implementation, this would include detailed project goals, clinical objectives, technical requirements, and collaboration guidelines.</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Recent activity preview -->
-                            <div class="project-section">
-                                <div class="section-header">
-                                    <h2 class="section-title">Recent Activity</h2>
-                                    <div class="feature-status status-backend-required">Backend Required</div>
-                                </div>
-                                
-                                <div id="recentActivity" class="empty-state" style="padding: 2rem; text-align: left;">
-                                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; text-align: center;">💬</div>
-                                    <h3 style="color: var(--ui-dark); margin-bottom: 0.5rem;">No Activity Yet</h3>
-                                    <p style="color: var(--ui-light); margin-bottom: 1.5rem;">
-                                        Activity feed will show recent discussions, comments, and updates when the backend is implemented.
-                                    </p>
-                                    
-                                    <div class="implementation-guide">
-                                        <div class="guide-title">To Enable Activity Feed</div>
-                                        <div class="guide-step">
-                                            <div class="step-number">1</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Implement Discussion System</div>
-                                                <div class="step-description">Create thread and comment database models with real-time updates</div>
-                                            </div>
-                                        </div>
-                                        <div class="guide-step">
-                                            <div class="step-number">2</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Add WebSocket Events</div>
-                                                <div class="step-description">Send real-time notifications for new discussions and comments</div>
-                                            </div>
-                                        </div>
-                                        <div class="guide-step">
-                                            <div class="step-number">3</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Create Activity Endpoint</div>
-                                                <div class="step-description">GET /api/projects/:id/activity to fetch recent activity</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Discussions tab -->
-                        <div id="discussionsTab" class="tab-content">
-                            <div class="project-section">
-                                <div class="section-header">
-                                    <h2 class="section-title">Discussion Threads</h2>
-                                    <button id="startDiscussionBtn" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i>
-                                        New Thread (Demo)
-                                    </button>
-                                </div>
-                                
-                                <div class="warning-banner" style="margin-bottom: 2rem;">
-                                    <div class="warning-icon">
-                                        <i class="fas fa-database"></i>
-                                    </div>
-                                    <div class="warning-content">
-                                        <div class="warning-title">Discussion System Not Implemented</div>
-                                        <div class="warning-description">
-                                            Threads and comments require backend implementation. Demo threads are stored locally only.
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div id="discussionsList" class="empty-state" style="padding: 2rem;">
-                                    <div class="empty-state-icon">💬</div>
-                                    <h3 class="empty-state-title">No Discussions Yet</h3>
-                                    <p class="empty-state-description">
-                                        Start the first discussion to collaborate with your team. 
-                                        In demo mode, discussions are stored locally only.
-                                    </p>
-                                    <button id="startFirstDiscussion" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i>
-                                        Start First Discussion (Demo)
-                                    </button>
-                                    
-                                    <div class="implementation-guide">
-                                        <div class="guide-title">Required Backend Implementation</div>
-                                        <div class="guide-step">
-                                            <div class="step-number">1</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Create Thread Model</div>
-                                                <div class="step-description">Database schema for threads with title, content, author, category</div>
-                                            </div>
-                                        </div>
-                                        <div class="guide-step">
-                                            <div class="step-number">2</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Implement Comment System</div>
-                                                <div class="step-description">Nested comments with threading, mentions, and notifications</div>
-                                            </div>
-                                        </div>
-                                        <div class="guide-step">
-                                            <div class="step-number">3</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Add Real-time Updates</div>
-                                                <div class="step-description">WebSocket events for new threads and comments</div>
-                                            </div>
-                                        </div>
-                                        <div class="api-docs">
-                                            <pre class="code"><span class="code-comment">// POST /api/projects/:id/threads</span>
-<span class="code-keyword">Request</span>:
-{
-  <span class="code-string">"title"</span>: <span class="code-string">"Discussion Title"</span>,
-  <span class="code-string">"content"</span>: <span class="code-string">"Discussion content..."</span>,
-  <span class="code-string">"category"</span>: <span class="code-string">"clinical|technical|data|methodology|general"</span>
-}
 
-<span class="code-comment">// WebSocket Event: new_thread</span>
-{
-  <span class="code-string">"type"</span>: <span class="code-string">"new_thread"</span>,
-  <span class="code-string">"thread"</span>: {
-    <span class="code-string">"id"</span>: <span class="code-string">"thread_123"</span>,
-    <span class="code-string">"title"</span>: <span class="code-string">"Discussion Title"</span>,
-    <span class="code-string">"author"</span>: { <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span> },
-    <span class="code-string">"created_at"</span>: <span class="code-string">"2024-01-15T10:30:00Z"</span>
-  }
-}</pre>
-                                        </div>
-                                    </div>
+    <main class="container">
+        <!-- Project Header -->
+        <div style="margin: 2rem 0;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div>
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">COPD Exacerbation Prediction</h1>
+                    <div style="color: var(--ui-mid); display: flex; gap: 1rem; font-size: 0.875rem;">
+                        <span>Clinical-Industry Collaboration</span>
+                        <span>•</span>
+                        <span>Started Jan 15, 2024</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="uploadDocumentBtn">
+                    <i class="fas fa-upload"></i>
+                    Upload Document
+                </button>
+            </div>
+            
+            <div class="filter-bar" id="filterBar">
+                <div style="font-weight: 600; color: var(--ui-dark);">Active Filters:</div>
+                <!-- Active filters will appear here -->
+                <div id="activeFilters"></div>
+                <button class="btn btn-secondary" id="clearFilters" style="margin-left: auto; font-size: 0.875rem;">
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="project-view">
+            <!-- Left Column -->
+            <div>
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" data-tab="documents">
+                        <i class="fas fa-file-alt"></i>
+                        Documents
+                    </button>
+                    <button class="tab" data-tab="discussions">
+                        <i class="fas fa-comments"></i>
+                        Discussions
+                    </button>
+                    <button class="tab" data-tab="knowledge">
+                        <i class="fas fa-bridge"></i>
+                        Knowledge Bridge
+                    </button>
+                </div>
+
+                <!-- Documents Tab -->
+                <div id="documentsTab" class="tab-content active">
+                    <div class="card">
+                        <h2 style="margin-bottom: 1.5rem;">Project Documents</h2>
+                        <p style="color: var(--ui-mid); margin-bottom: 1.5rem;">
+                            Filter documents by audience, specialty, and content type. Click tags to filter.
+                        </p>
+                        
+                        <!-- Tagging System -->
+                        <div class="tagging-system">
+                            <div class="tag-category">
+                                <div class="category-title">
+                                    <i class="fas fa-users"></i>
+                                    <span>Primary Audience</span>
+                                </div>
+                                <div class="tag-cloud">
+                                    <div class="tag tag-clinical" data-filter="audience:clinical">Clinical Team</div>
+                                    <div class="tag tag-technical" data-filter="audience:technical">Technical Team</div>
+                                    <div class="tag tag-both" data-filter="audience:both">Both Audiences</div>
+                                    <div class="tag" data-filter="audience:regulatory">Regulatory</div>
+                                </div>
+                            </div>
+                            
+                            <div class="tag-category">
+                                <div class="category-title">
+                                    <i class="fas fa-stethoscope"></i>
+                                    <span>Clinical Specialties</span>
+                                </div>
+                                <div class="tag-cloud">
+                                    <div class="tag tag-clinical" data-filter="specialty:pulmonology">Pulmonology</div>
+                                    <div class="tag tag-clinical" data-filter="specialty:critical-care">Critical Care</div>
+                                    <div class="tag tag-clinical" data-filter="specialty:radiology">Radiology</div>
+                                    <div class="tag tag-clinical" data-filter="specialty:pharmacology">Pharmacology</div>
+                                </div>
+                            </div>
+                            
+                            <div class="tag-category">
+                                <div class="category-title">
+                                    <i class="fas fa-cogs"></i>
+                                    <span>Technical Domains</span>
+                                </div>
+                                <div class="tag-cloud">
+                                    <div class="tag tag-technical" data-filter="domain:ml">Machine Learning</div>
+                                    <div class="tag tag-technical" data-filter="domain:data">Data Engineering</div>
+                                    <div class="tag tag-technical" data-filter="domain:backend">Backend Systems</div>
+                                    <div class="tag tag-technical" data-filter="domain:security">Security & Compliance</div>
+                                </div>
+                            </div>
+                            
+                            <div class="tag-category">
+                                <div class="category-title">
+                                    <i class="fas fa-file"></i>
+                                    <span>Document Types</span>
+                                </div>
+                                <div class="tag-cloud">
+                                    <div class="tag tag-both" data-filter="type:protocol">Protocol</div>
+                                    <div class="tag" data-filter="type:dataset">Dataset</div>
+                                    <div class="tag tag-technical" data-filter="type:api">API Documentation</div>
+                                    <div class="tag tag-clinical" data-filter="type:analysis">Clinical Analysis</div>
+                                    <div class="tag" data-filter="type:regulatory">Regulatory Submission</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Documents tab -->
-                        <div id="documentsTab" class="tab-content">
-                            <div class="project-section">
-                                <div class="section-header">
-                                    <h2 class="section-title">Project Documents</h2>
-                                    <button id="uploadDocumentBtn" class="btn btn-disabled" title="Requires file upload backend">
-                                        <i class="fas fa-upload"></i>
-                                        Upload (Disabled)
-                                    </button>
-                                </div>
-                                
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">📄</div>
-                                    <h3 class="empty-state-title">Document Management Not Implemented</h3>
-                                    <p class="empty-state-description">
-                                        File upload, storage, and sharing require backend implementation with secure file handling.
-                                    </p>
-                                    
-                                    <div class="implementation-guide">
-                                        <div class="guide-title">Required Implementation</div>
-                                        <div class="guide-step">
-                                            <div class="step-number">1</div>
-                                            <div class="step-content">
-                                                <div class="step-title">File Storage Service</div>
-                                                <div class="step-description">Implement secure file upload to S3/Azure Blob/Cloud Storage</div>
-                                            </div>
-                                        </div>
-                                        <div class="guide-step">
-                                            <div class="step-number">2</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Document Metadata Database</div>
-                                                <div class="step-description">Store file metadata, permissions, and version history</div>
-                                            </div>
-                                        </div>
-                                        <div class="guide-step">
-                                            <div class="step-number">3</div>
-                                            <div class="step-content">
-                                                <div class="step-title">Secure Access Control</div>
-                                                <div class="step-description">Implement role-based access to sensitive clinical documents</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- Document List -->
+                        <div class="document-list" id="documentList" style="margin-top: 2rem;">
+                            <!-- Documents will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Bridge Tab -->
+                <div id="knowledgeTab" class="tab-content">
+                    <div class="card knowledge-bridge">
+                        <div class="bridge-header">
+                            <div class="bridge-icon">
+                                <i class="fas fa-bridge"></i>
+                            </div>
+                            <div>
+                                <h2 style="color: white; margin-bottom: 0.25rem;">Knowledge Bridge</h2>
+                                <p style="color: rgba(255, 255, 255, 0.8);">Translate between clinical and technical concepts</p>
                             </div>
                         </div>
                         
-                        <!-- Timeline tab -->
-                        <div id="timelineTab" class="tab-content">
-                            <div class="project-section">
-                                <div class="section-header">
-                                    <h2 class="section-title">Project Timeline</h2>
-                                    <div class="feature-status status-backend-required">Auto-generated</div>
-                                </div>
-                                
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">📅</div>
-                                    <h3 class="empty-state-title">Timeline Will Be Auto-generated</h3>
-                                    <p class="empty-state-description">
-                                        Project timeline will automatically populate with key milestones, discussions, and document uploads once backend is implemented.
-                                    </p>
-                                    
-                                    <div id="projectTimeline" class="timeline">
-                                        <div class="timeline-empty">
-                                            <div class="timeline-dot"></div>
-                                            <div class="timeline-content">
-                                                <div class="timeline-date">Project Created</div>
-                                                <p>Project timeline events will appear here automatically</p>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-empty">
-                                            <div class="timeline-dot"></div>
-                                            <div class="timeline-content">
-                                                <div class="timeline-date">First Discussion</div>
-                                                <p>Will be added when discussions are implemented</p>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-empty">
-                                            <div class="timeline-dot"></div>
-                                            <div class="timeline-content">
-                                                <div class="timeline-date">Team Expansion</div>
-                                                <p>Will be added when team members join</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="bridge-directions">
+                            <div class="bridge-direction" data-direction="clinical-to-technical">
+                                <i class="fas fa-user-md"></i>
+                                <div>Clinical → Technical</div>
                             </div>
+                            <div class="bridge-direction active" data-direction="technical-to-clinical">
+                                <i class="fas fa-code"></i>
+                                <div>Technical → Clinical</div>
+                            </div>
+                            <div class="bridge-direction" data-direction="both-ways">
+                                <i class="fas fa-exchange-alt"></i>
+                                <div>Explain Both Ways</div>
+                            </div>
+                        </div>
+                        
+                        <input type="text" class="bridge-input" id="bridgeInput" 
+                               placeholder="Enter a clinical or technical concept to translate...">
+                        
+                        <button class="btn btn-primary" id="translateBtn" style="width: 100%; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);">
+                            <i class="fas fa-language"></i>
+                            Translate Concept
+                        </button>
+                        
+                        <div class="bridge-output" id="bridgeOutput">
+                            <!-- Translation results will appear here -->
                         </div>
                     </div>
                     
-                    <!-- Sidebar -->
-                    <div class="project-sidebar">
-                        <!-- Team section -->
-                        <div class="project-section">
-                            <div class="section-header">
-                                <h2 class="section-title">Project Team</h2>
-                                <button id="inviteMemberBtn" class="btn btn-disabled" title="Requires user management backend">
-                                    <i class="fas fa-user-plus"></i>
-                                </button>
+                    <!-- Recent Translations -->
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Recent Translations</h3>
+                        <div id="translationHistory">
+                            <!-- History items will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Discussions Tab -->
+                <div id="discussionsTab" class="tab-content">
+                    <div class="card">
+                        <h2 style="margin-bottom: 1.5rem;">Project Discussions</h2>
+                        <p style="color: var(--ui-mid);">Discussion system requires backend implementation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Project Team -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">
+                        <i class="fas fa-users"></i>
+                        Project Team
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--clinical); border-radius: var(--radius);">
+                            <div style="width: 40px; height: 40px; background: var(--thorax-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                AC
                             </div>
-                            
-                            <div class="team-grid" id="teamList">
-                                <div class="team-member empty">
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.3;">👥</div>
-                                        <div style="color: var(--ui-light); font-size: 0.875rem;">
-                                            No team members yet
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="implementation-guide" style="margin-top: 1rem;">
-                                <div class="guide-title">Team Management Required</div>
-                                <div class="guide-step">
-                                    <div class="step-number">1</div>
-                                    <div class="step-content">
-                                        <div class="step-title">User Directory</div>
-                                        <div class="step-description">Implement user search and invitation system</div>
-                                    </div>
-                                </div>
-                                <div class="guide-step">
-                                    <div class="step-number">2</div>
-                                    <div class="step-content">
-                                        <div class="step-title">Project Membership</div>
-                                        <div class="step-description">Database relationships for project-team membership</div>
-                                    </div>
-                                </div>
-                                <div class="guide-step">
-                                    <div class="step-number">3</div>
-                                    <div class="step-content">
-                                        <div class="step-title">Role Management</div>
-                                        <div class="step-description">Assign roles (clinician/industry) with different permissions</div>
-                                    </div>
-                                </div>
+                            <div>
+                                <div style="font-weight: 600;">Dr. Alex Chen</div>
+                                <div style="font-size: 0.875rem; color: var(--ui-mid);">Lead Pulmonologist</div>
                             </div>
                         </div>
                         
-                        <!-- Engagement stats -->
-                        <div class="project-section">
-                            <div class="section-header">
-                                <h2 class="section-title">Engagement Metrics</h2>
-                                <div class="feature-status status-backend-required">No Data</div>
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--technical); border-radius: var(--radius);">
+                            <div style="width: 40px; height: 40px; background: var(--thorax-purple); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                SR
                             </div>
-                            <div class="engagement-stats">
-                                <div class="stat-card">
-                                    <div class="stat-value empty">--</div>
-                                    <div class="stat-label">Discussions</div>
-                                    <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.25rem;">
-                                        Requires backend
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value empty">--</div>
-                                    <div class="stat-label">Comments</div>
-                                    <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.25rem;">
-                                        Requires backend
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value empty">--</div>
-                                    <div class="stat-label">Members</div>
-                                    <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.25rem;">
-                                        Requires backend
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value empty">--</div>
-                                    <div class="stat-label">Files</div>
-                                    <div style="font-size: 0.75rem; color: var(--ui-light); margin-top: 0.25rem;">
-                                        Requires backend
-                                    </div>
-                                </div>
+                            <div>
+                                <div style="font-weight: 600;">Dr. Sarah Rodriguez</div>
+                                <div style="font-size: 0.8758rem; color: var(--ui-mid);">ML Research Lead</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">
+                        <i class="fas fa-chart-line"></i>
+                        Collaboration Stats
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--ui-mid);">Clinical Inputs</span>
+                                <span style="font-weight: 600; color: var(--thorax-blue);">24</span>
+                            </div>
+                            <div style="height: 4px; background: var(--ui-border); border-radius: 2px; margin-top: 0.25rem;">
+                                <div style="width: 60%; height: 100%; background: var(--thorax-blue); border-radius: 2px;"></div>
                             </div>
                         </div>
                         
-                        <!-- Quick actions -->
-                        <div class="project-section">
-                            <div class="section-header">
-                                <h2 class="section-title">Quick Actions</h2>
+                        <div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--ui-mid);">Technical Solutions</span>
+                                <span style="font-weight: 600; color: var(--thorax-purple);">18</span>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                <button id="quickPollBtn" class="btn btn-disabled" title="Requires polling/voting backend">
-                                    <i class="fas fa-chart-pie"></i>
-                                    Create Poll (Disabled)
-                                </button>
-                                <button id="scheduleMeetingBtn" class="btn btn-disabled" title="Requires calendar integration">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    Schedule Meeting (Disabled)
-                                </button>
-                                <button id="exportDataBtn" class="btn btn-disabled" title="Requires data export backend">
-                                    <i class="fas fa-download"></i>
-                                    Export Data (Disabled)
-                                </button>
-                                <button id="viewApiImplementation" class="btn btn-secondary">
-                                    <i class="fas fa-code"></i>
-                                    View Implementation Guide
-                                </button>
+                            <div style="height: 4px; background: var(--ui-border); border-radius: 2px; margin-top: 0.25rem;">
+                                <div style="width: 45%; height: 100%; background: var(--thorax-purple); border-radius: 2px;"></div>
                             </div>
                         </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--ui-mid);">Cross-Domain</span>
+                                <span style="font-weight: 600; color: var(--thorax-teal);">12</span>
+                            </div>
+                            <div style="height: 4px; background: var(--ui-border); border-radius: 2px; margin-top: 0.25rem;">
+                                <div style="width: 30%; height: 100%; background: var(--thorax-teal); border-radius: 2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">
+                        <i class="fas fa-bolt"></i>
+                        Quick Actions
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <button class="btn btn-secondary" id="quickTranslate">
+                            <i class="fas fa-language"></i>
+                            Quick Translation
+                        </button>
+                        <button class="btn btn-secondary" id="filterClinical">
+                            <i class="fas fa-user-md"></i>
+                            Clinical View
+                        </button>
+                        <button class="btn btn-secondary" id="filterTechnical">
+                            <i class="fas fa-code"></i>
+                            Technical View
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-    
-    <!-- Modals -->
-    
-    <!-- New Discussion Modal -->
-    <div id="newThreadModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Start New Discussion (Demo)</h2>
-                <button class="close-modal" data-modal="newThreadModal">&times;</button>
-            </div>
-            <form id="newThreadForm">
-                <div class="warning-banner">
-                    <div class="warning-icon">
-                        <i class="fas fa-flask"></i>
-                    </div>
-                    <div class="warning-content">
-                        <div class="warning-title">Demo Mode Active</div>
-                        <div class="warning-description">
-                            This discussion will be stored locally only. To enable persistent discussions, implement the backend API.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="threadTitle" class="form-label">Title</label>
-                    <input type="text" id="threadTitle" class="form-input" required 
-                           placeholder="e.g., Dataset quality issues in Phase 2">
-                </div>
-                
-                <div class="form-group">
-                    <label for="threadCategory" class="form-label">Category</label>
-                    <select id="threadCategory" class="form-input form-select" required>
-                        <option value="">Select category</option>
-                        <option value="clinical">Clinical Observation</option>
-                        <option value="technical">Technical Question</option>
-                        <option value="data">Data Analysis</option>
-                        <option value="methodology">Methodology</option>
-                        <option value="general">General Discussion</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="threadContent" class="form-label">Content</label>
-                    <textarea id="threadContent" class="form-textarea" required 
-                              placeholder="Describe your question or observation..."
-                              rows="6"></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" data-modal="newThreadModal">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary" id="submitThreadBtn">
-                        Create Demo Discussion
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- API Implementation Guide Modal -->
-    <div id="apiGuideModal" class="modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h2 class="modal-title">Backend Implementation Guide</h2>
-                <button class="close-modal" data-modal="apiGuideModal">&times;</button>
+
+    <!-- Upload Document Modal -->
+    <div id="uploadModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; padding: 1rem;">
+        <div class="card" style="max-width: 500px; max-height: 90vh; overflow-y: auto; width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Upload New Document</h2>
+                <button id="closeModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ui-mid);">&times;</button>
             </div>
             
-            <div class="implementation-guide">
-                <div class="guide-title">Core API Endpoints Required</div>
-                
-                <div class="guide-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <div class="step-title">Project Management</div>
-                        <div class="step-description">
-                            <div class="api-docs">
-                                <pre class="code"><span class="code-comment">// GET /api/projects/:id</span>
-<span class="code-keyword">Response</span>:
-{
-  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
-  <span class="code-string">"project"</span>: {
-    <span class="code-string">"id"</span>: <span class="code-string">"proj_123"</span>,
-    <span class="code-string">"title"</span>: <span class="code-string">"Project Title"</span>,
-    <span class="code-string">"description"</span>: <span class="code-string">"Full description..."</span>,
-    <span class="code-string">"type"</span>: <span class="code-string">"collaborative"</span>,
-    <span class="code-string">"status"</span>: <span class="code-string">"active"</span>,
-    <span class="code-string">"created_at"</span>: <span class="code-string">"2024-01-15T10:30:00Z"</span>,
-    <span class="code-string">"creator"</span>: {
-      <span class="code-string">"id"</span>: <span class="code-string">"user_123"</span>,
-      <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span>,
-      <span class="code-string">"role"</span>: <span class="code-string">"clinician"</span>
-    },
-    <span class="code-string">"team"</span>: [
-      {
-        <span class="code-string">"id"</span>: <span class="code-string">"user_123"</span>,
-        <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span>,
-        <span class="code-string">"role"</span>: <span class="code-string">"clinician"</span>,
-        <span class="code-string">"specialty"</span>: <span class="code-string">"Pulmonology"</span>,
-        <span class="code-string">"joined_at"</span>: <span class="code-string">"2024-01-15T10:30:00Z"</span>
-      }
-    ],
-    <span class="code-string">"metrics"</span>: {
-      <span class="code-string">"threads"</span>: <span class="code-number">0</span>,
-      <span class="code-string">"comments"</span>: <span class="code-number">0</span>,
-      <span class="code-string">"members"</span>: <span class="code-number">1</span>,
-      <span class="code-string">"files"</span>: <span class="code-number">0</span>
-    }
-  }
-}</pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <div class="step-title">Discussion System</div>
-                        <div class="step-description">
-                            <div class="api-docs">
-                                <pre class="code"><span class="code-comment">// POST /api/projects/:id/threads</span>
-<span class="code-keyword">Request</span>:
-{
-  <span class="code-string">"title"</span>: <span class="code-string">"Discussion Title"</span>,
-  <span class="code-string">"content"</span>: <span class="code-string">"Discussion content..."</span>,
-  <span class="code-string">"category"</span>: <span class="code-string">"clinical"</span>
-}
-
-<span class="code-comment">// GET /api/projects/:id/threads</span>
-<span class="code-keyword">Response</span>:
-{
-  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
-  <span class="code-string">"threads"</span>: [
-    {
-      <span class="code-string">"id"</span>: <span class="code-string">"thread_123"</span>,
-      <span class="code-string">"title"</span>: <span class="code-string">"Discussion Title"</span>,
-      <span class="code-string">"content"</span>: <span class="code-string">"Discussion content..."</span>,
-      <span class="code-string">"category"</span>: <span class="code-string">"clinical"</span>,
-      <span class="code-string">"author"</span>: {
-        <span class="code-string">"id"</span>: <span class="code-string">"user_123"</span>,
-        <span class="code-string">"name"</span>: <span class="code-string">"Dr. Alex Chen"</span>,
-        <span class="code-string">"role"</span>: <span class="code-string">"clinician"</span>
-      },
-      <span class="code-string">"created_at"</span>: <span class="code-string">"2024-01-15T10:30:00Z"</span>,
-      <span class="code-string">"comment_count"</span>: <span class="code-number">0</span>,
-      <span class="code-string">"upvotes"</span>: <span class="code-number">0</span>,
-      <span class="code-string">"expert_endorsed"</span>: <span class="code-keyword">false</span>
-    }
-  ]
-}</pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <div class="step-title">WebSocket Events</div>
-                        <div class="step-description">
-                            <div class="api-docs">
-                                <pre class="code"><span class="code-comment">// Connect to WebSocket</span>
-<span class="code-function">const</span> ws = <span class="code-keyword">new</span> WebSocket(<span class="code-string">'wss://your-domain.com/project/:id'</span>);
-
-<span class="code-comment">// Authentication message</span>
-ws.<span class="code-function">send</span>(<span class="code-function">JSON</span>.<span class="code-function">stringify</span>({
-  <span class="code-string">"type"</span>: <span class="code-string">"authenticate"</span>,
-  <span class="code-string">"token"</span>: <span class="code-string">"jwt_token_here"</span>,
-  <span class="code-string">"project_id"</span>: <span class="code-string">"project_id_here"</span>
-}));
-
-<span class="code-comment">// Event types to handle:</span>
-{
-  <span class="code-string">"type"</span>: <span class="code-string">"new_thread"</span>,      <span class="code-comment">// New discussion started</span>
-  <span class="code-string">"type"</span>: <span class="code-string">"new_comment"</span>,     <span class="code-comment">// New comment posted</span>
-  <span class="code-string">"type"</span>: <span class="code-string">"thread_updated"</span>,  <span class="code-comment">// Thread modified</span>
-  <span class="code-string">"type"</span>: <span class="code-string">"project_updated"</span>, <span class="code-comment">// Project details changed</span>
-  <span class="code-string">"type"</span>: <span class="code-string">"member_joined"</span>,   <span class="code-comment">// New team member</span>
-  <span class="code-string">"type"</span>: <span class="code-string">"document_uploaded"</span> <span class="code-comment">// New file uploaded</span>
-}</pre>
-                            </div>
-                        </div>
-                    </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Document Title</label>
+                <input type="text" id="docTitle" style="width: 100%; padding: 0.75rem; border: 1px solid var(--ui-border); border-radius: var(--radius); font-family: inherit;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Select Tags</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                    <div class="tag selected">Clinical Team</div>
+                    <div class="tag">Technical Team</div>
+                    <div class="tag">Pulmonology</div>
+                    <div class="tag">Machine Learning</div>
                 </div>
             </div>
             
-            <div class="form-actions">
-                <button type="button" class="btn btn-primary" data-modal="apiGuideModal">
-                    Close
-                </button>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-secondary" id="cancelUpload">Cancel</button>
+                <button class="btn btn-primary" id="submitDocument">Upload Document</button>
             </div>
         </div>
     </div>
-    
+
     <script>
-        class ProjectView {
+        // ====================
+        // DOCUMENTATION SYSTEM
+        // ====================
+        
+        class DocumentationSystem {
             constructor() {
-                this.projectId = this.getProjectIdFromURL();
-                this.token = localStorage.getItem('thoraxlab_token');
-                this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
-                this.ws = null;
-                this.localThreads = JSON.parse(localStorage.getItem(`thoraxlab_threads_${this.projectId}`) || '[]');
+                this.activeFilters = new Set();
+                this.documents = this.getSampleDocuments();
                 this.initialize();
             }
             
             initialize() {
                 this.setupEventListeners();
-                this.checkAuth();
+                this.renderDocuments();
+                this.updateFilterDisplay();
             }
             
-            getProjectIdFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id') || 'demo-project';
-            }
-            
-            checkAuth() {
-                // Always show in demo mode
-                this.loadProject();
-                this.updateUserDisplay();
-            }
-            
-            updateUserDisplay() {
-                if (this.user) {
-                    document.getElementById('userDisplayName').textContent = this.user.name;
-                    document.getElementById('userDisplayRole').textContent = 
-                        this.user.role === 'clinician' ? 'Clinical Professional' : 'Industry Professional';
-                    document.getElementById('userAvatar').textContent = 
-                        this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                }
-            }
-            
-            async loadProject() {
-                try {
-                    // Try to load from localStorage first (demo mode)
-                    const localProjects = JSON.parse(localStorage.getItem('thoraxlab_projects') || '[]');
-                    const project = localProjects.find(p => p.id === this.projectId);
-                    
-                    if (project) {
-                        this.renderProject(project);
-                    } else {
-                        // Create a demo project if none exists
-                        const demoProject = {
-                            id: this.projectId,
-                            title: 'Demo Collaboration Project',
-                            description: 'This is a demonstration project showing the ThoraxLab collaboration interface. In a real implementation, this would be a clinical-industry collaboration project with real data and team members.',
-                            type: 'collaborative',
-                            status: 'active',
-                            created_at: new Date().toISOString(),
-                            creator_id: this.user?.id || 'demo-user',
-                            creator_name: this.user?.name || 'Demo User',
-                            metrics: {
-                                threads: this.localThreads.length,
-                                comments: 0,
-                                members: 1,
-                                files: 0
-                            }
-                        };
-                        
-                        this.renderProject(demoProject);
+            getSampleDocuments() {
+                return [
+                    {
+                        id: 1,
+                        title: "COPD Clinical Trial Protocol v2.1",
+                        description: "Phase III trial design for exacerbation prediction algorithm",
+                        tags: ["audience:clinical", "specialty:pulmonology", "type:protocol", "audience:both"],
+                        date: "2024-01-15",
+                        author: "Dr. Alex Chen",
+                        badge: "clinical"
+                    },
+                    {
+                        id: 2,
+                        title: "Spirometry Data Pipeline Architecture",
+                        description: "Technical specification for data ingestion and preprocessing",
+                        tags: ["audience:technical", "domain:data", "type:api", "specialty:pulmonology"],
+                        date: "2024-01-20",
+                        author: "Sarah Rodriguez",
+                        badge: "technical"
+                    },
+                    {
+                        id: 3,
+                        title: "ML Model Performance Report",
+                        description: "Validation results for exacerbation prediction models",
+                        tags: ["audience:both", "domain:ml", "type:analysis", "specialty:critical-care"],
+                        date: "2024-01-25",
+                        author: "ML Team",
+                        badge: "both"
+                    },
+                    {
+                        id: 4,
+                        title: "FDA Submission Framework",
+                        description: "Regulatory pathway for algorithm approval",
+                        tags: ["audience:regulatory", "type:regulatory", "audience:clinical"],
+                        date: "2024-01-28",
+                        author: "Regulatory Team",
+                        badge: "clinical"
+                    },
+                    {
+                        id: 5,
+                        title: "API Documentation v1.0",
+                        description: "REST API endpoints for clinical data access",
+                        tags: ["audience:technical", "domain:backend", "type:api", "domain:security"],
+                        date: "2024-02-01",
+                        author: "Engineering Team",
+                        badge: "technical"
+                    },
+                    {
+                        id: 6,
+                        title: "Clinical Validation Study Design",
+                        description: "Methodology for real-world evidence collection",
+                        tags: ["audience:both", "specialty:pulmonology", "type:protocol", "domain:data"],
+                        date: "2024-02-05",
+                        author: "Dr. Maria Santos",
+                        badge: "both"
                     }
-                    
-                } catch (error) {
-                    console.error('Project load error:', error);
-                    this.showError('Failed to load project');
-                }
-            }
-            
-            renderProject(project) {
-                // Hide loading, show content
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('projectContent').classList.remove('hidden');
-                
-                // Update project details
-                document.getElementById('projectTitle').textContent = project.title;
-                document.getElementById('projectDescription').innerHTML = this.formatDescription(project.description);
-                
-                // Update metadata
-                const createdDate = new Date(project.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                document.getElementById('projectCreated').textContent = `Created ${createdDate}`;
-                document.getElementById('projectType').textContent = project.type === 'collaborative' ? 'Joint Collaboration' : 
-                                                                   project.type === 'clinical' ? 'Clinical-Led Research' : 'Industry-Led Development';
-                
-                // Update engagement stats
-                if (project.metrics) {
-                    const threadsElement = document.querySelectorAll('.stat-value')[0];
-                    const commentsElement = document.querySelectorAll('.stat-value')[1];
-                    const membersElement = document.querySelectorAll('.stat-value')[2];
-                    const filesElement = document.querySelectorAll('.stat-value')[3];
-                    
-                    threadsElement.textContent = project.metrics.threads || 0;
-                    threadsElement.className = project.metrics.threads > 0 ? 'stat-value' : 'stat-value empty';
-                    
-                    commentsElement.textContent = project.metrics.comments || 0;
-                    commentsElement.className = project.metrics.comments > 0 ? 'stat-value' : 'stat-value empty';
-                    
-                    membersElement.textContent = project.metrics.members || 1;
-                    membersElement.className = project.metrics.members > 0 ? 'stat-value' : 'stat-value empty';
-                    
-                    filesElement.textContent = project.metrics.files || 0;
-                    filesElement.className = project.metrics.files > 0 ? 'stat-value' : 'stat-value empty';
-                }
-                
-                // Load threads if any
-                if (this.localThreads.length > 0) {
-                    this.renderThreads(this.localThreads);
-                }
-            }
-            
-            formatDescription(text) {
-                if (!text) return '';
-                // Convert line breaks to paragraphs
-                return text.split('\n').filter(p => p.trim()).map(p => `<p>${this.escapeHtml(p)}</p>`).join('');
-            }
-            
-            showError(message) {
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('errorState').classList.remove('hidden');
-                
-                const errorTitle = document.querySelector('#errorState h3');
-                if (errorTitle && message) {
-                    errorTitle.textContent = message;
-                }
+                ];
             }
             
             setupEventListeners() {
-                // Tab navigation
+                // Tag filtering
+                document.querySelectorAll('.tag').forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const filter = e.target.dataset.filter;
+                        if (filter) {
+                            this.toggleFilter(filter);
+                        }
+                    });
+                });
+                
+                // Clear filters
+                document.getElementById('clearFilters').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+                
+                // Tab switching
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', (e) => {
-                        const tabId = e.target.getAttribute('data-tab');
+                        const tabId = e.target.dataset.tab;
                         this.switchTab(tabId);
                     });
                 });
                 
-                // New thread buttons
-                document.getElementById('newThreadBtn').addEventListener('click', () => {
-                    this.showModal('newThreadModal');
+                // Quick filter buttons
+                document.getElementById('filterClinical').addEventListener('click', () => {
+                    this.setFilter('audience:clinical');
                 });
                 
-                document.getElementById('startDiscussionBtn').addEventListener('click', () => {
-                    this.showModal('newThreadModal');
+                document.getElementById('filterTechnical').addEventListener('click', () => {
+                    this.setFilter('audience:technical');
                 });
                 
-                document.addEventListener('click', (e) => {
-                    if (e.target && e.target.id === 'startFirstDiscussion') {
-                        this.showModal('newThreadModal');
+                // Modal controls
+                const modal = document.getElementById('uploadModal');
+                document.getElementById('uploadDocumentBtn').addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                });
+                
+                document.getElementById('closeModal').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+                
+                document.getElementById('cancelUpload').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+                
+                document.getElementById('submitDocument').addEventListener('click', () => {
+                    this.addDocument();
+                    modal.style.display = 'none';
+                });
+                
+                // Close modal on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
                     }
                 });
+            }
+            
+            toggleFilter(filter) {
+                if (this.activeFilters.has(filter)) {
+                    this.activeFilters.delete(filter);
+                } else {
+                    this.activeFilters.add(filter);
+                }
                 
-                // Edit project button (disabled)
-                document.getElementById('editProjectBtn').addEventListener('click', () => {
-                    this.showToast('Project editing requires backend implementation', 'warning');
+                this.updateFilterDisplay();
+                this.renderDocuments();
+            }
+            
+            setFilter(filter) {
+                this.activeFilters.clear();
+                this.activeFilters.add(filter);
+                this.updateFilterDisplay();
+                this.renderDocuments();
+            }
+            
+            clearFilters() {
+                this.activeFilters.clear();
+                this.updateFilterDisplay();
+                this.renderDocuments();
+            }
+            
+            updateFilterDisplay() {
+                const container = document.getElementById('activeFilters');
+                container.innerHTML = '';
+                
+                if (this.activeFilters.size === 0) {
+                    document.getElementById('filterBar').style.display = 'none';
+                    return;
+                }
+                
+                document.getElementById('filterBar').style.display = 'flex';
+                
+                this.activeFilters.forEach(filter => {
+                    const [type, value] = filter.split(':');
+                    const filterElement = document.createElement('div');
+                    filterElement.className = 'filter-tag';
+                    filterElement.innerHTML = `
+                        ${this.getFilterIcon(type)}
+                        ${this.formatFilterName(type, value)}
+                        <span class="remove-filter" data-filter="${filter}">&times;</span>
+                    `;
+                    container.appendChild(filterElement);
                 });
                 
-                // Form submissions
-                document.getElementById('newThreadForm').addEventListener('submit', (e) => this.createThread(e));
-                
-                // Modal close buttons
-                document.querySelectorAll('.close-modal').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const modalId = e.target.getAttribute('data-modal');
-                        this.hideModal(modalId);
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-filter').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const filter = e.target.dataset.filter;
+                        this.activeFilters.delete(filter);
+                        this.updateFilterDisplay();
+                        this.renderDocuments();
                     });
                 });
+            }
+            
+            getFilterIcon(type) {
+                const icons = {
+                    'audience': 'fas fa-users',
+                    'specialty': 'fas fa-stethoscope',
+                    'domain': 'fas fa-cogs',
+                    'type': 'fas fa-file'
+                };
+                return `<i class="${icons[type] || 'fas fa-tag'}" style="font-size: 0.75rem;"></i>`;
+            }
+            
+            formatFilterName(type, value) {
+                const names = {
+                    'clinical': 'Clinical Team',
+                    'technical': 'Technical Team',
+                    'both': 'Both Audiences',
+                    'regulatory': 'Regulatory',
+                    'pulmonology': 'Pulmonology',
+                    'ml': 'Machine Learning',
+                    'protocol': 'Protocol',
+                    'analysis': 'Analysis'
+                };
+                return names[value] || value;
+            }
+            
+            renderDocuments() {
+                const container = document.getElementById('documentList');
+                const filteredDocs = this.getFilteredDocuments();
                 
-                document.querySelectorAll('[data-modal]').forEach(button => {
-                    if (button.type === 'button') {
-                        button.addEventListener('click', (e) => {
-                            const modalId = e.target.getAttribute('data-modal');
-                            this.hideModal(modalId);
-                        });
-                    }
+                if (filteredDocs.length === 0) {
+                    container.innerHTML = `
+                        <div class="card" style="text-align: center; padding: 3rem;">
+                            <div style="font-size: 3rem; color: var(--ui-mid); margin-bottom: 1rem;">📂</div>
+                            <h3 style="margin-bottom: 0.5rem;">No Documents Match Filters</h3>
+                            <p style="color: var(--ui-mid); margin-bottom: 1.5rem;">Try adjusting your filter criteria</p>
+                            <button class="btn btn-secondary" id="clearFiltersInline">Clear Filters</button>
+                        </div>
+                    `;
+                    
+                    document.getElementById('clearFiltersInline').addEventListener('click', () => {
+                        this.clearFilters();
+                    });
+                    
+                    return;
+                }
+                
+                container.innerHTML = filteredDocs.map(doc => `
+                    <div class="document-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <h4 style="font-weight: 600;">${doc.title}</h4>
+                            <span class="translation-badge badge-${doc.badge}">
+                                ${doc.badge === 'clinical' ? 'Clinical' : doc.badge === 'technical' ? 'Technical' : 'Both'}
+                            </span>
+                        </div>
+                        
+                        <p style="color: var(--ui-mid); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                            ${doc.description}
+                        </p>
+                        
+                        <div class="document-tags">
+                            ${doc.tags.map(tag => {
+                                const [type, value] = tag.split(':');
+                                return `<span class="tag" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" data-filter="${tag}">
+                                    ${this.getFilterIcon(type)} ${this.formatFilterName(type, value)}
+                                </span>`;
+                            }).join('')}
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.75rem; color: var(--ui-mid);">
+                            <span>By ${doc.author}</span>
+                            <span>${doc.date}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Re-add event listeners to tags in documents
+                container.querySelectorAll('.tag').forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const filter = e.target.dataset.filter;
+                        if (filter) {
+                            this.toggleFilter(filter);
+                        }
+                    });
                 });
+            }
+            
+            getFilteredDocuments() {
+                if (this.activeFilters.size === 0) {
+                    return this.documents;
+                }
                 
-                // Quick actions (all disabled)
-                document.getElementById('quickPollBtn').addEventListener('click', () => {
-                    this.showToast('Poll feature requires voting backend implementation', 'info');
-                });
-                
-                document.getElementById('scheduleMeetingBtn').addEventListener('click', () => {
-                    this.showToast('Meeting scheduling requires calendar integration', 'info');
-                });
-                
-                document.getElementById('exportDataBtn').addEventListener('click', () => {
-                    this.showToast('Data export requires backend implementation', 'info');
-                });
-                
-                document.getElementById('inviteMemberBtn').addEventListener('click', () => {
-                    this.showToast('Team invitation requires user management backend', 'info');
-                });
-                
-                document.getElementById('uploadDocumentBtn').addEventListener('click', () => {
-                    this.showToast('File upload requires secure file storage backend', 'info');
-                });
-                
-                // View API guide
-                document.getElementById('viewApiImplementation').addEventListener('click', () => {
-                    this.showModal('apiGuideModal');
-                });
-                
-                // View all activity
-                document.addEventListener('click', (e) => {
-                    if (e.target && e.target.closest('#viewAllActivity')) {
-                        this.switchTab('discussions');
-                    }
+                return this.documents.filter(doc => {
+                    return Array.from(this.activeFilters).every(filter => 
+                        doc.tags.includes(filter)
+                    );
                 });
             }
             
             switchTab(tabId) {
                 // Update active tab
                 document.querySelectorAll('.tab').forEach(tab => {
-                    tab.classList.toggle('active', tab.getAttribute('data-tab') === tabId);
+                    tab.classList.toggle('active', tab.dataset.tab === tabId);
                 });
                 
                 // Update active content
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.toggle('active', content.id === `${tabId}Tab`);
                 });
-                
-                // Load tab content if needed
-                if (tabId === 'discussions') {
-                    this.loadThreads();
-                }
             }
             
-            async loadThreads() {
-                const container = document.getElementById('discussionsList');
+            addDocument() {
+                const title = document.getElementById('docTitle').value.trim();
+                if (!title) return;
                 
-                if (this.localThreads.length === 0) {
-                    // Show empty state
-                    container.innerHTML = `
-                        <div class="empty-state" style="padding: 2rem;">
-                            <div class="empty-state-icon">💬</div>
-                            <h3 class="empty-state-title">No Discussions Yet</h3>
-                            <p class="empty-state-description">
-                                Start the first discussion to collaborate with your team. 
-                                In demo mode, discussions are stored locally only.
-                            </p>
-                            <button id="startFirstDiscussion" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                Start First Discussion (Demo)
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    this.renderThreads(this.localThreads);
-                }
-            }
-            
-            renderThreads(threads) {
-                const container = document.getElementById('discussionsList');
-                if (!container || !threads) return;
+                const newDoc = {
+                    id: this.documents.length + 1,
+                    title: title,
+                    description: "Newly uploaded document - add description in full implementation",
+                    tags: ["audience:both", "type:protocol"],
+                    date: new Date().toISOString().split('T')[0],
+                    author: "Current User",
+                    badge: "both"
+                };
                 
-                container.innerHTML = threads.map(thread => `
-                    <div class="thread-preview" data-thread-id="${thread.id}">
-                        <div class="thread-header">
-                            <h3 class="thread-title">${this.escapeHtml(thread.title)}</h3>
-                            <span class="thread-meta">
-                                ${new Date(thread.created_at).toLocaleDateString()}
-                            </span>
-                        </div>
-                        <p class="thread-excerpt">
-                            ${this.escapeHtml(thread.content.substring(0, 150))}${thread.content.length > 150 ? '...' : ''}
-                        </p>
-                        <div class="thread-engagement">
-                            <span class="engagement-item">
-                                <i class="fas fa-comment"></i> ${thread.comment_count || 0}
-                            </span>
-                            <span class="engagement-item">
-                                <i class="fas fa-heart" style="color: #EF4444;"></i> ${thread.upvotes || 0}
-                            </span>
-                            <span class="engagement-item">
-                                <i class="fas fa-flask" style="color: var(--ui-warning);"></i> Demo
-                            </span>
-                        </div>
-                    </div>
-                `).join('');
-                
-                // Add click listeners to thread previews
-                document.querySelectorAll('.thread-preview:not(.empty)').forEach(preview => {
-                    preview.addEventListener('click', (e) => {
-                        if (!e.target.closest('button')) {
-                            const threadId = preview.getAttribute('data-thread-id');
-                            this.showToast('Thread detail view requires backend implementation', 'info');
-                        }
-                    });
-                });
-            }
-            
-            async createThread(e) {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('submitThreadBtn');
-                const originalText = submitBtn.textContent;
-                
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Creating...';
-                
-                try {
-                    // Create demo thread
-                    const threadData = {
-                        id: 'thread_' + Date.now(),
-                        title: document.getElementById('threadTitle').value,
-                        content: document.getElementById('threadContent').value,
-                        category: document.getElementById('threadCategory').value,
-                        created_at: new Date().toISOString(),
-                        author: {
-                            id: this.user?.id || 'demo-user',
-                            name: this.user?.name || 'Demo User',
-                            role: this.user?.role || 'clinician'
-                        },
-                        comment_count: 0,
-                        upvotes: 0,
-                        expert_endorsed: false
-                    };
-                    
-                    // Save locally
-                    this.localThreads.unshift(threadData);
-                    localStorage.setItem(`thoraxlab_threads_${this.projectId}`, JSON.stringify(this.localThreads));
-                    
-                    // Update metrics
-                    const threadsElement = document.querySelectorAll('.stat-value')[0];
-                    const currentCount = parseInt(threadsElement.textContent) || 0;
-                    threadsElement.textContent = currentCount + 1;
-                    threadsElement.className = 'stat-value';
-                    
-                    this.hideModal('newThreadModal');
-                    document.getElementById('newThreadForm').reset();
-                    
-                    // Refresh threads if on that tab
-                    if (document.getElementById('discussionsTab').classList.contains('active')) {
-                        this.loadThreads();
-                    }
-                    
-                    this.showToast('Demo discussion created (stored locally)', 'success');
-                    
-                } catch (error) {
-                    console.error('Create thread error:', error);
-                    this.showToast('Error creating discussion', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            }
-            
-            showModal(modalId) {
-                document.getElementById(modalId).style.display = 'flex';
-            }
-            
-            hideModal(modalId) {
-                document.getElementById(modalId).style.display = 'none';
-            }
-            
-            showToast(message, type = 'info') {
-                const container = document.getElementById('toastContainer');
-                if (!container) return;
-                
-                const toast = document.createElement('div');
-                toast.className = `toast toast-${type}`;
-                
-                const icon = type === 'success' ? 'fa-check-circle' : 
-                           type === 'error' ? 'fa-exclamation-circle' : 
-                           type === 'warning' ? 'fa-exclamation-triangle' : 
-                           'fa-info-circle';
-                
-                toast.innerHTML = `
-                    <i class="fas ${icon}"></i>
-                    <span>${this.escapeHtml(message)}</span>
-                `;
-                
-                container.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.style.animation = 'toastSlideIn 0.3s ease reverse';
-                    setTimeout(() => toast.remove(), 300);
-                }, 4000);
-            }
-            
-            escapeHtml(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
+                this.documents.unshift(newDoc);
+                this.renderDocuments();
+                document.getElementById('docTitle').value = '';
             }
         }
         
-        // Initialize the project view
-        window.addEventListener('DOMContentLoaded', () => {
-            window.projectView = new ProjectView();
+        // ====================
+        // KNOWLEDGE BRIDGE
+        // ====================
+        
+        class KnowledgeBridge {
+            constructor() {
+                this.direction = 'technical-to-clinical';
+                this.history = [];
+                this.initialize();
+            }
+            
+            initialize() {
+                this.setupEventListeners();
+                this.loadSampleHistory();
+            }
+            
+            setupEventListeners() {
+                // Direction selection
+                document.querySelectorAll('.bridge-direction').forEach(dir => {
+                    dir.addEventListener('click', (e) => {
+                        this.setDirection(e.currentTarget.dataset.direction);
+                    });
+                });
+                
+                // Translation button
+                document.getElementById('translateBtn').addEventListener('click', () => {
+                    this.performTranslation();
+                });
+                
+                // Quick translate
+                document.getElementById('quickTranslate').addEventListener('click', () => {
+                    this.switchToKnowledgeTab();
+                    document.getElementById('bridgeInput').value = "FEV1 variability over time";
+                    setTimeout(() => this.performTranslation(), 100);
+                });
+                
+                // Enter key in input
+                document.getElementById('bridgeInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performTranslation();
+                    }
+                });
+            }
+            
+            setDirection(direction) {
+                this.direction = direction;
+                
+                // Update UI
+                document.querySelectorAll('.bridge-direction').forEach(dir => {
+                    dir.classList.toggle('active', dir.dataset.direction === direction);
+                });
+                
+                // Update placeholder
+                const input = document.getElementById('bridgeInput');
+                const placeholders = {
+                    'clinical-to-technical': 'Enter a clinical concept (e.g., "COPD exacerbation")...',
+                    'technical-to-clinical': 'Enter a technical concept (e.g., "random forest classifier")...',
+                    'both-ways': 'Enter any concept to see both perspectives...'
+                };
+                input.placeholder = placeholders[direction] || 'Enter a concept to translate...';
+            }
+            
+            performTranslation() {
+                const input = document.getElementById('bridgeInput').value.trim();
+                if (!input) return;
+                
+                const translation = this.generateTranslation(input);
+                this.displayTranslation(translation);
+                this.addToHistory(input, translation);
+            }
+            
+            generateTranslation(input) {
+                const translations = {
+                    // Clinical to Technical
+                    'COPD exacerbation': {
+                        technical: "Time-series classification of multivariate physiological signals for early detection of chronic obstructive pulmonary disease deterioration events.",
+                        clinical: "A sudden worsening of COPD symptoms requiring medical intervention.",
+                        analogy: "Like a weather forecast predicting storms before they hit, but for lung function."
+                    },
+                    'FEV1 variability': {
+                        technical: "Standard deviation in forced expiratory volume measurements over time, used as a feature in respiratory disease progression models.",
+                        clinical: "Changes in how much air a patient can forcefully exhale in one second, indicating lung function stability.",
+                        analogy: "Like monitoring battery life degradation patterns in smartphones."
+                    },
+                    'spirometry data': {
+                        technical: "Time-series pulmonary function test results including flow-volume loops, FVC, FEV1, and PEF metrics for respiratory analytics.",
+                        clinical: "Breathing test results that measure how well lungs are working.",
+                        analogy: "Like a car's diagnostic report showing engine performance metrics."
+                    },
+                    
+                    // Technical to Clinical
+                    'random forest classifier': {
+                        clinical: "A decision-making tool that combines multiple expert opinions to predict medical outcomes more accurately.",
+                        technical: "Ensemble learning method using multiple decision trees for classification tasks.",
+                        analogy: "Like getting a second (and third, and fourth) opinion from different specialists."
+                    },
+                    'anomaly detection': {
+                        clinical: "Spotting unusual patterns in patient data that might indicate early signs of health problems.",
+                        technical: "Identification of rare items, events or observations which differ significantly from the majority of the data.",
+                        analogy: "Like a nurse noticing subtle changes in a patient's condition before vital signs change dramatically."
+                    },
+                    'feature engineering': {
+                        clinical: "Creating meaningful measurements from raw patient data that help predict health outcomes.",
+                        technical: "Process of using domain knowledge to create features that make machine learning algorithms work better.",
+                        analogy: "Like a chef preparing ingredients in specific ways to make a better dish."
+                    }
+                };
+                
+                // Find best match
+                let bestMatch = null;
+                for (const [key, value] of Object.entries(translations)) {
+                    if (input.toLowerCase().includes(key.toLowerCase())) {
+                        bestMatch = { term: key, ...value };
+                        break;
+                    }
+                }
+                
+                // If no match, generate a dynamic translation
+                if (!bestMatch) {
+                    return this.generateDynamicTranslation(input);
+                }
+                
+                return bestMatch;
+            }
+            
+            generateDynamicTranslation(input) {
+                const isClinical = this.looksClinical(input);
+                
+                return {
+                    term: input,
+                    technical: isClinical ? 
+                        `Technical implementation would involve ${input.toLowerCase()} monitoring through sensor data analysis, predictive modeling, and automated alert systems.` :
+                        `${input} involves algorithm design, data pipeline construction, validation protocols, and deployment infrastructure.`,
+                    clinical: !isClinical ?
+                        `Clinically, ${input.toLowerCase()} helps monitor patient health, predict deterioration, and guide treatment decisions.` :
+                        `${input} is assessed through patient symptoms, diagnostic tests, treatment response, and long-term outcomes.`,
+                    analogy: isClinical ?
+                        "Like a car's dashboard warning lights - early indicators that maintenance is needed." :
+                        "Like building a bridge - requires solid foundations, careful engineering, and regular inspections."
+                };
+            }
+            
+            looksClinical(text) {
+                const clinicalTerms = ['patient', 'symptom', 'treatment', 'clinical', 'disease', 'therapy', 'medical', 'health', 'care'];
+                return clinicalTerms.some(term => text.toLowerCase().includes(term));
+            }
+            
+            displayTranslation(translation) {
+                const output = document.getElementById('bridgeOutput');
+                
+                let content = '';
+                
+                if (this.direction === 'both-ways') {
+                    content = `
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span class="translation-badge badge-clinical">Clinical Perspective</span>
+                                <i class="fas fa-arrow-right"></i>
+                                <span class="translation-badge badge-technical">Technical Perspective</span>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                                <strong>${translation.term}</strong>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <div class="translation-badge badge-clinical" style="margin-bottom: 0.5rem;">Clinical View</div>
+                                    <p style="font-size: 0.875rem;">${translation.clinical}</p>
+                                </div>
+                                <div>
+                                    <div class="translation-badge badge-technical" style="margin-bottom: 0.5rem;">Technical View</div>
+                                    <p style="font-size: 0.875rem;">${translation.technical}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (this.direction === 'clinical-to-technical') {
+                    content = `
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span class="translation-badge badge-clinical">Clinical</span>
+                                <i class="fas fa-arrow-right"></i>
+                                <span class="translation-badge badge-technical">Technical</span>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                                <strong>${translation.term}</strong>
+                                <p style="margin-top: 0.5rem; font-size: 0.875rem;">${translation.clinical}</p>
+                            </div>
+                            <div>
+                                <div class="translation-badge badge-technical" style="margin-bottom: 0.5rem;">Technical Translation</div>
+                                <p>${translation.technical}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content = `
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span class="translation-badge badge-technical">Technical</span>
+                                <i class="fas fa-arrow-right"></i>
+                                <span class="translation-badge badge-clinical">Clinical</span>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                                <strong>${translation.term}</strong>
+                                <p style="margin-top: 0.5rem; font-size: 0.875rem;">${translation.technical}</p>
+                            </div>
+                            <div>
+                                <div class="translation-badge badge-clinical" style="margin-bottom: 0.5rem;">Clinical Translation</div>
+                                <p>${translation.clinical}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Add analogy if available
+                if (translation.analogy) {
+                    content += `
+                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-lightbulb" style="color: #FBBF24;"></i>
+                                <div class="translation-badge" style="background: rgba(251, 191, 36, 0.2); color: #FBBF24;">Analogy</div>
+                            </div>
+                            <p style="font-size: 0.875rem; font-style: italic;">"${translation.analogy}"</p>
+                        </div>
+                    `;
+                }
+                
+                output.innerHTML = content;
+                output.classList.add('show');
+                
+                // Scroll to output
+                output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            addToHistory(input, translation) {
+                const historyItem = {
+                    input,
+                    translation,
+                    direction: this.direction,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                
+                this.history.unshift(historyItem);
+                if (this.history.length > 5) this.history.pop();
+                
+                this.updateHistoryDisplay();
+            }
+            
+            loadSampleHistory() {
+                this.history = [
+                    {
+                        input: "random forest classifier",
+                        translation: this.generateTranslation("random forest classifier"),
+                        direction: "technical-to-clinical",
+                        timestamp: "10:30 AM"
+                    },
+                    {
+                        input: "spirometry data quality",
+                        translation: this.generateTranslation("spirometry data"),
+                        direction: "both-ways",
+                        timestamp: "09:45 AM"
+                    }
+                ];
+                
+                this.updateHistoryDisplay();
+            }
+            
+            updateHistoryDisplay() {
+                const container = document.getElementById('translationHistory');
+                
+                if (this.history.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--ui-mid);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💭</div>
+                            <p>No translations yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = this.history.map(item => `
+                    <div style="padding: 0.75rem; border-bottom: 1px solid var(--ui-border);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                            <div style="font-weight: 600; font-size: 0.875rem;">${item.input}</div>
+                            <div style="font-size: 0.75rem; color: var(--ui-mid);">${item.timestamp}</div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--ui-mid);">
+                            ${item.direction === 'clinical-to-technical' ? 'Clinical → Technical' : 
+                              item.direction === 'technical-to-clinical' ? 'Technical → Clinical' : 'Both Directions'}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            switchToKnowledgeTab() {
+                // Simulate clicking the knowledge tab
+                document.querySelector('[data-tab="knowledge"]').click();
+            }
+        }
+        
+        // ====================
+        // INITIALIZATION
+        // ====================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.docs = new DocumentationSystem();
+            window.bridge = new KnowledgeBridge();
+            
+            // Initialize filter bar visibility
+            document.getElementById('filterBar').style.display = 'none';
         });
     </script>
 </body>
