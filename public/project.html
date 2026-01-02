@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[THØRAX][LAB] | Project</title>
     
-    <!-- Same dependencies as index.html -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Reuse the exact same CSS variables and base styles from index.html */
         :root {
             --thorax-primary: #1A5F7A;
             --thorax-secondary: #0D8B70;
@@ -35,7 +34,6 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* Same header styles as index.html */
         .app-header {
             background: var(--ui-card);
             border-bottom: 1px solid var(--ui-border);
@@ -90,7 +88,6 @@
         .user-name { font-weight: 600; font-size: 0.875rem; }
         .user-role { font-size: 0.75rem; color: var(--ui-light); }
         
-        /* Project-specific styles */
         .project-container {
             padding: 2rem 0;
         }
@@ -208,7 +205,6 @@
             border-color: var(--thorax-primary);
         }
         
-        /* Two-column layout */
         .project-layout {
             display: grid;
             grid-template-columns: 1fr 350px;
@@ -233,7 +229,6 @@
             gap: 2rem;
         }
         
-        /* Project sections */
         .project-section {
             background: var(--ui-card);
             border-radius: 14px;
@@ -264,7 +259,6 @@
             margin-bottom: 1rem;
         }
         
-        /* Team section */
         .team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -332,7 +326,6 @@
             color: var(--thorax-accent);
         }
         
-        /* Timeline */
         .timeline {
             position: relative;
             padding-left: 2rem;
@@ -377,7 +370,6 @@
             margin-bottom: 0.25rem;
         }
         
-        /* Engagement Preview */
         .engagement-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -405,7 +397,6 @@
             color: var(--ui-light);
         }
         
-        /* Thread Preview */
         .thread-preview {
             padding: 1rem;
             border: 1px solid var(--ui-border);
@@ -459,7 +450,6 @@
             gap: 0.25rem;
         }
         
-        /* Toast - same as index.html */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -488,7 +478,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
-        /* Loading states */
         .loading {
             display: flex;
             flex-direction: column;
@@ -513,7 +502,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Error state */
         .error-state {
             text-align: center;
             padding: 4rem 2rem;
@@ -526,7 +514,6 @@
             opacity: 0.3;
         }
         
-        /* Modal - same as index.html */
         .modal {
             position: fixed;
             top: 0;
@@ -575,7 +562,6 @@
             line-height: 1;
         }
         
-        /* Form styles */
         .form-group {
             display: flex;
             flex-direction: column;
@@ -617,7 +603,6 @@
         
         .hidden { display: none !important; }
         
-        /* Tab navigation */
         .tabs {
             display: flex;
             border-bottom: 1px solid var(--ui-border);
@@ -656,10 +641,8 @@
     </style>
 </head>
 <body>
-    <!-- Toast container - same as index.html -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- Header - consistent with index.html -->
     <header class="app-header">
         <div class="container">
             <div class="header-content">
@@ -683,16 +666,13 @@
         </div>
     </header>
     
-    <!-- Main project content -->
     <main class="project-container">
         <div class="container">
-            <!-- Loading state -->
             <div id="loadingState" class="loading">
                 <div class="spinner"></div>
                 <p>Loading project details...</p>
             </div>
             
-            <!-- Error state -->
             <div id="errorState" class="error-state hidden">
                 <div class="error-icon">⚠️</div>
                 <h3 style="color: var(--ui-dark); margin-bottom: 0.5rem;">Project Not Found</h3>
@@ -703,15 +683,12 @@
                 </a>
             </div>
             
-            <!-- Project content (hidden until loaded) -->
             <div id="projectContent" class="hidden">
-                <!-- Back navigation -->
                 <a href="index.html" class="back-button">
                     <i class="fas fa-arrow-left"></i>
                     Back to All Projects
                 </a>
                 
-                <!-- Project header -->
                 <div class="project-header">
                     <div class="project-title-section">
                         <h1 id="projectTitle" class="project-title">Loading project...</h1>
@@ -739,11 +716,8 @@
                     </div>
                 </div>
                 
-                <!-- Two-column layout -->
                 <div class="project-layout">
-                    <!-- Main content -->
                     <div class="project-main">
-                        <!-- Tab navigation -->
                         <div class="tabs">
                             <button class="tab active" data-tab="overview">Overview</button>
                             <button class="tab" data-tab="discussions">Discussions</button>
@@ -751,7 +725,6 @@
                             <button class="tab" data-tab="timeline">Timeline</button>
                         </div>
                         
-                        <!-- Overview tab -->
                         <div id="overviewTab" class="tab-content active">
                             <div class="project-section">
                                 <div class="section-header">
@@ -770,7 +743,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Recent activity preview -->
                             <div class="project-section">
                                 <div class="section-header">
                                     <h2 class="section-title">Recent Activity</h2>
@@ -780,7 +752,6 @@
                                 </div>
                                 
                                 <div id="recentActivity">
-                                    <!-- Recent threads/comments will be loaded here -->
                                     <div class="thread-preview">
                                         <div class="thread-header">
                                             <h3 class="thread-title">Dataset anomalies in Group C</h3>
@@ -823,7 +794,6 @@
                             </div>
                         </div>
                         
-                        <!-- Discussions tab -->
                         <div id="discussionsTab" class="tab-content">
                             <div class="project-section">
                                 <div class="section-header">
@@ -834,7 +804,6 @@
                                     </button>
                                 </div>
                                 <div id="discussionsList">
-                                    <!-- Threads will be loaded here -->
                                     <p style="color: var(--ui-light); text-align: center; padding: 2rem;">
                                         Loading discussion threads...
                                     </p>
@@ -842,7 +811,6 @@
                             </div>
                         </div>
                         
-                        <!-- Documents tab -->
                         <div id="documentsTab" class="tab-content">
                             <div class="project-section">
                                 <div class="section-header">
@@ -853,7 +821,6 @@
                                     </button>
                                 </div>
                                 <div id="documentsList">
-                                    <!-- Documents will be loaded here -->
                                     <p style="color: var(--ui-light); text-align: center; padding: 2rem;">
                                         No documents uploaded yet.
                                     </p>
@@ -861,14 +828,12 @@
                             </div>
                         </div>
                         
-                        <!-- Timeline tab -->
                         <div id="timelineTab" class="tab-content">
                             <div class="project-section">
                                 <div class="section-header">
                                     <h2 class="section-title">Project Timeline</h2>
                                 </div>
                                 <div id="projectTimeline" class="timeline">
-                                    <!-- Timeline items will be loaded here -->
                                     <div class="timeline-item">
                                         <div class="timeline-dot"></div>
                                         <div class="timeline-content">
@@ -895,9 +860,7 @@
                         </div>
                     </div>
                     
-                    <!-- Sidebar -->
                     <div class="project-sidebar">
-                        <!-- Team section -->
                         <div class="project-section">
                             <div class="section-header">
                                 <h2 class="section-title">Project Team</h2>
@@ -906,7 +869,6 @@
                                 </button>
                             </div>
                             <div class="team-grid" id="teamList">
-                                <!-- Team members will be loaded here -->
                                 <div class="team-member">
                                     <div class="member-avatar">AC</div>
                                     <div class="member-info">
@@ -930,7 +892,6 @@
                             </div>
                         </div>
                         
-                        <!-- Engagement stats -->
                         <div class="project-section">
                             <div class="section-header">
                                 <h2 class="section-title">Engagement</h2>
@@ -955,7 +916,6 @@
                             </div>
                         </div>
                         
-                        <!-- Quick actions -->
                         <div class="project-section">
                             <div class="section-header">
                                 <h2 class="section-title">Quick Actions</h2>
@@ -981,9 +941,6 @@
         </div>
     </main>
     
-    <!-- Modals -->
-    
-    <!-- New Discussion Modal -->
     <div id="newThreadModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1019,7 +976,6 @@
                 <div class="form-group">
                     <label class="form-label">Tag Team Members (optional)</label>
                     <div id="tagMembersContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.875rem; border: 2px solid var(--ui-border); border-radius: var(--radius-md); min-height: 48px;">
-                        <!-- Tagged members will appear here -->
                     </div>
                     <small style="color: var(--ui-light);">Type @ to mention team members</small>
                 </div>
@@ -1036,7 +992,6 @@
         </div>
     </div>
     
-    <!-- Edit Project Modal -->
     <div id="editProjectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1098,7 +1053,6 @@
             
             checkAuth() {
                 if (!this.token || !this.user) {
-                    // Redirect to login if not authenticated
                     window.location.href = 'index.html';
                     return;
                 }
@@ -1154,15 +1108,12 @@
             }
             
             renderProject(project) {
-                // Hide loading, show content
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('projectContent').classList.remove('hidden');
                 
-                // Update project details
                 document.getElementById('projectTitle').textContent = project.title;
                 document.getElementById('projectDescription').innerHTML = this.formatDescription(project.description);
                 
-                // Update metadata
                 const createdDate = new Date(project.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -1170,12 +1121,10 @@
                 });
                 document.getElementById('projectCreated').textContent = `Created ${createdDate}`;
                 
-                // Update status
                 const statusElement = document.getElementById('projectStatus');
-                statusElement.className = `project-status status-${project.status}`;
-                statusElement.innerHTML = `<i class="fas fa-circle"></i> ${this.capitalize(project.status)}`;
+                statusElement.className = `project-status status-${project.status || 'active'}`;
+                statusElement.innerHTML = `<i class="fas fa-circle"></i> ${this.capitalize(project.status || 'active')}`;
                 
-                // Update engagement stats
                 if (project.metrics) {
                     document.getElementById('threadCount').textContent = project.metrics.threads || 0;
                     document.getElementById('commentCount').textContent = project.metrics.comments || 0;
@@ -1183,24 +1132,20 @@
                     document.getElementById('fileCount').textContent = project.metrics.files || 0;
                 }
                 
-                // Load team members
                 if (project.team && Array.isArray(project.team)) {
                     this.teamMembers = project.team;
                     this.renderTeamMembers(project.team);
                 }
                 
-                // Populate edit form
                 document.getElementById('editProjectTitle').value = project.title;
                 document.getElementById('editProjectDescription').value = project.description;
-                document.getElementById('editProjectStatus').value = project.status;
+                document.getElementById('editProjectStatus').value = project.status || 'active';
                 
-                // Load recent activity
                 this.loadRecentActivity();
             }
             
             formatDescription(text) {
                 if (!text) return '';
-                // Convert line breaks to paragraphs
                 return text.split('\n').filter(p => p.trim()).map(p => `<p>${this.escapeHtml(p)}</p>`).join('');
             }
             
@@ -1211,13 +1156,13 @@
                 container.innerHTML = team.map(member => `
                     <div class="team-member">
                         <div class="member-avatar">
-                            ${member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                            ${member.avatar_initials || member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
                         </div>
                         <div class="member-info">
                             <div class="member-name">${this.escapeHtml(member.name)}</div>
                             <div class="member-role">
-                                <span class="role-badge role-${member.role}">
-                                    ${member.role === 'clinician' ? 'Clinician' : 'Industry'}
+                                <span class="role-badge role-${member.user_role || member.role}">
+                                    ${(member.user_role || member.role) === 'clinician' ? 'Clinician' : 'Industry'}
                                 </span>
                                 ${member.specialty || member.title || ''}
                             </div>
@@ -1247,8 +1192,7 @@
                 const container = document.getElementById('recentActivity');
                 if (!container || !activity) return;
                 
-                // For now, show placeholder - will be replaced with actual data
-                // In real implementation, you would map activity items to HTML
+                // Activity rendering logic here
             }
             
             showError(message) {
@@ -1262,7 +1206,6 @@
             }
             
             setupEventListeners() {
-                // Tab navigation
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', (e) => {
                         const tabId = e.target.getAttribute('data-tab');
@@ -1270,7 +1213,6 @@
                     });
                 });
                 
-                // New thread button
                 document.getElementById('newThreadBtn').addEventListener('click', () => {
                     this.showModal('newThreadModal');
                 });
@@ -1279,16 +1221,13 @@
                     this.showModal('newThreadModal');
                 });
                 
-                // Edit project button
                 document.getElementById('editProjectBtn').addEventListener('click', () => {
                     this.showModal('editProjectModal');
                 });
                 
-                // Form submissions
                 document.getElementById('newThreadForm').addEventListener('submit', (e) => this.createThread(e));
                 document.getElementById('editProjectForm').addEventListener('submit', (e) => this.updateProject(e));
                 
-                // Modal close buttons
                 document.querySelectorAll('.close-modal').forEach(button => {
                     button.addEventListener('click', (e) => {
                         const modalId = e.target.getAttribute('data-modal');
@@ -1305,7 +1244,6 @@
                     }
                 });
                 
-                // Quick actions
                 document.getElementById('quickPollBtn').addEventListener('click', () => {
                     this.showToast('Poll feature coming soon!', 'info');
                 });
@@ -1332,17 +1270,14 @@
             }
             
             switchTab(tabId) {
-                // Update active tab
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.classList.toggle('active', tab.getAttribute('data-tab') === tabId);
                 });
                 
-                // Update active content
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.toggle('active', content.id === `${tabId}Tab`);
                 });
                 
-                // Load tab content if needed
                 if (tabId === 'discussions') {
                     this.loadDiscussions();
                 } else if (tabId === 'documents') {
@@ -1432,12 +1367,10 @@
                     </div>
                 `).join('');
                 
-                // Add click listeners to thread previews
                 document.querySelectorAll('.thread-preview').forEach(preview => {
                     preview.addEventListener('click', (e) => {
                         if (!e.target.closest('button')) {
                             const threadId = preview.getAttribute('data-thread-id');
-                            // In a real app, this would open the thread detail view
                             this.showToast('Thread detail view coming soon!', 'info');
                         }
                     });
@@ -1445,7 +1378,6 @@
             }
             
             async loadDocuments() {
-                // Placeholder - would fetch documents from API
                 const container = document.getElementById('documentsList');
                 container.innerHTML = `
                     <div style="text-align: center; padding: 3rem; color: var(--ui-light);">
@@ -1457,8 +1389,7 @@
             }
             
             async loadTimeline() {
-                // Placeholder - would fetch timeline events from API
-                // For now, the static timeline remains
+                // Static timeline remains
             }
             
             async createThread(e) {
@@ -1471,7 +1402,7 @@
                 submitBtn.textContent = 'Creating...';
                 
                 try {
-                    const response = await fetch(`/api/projects/${this.projectId}/threads`, {
+                    const response = await fetch(`/api/projects/${this.projectId}/discussions`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
@@ -1479,7 +1410,7 @@
                         },
                         body: JSON.stringify({
                             title: document.getElementById('threadTitle').value,
-                            category: document.getElementById('threadCategory').value,
+                            type: document.getElementById('threadCategory').value,
                             content: document.getElementById('threadContent').value
                         })
                     });
@@ -1490,12 +1421,10 @@
                         this.hideModal('newThreadModal');
                         document.getElementById('newThreadForm').reset();
                         
-                        // Refresh discussions if on that tab
                         if (document.getElementById('discussionsTab').classList.contains('active')) {
                             this.loadDiscussions();
                         }
                         
-                        // Update engagement stats
                         const threadCount = document.getElementById('threadCount');
                         threadCount.textContent = parseInt(threadCount.textContent) + 1;
                         
@@ -1539,7 +1468,7 @@
                     
                     if (data.success) {
                         this.hideModal('editProjectModal');
-                        this.loadProject(); // Refresh project data
+                        this.loadProject();
                         this.showToast('Project updated successfully!', 'success');
                     } else {
                         this.showToast(data.error || 'Failed to update project', 'error');
@@ -1565,7 +1494,7 @@
                 if (!this.token || this.ws) return;
                 
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}/project/${this.projectId}`;
+                const wsUrl = `${protocol}//${window.location.host}/ws`;
                 
                 this.ws = new WebSocket(wsUrl);
                 
@@ -1587,9 +1516,6 @@
                         case 'new_comment':
                             this.handleNewComment(message.comment);
                             break;
-                        case 'thread_updated':
-                            this.handleThreadUpdate(message.thread);
-                            break;
                         case 'project_updated':
                             this.loadProject();
                             break;
@@ -1604,32 +1530,20 @@
             handleNewThread(thread) {
                 this.showToast(`New discussion: ${thread.title}`, 'info');
                 
-                // Update thread count
                 const threadCount = document.getElementById('threadCount');
                 threadCount.textContent = parseInt(threadCount.textContent) + 1;
                 
-                // If we're on the discussions tab, refresh
                 if (document.getElementById('discussionsTab').classList.contains('active')) {
                     this.loadDiscussions();
                 }
             }
             
             handleNewComment(comment) {
-                // Update comment count
                 const commentCount = document.getElementById('commentCount');
                 commentCount.textContent = parseInt(commentCount.textContent) + 1;
                 
-                // Show notification if relevant
                 if (comment.mentions && comment.mentions.includes(this.user.id)) {
                     this.showToast(`You were mentioned in a comment`, 'info');
-                }
-            }
-            
-            handleThreadUpdate(thread) {
-                // Could update specific thread in UI if it's visible
-                // For now, just refresh if on discussions tab
-                if (document.getElementById('discussionsTab').classList.contains('active')) {
-                    this.loadDiscussions();
                 }
             }
             
@@ -1675,7 +1589,6 @@
             }
         }
         
-        // Initialize the project view
         window.addEventListener('DOMContentLoaded', () => {
             window.projectView = new ProjectView();
         });
