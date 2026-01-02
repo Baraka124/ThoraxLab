@@ -14,6 +14,18 @@ const wss = new WebSocket.Server({ server });
 const clients = new Map();
 const projectConnections = new Map();
 
+function broadcastToProject(projectId, message) {
+    const projectClients = projectConnections.get(projectId);
+    if (projectClients) {
+        projectClients.forEach(clientId => {
+            const client = clients.get(clientId);
+            if (client && client.ws.readyState === WebSocket.OPEN) {
+                client.ws.send(JSON.stringify(message));
+            }
+        });
+    }
+}
+
 wss.on('connection', (ws, req) => {
     const clientId = `client_${uuidv4()}`;
     clients.set(clientId, { ws, userId: null, projectId: null });
@@ -27,9 +39,9 @@ wss.on('connection', (ws, req) => {
                 if (session) {
                     const client = clients.get(clientId);
                     client.userId = session.user_id;
+                    client.projectId = message.project_id || null;
                     
                     if (message.project_id) {
-                        client.projectId = message.project_id;
                         if (!projectConnections.has(message.project_id)) {
                             projectConnections.set(message.project_id, new Set());
                         }
@@ -39,7 +51,7 @@ wss.on('connection', (ws, req) => {
                     ws.send(JSON.stringify({ 
                         type: 'authenticated', 
                         userId: session.user_id,
-                        projectId: message.project_id 
+                        projectId: message.project_id || null
                     }));
                 }
             }
@@ -62,18 +74,6 @@ wss.on('connection', (ws, req) => {
         clients.delete(clientId);
     });
 });
-
-function broadcastToProject(projectId, message) {
-    const projectClients = projectConnections.get(projectId);
-    if (projectClients) {
-        projectClients.forEach(clientId => {
-            const client = clients.get(clientId);
-            if (client && client.ws.readyState === WebSocket.OPEN) {
-                client.ws.send(JSON.stringify(message));
-            }
-        });
-    }
-}
 
 // ===== Express Setup =====
 app.use(cors({ origin: true, credentials: true }));
@@ -197,6 +197,7 @@ app.get('/api/dashboard', authenticateToken, async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Dashboard error:', error);
         res.status(500).json({ error: 'Failed to load dashboard' });
     }
 });
@@ -229,7 +230,7 @@ app.post('/api/projects', authenticateToken, async (req, res) => {
             objectives
         }, req.user.id);
         
-        broadcastToUser(req.user.id, {
+        broadcastToProject(project.id, {
             type: 'project_created',
             project,
             timestamp: new Date().toISOString()
@@ -522,16 +523,7 @@ async function startServer() {
     }
 }
 
-// Helper function
-function broadcastToUser(userId, message) {
-    clients.forEach((client) => {
-        if (client.userId === userId && client.ws.readyState === WebSocket.OPEN) {
-            client.ws.send(JSON.stringify(message));
-        }
-    });
-}
-
-// Graceful shutdown
+// ===== Graceful Shutdown =====
 process.on('SIGTERM', async () => {
     await database.close();
     process.exit(0);
