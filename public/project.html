@@ -3,139 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[THØRAX][LAB] | Project Workspace</title>
+    <title>[THØRAX][LAB] | Project</title>
     
-    <!-- Fonts & Icons -->
+    <!-- Same dependencies as index.html -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ===== CORE VARIABLES ===== */
+        /* Reuse the exact same CSS variables and base styles from index.html */
         :root {
-            /* Brand Colors */
-            --thorax-primary: #1A5F7A;      /* Clinical Blue */
-            --thorax-secondary: #0D8B70;     /* Medical Green */
-            --thorax-accent: #6D5ACF;        /* Innovation Purple */
-            --thorax-warning: #F59E0B;
-            --thorax-error: #EF4444;
-            --thorax-success: #10B981;
-            
-            /* Role Colors */
-            --role-clinician: #1A5F7A;
-            --role-industry: #6D5ACF;
-            --role-lead: #0D8B70;
-            
-            /* Discussion Type Colors */
-            --type-clinical: #1A5F7A;
-            --type-technical: #6D5ACF;
-            --type-joint: #0D8B70;
-            
-            /* UI Colors */
+            --thorax-primary: #1A5F7A;
+            --thorax-secondary: #0D8B70;
+            --thorax-accent: #6D5ACF;
             --ui-dark: #1E293B;
-            --ui-dark-secondary: #334155;
-            --ui-medium: #475569;
             --ui-light: #64748B;
-            --ui-lighter: #94A3B8;
             --ui-bg: #F8FAFC;
             --ui-card: #FFFFFF;
             --ui-border: #E2E8F0;
-            --ui-hover: #F1F5F9;
-            
-            /* Typography */
-            --font-display: 'SF Mono', monospace;
-            --font-body: 'Inter', sans-serif;
-            
-            /* Spacing & Effects */
-            --radius-sm: 6px;
             --radius-md: 10px;
-            --radius-lg: 14px;
-            --radius-xl: 18px;
-            --radius-full: 9999px;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: var(--font-body);
-            background: var(--ui-bg);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--ui-bg); 
             color: var(--ui-dark);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* ===== TYPOGRAPHY ===== */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-            line-height: 1.2;
-            margin-bottom: 0.5em;
-        }
-        
-        h1 { font-size: 2rem; }
-        h2 { font-size: 1.5rem; }
-        h3 { font-size: 1.25rem; }
-        
-        .text-body { font-size: 1rem; }
-        .text-small { font-size: 0.875rem; }
-        .text-xsmall { font-size: 0.75rem; }
-        
-        .text-light { color: var(--ui-light); }
-        .text-medium { color: var(--ui-medium); }
-        .text-dark { color: var(--ui-dark); }
-        
-        /* ===== IMPROVEMENT: ACCESSIBILITY FOCUS ===== */
-        :focus-visible {
-            outline: 3px solid var(--thorax-primary);
-            outline-offset: 2px;
-            outline-style: solid;
-        }
-        
-        button:focus:not(:focus-visible),
-        input:focus:not(:focus-visible),
-        textarea:focus:not(:focus-visible) {
-            outline: none;
-        }
-        
-        .btn:focus-visible,
-        .action-btn:focus-visible,
-        .modal-close:focus-visible {
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.3);
-        }
-        
-        /* ===== IMPROVEMENT: PERFORMANCE ===== */
-        .discussion-list,
-        .team-list,
-        .decision-list {
-            transform: translateZ(0);
-            will-change: transform;
-        }
-        
-        /* ===== LAYOUT CONTAINERS ===== */
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        
-        .page-container {
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
         }
         
-        /* ===== HEADER ===== */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+        
+        /* Same header styles as index.html */
         .app-header {
             background: var(--ui-card);
             border-bottom: 1px solid var(--ui-border);
@@ -153,784 +53,132 @@
             padding: 1rem 0;
         }
         
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
-        /* ===== NEW LOGO: [THØRAX][LAB] ===== */
         .nav-brand {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-family: 'SF Mono', monospace;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--ui-dark);
             text-decoration: none;
+        }
+        
+        .user-profile {
             display: flex;
             align-items: center;
-            gap: 0;
-            letter-spacing: -0.02em;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 9999px;
+            background: var(--ui-bg);
+            transition: all 0.2s;
+            cursor: pointer;
         }
         
-        .logo-bracket {
-            color: var(--ui-light);
-            font-weight: 400;
-        }
+        .user-profile:hover { background: var(--ui-border); }
         
-        .logo-main {
-            color: var(--thorax-primary);
-            font-weight: 700;
-        }
-        
-        .logo-lab {
-            color: var(--thorax-accent);
-            font-weight: 500;
-            font-size: 0.9em;
-            margin-left: -0.05em;
-        }
-        
-        .back-link {
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-accent));
+            color: white;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .user-name { font-weight: 600; font-size: 0.875rem; }
+        .user-role { font-size: 0.75rem; color: var(--ui-light); }
+        
+        /* Project-specific styles */
+        .project-container {
+            padding: 2rem 0;
+        }
+        
+        .back-button {
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--ui-medium);
+            color: var(--thorax-primary);
             text-decoration: none;
-            font-size: 0.875rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--radius-md);
-            transition: var(--transition);
-        }
-        
-        .back-link:hover {
-            background: var(--ui-hover);
-            color: var(--ui-dark);
-        }
-        
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        /* ===== PROJECT COMMAND CENTER ===== */
-        .project-command {
-            background: linear-gradient(135deg, var(--thorax-primary) 0%, #14485E 100%);
-            color: white;
-            padding: 2.5rem 0;
+            font-weight: 500;
             margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
         }
         
-        .command-header {
+        .back-button:hover {
+            background: rgba(26, 95, 122, 0.1);
+        }
+        
+        .project-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .project-title-section {
+            flex: 1;
+            min-width: 300px;
         }
         
         .project-title {
             font-size: 2rem;
             font-weight: 700;
-            line-height: 1.2;
+            color: var(--ui-dark);
             margin-bottom: 0.5rem;
+            line-height: 1.2;
         }
         
-        .project-type-badge {
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            color: var(--ui-light);
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+        
+        .project-status {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .command-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .command-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .command-stat {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-        
-        /* ===== BRIDGE VISUALIZATION ===== */
-        .bridge-section {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .bridge-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .bridge-visual {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            position: relative;
-            min-height: 200px;
-        }
-        
-        .bridge-side {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 0 1rem;
-        }
-        
-        .bridge-center {
-            padding: 0 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            min-width: 200px;
-        }
-        
-        .bridge-connection {
-            width: 120px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--role-clinician), var(--role-industry));
-            border-radius: 2px;
-            position: relative;
-        }
-        
-        .bridge-connection::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: 0;
-            right: 0;
-            height: 12px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(26, 95, 122, 0.2) 20%, 
-                rgba(107, 91, 207, 0.2) 80%, 
-                transparent 100%);
-            border-radius: 6px;
-        }
-        
-        .objectives-matrix {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .objectives-column {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .column-header {
-            font-weight: 600;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.5rem 0;
-            border-bottom: 2px solid;
-        }
-        
-        .clinical-header {
-            color: var(--role-clinician);
-            border-color: var(--role-clinician);
-        }
-        
-        .shared-header {
-            color: var(--thorax-accent);
-            border-color: var(--thorax-accent);
-        }
-        
-        .industry-header {
-            color: var(--role-industry);
-            border-color: var(--role-industry);
-        }
-        
-        .objective-item {
-            padding: 0.75rem;
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-        
-        .objective-check {
-            color: var(--thorax-success);
-            flex-shrink: 0;
-            margin-top: 0.125rem;
-        }
-        
-        /* ===== MAIN CONTENT LAYOUT ===== */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* ===== DISCUSSIONS SECTION ===== */
-        .discussions-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-        }
-        
-        .section-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        /* ===== IMPROVEMENT: SEARCH FUNCTIONALITY ===== */
-        .search-box {
-            flex: 1;
-            max-width: 300px;
-            margin-right: 1rem;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.625rem 1rem;
-            border: 2px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            font-family: var(--font-body);
-            font-size: 0.875rem;
-            transition: var(--transition);
-            background: var(--ui-card);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--thorax-primary);
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-        }
-        
-        /* Discussion List */
-        .discussion-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .discussion-item {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
-            padding: 1.5rem;
-            transition: var(--transition);
-        }
-        
-        .discussion-item:hover {
-            border-color: var(--thorax-primary);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .discussion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        
-        .discussion-author {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-            font-size: 0.875rem;
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        /* ===== IMPROVEMENT: USER PRESENCE INDICATORS ===== */
-        .presence-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            border: 2px solid var(--ui-card);
-        }
-        
-        .presence-online {
-            background: var(--thorax-success);
-        }
-        
-        .presence-away {
-            background: var(--thorax-warning);
-        }
-        
-        .presence-offline {
-            background: var(--ui-light);
-        }
-        
-        .avatar-clinician {
-            background: var(--role-clinician);
-        }
-        
-        .avatar-industry {
-            background: var(--role-industry);
-        }
-        
-        .avatar-lead {
-            background: var(--role-lead);
-        }
-        
-        .author-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.125rem;
-        }
-        
-        .author-name {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--ui-dark);
-        }
-        
-        .author-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--ui-light);
-        }
-        
-        .discussion-type {
             padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-full);
+            border-radius: 9999px;
+            font-weight: 500;
             font-size: 0.75rem;
-            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         
-        .type-clinical {
-            background: rgba(26, 95, 122, 0.1);
-            color: var(--type-clinical);
-        }
-        
-        .type-technical {
-            background: rgba(107, 91, 207, 0.1);
-            color: var(--type-technical);
-        }
-        
-        .type-joint {
-            background: rgba(13, 139, 112, 0.1);
-            color: var(--type-joint);
-        }
-        
-        .discussion-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--ui-dark);
-            margin-bottom: 0.75rem;
-        }
-        
-        .discussion-content {
-            color: var(--ui-medium);
-            margin-bottom: 1.25rem;
-            line-height: 1.6;
-        }
-        
-        /* Evidence Panel */
-        .evidence-panel {
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            margin-bottom: 1.25rem;
-            border: 1px solid var(--ui-border);
-        }
-        
-        .evidence-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--thorax-success);
-        }
-        
-        .evidence-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .evidence-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--ui-medium);
-        }
-        
-        .evidence-icon {
-            color: var(--thorax-success);
-            flex-shrink: 0;
-            margin-top: 0.125rem;
-        }
-        
-        /* Consensus Meter */
-        .consensus-meter {
-            margin: 1.25rem 0;
-            padding: 1.25rem;
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--ui-border);
-        }
-        
-        .consensus-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .consensus-title {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--ui-dark);
-        }
-        
-        .consensus-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .status-pending {
-            background: rgba(100, 116, 139, 0.1);
-            color: var(--ui-light);
-        }
-        
-        .status-low {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--thorax-error);
-        }
-        
-        .status-medium {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--thorax-warning);
-        }
-        
-        .status-high {
+        .status-active {
             background: rgba(16, 185, 129, 0.1);
-            color: var(--thorax-success);
+            color: #10B981;
         }
         
-        .consensus-bars {
+        .status-completed {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366F1;
+        }
+        
+        .project-actions {
             display: flex;
-            flex-direction: column;
             gap: 1rem;
         }
         
-        .consensus-bar {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .bar-label {
-            font-size: 0.875rem;
-            color: var(--ui-medium);
-            min-width: 120px;
-        }
-        
-        .bar-container {
-            flex: 1;
-            height: 8px;
-            background: var(--ui-border);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        .bar-clinical {
-            background: var(--role-clinician);
-        }
-        
-        .bar-technical {
-            background: var(--role-industry);
-        }
-        
-        .bar-value {
-            font-size: 0.875rem;
-            font-weight: 600;
-            min-width: 40px;
-            text-align: right;
-        }
-        
-        .vote-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        /* Discussion Actions */
-        .discussion-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1.25rem;
-            border-top: 1px solid var(--ui-border);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .discussion-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: var(--ui-light);
-        }
-        
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        /* Team Section */
-        .team-section {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
-            padding: 1.5rem;
-        }
-        
-        .team-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .team-member:hover {
-            background: var(--ui-hover);
-        }
-        
-        .member-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-            font-size: 0.75rem;
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .member-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .member-name {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--ui-dark);
-            margin-bottom: 0.125rem;
-        }
-        
-        .member-role {
-            font-size: 0.75rem;
-            color: var(--ui-light);
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 0.125rem 0.5rem;
-            border-radius: var(--radius-full);
-            font-size: 0.6875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-right: 0.25rem;
-        }
-        
-        .badge-clinician {
-            background: rgba(26, 95, 122, 0.1);
-            color: var(--role-clinician);
-        }
-        
-        .badge-industry {
-            background: rgba(107, 91, 207, 0.1);
-            color: var(--role-industry);
-        }
-        
-        .badge-lead {
-            background: rgba(13, 139, 112, 0.1);
-            color: var(--role-lead);
-        }
-        
-        /* Project Info */
-        .info-section {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
-            padding: 1.5rem;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-        
-        .info-item {
-            padding: 0.75rem;
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-        }
-        
-        .info-label {
-            font-size: 0.75rem;
-            color: var(--ui-light);
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .info-value {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--ui-dark);
-        }
-        
-        /* Decisions Section */
-        .decisions-section {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
-            padding: 1.5rem;
-        }
-        
-        .decision-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .decision-item {
-            padding: 0.75rem;
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--thorax-success);
-        }
-        
-        .decision-title {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--ui-dark);
-            margin-bottom: 0.25rem;
-        }
-        
-        .decision-meta {
-            font-size: 0.75rem;
-            color: var(--ui-light);
-        }
-        
-        /* ===== BUTTONS ===== */
         .btn {
-            padding: 0.625rem 1.25rem;
+            padding: 0.875rem 1.5rem;
             border-radius: var(--radius-md);
-            font-family: var(--font-body);
-            font-size: 0.875rem;
+            font-family: inherit;
+            font-size: 1rem;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -950,70 +198,268 @@
         }
         
         .btn-secondary {
-            background: var(--ui-bg);
+            background: white;
             color: var(--ui-dark);
-            border: 2px solid var(--ui-border);
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--ui-card);
-            border-color: var(--ui-light);
-        }
-        
-        .btn-success {
-            background: var(--thorax-success);
-            color: white;
-        }
-        
-        .btn-warning {
-            background: var(--thorax-warning);
-            color: white;
-        }
-        
-        .btn-small {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.75rem;
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        /* Action Buttons */
-        .action-btn {
-            padding: 0.5rem 0.75rem;
-            background: var(--ui-bg);
             border: 1px solid var(--ui-border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--ui-bg);
+            border-color: var(--thorax-primary);
+        }
+        
+        /* Two-column layout */
+        .project-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .project-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .project-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .project-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        /* Project sections */
+        .project-section {
+            background: var(--ui-card);
+            border-radius: 14px;
+            padding: 1.75rem;
+            border: 1px solid var(--ui-border);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--ui-dark);
+        }
+        
+        .project-description {
+            color: var(--ui-dark);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-description p {
+            margin-bottom: 1rem;
+        }
+        
+        /* Team section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
             border-radius: var(--radius-md);
+            border: 1px solid var(--ui-border);
+            transition: all 0.2s;
+        }
+        
+        .team-member:hover {
+            border-color: var(--thorax-primary);
+            background: rgba(26, 95, 122, 0.03);
+        }
+        
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--thorax-primary), var(--thorax-accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .member-info {
+            flex: 1;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .member-role {
             font-size: 0.875rem;
-            color: var(--ui-medium);
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
+            color: var(--ui-light);
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            text-decoration: none;
         }
         
-        .action-btn:hover {
-            background: var(--ui-card);
-            border-color: var(--ui-light);
+        .role-badge {
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
         
-        .btn-evidence {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.2);
-            color: var(--thorax-success);
+        .role-clinician {
+            background: rgba(26, 95, 122, 0.1);
+            color: var(--thorax-primary);
         }
         
-        .btn-vote {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.2);
-            color: #3B82F6;
+        .role-industry {
+            background: rgba(109, 90, 207, 0.1);
+            color: var(--thorax-accent);
         }
         
-        /* ===== IMPROVEMENT: TOAST NOTIFICATIONS ===== */
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--ui-border);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--thorax-primary);
+            border: 3px solid var(--ui-card);
+        }
+        
+        .timeline-content {
+            padding: 0.75rem;
+            background: var(--ui-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .timeline-date {
+            font-size: 0.875rem;
+            color: var(--ui-light);
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Engagement Preview */
+        .engagement-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            background: var(--ui-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--thorax-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--ui-light);
+        }
+        
+        /* Thread Preview */
+        .thread-preview {
+            padding: 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .thread-preview:hover {
+            border-color: var(--thorax-primary);
+            transform: translateX(2px);
+        }
+        
+        .thread-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .thread-title {
+            font-weight: 600;
+            color: var(--ui-dark);
+            flex: 1;
+        }
+        
+        .thread-meta {
+            font-size: 0.875rem;
+            color: var(--ui-light);
+        }
+        
+        .thread-excerpt {
+            color: var(--ui-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .thread-engagement {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--ui-light);
+        }
+        
+        .engagement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* Toast - same as index.html */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -1028,33 +474,12 @@
         .toast {
             padding: 1rem 1.5rem;
             border-radius: var(--radius-md);
-            margin-bottom: 0.5rem;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
             animation: toastSlideIn 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            max-width: 100%;
-            transform: translateZ(0);
-        }
-        
-        .toast-success {
-            background: var(--thorax-success);
-            color: white;
-        }
-        
-        .toast-error {
-            background: var(--thorax-error);
-            color: white;
-        }
-        
-        .toast-info {
             background: var(--thorax-primary);
-            color: white;
-        }
-        
-        .toast-warning {
-            background: var(--thorax-warning);
             color: white;
         }
         
@@ -1063,54 +488,45 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
-        @keyframes toastSlideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-        
-        /* ===== IMPROVEMENT: SKELETON LOADING ===== */
-        .skeleton {
-            background: linear-gradient(
-                90deg,
-                var(--ui-border) 25%,
-                var(--ui-hover) 50%,
-                var(--ui-border) 75%
-            );
-            background-size: 200% 100%;
-            border-radius: var(--radius-md);
-        }
-        
-        @keyframes skeletonLoading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        .skeleton-text {
-            height: 1em;
-            margin: 0.5rem 0;
-            border-radius: var(--radius-sm);
-        }
-        
-        /* ===== IMPROVEMENT: FORM VALIDATION ===== */
-        .error-state {
-            border: 2px solid var(--thorax-error) !important;
-            background: rgba(239, 68, 68, 0.05) !important;
-        }
-        
-        .error-message {
-            color: var(--thorax-error);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+        /* Loading states */
+        .loading {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--ui-light);
+            grid-column: 1 / -1;
         }
         
-        .form-group.has-error .form-label {
-            color: var(--thorax-error);
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--ui-border);
+            border-top-color: var(--thorax-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
         }
         
-        /* ===== MODALS ===== */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Error state */
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--ui-light);
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+        
+        /* Modal - same as index.html */
         .modal {
             position: fixed;
             top: 0;
@@ -1127,13 +543,13 @@
         
         .modal-content {
             background: var(--ui-card);
-            border-radius: var(--radius-xl);
+            border-radius: 18px;
             padding: 2rem;
             width: 100%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-xl);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
         .modal-header {
@@ -1149,51 +565,40 @@
             color: var(--ui-dark);
         }
         
-        .modal-close {
+        .close-modal {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--ui-light);
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-full);
-            transition: var(--transition);
+            padding: 0.5rem;
+            line-height: 1;
         }
         
-        .modal-close:hover {
-            background: var(--ui-hover);
-            color: var(--ui-dark);
-        }
-        
-        /* Form Styles */
+        /* Form styles */
         .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
         
         .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--ui-dark);
             font-size: 0.875rem;
         }
         
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
+        .form-input, .form-select, .form-textarea {
             padding: 0.875rem 1rem;
             border: 2px solid var(--ui-border);
             border-radius: var(--radius-md);
-            font-family: var(--font-body);
+            font-family: inherit;
             font-size: 1rem;
-            transition: var(--transition);
             background: var(--ui-card);
         }
         
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--thorax-primary);
             box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
@@ -1204,1621 +609,1040 @@
             resize: vertical;
         }
         
-        .form-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1.25rem;
-            padding-right: 3rem;
-        }
-        
         .form-actions {
             display: flex;
             gap: 1rem;
-            margin-top: 2rem;
+            justify-content: flex-end;
         }
         
-        /* Evidence Form */
-        .evidence-form {
-            background: var(--ui-bg);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            margin-top: 1rem;
-        }
+        .hidden { display: none !important; }
         
-        .evidence-preview {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: var(--ui-card);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--ui-border);
-        }
-        
-        /* ===== EMPTY STATES ===== */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--ui-light);
-        }
-        
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
-        
-        /* ===== LOADING STATES ===== */
-        .loading {
+        /* Tab navigation */
+        .tabs {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
+            border-bottom: 1px solid var(--ui-border);
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 500;
             color: var(--ui-light);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
         }
         
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--ui-border);
-            border-top-color: var(--thorax-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
+        .tab:hover {
+            color: var(--thorax-primary);
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .tab.active {
+            color: var(--thorax-primary);
+            border-bottom-color: var(--thorax-primary);
         }
         
-        /* ===== IMPROVEMENT: PERFORMANCE - REDUCED MOTION ===== */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-            
-            .discussion-item,
-            .team-member,
-            .btn,
-            .action-btn,
-            .modal-content {
-                transition: none !important;
-            }
-            
-            .spinner {
-                animation: none !important;
-                border-top-color: var(--thorax-primary);
-            }
-            
-            .skeleton {
-                background: var(--ui-border) !important;
-                animation: none !important;
-            }
-            
-            .toast {
-                animation: none !important;
-            }
+        .tab-content {
+            display: none;
         }
         
-        /* Apply skeleton animation only if user doesn't prefer reduced motion */
-        @media (prefers-reduced-motion: no-preference) {
-            .skeleton {
-                animation: skeletonLoading 1.5s ease-in-out infinite;
-            }
-        }
-        
-        /* ===== UTILITY CLASSES ===== */
-        .hidden {
-            display: none !important;
-        }
-        
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-4 { gap: 1rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-8 { margin-top: 2rem; }
-        .p-4 { padding: 1rem; }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .container {
-                padding: 0 1rem;
-            }
-            
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .command-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .bridge-visual {
-                flex-direction: column;
-                gap: 2rem;
-            }
-            
-            .bridge-center {
-                padding: 2rem 0;
-            }
-            
-            .bridge-connection {
-                width: 4px;
-                height: 120px;
-                background: linear-gradient(180deg, var(--role-clinician), var(--role-industry));
-            }
-            
-            .bridge-connection::before {
-                width: 12px;
-                height: 100%;
-                top: 0;
-                left: -4px;
-                background: linear-gradient(180deg, 
-                    transparent 0%, 
-                    rgba(26, 95, 122, 0.2) 20%, 
-                    rgba(107, 91, 207, 0.2) 80%, 
-                    transparent 100%);
-            }
-            
-            .objectives-matrix {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .search-box {
-                max-width: 100%;
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .command-header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .command-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .section-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .discussion-actions {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-            
-            .action-buttons {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-            
-            .discussion-meta {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .toast-container {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-            
-            .toast {
-                padding: 0.75rem 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .command-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .vote-actions {
-                flex-wrap: wrap;
-            }
-            
-            .nav-brand {
-                font-size: 1rem;
-            }
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Toast Container -->
+    <!-- Toast container - same as index.html -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- Page Container -->
-    <div class="page-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="container">
-                <div class="header-content">
-                    <div class="header-left">
-                        <!-- NEW LOGO: [THØRAX][LAB] -->
-                        <a href="index.html" class="nav-brand">
-                            <span class="logo-bracket">[</span>
-                            <span class="logo-main">THØRAX</span>
-                            <span class="logo-bracket">][</span>
-                            <span class="logo-lab">LAB</span>
-                            <span class="logo-bracket">]</span>
-                        </a>
-                        <a href="index.html" class="back-link">
-                            <i class="fas fa-arrow-left"></i>
-                            Back to Dashboard
-                        </a>
-                    </div>
+    <!-- Header - consistent with index.html -->
+    <header class="app-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="nav-brand">[THØRAX][LAB]</a>
+                
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <a href="index.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
                     
-                    <div class="header-right">
-                        <div id="userProfile" class="user-profile" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; background: var(--ui-bg); border-radius: var(--radius-full);">
-                            <div id="userAvatar" class="user-avatar">AC</div>
-                            <div class="user-info">
-                                <div id="userDisplayName" class="user-name">Dr. Alex Chen</div>
-                                <div id="userDisplayRole" class="user-role">Clinical Professional</div>
-                            </div>
+                    <div id="userProfile" class="user-profile">
+                        <div id="userAvatar" class="user-avatar">AC</div>
+                        <div class="user-info">
+                            <div id="userDisplayName" class="user-name">Dr. Alex Chen</div>
+                            <div id="userDisplayRole" class="user-role">Clinical Professional</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
-
-        <!-- Project Command Center -->
-        <section class="project-command">
-            <div class="container">
-                <div class="command-header">
-                    <div>
-                        <h1 id="projectTitle" class="project-title">Loading Project...</h1>
-                        <div id="projectTypeBadge" class="project-type-badge">
-                            <span id="typeIcon">⚕️</span>
-                            <span id="typeText">Clinical Project</span>
+        </div>
+    </header>
+    
+    <!-- Main project content -->
+    <main class="project-container">
+        <div class="container">
+            <!-- Loading state -->
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+                <p>Loading project details...</p>
+            </div>
+            
+            <!-- Error state -->
+            <div id="errorState" class="error-state hidden">
+                <div class="error-icon">⚠️</div>
+                <h3 style="color: var(--ui-dark); margin-bottom: 0.5rem;">Project Not Found</h3>
+                <p style="margin-bottom: 1.5rem;">The project you're looking for doesn't exist or you don't have access.</p>
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Return to Dashboard
+                </a>
+            </div>
+            
+            <!-- Project content (hidden until loaded) -->
+            <div id="projectContent" class="hidden">
+                <!-- Back navigation -->
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to All Projects
+                </a>
+                
+                <!-- Project header -->
+                <div class="project-header">
+                    <div class="project-title-section">
+                        <h1 id="projectTitle" class="project-title">Loading project...</h1>
+                        <div class="project-meta">
+                            <span id="projectType">Collaborative Project</span>
+                            <span>•</span>
+                            <span id="projectCreated">Created Jan 15, 2024</span>
+                            <span>•</span>
+                            <span id="projectStatus" class="project-status status-active">
+                                <i class="fas fa-circle"></i>
+                                Active
+                            </span>
                         </div>
                     </div>
                     
-                    <div class="command-actions">
+                    <div class="project-actions">
                         <button id="editProjectBtn" class="btn btn-secondary">
                             <i class="fas fa-edit"></i>
-                            Edit Project
+                            Edit
                         </button>
-                        <button id="addTeamMemberBtn" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i>
-                            Add Team Member
+                        <button id="newThreadBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            New Discussion
                         </button>
                     </div>
                 </div>
                 
-                <p id="projectDescription" class="text-light" style="max-width: 800px; line-height: 1.6;">
-                    Loading project description...
-                </p>
-                
-                <div class="command-stats">
-                    <div class="command-stat">
-                        <div class="stat-value" id="discussionCount">0</div>
-                        <div class="stat-label">Discussions</div>
-                    </div>
-                    <div class="command-stat">
-                        <div class="stat-value" id="teamCount">0</div>
-                        <div class="stat-label">Team Members</div>
-                    </div>
-                    <div class="command-stat">
-                        <div class="stat-value" id="consensusScore">0%</div>
-                        <div class="stat-label">Overall Consensus</div>
-                    </div>
-                    <div class="command-stat">
-                        <div class="stat-value" id="decisionCount">0</div>
-                        <div class="stat-label">Decisions Made</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Bridge Visualization -->
-        <section class="bridge-section">
-            <div class="container">
-                <div class="bridge-header">
-                    <h2 class="section-title">Collaboration Bridge</h2>
-                    <button id="editObjectivesBtn" class="btn btn-secondary btn-small">
-                        <i class="fas fa-edit"></i>
-                        Edit Objectives
-                    </button>
-                </div>
-                
-                <div class="bridge-visual">
-                    <div class="bridge-side">
-                        <div class="metric-icon icon-clinical" style="width: 64px; height: 64px; font-size: 1.75rem;">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <h3 style="color: var(--role-clinician);">Clinical Side</h3>
-                        <div id="clinicalTeamStats" class="text-light text-center">
-                            <div class="text-small">Loading clinical team...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bridge-center">
-                        <div class="bridge-connection"></div>
-                        <div class="text-center">
-                            <div id="sharedObjectivesCount" class="stat-value" style="color: var(--thorax-accent); font-size: 2rem;">0</div>
-                            <div class="stat-label">Shared Objectives</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bridge-side">
-                        <div class="metric-icon icon-industry" style="width: 64px; height: 64px; font-size: 1.75rem;">
-                            <i class="fas fa-industry"></i>
-                        </div>
-                        <h3 style="color: var(--role-industry);">Industry Side</h3>
-                        <div id="industryTeamStats" class="text-light text-center">
-                            <div class="text-small">Loading industry team...</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Objectives Matrix -->
-                <div class="objectives-matrix" id="objectivesMatrix">
-                    <div class="objectives-column">
-                        <div class="column-header clinical-header">Clinical Objectives</div>
-                        <div id="clinicalObjectivesList">
-                            <div class="objective-item">
-                                <div class="objective-check"><i class="fas fa-circle text-light"></i></div>
-                                <div class="text-small text-light">No objectives defined yet</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="objectives-column">
-                        <div class="column-header shared-header">Shared Objectives</div>
-                        <div id="sharedObjectivesList">
-                            <div class="objective-item">
-                                <div class="objective-check"><i class="fas fa-circle text-light"></i></div>
-                                <div class="text-small text-light">No shared objectives defined yet</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="objectives-column">
-                        <div class="column-header industry-header">Industry Objectives</div>
-                        <div id="industryObjectivesList">
-                            <div class="objective-item">
-                                <div class="objective-check"><i class="fas fa-circle text-light"></i></div>
-                                <div class="text-small text-light">No objectives defined yet</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <div class="container">
-            <div class="main-content">
-                <!-- Left Column: Discussions -->
-                <div class="discussions-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Evidence-Based Discussions</h2>
-                        <div class="section-actions">
-                            <!-- IMPROVEMENT: SEARCH BOX -->
-                            <div class="search-box">
-                                <input type="search" id="searchDiscussions" 
-                                       placeholder="Search discussions..." 
-                                       class="search-input">
-                            </div>
-                            <button id="filterDiscussionsBtn" class="btn btn-secondary btn-small">
-                                <i class="fas fa-filter"></i>
-                                Filter
-                            </button>
-                            <button id="newDiscussionBtn" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                New Discussion
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Discussion List -->
-                    <div class="discussion-list" id="discussionList">
-                        <!-- IMPROVEMENT: SKELETON LOADING -->
-                        <div class="discussion-item skeleton-item">
-                            <div class="skeleton skeleton-text" style="width: 40%; height: 24px;"></div>
-                            <div class="skeleton skeleton-text" style="width: 60%; height: 16px;"></div>
-                            <div class="skeleton skeleton-text" style="width: 100%; height: 20px; margin-top: 1rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 80%; height: 16px;"></div>
-                            <div class="skeleton skeleton-text" style="width: 30%; height: 12px; margin-top: 1rem;"></div>
-                        </div>
-                        <div class="discussion-item skeleton-item">
-                            <div class="skeleton skeleton-text" style="width: 35%; height: 24px;"></div>
-                            <div class="skeleton skeleton-text" style="width: 55%; height: 16px;"></div>
-                            <div class="skeleton skeleton-text" style="width: 100%; height: 20px; margin-top: 1rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 85%; height: 16px;"></div>
-                            <div class="skeleton skeleton-text" style="width: 25%; height: 12px; margin-top: 1rem;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Sidebar -->
-                <div class="sidebar">
-                    <!-- Team Section -->
-                    <div class="team-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Project Team</h3>
-                            <button id="inviteTeamMemberBtn" class="action-btn" aria-label="Invite team member">
-                                <i class="fas fa-user-plus"></i>
-                            </button>
+                <!-- Two-column layout -->
+                <div class="project-layout">
+                    <!-- Main content -->
+                    <div class="project-main">
+                        <!-- Tab navigation -->
+                        <div class="tabs">
+                            <button class="tab active" data-tab="overview">Overview</button>
+                            <button class="tab" data-tab="discussions">Discussions</button>
+                            <button class="tab" data-tab="documents">Documents</button>
+                            <button class="tab" data-tab="timeline">Timeline</button>
                         </div>
                         
-                        <div class="team-list" id="teamList">
-                            <!-- IMPROVEMENT: SKELETON LOADING -->
-                            <div class="team-member skeleton-item">
-                                <div class="member-avatar skeleton"></div>
-                                <div class="member-info">
-                                    <div class="skeleton skeleton-text" style="width: 70%;"></div>
-                                    <div class="skeleton skeleton-text" style="width: 50%; height: 12px;"></div>
+                        <!-- Overview tab -->
+                        <div id="overviewTab" class="tab-content active">
+                            <div class="project-section">
+                                <div class="section-header">
+                                    <h2 class="section-title">Project Description</h2>
+                                </div>
+                                <div id="projectDescription" class="project-description">
+                                    <p>This project focuses on developing a machine learning algorithm to predict COPD exacerbations using a combination of clinical data, wearable device outputs, and patient-reported outcomes.</p>
+                                    <p>The goal is to create a predictive model that can alert clinicians to potential exacerbations 48-72 hours before they occur, allowing for proactive intervention and reduced hospitalizations.</p>
+                                    <p><strong>Key Objectives:</strong></p>
+                                    <ul>
+                                        <li>Analyze historical clinical data from 500+ COPD patients</li>
+                                        <li>Integrate real-time wearable data (spirometry, activity levels)</li>
+                                        <li>Develop and validate prediction algorithm</li>
+                                        <li>Create clinician dashboard for real-time monitoring</li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="team-member skeleton-item">
-                                <div class="member-avatar skeleton"></div>
-                                <div class="member-info">
-                                    <div class="skeleton skeleton-text" style="width: 80%;"></div>
-                                    <div class="skeleton skeleton-text" style="width: 60%; height: 12px;"></div>
+                            
+                            <!-- Recent activity preview -->
+                            <div class="project-section">
+                                <div class="section-header">
+                                    <h2 class="section-title">Recent Activity</h2>
+                                    <button id="viewAllActivity" class="btn btn-secondary" style="font-size: 0.875rem;">
+                                        View All
+                                    </button>
+                                </div>
+                                
+                                <div id="recentActivity">
+                                    <!-- Recent threads/comments will be loaded here -->
+                                    <div class="thread-preview">
+                                        <div class="thread-header">
+                                            <h3 class="thread-title">Dataset anomalies in Group C</h3>
+                                            <span class="thread-meta">2 hours ago</span>
+                                        </div>
+                                        <p class="thread-excerpt">
+                                            I've noticed inconsistent spirometry readings in the Group C dataset. The FEV1 values show unexpected variance that doesn't correlate with patient symptoms...
+                                        </p>
+                                        <div class="thread-engagement">
+                                            <span class="engagement-item">
+                                                <i class="fas fa-comment"></i> 8
+                                            </span>
+                                            <span class="engagement-item">
+                                                <i class="fas fa-heart" style="color: #EF4444;"></i> 12
+                                            </span>
+                                            <span class="engagement-item">
+                                                <i class="fas fa-check-circle" style="color: #10B981;"></i> Expert endorsed
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="thread-preview">
+                                        <div class="thread-header">
+                                            <h3 class="thread-title">Algorithm performance metrics</h3>
+                                            <span class="thread-meta">1 day ago</span>
+                                        </div>
+                                        <p class="thread-excerpt">
+                                            Our initial model shows 87% accuracy in predicting exacerbations. I've uploaded the detailed performance metrics...
+                                        </p>
+                                        <div class="thread-engagement">
+                                            <span class="engagement-item">
+                                                <i class="fas fa-comment"></i> 5
+                                            </span>
+                                            <span class="engagement-item">
+                                                <i class="fas fa-heart" style="color: #EF4444;"></i> 9
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Discussions tab -->
+                        <div id="discussionsTab" class="tab-content">
+                            <div class="project-section">
+                                <div class="section-header">
+                                    <h2 class="section-title">Discussion Threads</h2>
+                                    <button id="startDiscussionBtn" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                        New Thread
+                                    </button>
+                                </div>
+                                <div id="discussionsList">
+                                    <!-- Threads will be loaded here -->
+                                    <p style="color: var(--ui-light); text-align: center; padding: 2rem;">
+                                        Loading discussion threads...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Documents tab -->
+                        <div id="documentsTab" class="tab-content">
+                            <div class="project-section">
+                                <div class="section-header">
+                                    <h2 class="section-title">Project Documents</h2>
+                                    <button id="uploadDocumentBtn" class="btn btn-primary">
+                                        <i class="fas fa-upload"></i>
+                                        Upload
+                                    </button>
+                                </div>
+                                <div id="documentsList">
+                                    <!-- Documents will be loaded here -->
+                                    <p style="color: var(--ui-light); text-align: center; padding: 2rem;">
+                                        No documents uploaded yet.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timeline tab -->
+                        <div id="timelineTab" class="tab-content">
+                            <div class="project-section">
+                                <div class="section-header">
+                                    <h2 class="section-title">Project Timeline</h2>
+                                </div>
+                                <div id="projectTimeline" class="timeline">
+                                    <!-- Timeline items will be loaded here -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-date">Jan 15, 2024</div>
+                                            <p>Project initiated by Dr. Alex Chen</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-date">Jan 22, 2024</div>
+                                            <p>Initial team formed with 3 clinicians and 2 industry partners</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-date">Jan 30, 2024</div>
+                                            <p>Data sharing agreement finalized</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Project Info -->
-                    <div class="info-section">
-                        <h3 class="section-title" style="margin-bottom: 1rem;">Project Information</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Status</div>
-                                <div id="projectStatus" class="info-value">Active</div>
+                    
+                    <!-- Sidebar -->
+                    <div class="project-sidebar">
+                        <!-- Team section -->
+                        <div class="project-section">
+                            <div class="section-header">
+                                <h2 class="section-title">Project Team</h2>
+                                <button id="inviteMemberBtn" class="btn btn-secondary" style="font-size: 0.875rem;">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Project Lead</div>
-                                <div id="projectLead" class="info-value">Loading...</div>
+                            <div class="team-grid" id="teamList">
+                                <!-- Team members will be loaded here -->
+                                <div class="team-member">
+                                    <div class="member-avatar">AC</div>
+                                    <div class="member-info">
+                                        <div class="member-name">Dr. Alex Chen</div>
+                                        <div class="member-role">
+                                            <span class="role-badge role-clinician">Clinician</span>
+                                            Project Lead
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="team-member">
+                                    <div class="member-avatar">SR</div>
+                                    <div class="member-info">
+                                        <div class="member-name">Dr. Sarah Rodriguez</div>
+                                        <div class="member-role">
+                                            <span class="role-badge role-clinician">Clinician</span>
+                                            Pulmonology
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Created</div>
-                                <div id="projectCreated" class="info-value">Loading...</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Last Activity</div>
-                                <div id="projectUpdated" class="info-value">Loading...</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Decisions -->
-                    <div class="decisions-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Recent Decisions</h3>
                         </div>
                         
-                        <div class="decision-list" id="decisionList">
-                            <div class="empty-state" style="padding: 1rem;">
-                                <div class="empty-icon">🤔</div>
-                                <p class="text-small">No decisions yet</p>
+                        <!-- Engagement stats -->
+                        <div class="project-section">
+                            <div class="section-header">
+                                <h2 class="section-title">Engagement</h2>
+                            </div>
+                            <div class="engagement-stats">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="threadCount">12</div>
+                                    <div class="stat-label">Discussions</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="commentCount">47</div>
+                                    <div class="stat-label">Comments</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="memberCount">8</div>
+                                    <div class="stat-label">Members</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="fileCount">6</div>
+                                    <div class="stat-label">Files</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick actions -->
+                        <div class="project-section">
+                            <div class="section-header">
+                                <h2 class="section-title">Quick Actions</h2>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <button id="quickPollBtn" class="btn btn-secondary" style="justify-content: flex-start;">
+                                    <i class="fas fa-chart-pie"></i>
+                                    Create Poll
+                                </button>
+                                <button id="scheduleMeetingBtn" class="btn btn-secondary" style="justify-content: flex-start;">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Schedule Meeting
+                                </button>
+                                <button id="exportDataBtn" class="btn btn-secondary" style="justify-content: flex-start;">
+                                    <i class="fas fa-download"></i>
+                                    Export Project Data
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- ===== MODALS ===== -->
-
+    </main>
+    
+    <!-- Modals -->
+    
     <!-- New Discussion Modal -->
-    <div id="newDiscussionModal" class="modal">
+    <div id="newThreadModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Start New Discussion</h2>
-                <button class="modal-close" id="closeDiscussionModal" aria-label="Close new discussion modal">&times;</button>
+                <button class="close-modal" data-modal="newThreadModal">&times;</button>
             </div>
-            
-            <form id="discussionForm">
+            <form id="newThreadForm">
                 <div class="form-group">
-                    <label for="discussionTitle" class="form-label">Discussion Title</label>
-                    <input type="text" id="discussionTitle" class="form-input" 
-                           placeholder="e.g., Clinical validation protocol for COPD algorithm" required>
+                    <label for="threadTitle" class="form-label">Title</label>
+                    <input type="text" id="threadTitle" class="form-input" required 
+                           placeholder="e.g., Dataset quality issues in Phase 2">
                 </div>
                 
                 <div class="form-group">
-                    <label for="discussionContent" class="form-label">Detailed Description</label>
-                    <textarea id="discussionContent" class="form-textarea" 
-                              placeholder="Describe the clinical problem, current evidence, and desired collaboration outcomes..."
-                              required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="discussionType" class="form-label">Discussion Type</label>
-                    <select id="discussionType" class="form-select" required>
-                        <option value="">Select discussion type based on your role</option>
-                        <option value="clinical_question" id="clinicalOption">⚕️ Clinical Question (Clinical Team)</option>
-                        <option value="technical_solution" id="technicalOption">🏭 Technical Solution (Industry Team)</option>
-                        <option value="joint_review" id="jointOption">🤝 Joint Review (Both Teams)</option>
-                    </select>
-                    <div class="text-small text-light mt-2">
-                        <span id="typeDescription">Select your role-appropriate discussion type</span>
-                    </div>
-                </div>
-                
-                <!-- Evidence Section -->
-                <div class="form-group">
-                    <label class="form-label">Evidence References (Required for Clinical/Technical Discussions)</label>
-                    <div class="evidence-form">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-small text-medium">Add supporting evidence:</span>
-                            <button type="button" id="addEvidenceBtn" class="btn btn-evidence btn-small">
-                                <i class="fas fa-plus"></i> Add Evidence
-                            </button>
-                        </div>
-                        
-                        <div id="evidenceContainer">
-                            <!-- Evidence items will be added here -->
-                        </div>
-                        
-                        <div id="evidencePreview" class="evidence-preview hidden">
-                            <div class="text-small text-light">Evidence preview will appear here</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelDiscussionBtn">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary" id="submitDiscussionBtn">
-                        Create Discussion
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Evidence Modal -->
-    <div id="evidenceModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add Evidence Reference</h2>
-                <button class="modal-close" id="closeEvidenceModal" aria-label="Close evidence modal">&times;</button>
-            </div>
-            
-            <form id="evidenceForm">
-                <div class="form-group">
-                    <label for="evidenceType" class="form-label">Evidence Type</label>
-                    <select id="evidenceType" class="form-select" required>
-                        <option value="">Select evidence type</option>
-                        <option value="pubmed">PubMed Article</option>
-                        <option value="clinical_trial">Clinical Trial</option>
-                        <option value="guideline">Clinical Guideline</option>
-                        <option value="regulatory">Regulatory Document</option>
-                        <option value="other">Other Reference</option>
+                    <label for="threadCategory" class="form-label">Category</label>
+                    <select id="threadCategory" class="form-input form-select" required>
+                        <option value="">Select category</option>
+                        <option value="clinical">Clinical Observation</option>
+                        <option value="technical">Technical Question</option>
+                        <option value="data">Data Analysis</option>
+                        <option value="methodology">Methodology</option>
+                        <option value="general">General Discussion</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="evidenceId" class="form-label">Reference ID/Link</label>
-                    <input type="text" id="evidenceId" class="form-input" 
-                           placeholder="e.g., PubMed ID (PMID), ClinicalTrials.gov ID, or DOI" required>
-                    <div class="text-small text-light mt-2">
-                        For PubMed: Enter PMID (e.g., 12345678)<br>
-                        For Clinical Trials: Enter NCT number (e.g., NCT01234567)<br>
-                        For guidelines: Enter citation or URL
-                    </div>
+                    <label for="threadContent" class="form-label">Content</label>
+                    <textarea id="threadContent" class="form-textarea" required 
+                              placeholder="Describe your question or observation..."
+                              rows="6"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="evidenceTitle" class="form-label">Title (Optional)</label>
-                    <input type="text" id="evidenceTitle" class="form-input" 
-                           placeholder="Title of the article or document">
+                    <label class="form-label">Tag Team Members (optional)</label>
+                    <div id="tagMembersContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.875rem; border: 2px solid var(--ui-border); border-radius: var(--radius-md); min-height: 48px;">
+                        <!-- Tagged members will appear here -->
+                    </div>
+                    <small style="color: var(--ui-light);">Type @ to mention team members</small>
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelEvidenceBtn">
+                    <button type="button" class="btn btn-secondary" data-modal="newThreadModal">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary" id="submitEvidenceBtn">
-                        Add Evidence
+                    <button type="submit" class="btn btn-primary" id="submitThreadBtn">
+                        Start Discussion
                     </button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- Vote Modal -->
-    <div id="voteModal" class="modal">
+    
+    <!-- Edit Project Modal -->
+    <div id="editProjectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Cast Your Vote</h2>
-                <button class="modal-close" id="closeVoteModal" aria-label="Close vote modal">&times;</button>
+                <h2 class="modal-title">Edit Project</h2>
+                <button class="close-modal" data-modal="editProjectModal">&times;</button>
             </div>
-            
-            <div class="p-4">
-                <div class="mb-4">
-                    <h3 id="voteDiscussionTitle" class="mb-2">Discussion Title</h3>
-                    <p class="text-small text-light">Based on your role, select your position:</p>
-                </div>
-                
-                <div id="voteOptions" class="flex flex-col gap-4">
-                    <!-- Vote options will be populated based on user role -->
-                </div>
-                
-                <div class="form-actions mt-8">
-                    <button type="button" class="btn btn-secondary" id="cancelVoteBtn">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Team Member Modal -->
-    <div id="teamModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add Team Member</h2>
-                <button class="modal-close" id="closeTeamModal" aria-label="Close team modal">&times;</button>
-            </div>
-            
-            <form id="teamForm">
+            <form id="editProjectForm">
                 <div class="form-group">
-                    <label for="memberName" class="form-label">Full Name</label>
-                    <input type="text" id="memberName" class="form-input" 
-                           placeholder="e.g., Dr. Jane Smith" required>
+                    <label for="editProjectTitle" class="form-label">Project Title</label>
+                    <input type="text" id="editProjectTitle" class="form-input" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="memberEmail" class="form-label">Email Address</label>
-                    <input type="email" id="memberEmail" class="form-input" 
-                           placeholder="jane.smith@example.com" required>
+                    <label for="editProjectDescription" class="form-label">Description</label>
+                    <textarea id="editProjectDescription" class="form-textarea" required rows="6"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="memberRole" class="form-label">Team Role</label>
-                    <select id="memberRole" class="form-select" required>
-                        <option value="">Select team role</option>
-                        <option value="clinician">Clinical Contributor</option>
-                        <option value="industry">Industry Contributor</option>
-                        <option value="contributor">General Contributor</option>
+                    <label for="editProjectStatus" class="form-label">Status</label>
+                    <select id="editProjectStatus" class="form-input form-select" required>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="archived">Archived</option>
                     </select>
                 </div>
                 
-                <div class="form-group">
-                    <label for="memberOrganization" class="form-label">Organization (Optional)</label>
-                    <input type="text" id="memberOrganization" class="form-input" 
-                           placeholder="Organization name">
-                </div>
-                
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelTeamBtn">
+                    <button type="button" class="btn btn-secondary" data-modal="editProjectModal">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary" id="submitTeamBtn">
-                        Add to Team
+                    <button type="submit" class="btn btn-primary" id="saveProjectBtn">
+                        Save Changes
                     </button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- Edit Objectives Modal -->
-    <div id="objectivesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Edit Project Objectives</h2>
-                <button class="modal-close" id="closeObjectivesModal" aria-label="Close objectives modal">&times;</button>
-            </div>
-            
-            <form id="objectivesForm">
-                <div class="form-group">
-                    <label class="form-label">Clinical Objectives</label>
-                    <div id="clinicalObjectivesInput" class="objectives-input">
-                        <!-- Clinical objectives will be added here -->
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-small mt-2" id="addClinicalObjectiveBtn">
-                        <i class="fas fa-plus"></i> Add Clinical Objective
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Shared Objectives</label>
-                    <div id="sharedObjectivesInput" class="objectives-input">
-                        <!-- Shared objectives will be added here -->
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-small mt-2" id="addSharedObjectiveBtn">
-                        <i class="fas fa-plus"></i> Add Shared Objective
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Industry Objectives</label>
-                    <div id="industryObjectivesInput" class="objectives-input">
-                        <!-- Industry objectives will be added here -->
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-small mt-2" id="addIndustryObjectiveBtn">
-                        <i class="fas fa-plus"></i> Add Industry Objective
-                    </button>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelObjectivesBtn">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary" id="submitObjectivesBtn">
-                        Save Objectives
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    
     <script>
-        // IMPROVEMENT: CONSTANTS AND CONFIGURATION
-        const DISCUSSION_TYPES = {
-            CLINICAL_QUESTION: 'clinical_question',
-            TECHNICAL_SOLUTION: 'technical_solution', 
-            JOINT_REVIEW: 'joint_review'
-        };
-
-        const ROLE_TYPES = {
-            CLINICIAN: 'clinician',
-            INDUSTRY: 'industry',
-            LEAD: 'lead'
-        };
-
-        const EVIDENCE_SOURCES = {
-            PUBMED: 'pubmed',
-            CLINICAL_TRIAL: 'clinical_trial',
-            GUIDELINE: 'guideline'
-        };
-
-        // IMPROVEMENT: UTILITY FUNCTIONS
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        class ThoraxLabProject {
+        class ProjectView {
             constructor() {
-                this.projectId = this.getProjectId();
-                this.project = null;
-                this.user = null;
-                this.discussions = [];
-                this.filteredDiscussions = [];
-                this.team = [];
-                this.objectives = { clinical: [], industry: [], shared: [] };
+                this.projectId = this.getProjectIdFromURL();
+                this.token = localStorage.getItem('thoraxlab_token');
+                this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
                 this.ws = null;
-                this.currentDiscussionId = null;
-                this.evidenceItems = [];
-                this.presenceStates = new Map(); // Track user presence
-                
+                this.teamMembers = [];
                 this.initialize();
             }
             
-            getProjectId() {
-                const params = new URLSearchParams(window.location.search);
-                const id = params.get('id');
-                
-                if (!id) {
-                    this.showToast('No project ID specified', 'error');
-                    setTimeout(() => window.location.href = 'index.html', 2000);
-                    return null;
-                }
-                
-                return id;
-            }
-            
-            async initialize() {
-                if (!this.projectId) return;
-                
-                await this.loadUser();
-                await this.loadProject();
+            initialize() {
                 this.setupEventListeners();
-                this.setupWebSocket();
-                this.updateRoleBasedUI();
-                this.setupSearch(); // IMPROVEMENT: SEARCH SETUP
-                this.simulatePresence(); // IMPROVEMENT: PRESENCE SIMULATION
+                this.checkAuth();
             }
             
-            async loadUser() {
-                try {
-                    const savedUser = localStorage.getItem('thoraxlab_user');
-                    if (savedUser) {
-                        this.user = JSON.parse(savedUser);
-                        this.updateUserDisplay();
-                    } else {
-                        // Demo user for testing
-                        this.user = {
-                            id: 'user_' + Date.now(),
-                            name: 'Dr. Alex Chen',
-                            role: 'clinician',
-                            organization: 'Massachusetts General Hospital'
-                        };
-                        localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
-                        this.updateUserDisplay();
-                    }
-                } catch (error) {
-                    console.error('User load error:', error);
-                    this.showToast('Failed to load user', 'error');
-                }
+            getProjectIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
             }
             
-            async loadProject() {
-                try {
-                    // IMPROVEMENT: SHOW SKELETON LOADING
-                    this.showSkeletonLoading();
-                    
-                    // Simulate API delay
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    // Demo data for testing
-                    this.project = {
-                        id: this.projectId,
-                        title: "COPD Early Detection Algorithm",
-                        description: "Development and validation of a machine learning algorithm for early detection of COPD exacerbations using wearable sensor data.",
-                        type: "clinical",
-                        discussion_count: 3,
-                        team_count: 4,
-                        consensus_score: 65,
-                        decision_count: 1,
-                        status: "Active",
-                        lead_name: "Dr. Sarah Johnson",
-                        created_at: "2024-01-15T10:30:00Z",
-                        updated_at: "2024-02-20T14:45:00Z",
-                        objectives: {
-                            clinical: [
-                                { text: "Define clinical validation criteria", completed: true },
-                                { text: "Establish patient inclusion/exclusion criteria", completed: true },
-                                { text: "Validate algorithm against gold-standard diagnosis", completed: false }
-                            ],
-                            industry: [
-                                { text: "Develop scalable cloud infrastructure", completed: true },
-                                { text: "Optimize algorithm for real-time processing", completed: false },
-                                { text: "Ensure HIPAA compliance", completed: true }
-                            ],
-                            shared: [
-                                { text: "Achieve 90% sensitivity in detection", completed: false },
-                                { text: "Complete pilot study with 50 patients", completed: false },
-                                { text: "Prepare joint publication", completed: false }
-                            ]
-                        }
-                    };
-                    
-                    this.team = [
-                        { id: '1', name: 'Dr. Sarah Johnson', role: 'lead', organization: 'Boston Medical Center' },
-                        { id: '2', name: 'Dr. Michael Chen', role: 'clinician', organization: 'Massachusetts General Hospital' },
-                        { id: '3', name: 'Dr. Lisa Park', role: 'clinician', organization: 'Brigham and Women\'s Hospital' },
-                        { id: '4', name: 'Emma Rodriguez', role: 'industry', organization: 'TechMed Solutions' },
-                        { id: '5', name: 'James Wilson', role: 'industry', organization: 'HealthAI Inc.' }
-                    ];
-                    
-                    this.discussions = [
-                        {
-                            id: 'disc_1',
-                            title: 'Clinical validation protocol requirements',
-                            content: 'Need to establish clear validation criteria for the COPD detection algorithm. Current literature suggests using FEV1/FVC ratio as primary endpoint, but we should consider additional biomarkers.',
-                            author_name: 'Dr. Michael Chen',
-                            author_role: 'clinician',
-                            author_organization: 'Massachusetts General Hospital',
-                            type: 'clinical_question',
-                            created_at: '2024-02-15T09:30:00Z',
-                            evidence_count: 2,
-                            evidence: [
-                                { source_id: 'PMID: 34567890', title: 'COPD Diagnosis Guidelines 2023' },
-                                { source_id: 'NCT01234567', title: 'COPD Biomarker Study' }
-                            ],
-                            comment_count: 3,
-                            consensus: {
-                                clinicalAgreement: 85,
-                                technicalFeasibility: 60,
-                                status: 'medium',
-                                totalVotes: 8
-                            }
-                        },
-                        {
-                            id: 'disc_2',
-                            title: 'Real-time data processing architecture',
-                            content: 'Proposing a cloud-based architecture using AWS Lambda for real-time processing of wearable sensor data. Need to ensure HIPAA compliance and data security.',
-                            author_name: 'Emma Rodriguez',
-                            author_role: 'industry',
-                            author_organization: 'TechMed Solutions',
-                            type: 'technical_solution',
-                            created_at: '2024-02-18T14:20:00Z',
-                            evidence_count: 1,
-                            evidence: [
-                                { source_id: 'AWS Whitepaper', title: 'Healthcare Data Processing on AWS' }
-                            ],
-                            comment_count: 5,
-                            consensus: {
-                                clinicalAgreement: 70,
-                                technicalFeasibility: 90,
-                                status: 'high',
-                                totalVotes: 12
-                            }
-                        },
-                        {
-                            id: 'disc_3',
-                            title: 'Pilot study design discussion',
-                            content: 'Planning the 50-patient pilot study. Need to align on study duration, endpoints, and data collection methods.',
-                            author_name: 'Dr. Sarah Johnson',
-                            author_role: 'lead',
-                            author_organization: 'Boston Medical Center',
-                            type: 'joint_review',
-                            created_at: '2024-02-20T11:15:00Z',
-                            evidence_count: 0,
-                            comment_count: 7,
-                            consensus: {
-                                clinicalAgreement: 50,
-                                technicalFeasibility: 75,
-                                status: 'medium',
-                                totalVotes: 6
-                            }
-                        }
-                    ];
-                    
-                    this.filteredDiscussions = [...this.discussions];
-                    
-                    this.renderProject();
-                    this.renderTeam();
-                    this.renderDiscussions();
-                    this.renderBridge();
-                    
-                    // IMPROVEMENT: HIDE SKELETON AFTER LOAD
-                    this.hideSkeletonLoading();
-                    
-                } catch (error) {
-                    console.error('Project load error:', error);
-                    this.showToast('Failed to load project', 'error');
-                    this.hideSkeletonLoading();
+            checkAuth() {
+                if (!this.token || !this.user) {
+                    // Redirect to login if not authenticated
+                    window.location.href = 'index.html';
+                    return;
                 }
+                
+                if (!this.projectId) {
+                    this.showError('No project specified');
+                    return;
+                }
+                
+                this.loadProject();
+                this.updateUserDisplay();
             }
             
             updateUserDisplay() {
                 if (!this.user) return;
                 
                 document.getElementById('userDisplayName').textContent = this.user.name;
-                document.getElementById('userDisplayRole').textContent = this.getRoleLabel(this.user.role);
-                document.getElementById('userAvatar').textContent = this.getInitials(this.user.name);
-                
-                // IMPROVEMENT: SET USER PRESENCE
-                this.setUserPresence(this.user.id, 'online');
+                document.getElementById('userDisplayRole').textContent = 
+                    this.user.role === 'clinician' ? 'Clinical Professional' : 'Industry Professional';
+                document.getElementById('userAvatar').textContent = 
+                    this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             }
             
-            updateRoleBasedUI() {
-                if (!this.user) return;
-                
-                const discussionType = document.getElementById('discussionType');
-                const clinicalOption = document.getElementById('clinicalOption');
-                const technicalOption = document.getElementById('technicalOption');
-                const jointOption = document.getElementById('jointOption');
-                const typeDescription = document.getElementById('typeDescription');
-                
-                // Hide options based on role
-                if (this.user.role === 'clinician') {
-                    technicalOption.style.display = 'none';
-                    typeDescription.textContent = 'As a clinical professional, you can start Clinical Questions or Joint Reviews.';
-                } else if (this.user.role === 'industry') {
-                    clinicalOption.style.display = 'none';
-                    typeDescription.textContent = 'As an industry professional, you can start Technical Solutions or Joint Reviews.';
-                }
-            }
-            
-            renderProject() {
-                if (!this.project) return;
-                
-                // Update basic project info
-                document.getElementById('projectTitle').textContent = this.project.title;
-                document.getElementById('projectDescription').textContent = this.project.description;
-                
-                // Update project type badge
-                const typeIcon = document.getElementById('typeIcon');
-                const typeText = document.getElementById('typeText');
-                
-                switch(this.project.type) {
-                    case 'clinical':
-                        typeIcon.textContent = '⚕️';
-                        typeText.textContent = 'Clinical Project';
-                        break;
-                    case 'industry':
-                        typeIcon.textContent = '🏭';
-                        typeText.textContent = 'Industry Project';
-                        break;
-                    default:
-                        typeIcon.textContent = '🤝';
-                        typeText.textContent = 'Collaborative Project';
-                }
-                
-                // Update stats
-                document.getElementById('discussionCount').textContent = this.project.discussion_count || 0;
-                document.getElementById('teamCount').textContent = this.project.team_count || 0;
-                document.getElementById('consensusScore').textContent = `${this.project.consensus_score || 0}%`;
-                document.getElementById('decisionCount').textContent = this.project.decision_count || 0;
-                
-                // Update project info
-                document.getElementById('projectStatus').textContent = this.project.status || 'Active';
-                document.getElementById('projectLead').textContent = this.project.lead_name || 'Unknown';
-                
-                if (this.project.created_at) {
-                    document.getElementById('projectCreated').textContent = this.formatDate(this.project.created_at);
-                }
-                
-                if (this.project.updated_at) {
-                    document.getElementById('projectUpdated').textContent = this.formatDate(this.project.updated_at);
-                }
-                
-                // Parse and render objectives
-                if (this.project.objectives) {
-                    this.objectives = typeof this.project.objectives === 'string' 
-                        ? JSON.parse(this.project.objectives) 
-                        : this.project.objectives;
-                    this.renderObjectives();
-                }
-            }
-            
-            renderBridge() {
-                if (!this.team || !this.objectives) return;
-                
-                const clinicalTeam = this.team.filter(m => m.role === 'clinician');
-                const industryTeam = this.team.filter(m => m.role === 'industry');
-                
-                // Update team stats
-                document.getElementById('clinicalTeamStats').innerHTML = `
-                    <div class="stat-value" style="color: var(--role-clinician); font-size: 1.5rem;">
-                        ${clinicalTeam.length}
-                    </div>
-                    <div class="text-xsmall">Clinical Team Members</div>
-                `;
-                
-                document.getElementById('industryTeamStats').innerHTML = `
-                    <div class="stat-value" style="color: var(--role-industry); font-size: 1.5rem;">
-                        ${industryTeam.length}
-                    </div>
-                    <div class="text-xsmall">Industry Team Members</div>
-                `;
-                
-                // Update shared objectives count
-                const sharedCount = this.objectives.shared?.length || 0;
-                document.getElementById('sharedObjectivesCount').textContent = sharedCount;
-            }
-            
-            renderObjectives() {
-                const renderObjectiveList = (listId, objectives) => {
-                    const container = document.getElementById(listId);
-                    if (!container) return;
+            async loadProject() {
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
                     
-                    if (!objectives || objectives.length === 0) {
-                        container.innerHTML = `
-                            <div class="objective-item">
-                                <div class="objective-check"><i class="fas fa-circle text-light"></i></div>
-                                <div class="text-small text-light">No objectives defined yet</div>
-                            </div>
-                        `;
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            this.showError('Project not found');
+                        } else if (response.status === 403) {
+                            this.showError('You do not have access to this project');
+                        } else {
+                            this.showError('Failed to load project');
+                        }
                         return;
                     }
                     
-                    container.innerHTML = objectives.map((obj, index) => `
-                        <div class="objective-item">
-                            <div class="objective-check">
-                                <i class="fas fa-circle" style="color: ${obj.completed ? 'var(--thorax-success)' : 'var(--ui-light)'}"></i>
-                            </div>
-                            <div class="text-small">${this.escapeHtml(obj.text)}</div>
-                        </div>
-                    `).join('');
-                };
-                
-                renderObjectiveList('clinicalObjectivesList', this.objectives.clinical);
-                renderObjectiveList('sharedObjectivesList', this.objectives.shared);
-                renderObjectiveList('industryObjectivesList', this.objectives.industry);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderProject(data.project);
+                        this.connectWebSocket();
+                    } else {
+                        this.showError(data.error || 'Failed to load project');
+                    }
+                } catch (error) {
+                    console.error('Project load error:', error);
+                    this.showError('Connection error. Please try again.');
+                }
             }
             
-            renderTeam() {
-                const container = document.getElementById('teamList');
-                if (!container) return;
+            renderProject(project) {
+                // Hide loading, show content
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('projectContent').classList.remove('hidden');
                 
-                if (!this.team || this.team.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state" style="padding: 1rem;">
-                            <div class="empty-icon">👥</div>
-                            <p class="text-small">No team members yet</p>
-                        </div>
-                    `;
-                    return;
+                // Update project details
+                document.getElementById('projectTitle').textContent = project.title;
+                document.getElementById('projectDescription').innerHTML = this.formatDescription(project.description);
+                
+                // Update metadata
+                const createdDate = new Date(project.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                document.getElementById('projectCreated').textContent = `Created ${createdDate}`;
+                
+                // Update status
+                const statusElement = document.getElementById('projectStatus');
+                statusElement.className = `project-status status-${project.status}`;
+                statusElement.innerHTML = `<i class="fas fa-circle"></i> ${this.capitalize(project.status)}`;
+                
+                // Update engagement stats
+                if (project.metrics) {
+                    document.getElementById('threadCount').textContent = project.metrics.threads || 0;
+                    document.getElementById('commentCount').textContent = project.metrics.comments || 0;
+                    document.getElementById('memberCount').textContent = project.metrics.members || 0;
+                    document.getElementById('fileCount').textContent = project.metrics.files || 0;
                 }
                 
-                container.innerHTML = this.team.map(member => {
-                    const presence = this.presenceStates.get(member.id) || 'offline';
-                    return `
-                        <div class="team-member" data-user-id="${member.id}">
-                            <div class="member-avatar ${this.getAvatarClass(member.role)}">
-                                ${this.getInitials(member.name)}
-                                <div class="presence-indicator presence-${presence}"></div>
-                            </div>
-                            <div class="member-info">
-                                <div class="member-name">${this.escapeHtml(member.name)}</div>
-                                <div class="member-role">
-                                    <span class="role-badge badge-${member.role}">${member.role}</span>
-                                    ${member.organization ? ` • ${this.escapeHtml(member.organization)}` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                // Load team members
+                if (project.team && Array.isArray(project.team)) {
+                    this.teamMembers = project.team;
+                    this.renderTeamMembers(project.team);
+                }
+                
+                // Populate edit form
+                document.getElementById('editProjectTitle').value = project.title;
+                document.getElementById('editProjectDescription').value = project.description;
+                document.getElementById('editProjectStatus').value = project.status;
+                
+                // Load recent activity
+                this.loadRecentActivity();
             }
             
-            async renderDiscussions(discussions = this.filteredDiscussions) {
-                const container = document.getElementById('discussionList');
+            formatDescription(text) {
+                if (!text) return '';
+                // Convert line breaks to paragraphs
+                return text.split('\n').filter(p => p.trim()).map(p => `<p>${this.escapeHtml(p)}</p>`).join('');
+            }
+            
+            renderTeamMembers(team) {
+                const container = document.getElementById('teamList');
+                if (!container || !team) return;
+                
+                container.innerHTML = team.map(member => `
+                    <div class="team-member">
+                        <div class="member-avatar">
+                            ${member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">${this.escapeHtml(member.name)}</div>
+                            <div class="member-role">
+                                <span class="role-badge role-${member.role}">
+                                    ${member.role === 'clinician' ? 'Clinician' : 'Industry'}
+                                </span>
+                                ${member.specialty || member.title || ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            async loadRecentActivity() {
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/activity`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.activity.length > 0) {
+                            this.renderRecentActivity(data.activity);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load activity:', error);
+                }
+            }
+            
+            renderRecentActivity(activity) {
+                const container = document.getElementById('recentActivity');
+                if (!container || !activity) return;
+                
+                // For now, show placeholder - will be replaced with actual data
+                // In real implementation, you would map activity items to HTML
+            }
+            
+            showError(message) {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+                
+                const errorTitle = document.querySelector('#errorState h3');
+                if (errorTitle && message) {
+                    errorTitle.textContent = message;
+                }
+            }
+            
+            setupEventListeners() {
+                // Tab navigation
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabId = e.target.getAttribute('data-tab');
+                        this.switchTab(tabId);
+                    });
+                });
+                
+                // New thread button
+                document.getElementById('newThreadBtn').addEventListener('click', () => {
+                    this.showModal('newThreadModal');
+                });
+                
+                document.getElementById('startDiscussionBtn').addEventListener('click', () => {
+                    this.showModal('newThreadModal');
+                });
+                
+                // Edit project button
+                document.getElementById('editProjectBtn').addEventListener('click', () => {
+                    this.showModal('editProjectModal');
+                });
+                
+                // Form submissions
+                document.getElementById('newThreadForm').addEventListener('submit', (e) => this.createThread(e));
+                document.getElementById('editProjectForm').addEventListener('submit', (e) => this.updateProject(e));
+                
+                // Modal close buttons
+                document.querySelectorAll('.close-modal').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const modalId = e.target.getAttribute('data-modal');
+                        this.hideModal(modalId);
+                    });
+                });
+                
+                document.querySelectorAll('[data-modal]').forEach(button => {
+                    if (button.type === 'button') {
+                        button.addEventListener('click', (e) => {
+                            const modalId = e.target.getAttribute('data-modal');
+                            this.hideModal(modalId);
+                        });
+                    }
+                });
+                
+                // Quick actions
+                document.getElementById('quickPollBtn').addEventListener('click', () => {
+                    this.showToast('Poll feature coming soon!', 'info');
+                });
+                
+                document.getElementById('scheduleMeetingBtn').addEventListener('click', () => {
+                    this.showToast('Meeting scheduling coming soon!', 'info');
+                });
+                
+                document.getElementById('exportDataBtn').addEventListener('click', () => {
+                    this.showToast('Export feature coming soon!', 'info');
+                });
+                
+                document.getElementById('inviteMemberBtn').addEventListener('click', () => {
+                    this.showToast('Member invitation coming soon!', 'info');
+                });
+                
+                document.getElementById('uploadDocumentBtn').addEventListener('click', () => {
+                    this.showToast('Document upload coming soon!', 'info');
+                });
+                
+                document.getElementById('viewAllActivity').addEventListener('click', () => {
+                    this.switchTab('discussions');
+                });
+            }
+            
+            switchTab(tabId) {
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.getAttribute('data-tab') === tabId);
+                });
+                
+                // Update active content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.toggle('active', content.id === `${tabId}Tab`);
+                });
+                
+                // Load tab content if needed
+                if (tabId === 'discussions') {
+                    this.loadDiscussions();
+                } else if (tabId === 'documents') {
+                    this.loadDocuments();
+                } else if (tabId === 'timeline') {
+                    this.loadTimeline();
+                }
+            }
+            
+            async loadDiscussions() {
+                const container = document.getElementById('discussionsList');
+                container.innerHTML = `
+                    <div class="loading" style="padding: 2rem;">
+                        <div class="spinner" style="width: 32px; height: 32px;"></div>
+                        <p>Loading discussions...</p>
+                    </div>
+                `;
+                
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/threads`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.renderDiscussions(data.threads);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load discussions:', error);
+                    container.innerHTML = `
+                        <p style="color: var(--ui-light); text-align: center; padding: 2rem;">
+                            Failed to load discussions. Please try again.
+                        </p>
+                    `;
+                }
+            }
+            
+            renderDiscussions(threads) {
+                const container = document.getElementById('discussionsList');
                 if (!container) return;
                 
-                if (!discussions || discussions.length === 0) {
+                if (!threads || threads.length === 0) {
                     container.innerHTML = `
-                        <div class="empty-state" style="grid-column: 1 / -1;">
-                            <div class="empty-icon">💬</div>
-                            <h3 style="color: var(--ui-light); margin-bottom: 1rem;">No Discussions Found</h3>
-                            <p style="margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-                                No discussions match your search. Try different keywords or start a new discussion.
-                            </p>
-                            <button id="startFirstDiscussionBtn" class="btn btn-primary">
-                                Start New Discussion
+                        <div style="text-align: center; padding: 3rem; color: var(--ui-light);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">💬</div>
+                            <h3 style="margin-bottom: 0.5rem;">No Discussions Yet</h3>
+                            <p style="margin-bottom: 1.5rem;">Start the first discussion to collaborate with your team.</p>
+                            <button id="startFirstDiscussion" class="btn btn-primary">
+                                Start First Discussion
                             </button>
                         </div>
                     `;
                     
-                    document.getElementById('startFirstDiscussionBtn').addEventListener('click', () => {
-                        this.showModal('newDiscussionModal');
+                    document.getElementById('startFirstDiscussion').addEventListener('click', () => {
+                        this.showModal('newThreadModal');
                     });
                     
                     return;
                 }
                 
-                container.innerHTML = discussions.map(discussion => {
-                    const authorPresence = this.presenceStates.get(discussion.author_id) || 'offline';
-                    return `
-                    <div class="discussion-item" data-discussion-id="${discussion.id}">
-                        <div class="discussion-header">
-                            <div class="discussion-author">
-                                <div class="author-avatar ${this.getAvatarClass(discussion.author_role)}">
-                                    ${this.getInitials(discussion.author_name)}
-                                    <div class="presence-indicator presence-${authorPresence}"></div>
-                                </div>
-                                <div class="author-info">
-                                    <div class="author-name">${this.escapeHtml(discussion.author_name)}</div>
-                                    <div class="author-meta">
-                                        <span>${this.escapeHtml(discussion.author_organization || '')}</span>
-                                        <span>•</span>
-                                        <span>${this.formatTimeAgo(discussion.created_at)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="discussion-type type-${discussion.type}">
-                                ${this.getDiscussionTypeLabel(discussion.type)}
-                            </div>
+                container.innerHTML = threads.map(thread => `
+                    <div class="thread-preview" data-thread-id="${thread.id}">
+                        <div class="thread-header">
+                            <h3 class="thread-title">${this.escapeHtml(thread.title)}</h3>
+                            <span class="thread-meta">
+                                ${new Date(thread.created_at).toLocaleDateString()}
+                            </span>
                         </div>
-                        
-                        <h3 class="discussion-title">${this.escapeHtml(discussion.title)}</h3>
-                        <div class="discussion-content">
-                            ${this.escapeHtml(discussion.content.substring(0, 200))}${discussion.content.length > 200 ? '...' : ''}
-                        </div>
-                        
-                        ${discussion.evidence_count > 0 ? `
-                            <div class="evidence-panel">
-                                <div class="evidence-header">
-                                    <i class="fas fa-file-medical"></i>
-                                    <span>${discussion.evidence_count} Evidence Reference${discussion.evidence_count !== 1 ? 's' : ''}</span>
-                                </div>
-                                <div class="evidence-list">
-                                    ${discussion.evidence && discussion.evidence.length > 0 
-                                        ? discussion.evidence.slice(0, 2).map(ev => `
-                                            <div class="evidence-item">
-                                                <i class="fas fa-link evidence-icon"></i>
-                                                <span>${this.escapeHtml(ev.title || ev.source_id)}</span>
-                                            </div>
-                                        `).join('')
-                                        : '<div class="text-small text-light">Evidence references attached</div>'
-                                    }
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${discussion.consensus ? `
-                            <div class="consensus-meter">
-                                <div class="consensus-header">
-                                    <div class="consensus-title">Consensus Progress</div>
-                                    <div class="consensus-status status-${discussion.consensus.status}">
-                                        ${discussion.consensus.status.toUpperCase()}
-                                    </div>
-                                </div>
-                                <div class="consensus-bars">
-                                    <div class="consensus-bar">
-                                        <div class="bar-label">Clinical Agreement</div>
-                                        <div class="bar-container">
-                                            <div class="bar-fill bar-clinical" style="width: ${discussion.consensus.clinicalAgreement}%"></div>
-                                        </div>
-                                        <div class="bar-value">${discussion.consensus.clinicalAgreement}%</div>
-                                    </div>
-                                    <div class="consensus-bar">
-                                        <div class="bar-label">Technical Feasibility</div>
-                                        <div class="bar-container">
-                                            <div class="bar-fill bar-technical" style="width: ${discussion.consensus.technicalFeasibility}%"></div>
-                                        </div>
-                                        <div class="bar-value">${discussion.consensus.technicalFeasibility}%</div>
-                                    </div>
-                                </div>
-                                <div class="vote-actions">
-                                    <button class="btn btn-vote btn-small" onclick="project.voteOnDiscussion('${discussion.id}', 'clinical_agree')">
-                                        <i class="fas fa-check"></i> Clinical Agree
-                                    </button>
-                                    <button class="btn btn-vote btn-small" onclick="project.voteOnDiscussion('${discussion.id}', 'technical_feasible')">
-                                        <i class="fas fa-cogs"></i> Technically Feasible
-                                    </button>
-                                    <button class="btn btn-secondary btn-small" onclick="project.voteOnDiscussion('${discussion.id}', 'needs_evidence')">
-                                        <i class="fas fa-question"></i> Needs Evidence
-                                    </button>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        <div class="discussion-actions">
-                            <div class="action-buttons">
-                                <button class="action-btn" onclick="project.addEvidenceToDiscussion('${discussion.id}')">
-                                    <i class="fas fa-file-medical"></i>
-                                    Add Evidence
-                                </button>
-                                <button class="action-btn" onclick="project.viewDiscussion('${discussion.id}')">
-                                    <i class="fas fa-comment"></i>
-                                    View Comments
-                                </button>
-                                ${discussion.consensus?.clinicalAgreement >= 70 && discussion.consensus?.technicalFeasibility >= 70 ? `
-                                    <button class="action-btn btn-success" onclick="project.createDecision('${discussion.id}')">
-                                        <i class="fas fa-check-circle"></i>
-                                        Create Decision
-                                    </button>
-                                ` : ''}
-                            </div>
-                            <div class="discussion-meta">
-                                <span>${discussion.comment_count || 0} comments</span>
-                                <span>•</span>
-                                <span>${discussion.consensus?.totalVotes || 0} votes</span>
-                            </div>
+                        <p class="thread-excerpt">
+                            ${this.escapeHtml(thread.content.substring(0, 150))}${thread.content.length > 150 ? '...' : ''}
+                        </p>
+                        <div class="thread-engagement">
+                            <span class="engagement-item">
+                                <i class="fas fa-comment"></i> ${thread.comment_count || 0}
+                            </span>
+                            <span class="engagement-item">
+                                <i class="fas fa-heart" style="color: #EF4444;"></i> ${thread.upvotes || 0}
+                            </span>
+                            ${thread.expert_endorsed ? `
+                                <span class="engagement-item">
+                                    <i class="fas fa-check-circle" style="color: #10B981;"></i> Expert endorsed
+                                </span>
+                            ` : ''}
                         </div>
                     </div>
-                    `;
-                }).join('');
-            }
-            
-            setupEventListeners() {
-                // Modal controls
-                document.getElementById('newDiscussionBtn').addEventListener('click', () => this.showModal('newDiscussionModal'));
-                document.getElementById('closeDiscussionModal').addEventListener('click', () => this.hideModal('newDiscussionModal'));
-                document.getElementById('cancelDiscussionBtn').addEventListener('click', () => this.hideModal('newDiscussionModal'));
-                document.getElementById('discussionForm').addEventListener('submit', (e) => this.createDiscussion(e));
+                `).join('');
                 
-                document.getElementById('addEvidenceBtn').addEventListener('click', () => this.showModal('evidenceModal'));
-                document.getElementById('closeEvidenceModal').addEventListener('click', () => this.hideModal('evidenceModal'));
-                document.getElementById('cancelEvidenceBtn').addEventListener('click', () => this.hideModal('evidenceModal'));
-                document.getElementById('evidenceForm').addEventListener('submit', (e) => this.addEvidenceItem(e));
-                
-                document.getElementById('closeVoteModal').addEventListener('click', () => this.hideModal('voteModal'));
-                document.getElementById('cancelVoteBtn').addEventListener('click', () => this.hideModal('voteModal'));
-                
-                document.getElementById('addTeamMemberBtn').addEventListener('click', () => this.showModal('teamModal'));
-                document.getElementById('inviteTeamMemberBtn').addEventListener('click', () => this.showModal('teamModal'));
-                document.getElementById('closeTeamModal').addEventListener('click', () => this.hideModal('teamModal'));
-                document.getElementById('cancelTeamBtn').addEventListener('click', () => this.hideModal('teamModal'));
-                document.getElementById('teamForm').addEventListener('submit', (e) => this.addTeamMember(e));
-                
-                document.getElementById('editObjectivesBtn').addEventListener('click', () => this.showObjectivesModal());
-                document.getElementById('closeObjectivesModal').addEventListener('click', () => this.hideModal('objectivesModal'));
-                document.getElementById('cancelObjectivesBtn').addEventListener('click', () => this.hideModal('objectivesModal'));
-                document.getElementById('objectivesForm').addEventListener('submit', (e) => this.updateObjectives(e));
-                
-                // Discussion type change
-                document.getElementById('discussionType').addEventListener('change', (e) => {
-                    this.updateDiscussionType(e.target.value);
-                });
-                
-                // Add objective buttons
-                document.getElementById('addClinicalObjectiveBtn').addEventListener('click', () => this.addObjectiveInput('clinical'));
-                document.getElementById('addSharedObjectiveBtn').addEventListener('click', () => this.addObjectiveInput('shared'));
-                document.getElementById('addIndustryObjectiveBtn').addEventListener('click', () => this.addObjectiveInput('industry'));
-                
-                // Close modals on outside click
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) {
-                            this.hideModal(modal.id);
+                // Add click listeners to thread previews
+                document.querySelectorAll('.thread-preview').forEach(preview => {
+                    preview.addEventListener('click', (e) => {
+                        if (!e.target.closest('button')) {
+                            const threadId = preview.getAttribute('data-thread-id');
+                            // In a real app, this would open the thread detail view
+                            this.showToast('Thread detail view coming soon!', 'info');
                         }
                     });
                 });
-                
-                // IMPROVEMENT: VALIDATE FORMS ON INPUT
-                this.setupFormValidation();
             }
             
-            // IMPROVEMENT: SEARCH FUNCTIONALITY
-            setupSearch() {
-                const searchInput = document.getElementById('searchDiscussions');
-                if (!searchInput) return;
-                
-                searchInput.addEventListener('input', debounce(() => {
-                    this.filterDiscussions(searchInput.value);
-                }, 300));
+            async loadDocuments() {
+                // Placeholder - would fetch documents from API
+                const container = document.getElementById('documentsList');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--ui-light);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">📄</div>
+                        <h3 style="margin-bottom: 0.5rem;">No Documents Yet</h3>
+                        <p>Upload project documents to share with your team.</p>
+                    </div>
+                `;
             }
             
-            filterDiscussions(query) {
-                const normalizedQuery = query.toLowerCase().trim();
-                
-                if (!normalizedQuery) {
-                    this.filteredDiscussions = [...this.discussions];
-                } else {
-                    this.filteredDiscussions = this.discussions.filter(d => 
-                        d.title.toLowerCase().includes(normalizedQuery) ||
-                        d.content.toLowerCase().includes(normalizedQuery) ||
-                        d.author_name.toLowerCase().includes(normalizedQuery) ||
-                        (d.author_organization && d.author_organization.toLowerCase().includes(normalizedQuery))
-                    );
-                }
-                
-                this.renderDiscussions();
+            async loadTimeline() {
+                // Placeholder - would fetch timeline events from API
+                // For now, the static timeline remains
             }
             
-            // IMPROVEMENT: FORM VALIDATION
-            setupFormValidation() {
-                const discussionForm = document.getElementById('discussionForm');
-                if (discussionForm) {
-                    discussionForm.addEventListener('submit', (e) => {
-                        if (!this.validateDiscussionForm()) {
-                            e.preventDefault();
-                            return false;
-                        }
+            async createThread(e) {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('submitThreadBtn');
+                const originalText = submitBtn.textContent;
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating...';
+                
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}/threads`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title: document.getElementById('threadTitle').value,
+                            category: document.getElementById('threadCategory').value,
+                            content: document.getElementById('threadContent').value
+                        })
                     });
-                }
-                
-                const teamForm = document.getElementById('teamForm');
-                if (teamForm) {
-                    teamForm.addEventListener('submit', (e) => {
-                        if (!this.validateTeamForm()) {
-                            e.preventDefault();
-                            return false;
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.hideModal('newThreadModal');
+                        document.getElementById('newThreadForm').reset();
+                        
+                        // Refresh discussions if on that tab
+                        if (document.getElementById('discussionsTab').classList.contains('active')) {
+                            this.loadDiscussions();
                         }
-                    });
-                }
-            }
-            
-            validateDiscussionForm() {
-                const title = document.getElementById('discussionTitle').value.trim();
-                const content = document.getElementById('discussionContent').value.trim();
-                const type = document.getElementById('discussionType').value;
-                
-                // Clear previous errors
-                this.clearFormErrors();
-                
-                let isValid = true;
-                
-                if (title.length < 10) {
-                    this.showFormError('discussionTitle', 'Title must be at least 10 characters');
-                    isValid = false;
-                }
-                
-                if (content.length < 50) {
-                    this.showFormError('discussionContent', 'Description must be at least 50 characters');
-                    isValid = false;
-                }
-                
-                if (!type) {
-                    this.showFormError('discussionType', 'Please select a discussion type');
-                    isValid = false;
-                }
-                
-                // Evidence validation based on type
-                if ((type === 'clinical_question' || type === 'technical_solution') && 
-                    this.evidenceItems.length === 0) {
-                    this.showToast('This discussion type requires at least one evidence reference', 'warning');
-                    isValid = false;
-                }
-                
-                return isValid;
-            }
-            
-            validateTeamForm() {
-                const name = document.getElementById('memberName').value.trim();
-                const email = document.getElementById('memberEmail').value.trim();
-                const role = document.getElementById('memberRole').value;
-                
-                this.clearFormErrors();
-                
-                let isValid = true;
-                
-                if (name.length < 2) {
-                    this.showFormError('memberName', 'Please enter a valid name');
-                    isValid = false;
-                }
-                
-                if (!this.validateEmail(email)) {
-                    this.showFormError('memberEmail', 'Please enter a valid email address');
-                    isValid = false;
-                }
-                
-                if (!role) {
-                    this.showFormError('memberRole', 'Please select a team role');
-                    isValid = false;
-                }
-                
-                return isValid;
-            }
-            
-            showFormError(fieldId, message) {
-                const field = document.getElementById(fieldId);
-                if (!field) return;
-                
-                // Remove existing error
-                const existingError = field.parentNode.querySelector('.error-message');
-                if (existingError) existingError.remove();
-                
-                // Add error state
-                field.classList.add('error-state');
-                field.parentNode.classList.add('has-error');
-                
-                // Create error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message';
-                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${this.escapeHtml(message)}`;
-                field.parentNode.appendChild(errorDiv);
-                
-                // Focus on field
-                field.focus();
-            }
-            
-            clearFormErrors() {
-                document.querySelectorAll('.error-state').forEach(el => {
-                    el.classList.remove('error-state');
-                });
-                document.querySelectorAll('.has-error').forEach(el => {
-                    el.classList.remove('has-error');
-                });
-                document.querySelectorAll('.error-message').forEach(el => {
-                    el.remove();
-                });
-            }
-            
-            validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            }
-            
-            setupWebSocket() {
-                // Simulate WebSocket for demo
-                console.log('WebSocket simulation enabled');
-                
-                // Simulate periodic updates
-                setInterval(() => {
-                    this.simulateLiveUpdates();
-                }, 30000);
-            }
-            
-            simulateLiveUpdates() {
-                // Randomly update presence states
-                this.team.forEach(member => {
-                    if (Math.random() > 0.7) {
-                        const states = ['online', 'away', 'offline'];
-                        const newState = states[Math.floor(Math.random() * states.length)];
-                        this.setUserPresence(member.id, newState);
+                        
+                        // Update engagement stats
+                        const threadCount = document.getElementById('threadCount');
+                        threadCount.textContent = parseInt(threadCount.textContent) + 1;
+                        
+                        this.showToast('Discussion started successfully!', 'success');
+                    } else {
+                        this.showToast(data.error || 'Failed to create discussion', 'error');
                     }
-                });
+                } catch (error) {
+                    console.error('Create thread error:', error);
+                    this.showToast('Connection error', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
             }
             
-            // IMPROVEMENT: USER PRESENCE
-            simulatePresence() {
-                // Set initial presence states
-                this.team.forEach(member => {
-                    const states = ['online', 'away', 'offline'];
-                    const randomState = states[Math.floor(Math.random() * states.length)];
-                    this.setUserPresence(member.id, randomState);
-                });
+            async updateProject(e) {
+                e.preventDefault();
                 
-                // Set current user as online
-                if (this.user) {
-                    this.setUserPresence(this.user.id, 'online');
-                }
+                const submitBtn = document.getElementById('saveProjectBtn');
+                const originalText = submitBtn.textContent;
                 
-                // Simulate presence changes
-                setInterval(() => {
-                    this.team.forEach(member => {
-                        if (Math.random() > 0.8 && member.id !== this.user?.id) {
-                            const states = ['online', 'away', 'offline'];
-                            const newState = states[Math.floor(Math.random() * states.length)];
-                            this.setUserPresence(member.id, newState);
-                        }
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+                
+                try {
+                    const response = await fetch(`/api/projects/${this.projectId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title: document.getElementById('editProjectTitle').value,
+                            description: document.getElementById('editProjectDescription').value,
+                            status: document.getElementById('editProjectStatus').value
+                        })
                     });
-                }, 15000);
-            }
-            
-            setUserPresence(userId, presence) {
-                this.presenceStates.set(userId, presence);
-                
-                // Update UI if user is in team list
-                const teamMember = document.querySelector(`[data-user-id="${userId}"]`);
-                if (teamMember) {
-                    const indicator = teamMember.querySelector('.presence-indicator');
-                    if (indicator) {
-                        indicator.className = `presence-indicator presence-${presence}`;
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.hideModal('editProjectModal');
+                        this.loadProject(); // Refresh project data
+                        this.showToast('Project updated successfully!', 'success');
+                    } else {
+                        this.showToast(data.error || 'Failed to update project', 'error');
                     }
+                } catch (error) {
+                    console.error('Update project error:', error);
+                    this.showToast('Connection error', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 }
+            }
+            
+            showModal(modalId) {
+                document.getElementById(modalId).style.display = 'flex';
+            }
+            
+            hideModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+            
+            connectWebSocket() {
+                if (!this.token || this.ws) return;
                 
-                // Update UI if user is in discussion authors
-                document.querySelectorAll('.author-avatar').forEach(avatar => {
-                    const parent = avatar.closest('[data-discussion-id]');
-                    if (parent) {
-                        // This is simplified - in real app you'd match user ID
-                        // For demo, we'll update randomly
-                        if (Math.random() > 0.7) {
-                            const indicator = avatar.querySelector('.presence-indicator');
-                            if (indicator) {
-                                const states = ['online', 'away', 'offline'];
-                                const newState = states[Math.floor(Math.random() * states.length)];
-                                indicator.className = `presence-indicator presence-${newState}`;
-                            }
-                        }
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/project/${this.projectId}`;
+                
+                this.ws = new WebSocket(wsUrl);
+                
+                this.ws.onopen = () => {
+                    this.ws.send(JSON.stringify({
+                        type: 'authenticate',
+                        token: this.token,
+                        project_id: this.projectId
+                    }));
+                };
+                
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+                    
+                    switch (message.type) {
+                        case 'new_thread':
+                            this.handleNewThread(message.thread);
+                            break;
+                        case 'new_comment':
+                            this.handleNewComment(message.comment);
+                            break;
+                        case 'thread_updated':
+                            this.handleThreadUpdate(message.thread);
+                            break;
+                        case 'project_updated':
+                            this.loadProject();
+                            break;
                     }
-                });
-            }
-            
-            // IMPROVEMENT: SKELETON LOADING
-            showSkeletonLoading() {
-                // Already shown in HTML
-            }
-            
-            hideSkeletonLoading() {
-                const skeletons = document.querySelectorAll('.skeleton-item');
-                skeletons.forEach(skeleton => {
-                    skeleton.style.display = 'none';
-                });
+                };
                 
-                // Remove skeleton items
-                setTimeout(() => {
-                    document.querySelectorAll('.skeleton-item').forEach(el => el.remove());
-                }, 500);
+                this.ws.onclose = () => {
+                    setTimeout(() => this.connectWebSocket(), 3000);
+                };
             }
             
-            // IMPROVEMENT: TOAST NOTIFICATIONS
-            showToast(message, type = 'info', duration = 5000) {
+            handleNewThread(thread) {
+                this.showToast(`New discussion: ${thread.title}`, 'info');
+                
+                // Update thread count
+                const threadCount = document.getElementById('threadCount');
+                threadCount.textContent = parseInt(threadCount.textContent) + 1;
+                
+                // If we're on the discussions tab, refresh
+                if (document.getElementById('discussionsTab').classList.contains('active')) {
+                    this.loadDiscussions();
+                }
+            }
+            
+            handleNewComment(comment) {
+                // Update comment count
+                const commentCount = document.getElementById('commentCount');
+                commentCount.textContent = parseInt(commentCount.textContent) + 1;
+                
+                // Show notification if relevant
+                if (comment.mentions && comment.mentions.includes(this.user.id)) {
+                    this.showToast(`You were mentioned in a comment`, 'info');
+                }
+            }
+            
+            handleThreadUpdate(thread) {
+                // Could update specific thread in UI if it's visible
+                // For now, just refresh if on discussions tab
+                if (document.getElementById('discussionsTab').classList.contains('active')) {
+                    this.loadDiscussions();
+                }
+            }
+            
+            showToast(message, type = 'info') {
                 const container = document.getElementById('toastContainer');
                 if (!container) return;
                 
                 const toast = document.createElement('div');
-                toast.className = `toast toast-${type}`;
+                toast.className = `toast`;
+                toast.style.background = type === 'success' ? '#10B981' : 
+                                       type === 'error' ? '#EF4444' : 
+                                       type === 'warning' ? '#F59E0B' : 
+                                       '#1A5F7A';
                 
                 const icon = type === 'success' ? 'fa-check-circle' : 
                            type === 'error' ? 'fa-exclamation-circle' : 
@@ -2832,527 +1656,10 @@
                 
                 container.appendChild(toast);
                 
-                // Auto remove after duration
                 setTimeout(() => {
-                    toast.style.animation = 'toastSlideOut 0.3s ease';
+                    toast.style.animation = 'toastSlideIn 0.3s ease reverse';
                     setTimeout(() => toast.remove(), 300);
-                }, duration);
-            }
-            
-            // ===== MODAL METHODS =====
-            showModal(modalId) {
-                document.getElementById(modalId).style.display = 'flex';
-                
-                // IMPROVEMENT: TRAP FOCUS IN MODAL
-                const modal = document.getElementById(modalId);
-                const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                if (focusable.length > 0) {
-                    focusable[0].focus();
-                }
-            }
-            
-            hideModal(modalId) {
-                document.getElementById(modalId).style.display = 'none';
-                
-                // Reset forms when hiding
-                if (modalId === 'newDiscussionModal') {
-                    document.getElementById('discussionForm').reset();
-                    document.getElementById('evidenceContainer').innerHTML = '';
-                    this.evidenceItems = [];
-                    this.updateEvidencePreview();
-                    this.clearFormErrors();
-                } else if (modalId === 'evidenceModal') {
-                    document.getElementById('evidenceForm').reset();
-                    this.clearFormErrors();
-                } else if (modalId === 'teamModal') {
-                    document.getElementById('teamForm').reset();
-                    this.clearFormErrors();
-                }
-            }
-            
-            updateDiscussionType(type) {
-                const description = document.getElementById('typeDescription');
-                const evidenceContainer = document.getElementById('evidenceContainer');
-                
-                switch(type) {
-                    case 'clinical_question':
-                        description.textContent = 'Clinical questions require evidence from medical literature or clinical experience.';
-                        evidenceContainer.style.display = 'block';
-                        break;
-                    case 'technical_solution':
-                        description.textContent = 'Technical solutions require evidence from engineering specifications, prototypes, or feasibility studies.';
-                        evidenceContainer.style.display = 'block';
-                        break;
-                    case 'joint_review':
-                        description.textContent = 'Joint reviews benefit from evidence but can start as brainstorming sessions.';
-                        evidenceContainer.style.display = 'block';
-                        break;
-                    default:
-                        evidenceContainer.style.display = 'none';
-                }
-            }
-            
-            // ===== DISCUSSION METHODS =====
-            async createDiscussion(e) {
-                e.preventDefault();
-                
-                if (!this.validateDiscussionForm()) {
-                    return;
-                }
-                
-                const submitBtn = document.getElementById('submitDiscussionBtn');
-                const originalText = submitBtn.textContent;
-                
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Creating...';
-                
-                try {
-                    // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    const newDiscussion = {
-                        id: 'disc_' + Date.now(),
-                        title: document.getElementById('discussionTitle').value,
-                        content: document.getElementById('discussionContent').value,
-                        author_name: this.user.name,
-                        author_role: this.user.role,
-                        author_organization: this.user.organization,
-                        type: document.getElementById('discussionType').value,
-                        created_at: new Date().toISOString(),
-                        evidence_count: this.evidenceItems.length,
-                        evidence: this.evidenceItems.map(item => ({
-                            source_id: item.evidenceId,
-                            title: item.evidenceTitle || item.evidenceId
-                        })),
-                        comment_count: 0,
-                        consensus: {
-                            clinicalAgreement: 0,
-                            technicalFeasibility: 0,
-                            status: 'pending',
-                            totalVotes: 0
-                        }
-                    };
-                    
-                    this.discussions.unshift(newDiscussion);
-                    this.filteredDiscussions.unshift(newDiscussion);
-                    
-                    this.hideModal('newDiscussionModal');
-                    this.renderDiscussions();
-                    this.updateProjectStats();
-                    
-                    this.showToast('Discussion created successfully!', 'success');
-                    
-                } catch (error) {
-                    console.error('Create discussion error:', error);
-                    this.showToast('Failed to create discussion', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            }
-            
-            async addEvidenceItem(e) {
-                e.preventDefault();
-                
-                const evidenceData = {
-                    evidenceType: document.getElementById('evidenceType').value,
-                    evidenceId: document.getElementById('evidenceId').value,
-                    evidenceTitle: document.getElementById('evidenceTitle').value
-                };
-                
-                if (!evidenceData.evidenceType || !evidenceData.evidenceId) {
-                    this.showToast('Please fill in all required fields', 'warning');
-                    return;
-                }
-                
-                // IMPROVEMENT: VALIDATE EVIDENCE ID FORMAT
-                if (!this.validateEvidenceId(evidenceData.evidenceType, evidenceData.evidenceId)) {
-                    this.showToast('Invalid reference ID format for selected evidence type', 'warning');
-                    return;
-                }
-                
-                this.evidenceItems.push(evidenceData);
-                this.updateEvidencePreview();
-                this.hideModal('evidenceModal');
-                this.showToast('Evidence reference added', 'success');
-            }
-            
-            validateEvidenceId(type, id) {
-                const patterns = {
-                    pubmed: /^\d+$/, // PubMed IDs are numbers
-                    clinical_trial: /^NCT\d+$/i, // NCT followed by numbers
-                    guideline: /.+/, // Any non-empty string for guidelines
-                    regulatory: /.+/,
-                    other: /.+/
-                };
-                
-                return patterns[type] ? patterns[type].test(id.trim()) : true;
-            }
-            
-            updateEvidencePreview() {
-                const container = document.getElementById('evidenceContainer');
-                const preview = document.getElementById('evidencePreview');
-                
-                if (this.evidenceItems.length === 0) {
-                    container.innerHTML = '<div class="text-small text-light">No evidence added yet</div>';
-                    preview.classList.add('hidden');
-                    return;
-                }
-                
-                container.innerHTML = this.evidenceItems.map((item, index) => `
-                    <div class="evidence-item" style="justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-file-medical" style="color: var(--thorax-success);"></i>
-                            <div>
-                                <div class="text-small">${this.escapeHtml(item.evidenceTitle || `Reference: ${item.evidenceId}`)}</div>
-                                <div class="text-xsmall text-light">${item.evidenceType}</div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary btn-small" onclick="project.removeEvidenceItem(${index})" aria-label="Remove evidence">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `).join('');
-                
-                preview.classList.remove('hidden');
-            }
-            
-            removeEvidenceItem(index) {
-                this.evidenceItems.splice(index, 1);
-                this.updateEvidencePreview();
-                this.showToast('Evidence reference removed', 'info');
-            }
-            
-            generateEvidenceUrl(evidence) {
-                switch(evidence.evidenceType) {
-                    case 'pubmed':
-                        return `https://pubmed.ncbi.nlm.nih.gov/${evidence.evidenceId}/`;
-                    case 'clinical_trial':
-                        return `https://clinicaltrials.gov/ct2/show/${evidence.evidenceId}`;
-                    default:
-                        return evidence.evidenceId.startsWith('http') ? evidence.evidenceId : '';
-                }
-            }
-            
-            async voteOnDiscussion(discussionId, voteType) {
-                if (!this.user) {
-                    this.showToast('Please log in to vote', 'warning');
-                    return;
-                }
-                
-                try {
-                    // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 800));
-                    
-                    const discussion = this.discussions.find(d => d.id === discussionId);
-                    if (!discussion || !discussion.consensus) return;
-                    
-                    // Update consensus based on vote type
-                    if (voteType === 'clinical_agree') {
-                        discussion.consensus.clinicalAgreement = Math.min(100, discussion.consensus.clinicalAgreement + 15);
-                    } else if (voteType === 'technical_feasible') {
-                        discussion.consensus.technicalFeasibility = Math.min(100, discussion.consensus.technicalFeasibility + 15);
-                    } else if (voteType === 'needs_evidence') {
-                        discussion.consensus.clinicalAgreement = Math.max(0, discussion.consensus.clinicalAgreement - 10);
-                        discussion.consensus.technicalFeasibility = Math.max(0, discussion.consensus.technicalFeasibility - 10);
-                    }
-                    
-                    discussion.consensus.totalVotes = (discussion.consensus.totalVotes || 0) + 1;
-                    
-                    // Update status
-                    const avgConsensus = (discussion.consensus.clinicalAgreement + discussion.consensus.technicalFeasibility) / 2;
-                    if (avgConsensus >= 80) discussion.consensus.status = 'high';
-                    else if (avgConsensus >= 60) discussion.consensus.status = 'medium';
-                    else if (avgConsensus >= 40) discussion.consensus.status = 'low';
-                    else discussion.consensus.status = 'pending';
-                    
-                    this.updateDiscussionConsensus(discussionId, discussion.consensus);
-                    this.showToast('Vote recorded!', 'success');
-                    
-                } catch (error) {
-                    console.error('Vote error:', error);
-                    this.showToast('Failed to record vote', 'error');
-                }
-            }
-            
-            updateDiscussionConsensus(discussionId, consensus) {
-                const discussionItem = document.querySelector(`[data-discussion-id="${discussionId}"]`);
-                if (!discussionItem) return;
-                
-                const consensusMeter = discussionItem.querySelector('.consensus-meter');
-                if (consensusMeter) {
-                    const clinicalBar = consensusMeter.querySelector('.bar-clinical');
-                    const technicalBar = consensusMeter.querySelector('.bar-technical');
-                    const clinicalValue = consensusMeter.querySelector('.bar-value:first-child');
-                    const technicalValue = consensusMeter.querySelector('.bar-value:last-child');
-                    const statusBadge = consensusMeter.querySelector('.consensus-status');
-                    
-                    if (clinicalBar) clinicalBar.style.width = `${consensus.clinicalAgreement}%`;
-                    if (technicalBar) technicalBar.style.width = `${consensus.technicalFeasibility}%`;
-                    if (clinicalValue) clinicalValue.textContent = `${consensus.clinicalAgreement}%`;
-                    if (technicalValue) technicalValue.textContent = `${consensus.technicalFeasibility}%`;
-                    if (statusBadge) {
-                        statusBadge.className = `consensus-status status-${consensus.status}`;
-                        statusBadge.textContent = consensus.status.toUpperCase();
-                    }
-                }
-            }
-            
-            async addEvidenceToDiscussion(discussionId) {
-                this.currentDiscussionId = discussionId;
-                this.showModal('evidenceModal');
-            }
-            
-            async viewDiscussion(discussionId) {
-                // In a full implementation, this would open a detailed view
-                this.showToast('Detailed discussion view coming soon!', 'info');
-            }
-            
-            async createDecision(discussionId) {
-                const discussion = this.discussions.find(d => d.id === discussionId);
-                if (!discussion) return;
-                
-                const decision = {
-                    title: `Decision: ${discussion.title.substring(0, 50)}...`,
-                    description: `Based on discussion "${discussion.title}". Consensus reached with ${discussion.consensus?.clinicalAgreement}% clinical agreement and ${discussion.consensus?.technicalFeasibility}% technical feasibility.`,
-                    created_at: new Date().toISOString()
-                };
-                
-                this.addDecision(decision);
-                this.showToast('Decision created and logged!', 'success');
-            }
-            
-            // ===== TEAM METHODS =====
-            async addTeamMember(e) {
-                e.preventDefault();
-                
-                if (!this.validateTeamForm()) {
-                    return;
-                }
-                
-                const submitBtn = document.getElementById('submitTeamBtn');
-                const originalText = submitBtn.textContent;
-                
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Adding...';
-                
-                try {
-                    // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 1200));
-                    
-                    const newMember = {
-                        id: 'member_' + Date.now(),
-                        name: document.getElementById('memberName').value,
-                        email: document.getElementById('memberEmail').value,
-                        role: document.getElementById('memberRole').value,
-                        organization: document.getElementById('memberOrganization').value || ''
-                    };
-                    
-                    this.team.push(newMember);
-                    
-                    this.hideModal('teamModal');
-                    this.renderTeam();
-                    this.renderBridge();
-                    this.updateProjectStats();
-                    
-                    this.showToast('Team member added successfully!', 'success');
-                    
-                } catch (error) {
-                    console.error('Add team member error:', error);
-                    this.showToast('Failed to add team member', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            }
-            
-            // ===== OBJECTIVES METHODS =====
-            showObjectivesModal() {
-                this.showModal('objectivesModal');
-                
-                // Populate existing objectives
-                this.populateObjectivesInput('clinicalObjectivesInput', this.objectives.clinical);
-                this.populateObjectivesInput('sharedObjectivesInput', this.objectives.shared);
-                this.populateObjectivesInput('industryObjectivesInput', this.objectives.industry);
-            }
-            
-            populateObjectivesInput(containerId, objectives) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                
-                container.innerHTML = '';
-                
-                if (!objectives || objectives.length === 0) {
-                    this.addObjectiveInput(containerId.replace('Input', '').replace('Objectives', ''), '');
-                } else {
-                    objectives.forEach(obj => {
-                        this.addObjectiveInput(containerId.replace('Input', '').replace('Objectives', ''), obj.text, obj.completed);
-                    });
-                }
-            }
-            
-            addObjectiveInput(type, text = '', completed = false) {
-                const containerId = `${type}ObjectivesInput`;
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                
-                const input = document.createElement('div');
-                input.className = 'objective-input-item';
-                input.style.display = 'flex';
-                input.style.gap = '0.5rem';
-                input.style.marginBottom = '0.5rem';
-                input.innerHTML = `
-                    <input type="checkbox" ${completed ? 'checked' : ''} 
-                           onchange="this.nextElementSibling.style.textDecoration = this.checked ? 'line-through' : 'none'"
-                           style="margin-top: 0.25rem;">
-                    <input type="text" value="${this.escapeHtml(text)}" 
-                           placeholder="Enter objective..." 
-                           class="form-input" 
-                           style="flex: 1; text-decoration: ${completed ? 'line-through' : 'none'};">
-                    <button type="button" class="btn btn-secondary btn-small" 
-                            onclick="this.parentElement.remove()" aria-label="Remove objective">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                container.appendChild(input);
-            }
-            
-            async updateObjectives(e) {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('submitObjectivesBtn');
-                const originalText = submitBtn.textContent;
-                
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Saving...';
-                
-                try {
-                    // Collect objectives from inputs
-                    const objectives = {
-                        clinical: this.collectObjectives('clinical'),
-                        industry: this.collectObjectives('industry'),
-                        shared: this.collectObjectives('shared')
-                    };
-                    
-                    // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    this.hideModal('objectivesModal');
-                    this.objectives = objectives;
-                    this.renderObjectives();
-                    this.renderBridge();
-                    this.showToast('Objectives updated successfully!', 'success');
-                    
-                } catch (error) {
-                    console.error('Update objectives error:', error);
-                    this.showToast('Failed to update objectives', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            }
-            
-            collectObjectives(type) {
-                const container = document.getElementById(`${type}ObjectivesInput`);
-                if (!container) return [];
-                
-                const inputs = container.querySelectorAll('input[type="text"]');
-                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-                
-                return Array.from(inputs).map((input, index) => ({
-                    text: input.value.trim(),
-                    completed: checkboxes[index]?.checked || false
-                })).filter(obj => obj.text.length > 0);
-            }
-            
-            addDecision(decision) {
-                const decisionList = document.getElementById('decisionList');
-                if (decisionList) {
-                    // Remove empty state if it exists
-                    const emptyState = decisionList.querySelector('.empty-state');
-                    if (emptyState) emptyState.remove();
-                    
-                    const decisionItem = document.createElement('div');
-                    decisionItem.className = 'decision-item';
-                    decisionItem.innerHTML = `
-                        <div class="decision-title">${this.escapeHtml(decision.title)}</div>
-                        <div class="decision-meta">${this.formatTimeAgo(decision.created_at)}</div>
-                    `;
-                    decisionList.prepend(decisionItem);
-                }
-                
-                // Update project stats
-                this.project.decision_count = (this.project.decision_count || 0) + 1;
-                document.getElementById('decisionCount').textContent = this.project.decision_count;
-            }
-            
-            updateProjectStats() {
-                document.getElementById('discussionCount').textContent = this.discussions.length;
-                document.getElementById('teamCount').textContent = this.team.length;
-            }
-            
-            // ===== UTILITY METHODS =====
-            getInitials(name) {
-                if (!name) return '??';
-                return name.split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
-            }
-            
-            getAvatarClass(role) {
-                return `avatar-${role}`;
-            }
-            
-            getRoleLabel(role) {
-                const labels = {
-                    clinician: 'Clinical Professional',
-                    industry: 'Industry Professional',
-                    lead: 'Project Lead'
-                };
-                return labels[role] || role;
-            }
-            
-            getDiscussionTypeLabel(type) {
-                const labels = {
-                    clinical_question: 'Clinical Question ⚕️',
-                    technical_solution: 'Technical Solution 🏭',
-                    joint_review: 'Joint Review 🤝'
-                };
-                return labels[type] || type;
-            }
-            
-            formatDate(timestamp) {
-                try {
-                    const date = new Date(timestamp);
-                    return date.toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
-                } catch {
-                    return 'Unknown';
-                }
-            }
-            
-            formatTimeAgo(timestamp) {
-                try {
-                    const date = new Date(timestamp);
-                    const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMs / 3600000);
-                    const diffDays = Math.floor(diffMs / 86400000);
-                    
-                    if (diffMins < 1) return 'Just now';
-                    if (diffMins < 60) return `${diffMins}m ago`;
-                    if (diffHours < 24) return `${diffHours}h ago`;
-                    if (diffDays < 7) return `${diffDays}d ago`;
-                    return this.formatDate(timestamp);
-                } catch {
-                    return 'Recently';
-                }
+                }, 4000);
             }
             
             escapeHtml(text) {
@@ -3361,11 +1668,16 @@
                 div.textContent = text;
                 return div.innerHTML;
             }
+            
+            capitalize(str) {
+                if (!str) return '';
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
         }
         
-        // Initialize the project
+        // Initialize the project view
         window.addEventListener('DOMContentLoaded', () => {
-            window.project = new ThoraxLabProject();
+            window.projectView = new ProjectView();
         });
     </script>
 </body>
