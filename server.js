@@ -6,9 +6,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const sqlite3 = require('sqlite3').verbose();
 const multer = require('multer');
-const session = require('express-session');
-const PORT = process.env.PORT || 3000;
-
+const rateLimit = require('express-rate-limit');
 
 class ThoraxLabServer {
     constructor() {
@@ -17,8 +15,6 @@ class ThoraxLabServer {
         this.wss = new WebSocket.Server({ server: this.server });
         this.db = null;
         this.connected = false;
-        this.DB_PATH = path.join(__dirname, 'data', 'thoraxlab.db');
-        this.UPLOAD_PATH = path.join(__dirname, 'uploads');
         this.activeConnections = new Map();
         
         this.ensureDirectories();
@@ -26,11 +22,20 @@ class ThoraxLabServer {
     }
 
     ensureDirectories() {
+        // Railway uses /tmp for ephemeral storage
+        const baseDir = process.env.NODE_ENV === 'production' ? '/tmp' : __dirname;
+        
+        this.DB_PATH = path.join(baseDir, 'data', 'thoraxlab.db');
+        this.UPLOAD_PATH = path.join(baseDir, 'uploads');
+        
         [path.dirname(this.DB_PATH), this.UPLOAD_PATH].forEach(dir => {
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir, { recursive: true });
             }
         });
+        
+        console.log(`Database path: ${this.DB_PATH}`);
+        console.log(`Upload path: ${this.UPLOAD_PATH}`);
     }
 
     async initialize() {
@@ -39,6 +44,7 @@ class ThoraxLabServer {
         this.setupRoutes();
         this.setupWebSocket();
         this.setupErrorHandling();
+        this.setupSessionCleanup();
         this.startServer();
     }
 
@@ -182,7 +188,33 @@ class ThoraxLabServer {
         for (const sql of tables) {
             await this.runQuery(sql);
         }
-        console.log('Database schema ready');
+        
+        // Create indexes for performance
+        await this.createIndexes();
+        
+        console.log('Database schema and indexes ready');
+    }
+
+    async createIndexes() {
+        const indexes = [
+            'CREATE INDEX IF NOT EXISTS idx_projects_lead ON projects(lead_id)',
+            'CREATE INDEX IF NOT EXISTS idx_documents_project ON documents(project_id)',
+            'CREATE INDEX IF NOT EXISTS idx_documents_author ON documents(author_id)',
+            'CREATE INDEX IF NOT EXISTS idx_activity_project ON activity_log(project_id)',
+            'CREATE INDEX IF NOT EXISTS idx_activity_user ON activity_log(user_id)',
+            'CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token)',
+            'CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at)',
+            'CREATE INDEX IF NOT EXISTS idx_project_team_user ON project_team(user_id)',
+            'CREATE INDEX IF NOT EXISTS idx_project_team_project ON project_team(project_id)',
+            'CREATE INDEX IF NOT EXISTS idx_comments_document ON comments(document_id)',
+            'CREATE INDEX IF NOT EXISTS idx_comments_project ON comments(project_id)',
+            'CREATE INDEX IF NOT EXISTS idx_glossary_project ON glossary(project_id)',
+            'CREATE INDEX IF NOT EXISTS idx_translations_project ON translations(project_id)'
+        ];
+
+        for (const sql of indexes) {
+            await this.runQuery(sql);
+        }
     }
 
     // ========== DATABASE HELPERS ==========
@@ -219,17 +251,45 @@ class ThoraxLabServer {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         
+        // Rate limiting
+        const limiter = rateLimit({
+            windowMs: 15 * 60 * 1000, // 15 minutes
+            max: 100, // limit each IP to 100 requests per windowMs
+            message: 'Too many requests, please try again later.',
+            standardHeaders: true,
+            legacyHeaders: false
+        });
+        
         // CORS
         this.app.use((req, res, next) => {
-            res.header('Access-Control-Allow-Origin', '*');
+            const allowedOrigins = [
+                'http://localhost:3000',
+                'https://thoraxlab-production.up.railway.app',
+                'https://thoraxlab.railway.app'
+            ];
+            
+            const origin = req.headers.origin;
+            if (allowedOrigins.includes(origin)) {
+                res.header('Access-Control-Allow-Origin', origin);
+            }
+            
             res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+            res.header('Access-Control-Allow-Credentials', 'true');
+            
+            if (req.method === 'OPTIONS') {
+                return res.status(200).end();
+            }
+            
             next();
         });
         
+        // Apply rate limiting to auth routes
+        this.app.use('/api/login', limiter);
+        
         // Authentication middleware
         this.app.use(async (req, res, next) => {
-            const publicRoutes = ['/api/login', '/api/register', '/api/health'];
+            const publicRoutes = ['/api/login', '/api/health'];
             if (publicRoutes.some(route => req.path.startsWith(route))) {
                 return next();
             }
@@ -251,13 +311,26 @@ class ThoraxLabServer {
 
     // ========== ROUTES ==========
     setupRoutes() {
-        // Health check
-        this.app.get('/api/health', (req, res) => {
-            res.json({
-                status: 'ok',
-                timestamp: new Date().toISOString(),
-                database: this.connected ? 'connected' : 'disconnected'
-            });
+        // Health check with database test
+        this.app.get('/api/health', async (req, res) => {
+            try {
+                const dbTest = await this.getQuery('SELECT 1 as test');
+                
+                res.json({
+                    status: 'ok',
+                    timestamp: new Date().toISOString(),
+                    database: dbTest ? 'connected' : 'disconnected',
+                    uptime: process.uptime(),
+                    memory: process.memoryUsage()
+                });
+            } catch (error) {
+                res.status(503).json({
+                    status: 'error',
+                    timestamp: new Date().toISOString(),
+                    database: 'disconnected',
+                    error: error.message
+                });
+            }
         });
 
         // Authentication
@@ -423,6 +496,11 @@ class ThoraxLabServer {
         this.app.post('/api/projects', async (req, res) => {
             try {
                 const { title, description, type } = req.body;
+                
+                if (!title || !type) {
+                    return res.status(400).json({ error: 'Title and type are required' });
+                }
+                
                 const projectId = `project_${crypto.randomUUID()}`;
 
                 await this.runQuery(
@@ -530,7 +608,11 @@ class ThoraxLabServer {
                 cb(null, this.UPLOAD_PATH);
             },
             filename: (req, file, cb) => {
-                const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2)}${path.extname(file.originalname)}`;
+                // Sanitize filename to prevent path traversal
+                const sanitizedName = file.originalname
+                    .replace(/[^a-zA-Z0-9.\-_]/g, '_')
+                    .substring(0, 255);
+                const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2)}${path.extname(sanitizedName)}`;
                 cb(null, uniqueName);
             }
         });
@@ -541,10 +623,24 @@ class ThoraxLabServer {
             fileFilter: (req, file, cb) => {
                 const allowedTypes = ['.pdf', '.doc', '.docx', '.txt', '.csv', '.json', '.xlsx', '.jpg', '.png'];
                 const ext = path.extname(file.originalname).toLowerCase();
-                if (allowedTypes.includes(ext)) {
+                
+                // Check both extension and MIME type
+                const allowedMimes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'text/plain',
+                    'text/csv',
+                    'application/json',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'image/jpeg',
+                    'image/png'
+                ];
+                
+                if (allowedTypes.includes(ext) && allowedMimes.includes(file.mimetype)) {
                     cb(null, true);
                 } else {
-                    cb(new Error('File type not allowed'));
+                    cb(new Error(`File type not allowed. Allowed types: ${allowedTypes.join(', ')}`));
                 }
             }
         });
@@ -557,6 +653,11 @@ class ThoraxLabServer {
 
                 if (!title) {
                     return res.status(400).json({ error: 'Title is required' });
+                }
+
+                // Check if file was uploaded or if this is a text-only document
+                if (!file && !req.body.content) {
+                    return res.status(400).json({ error: 'No file or content provided' });
                 }
 
                 const documentId = `doc_${crypto.randomUUID()}`;
@@ -605,6 +706,15 @@ class ThoraxLabServer {
 
             } catch (error) {
                 console.error('Upload error:', error);
+                
+                // Handle specific errors
+                if (error instanceof multer.MulterError) {
+                    if (error.code === 'LIMIT_FILE_SIZE') {
+                        return res.status(413).json({ error: 'File too large. Maximum size is 10MB' });
+                    }
+                    return res.status(400).json({ error: 'File upload error' });
+                }
+                
                 res.status(500).json({ error: 'Failed to upload document' });
             }
         });
@@ -732,12 +842,31 @@ class ThoraxLabServer {
 
         // Serve SPA
         this.app.get('*', (req, res) => {
-            res.sendFile(path.join(__dirname, 'public', 'index.html'));
+            res.sendFile(path.join(__dirname, 'index.html'));
         });
     }
 
     // ========== WEBSOCKET ==========
     setupWebSocket() {
+        this.wss = new WebSocket.Server({ 
+            server: this.server,
+            verifyClient: (info, callback) => {
+                // Allow connections from Railway domain and localhost
+                const allowedOrigins = [
+                    'http://localhost:3000',
+                    'https://thoraxlab-production.up.railway.app',
+                    'https://thoraxlab.railway.app'
+                ];
+                
+                if (!info.origin || allowedOrigins.some(origin => info.origin.includes(origin))) {
+                    callback(true);
+                } else {
+                    console.log('WebSocket connection rejected from origin:', info.origin);
+                    callback(false, 401, 'Unauthorized origin');
+                }
+            }
+        });
+
         this.wss.on('connection', (ws, req) => {
             console.log('New WebSocket connection');
 
@@ -800,6 +929,7 @@ class ThoraxLabServer {
                         userId: ws.userId
                     });
                 }
+                this.activeConnections.delete(ws.userId);
             });
         });
     }
@@ -831,6 +961,23 @@ class ThoraxLabServer {
         );
     }
 
+    setupSessionCleanup() {
+        // Clean up expired sessions every hour
+        setInterval(async () => {
+            try {
+                const deleted = await this.runQuery(
+                    'DELETE FROM sessions WHERE expires_at < ?',
+                    [new Date().toISOString()]
+                );
+                if (deleted.changes > 0) {
+                    console.log(`Cleaned up ${deleted.changes} expired sessions`);
+                }
+            } catch (error) {
+                console.error('Session cleanup error:', error);
+            }
+        }, 3600000); // Run every hour
+    }
+
     // ========== ERROR HANDLING ==========
     setupErrorHandling() {
         this.app.use((err, req, res, next) => {
@@ -838,7 +985,7 @@ class ThoraxLabServer {
             
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
-                    return res.status(400).json({ error: 'File too large. Maximum size is 10MB' });
+                    return res.status(413).json({ error: 'File too large. Maximum size is 10MB' });
                 }
                 return res.status(400).json({ error: 'File upload error' });
             }
@@ -850,17 +997,21 @@ class ThoraxLabServer {
         });
     }
 
-      // ========== SERVER START ==========
+    // ========== SERVER START ==========
     startServer() {
         const PORT = process.env.PORT || 3000;
-        this.server.listen(PORT, '0.0.0.0', () => {
+        const HOST = '0.0.0.0'; // Critical for Railway
+        
+        this.server.listen(PORT, HOST, () => {
             console.log(`
 ╔══════════════════════════════════════════════════════╗
 ║     THORAXLAB SERVER STARTED                         ║
 ╠══════════════════════════════════════════════════════╣
-║     Server: http://0.0.0.0:${PORT}                      ║
-║     External URL: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'N/A'} ║
+║     Server: http://${HOST}:${PORT}                      ║
+║     API:    http://${HOST}:${PORT}/api/*              ║
+║     WebSocket: ws://${HOST}:${PORT}                   ║
 ║     Database: ${this.connected ? 'Connected' : 'Failed'}                ║
+║     Environment: ${process.env.NODE_ENV || 'development'}         ║
 ╚══════════════════════════════════════════════════════╝
             `);
         });
@@ -869,5 +1020,4 @@ class ThoraxLabServer {
 
 // Start server
 const server = new ThoraxLabServer();
-server.startServer();  // ← ADD THIS LINE!
 module.exports = server;
