@@ -7,6 +7,8 @@ const crypto = require('crypto');
 const sqlite3 = require('sqlite3').verbose();
 const multer = require('multer');
 const session = require('express-session');
+const PORT = process.env.PORT || 3000;
+
 
 class ThoraxLabServer {
     constructor() {
@@ -848,17 +850,16 @@ class ThoraxLabServer {
         });
     }
 
-    // ========== SERVER START ==========
+      // ========== SERVER START ==========
     startServer() {
         const PORT = process.env.PORT || 3000;
-        this.server.listen(PORT, () => {
+        this.server.listen(PORT, '0.0.0.0', () => {
             console.log(`
 ╔══════════════════════════════════════════════════════╗
 ║     THORAXLAB SERVER STARTED                         ║
 ╠══════════════════════════════════════════════════════╣
-║     Server: http://localhost:${PORT}                      ║
-║     API:    http://localhost:${PORT}/api/*              ║
-║     WebSocket: ws://localhost:${PORT}                   ║
+║     Server: http://0.0.0.0:${PORT}                      ║
+║     External URL: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'N/A'} ║
 ║     Database: ${this.connected ? 'Connected' : 'Failed'}                ║
 ╚══════════════════════════════════════════════════════╝
             `);
@@ -868,4 +869,5 @@ class ThoraxLabServer {
 
 // Start server
 const server = new ThoraxLabServer();
+server.startServer();  // ← ADD THIS LINE!
 module.exports = server;
