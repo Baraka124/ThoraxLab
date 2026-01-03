@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- PWA theme color (optional, not PWA) -->
+    <!-- Theme -->
     <meta name="theme-color" content="#1A5F7A">
-    <meta name="description" content="Clinical-Industry Collaboration Platform for medical innovation">
+    <meta name="description" content="Clinical-Industry Collaboration Platform">
     
     <style>
         /* ====== VARIABLES ====== */
@@ -20,9 +20,7 @@
             --thorax-blue: #1A5F7A;
             --thorax-blue-light: rgba(26, 95, 122, 0.1);
             --thorax-teal: #0D8B70;
-            --thorax-teal-light: rgba(13, 139, 112, 0.1);
             --thorax-purple: #6D5ACF;
-            --thorax-purple-light: rgba(109, 90, 207, 0.1);
             
             --ui-dark: #1E293B;
             --ui-mid: #64748B;
@@ -37,24 +35,15 @@
             --error: #EF4444;
             --info: #3B82F6;
             
-            --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 14px;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             
             --transition: 200ms ease;
         }
         
         /* ====== BASE RESET ====== */
-        html, body, div, span, h1, h2, h3, h4, h5, h6, p,
-        a, img, ul, ol, li, form, input, button, textarea, select {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--ui-bg);
@@ -67,7 +56,6 @@
         .hidden { display: none !important; }
         .visible { display: block !important; }
         .flex { display: flex; }
-        .grid { display: grid; }
         .items-center { align-items: center; }
         .justify-between { justify-content: space-between; }
         .gap-2 { gap: 0.5rem; }
@@ -76,26 +64,13 @@
         .mt-2 { margin-top: 0.5rem; }
         .mt-4 { margin-top: 1rem; }
         .mt-6 { margin-top: 1.5rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
         .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
         .text-sm { font-size: 0.875rem; }
-        .text-xs { font-size: 0.75rem; }
         .text-muted { color: var(--ui-mid); }
         .text-center { text-align: center; }
         
-        /* Missing utility classes */
-        .hidden-sm { display: none; }
-        .space-y-3 > * + * { margin-top: 0.75rem; }
-        .last\:border-b-0:last-child { border-bottom: 0 !important; }
-        
         /* ====== LAYOUT ====== */
-        #app {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
+        #app { min-height: 100vh; display: flex; flex-direction: column; }
         .container {
             width: 100%;
             max-width: 1200px;
@@ -109,14 +84,10 @@
             line-height: 1.2;
             color: var(--ui-dark);
         }
-        
         h1 { font-size: 2rem; }
         h2 { font-size: 1.5rem; }
         h3 { font-size: 1.25rem; }
-        
-        .font-mono {
-            font-family: 'SF Mono', monospace;
-        }
+        .font-mono { font-family: 'SF Mono', monospace; }
         
         /* ====== COMPONENTS ====== */
         
@@ -128,8 +99,6 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.98);
         }
         
         .header-content {
@@ -145,9 +114,6 @@
             font-weight: 600;
             color: var(--thorax-blue);
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
         
         /* Navigation */
@@ -180,12 +146,6 @@
         }
         
         /* User Menu */
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
         .user-avatar {
             width: 36px;
             height: 36px;
@@ -238,11 +198,6 @@
             border-color: var(--ui-mid);
         }
         
-        .btn-danger {
-            background: var(--error);
-            color: white;
-        }
-        
         .btn-sm {
             padding: 0.5rem 1rem;
             font-size: 0.75rem;
@@ -251,12 +206,6 @@
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-        
-        .btn-icon {
-            padding: 0.5rem;
-            width: 36px;
-            height: 36px;
         }
         
         /* Cards */
@@ -309,15 +258,6 @@
             line-height: 1.5;
         }
         
-        .form-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 16px;
-            padding-right: 2.5rem;
-        }
-        
         /* Alerts & Toasts */
         .toast-container {
             position: fixed;
@@ -333,7 +273,7 @@
         .toast {
             padding: 1rem 1.25rem;
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
             animation: toastSlideIn 0.3s ease;
             display: flex;
             align-items: center;
@@ -375,29 +315,6 @@
             to { transform: rotate(360deg); }
         }
         
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: var(--radius-md);
-        }
-        
-        .skeleton-text {
-            height: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .skeleton-title {
-            height: 1.5rem;
-            width: 60%;
-            margin-bottom: 1rem;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
         /* Empty States */
         .empty-state {
             text-align: center;
@@ -420,40 +337,16 @@
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 500;
-            border: 1px solid transparent;
         }
         
         .tag-clinical {
             background: var(--thorax-blue-light);
             color: var(--thorax-blue);
-            border-color: var(--thorax-blue-light);
         }
         
         .tag-technical {
-            background: var(--thorax-purple-light);
+            background: rgba(109, 90, 207, 0.1);
             color: var(--thorax-purple);
-            border-color: var(--thorax-purple-light);
-        }
-        
-        .tag-both {
-            background: var(--thorax-teal-light);
-            color: var(--thorax-teal);
-            border-color: var(--thorax-teal-light);
-        }
-        
-        /* Badges */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 0.375rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: var(--thorax-blue);
-            color: white;
         }
         
         /* Main Content */
@@ -488,7 +381,7 @@
             width: 100%;
             max-width: 440px;
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
         }
         
         .auth-header {
@@ -545,159 +438,7 @@
             gap: 1.5rem;
         }
         
-        .project-card {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        /* ====== PROJECT PAGE ====== */
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .project-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--ui-border);
-            margin-bottom: 2rem;
-            overflow-x: auto;
-        }
-        
-        .tab {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            font-family: inherit;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--ui-mid);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            white-space: nowrap;
-        }
-        
-        .tab:hover {
-            color: var(--thorax-blue);
-        }
-        
-        .tab.active {
-            color: var(--thorax-blue);
-            border-bottom-color: var(--thorax-blue);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .project-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-        }
-        
-        @media (max-width: 1024px) {
-            .project-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Documents */
-        .document-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-        
-        .document-card {
-            padding: 1.25rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            transition: all var(--transition);
-            cursor: pointer;
-        }
-        
-        .document-card:hover {
-            border-color: var(--thorax-blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .document-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-        
-        .document-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-        
-        .icon-clinical { background: var(--thorax-blue-light); color: var(--thorax-blue); }
-        .icon-technical { background: var(--thorax-purple-light); color: var(--thorax-purple); }
-        .icon-both { background: var(--thorax-teal-light); color: var(--thorax-teal); }
-        
-        /* Tagging System */
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Knowledge Bridge */
-        .knowledge-bridge {
-            background: linear-gradient(135deg, var(--thorax-blue) 0%, var(--thorax-purple) 100%);
-            color: white;
-            border: none;
-        }
-        
-        .bridge-input-container {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-        
-        .bridge-input {
-            width: 100%;
-            padding: 1rem;
-            padding-left: 3rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-md);
-            color: white;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        /* Modals */
+        /* ====== MODALS ====== */
         .modal {
             position: fixed;
             top: 0;
@@ -724,7 +465,7 @@
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
         }
         
         .modal-header {
@@ -745,16 +486,6 @@
             font-size: 1.5rem;
             color: var(--ui-light);
             cursor: pointer;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-sm);
-        }
-        
-        .modal-close:hover {
-            background: var(--ui-hover);
         }
         
         .form-actions {
@@ -762,92 +493,6 @@
             gap: 0.75rem;
             justify-content: flex-end;
             margin-top: 2rem;
-        }
-        
-        /* File Upload */
-        .dropzone {
-            border: 2px dashed var(--ui-border);
-            border-radius: var(--radius-md);
-            padding: 3rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-        
-        .dropzone:hover {
-            border-color: var(--thorax-blue);
-            background: var(--thorax-blue-light);
-        }
-        
-        .dropzone.active {
-            border-color: var(--thorax-blue);
-            background: var(--thorax-blue-light);
-        }
-        
-        /* Progress Bar */
-        .progress-bar {
-            height: 6px;
-            background: var(--ui-border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--thorax-blue);
-            transition: width 0.3s ease;
-        }
-        
-        /* Search */
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            background: var(--ui-card);
-        }
-        
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--ui-mid);
-        }
-        
-        /* Activity Feed */
-        .activity-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .activity-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: var(--radius-md);
-            background: var(--ui-card);
-            border: 1px solid var(--ui-border);
-        }
-        
-        .activity-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--thorax-blue-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
         }
         
         /* Responsive */
@@ -861,7 +506,6 @@
                 width: 100%;
                 margin-top: 1rem;
                 overflow-x: auto;
-                padding-bottom: 0.5rem;
             }
             
             .metrics-grid {
@@ -872,128 +516,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .project-header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .project-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .document-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .tabs {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .hidden-sm {
-                display: none;
-            }
-        }
-        
-        /* Extra small screens */
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 0.5rem;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-            
-            .btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.75rem;
-            }
-            
             h1 { font-size: 1.5rem; }
             h2 { font-size: 1.25rem; }
-            h3 { font-size: 1.1rem; }
-            
-            .auth-body {
-                padding: 1.5rem 1rem;
-            }
-            
-            .modal-content {
-                padding: 1rem;
-            }
-        }
-        
-        /* Dark Mode - FIXED */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --ui-dark: #F1F5F9;
-                --ui-bg: #0F172A;
-                --ui-card: #1E293B;
-                --ui-border: #334155;
-                --ui-hover: #2D3748;
-                --ui-mid: #CBD5E1;
-                --ui-light: #94A3B8;
-            }
-            
-            .auth-screen {
-                background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-            }
-            
-            .app-header {
-                background: rgba(30, 41, 59, 0.98);
-            }
-        }
-        
-        /* Print Styles - FIXED */
-        @media print {
-            .app-header,
-            .project-actions,
-            .modal,
-            .tabs {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-                color: black !important;
-                font-size: 12pt !important;
-            }
-            
-            .project-layout {
-                display: block;
-            }
-            
-            .card {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                border: 1px solid #ccc !important;
-                box-shadow: none !important;
-            }
-            
-            a {
-                color: black !important;
-                text-decoration: underline !important;
-            }
-        }
-        
-        /* Accessibility */
-        :focus-visible {
-            outline: 3px solid var(--thorax-blue);
-            outline-offset: 2px;
-        }
-        
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
         }
     </style>
 </head>
@@ -1002,11 +526,11 @@
         <!-- Toast Container -->
         <div id="toastContainer" class="toast-container"></div>
         
-        <!-- Auth Screen (Initially visible) -->
+        <!-- Auth Screen -->
         <div id="authScreen" class="auth-screen">
             <div class="auth-card">
                 <div class="auth-header">
-                    <div class="brand-logo" style="color: white; justify-content: center; font-size: 2rem;">
+                    <div class="brand-logo" style="color: white; font-size: 2rem;">
                         [THØRAX][LAB]
                     </div>
                     <p style="opacity: 0.9; margin-top: 0.5rem;">Clinical-Industry Collaboration Platform</p>
@@ -1016,25 +540,22 @@
                     <form id="authForm" class="auth-form">
                         <div class="form-group">
                             <label for="userName" class="form-label">Full Name</label>
-                            <input type="text" id="userName" class="form-input" 
-                                   placeholder="Dr. Alex Chen" required>
+                            <input type="text" id="userName" class="form-input" placeholder="Dr. Alex Chen" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="userEmail" class="form-label">Email Address</label>
-                            <input type="email" id="userEmail" class="form-input" 
-                                   placeholder="alex.chen@hospital.org" required>
+                            <input type="email" id="userEmail" class="form-input" placeholder="alex.chen@hospital.org" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="userOrganization" class="form-label">Organization</label>
-                            <input type="text" id="userOrganization" class="form-input" 
-                                   placeholder="Massachusetts General Hospital">
+                            <input type="text" id="userOrganization" class="form-input" placeholder="Massachusetts General Hospital">
                         </div>
                         
                         <div class="form-group">
                             <label for="userRole" class="form-label">Primary Role</label>
-                            <select id="userRole" class="form-input form-select" required>
+                            <select id="userRole" class="form-input" required>
                                 <option value="">Select your primary role</option>
                                 <option value="clinician">Clinical Professional</option>
                                 <option value="industry">Industry Professional</option>
@@ -1050,7 +571,7 @@
             </div>
         </div>
         
-        <!-- Main App (Initially hidden) -->
+        <!-- Main App -->
         <div id="mainApp" class="hidden">
             <!-- Header -->
             <header class="app-header">
@@ -1059,13 +580,6 @@
                         <a href="#dashboard" class="brand-logo">
                             [THØRAX][LAB]
                         </a>
-                        
-                        <div class="search-box">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="search" id="globalSearch" class="search-input" 
-                                   placeholder="Search projects, documents..." 
-                                   aria-label="Search projects and documents">
-                        </div>
                         
                         <nav class="nav-main">
                             <a href="#dashboard" class="nav-link" data-page="dashboard">
@@ -1076,21 +590,15 @@
                                 <i class="fas fa-project-diagram"></i>
                                 <span>Projects</span>
                             </a>
-                            <a href="#teams" class="nav-link" data-page="teams">
-                                <i class="fas fa-users"></i>
-                                <span>Teams</span>
-                            </a>
                         </nav>
                         
-                        <div class="user-menu">
+                        <div class="flex items-center gap-4">
                             <button id="newProjectBtn" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i>
-                                <span class="hidden-sm">New Project</span>
+                                <span>New Project</span>
                             </button>
                             
-                            <div class="user-profile" id="userProfile" style="cursor: pointer;">
-                                <div id="userAvatar" class="user-avatar">AC</div>
-                            </div>
+                            <div id="userAvatar" class="user-avatar">AC</div>
                         </div>
                     </div>
                 </div>
@@ -1100,11 +608,11 @@
             <main class="main-content">
                 <div class="container">
                     <!-- Dashboard Page -->
-                    <div id="dashboardPage" class="page hidden">
+                    <div id="dashboardPage" class="page">
                         <div class="welcome-card">
                             <h1 id="welcomeMessage">Welcome to ThoraxLab</h1>
-                            <p id="welcomeDescription" style="opacity: 0.9; max-width: 600px;">
-                                Connect clinical expertise with industry innovation to solve complex medical challenges.
+                            <p style="opacity: 0.9; max-width: 600px;">
+                                Connect clinical expertise with industry innovation.
                             </p>
                         </div>
                         
@@ -1133,21 +641,11 @@
                                 </div>
                             </div>
                         </section>
-                        
-                        <section>
-                            <h2 class="mb-4">Recent Activity</h2>
-                            <div class="activity-feed" id="activityFeed">
-                                <div class="loading">
-                                    <div class="spinner"></div>
-                                    <p>Loading activity...</p>
-                                </div>
-                            </div>
-                        </section>
                     </div>
                     
                     <!-- Projects Page -->
                     <div id="projectsPage" class="page hidden">
-                        <div class="project-header">
+                        <div class="flex items-center justify-between mb-6">
                             <div>
                                 <h1>Projects</h1>
                                 <p class="text-muted">Manage your clinical-industry collaborations</p>
@@ -1161,23 +659,19 @@
                         <div class="projects-grid" id="allProjectsGrid">
                             <div class="loading">
                                 <div class="spinner"></div>
-                                <p>Loading all projects...</p>
+                                <p>Loading projects...</p>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Project Detail Page -->
                     <div id="projectDetailPage" class="page hidden">
-                        <div class="project-header">
+                        <div class="flex items-center justify-between mb-6">
                             <div>
                                 <h1 id="projectTitle">Loading...</h1>
-                                <div class="flex items-center gap-4 mt-2">
-                                    <span class="text-muted" id="projectLead"></span>
-                                    <span class="text-muted">•</span>
-                                    <span class="text-muted" id="projectDate"></span>
-                                </div>
+                                <p class="text-muted" id="projectDescription"></p>
                             </div>
-                            <div class="project-actions">
+                            <div class="flex gap-2">
                                 <button class="btn btn-secondary" id="projectBackBtn">
                                     <i class="fas fa-arrow-left"></i>
                                     Back
@@ -1189,219 +683,27 @@
                             </div>
                         </div>
                         
-                        <div class="tabs">
-                            <button class="tab active" data-tab="documents">
-                                <i class="fas fa-file-alt"></i>
-                                Documents
-                            </button>
-                            <button class="tab" data-tab="knowledge">
-                                <i class="fas fa-bridge"></i>
-                                Knowledge Bridge
-                            </button>
-                            <button class="tab" data-tab="glossary">
-                                <i class="fas fa-book"></i>
-                                Glossary
-                            </button>
-                            <button class="tab" data-tab="team">
-                                <i class="fas fa-users"></i>
-                                Team
-                            </button>
-                            <button class="tab" data-tab="activity">
-                                <i class="fas fa-history"></i>
-                                Activity
-                            </button>
-                        </div>
-                        
-                        <div class="project-layout">
-                            <div>
-                                <!-- Documents Tab -->
-                                <div id="documentsTab" class="tab-content active">
-                                    <div class="mb-6">
-                                        <div class="flex items-center justify-between mb-4">
-                                            <h3>Project Documents</h3>
-                                            <button class="btn btn-secondary btn-sm" id="clearFiltersBtn">
-                                                Clear Filters
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- Filter System -->
-                                        <div class="card mb-4">
-                                            <div class="tag-cloud" id="filterTags">
-                                                <!-- Tags will be populated here -->
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Active Filters -->
-                                        <div class="flex items-center gap-2 mb-4" id="activeFiltersContainer">
-                                            <!-- Active filters will appear here -->
-                                        </div>
-                                        
-                                        <!-- Document Grid -->
-                                        <div class="document-grid" id="documentGrid">
-                                            <div class="loading">
-                                                <div class="spinner"></div>
-                                                <p>Loading documents...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Knowledge Bridge Tab -->
-                                <div id="knowledgeTab" class="tab-content">
-                                    <div class="card knowledge-bridge mb-6">
-                                        <div class="mb-4">
-                                            <h3 style="color: white;">Knowledge Bridge</h3>
-                                            <p style="color: rgba(255, 255, 255, 0.8);">
-                                                Translate clinical concepts to technical implementations
-                                            </p>
-                                        </div>
-                                        
-                                        <div class="bridge-input-container">
-                                            <div class="input-icon">
-                                                <i class="fas fa-search"></i>
-                                            </div>
-                                            <input type="text" class="bridge-input" id="bridgeInput" 
-                                                   placeholder="Enter a clinical or technical concept...">
-                                        </div>
-                                        
-                                        <div class="flex gap-2 mb-4">
-                                            <button class="btn" style="background: rgba(255, 255, 255, 0.1); color: white; flex: 1;" 
-                                                    data-direction="clinical-to-technical">
-                                                Clinical → Technical
-                                            </button>
-                                            <button class="btn" style="background: rgba(255, 255, 255, 0.1); color: white; flex: 1;"
-                                                    data-direction="technical-to-clinical">
-                                                Technical → Clinical
-                                            </button>
-                                        </div>
-                                        
-                                        <button class="btn btn-primary" id="translateBtn" 
-                                                style="width: 100%; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);">
-                                            <i class="fas fa-language"></i>
-                                            Translate
-                                        </button>
-                                        
-                                        <div class="mt-6" id="bridgeOutput">
-                                            <!-- Translation results will appear here -->
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="card">
-                                        <h3 class="mb-4">Translation History</h3>
-                                        <div id="translationHistory">
-                                            <!-- History will be populated here -->
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Glossary Tab -->
-                                <div id="glossaryTab" class="tab-content">
-                                    <div class="card mb-6">
-                                        <div class="flex items-center justify-between mb-4">
-                                            <h3>Project Glossary</h3>
-                                            <button class="btn btn-primary btn-sm" id="addTermBtn">
-                                                <i class="fas fa-plus"></i>
-                                                Add Term
-                                            </button>
-                                        </div>
-                                        <div id="glossaryList">
-                                            <!-- Glossary terms will be populated here -->
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Team Tab -->
-                                <div id="teamTab" class="tab-content">
-                                    <div class="card">
-                                        <h3 class="mb-4">Project Team</h3>
-                                        <div id="teamMembers">
-                                            <!-- Team members will be populated here -->
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Activity Tab -->
-                                <div id="activityTab" class="tab-content">
-                                    <div class="card">
-                                        <h3 class="mb-4">Project Activity</h3>
-                                        <div id="projectActivity">
-                                            <!-- Activity will be populated here -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Sidebar -->
-                            <div>
-                                <div class="card mb-6">
-                                    <h3 class="mb-4">Project Stats</h3>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="text-center">
-                                            <div class="metric-value" id="docCount">0</div>
-                                            <div class="text-sm text-muted">Documents</div>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="metric-value" id="teamCount">0</div>
-                                            <div class="text-sm text-muted">Team</div>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="metric-value" id="clinicalCount">0</div>
-                                            <div class="text-sm text-muted">Clinical</div>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="metric-value" id="technicalCount">0</div>
-                                            <div class="text-sm text-muted">Technical</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="card mb-6">
-                                    <h3 class="mb-4">Quick Actions</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <button class="btn btn-secondary" id="filterClinicalViewBtn">
-                                            <i class="fas fa-user-md"></i>
-                                            Clinical View
-                                        </button>
-                                        <button class="btn btn-secondary" id="filterTechnicalViewBtn">
-                                            <i class="fas fa-code"></i>
-                                            Technical View
-                                        </button>
-                                        <button class="btn btn-secondary" id="exportProjectBtn">
-                                            <i class="fas fa-download"></i>
-                                            Export Data
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div class="card">
-                                    <h3 class="mb-4">Recent Comments</h3>
-                                    <div id="recentComments">
-                                        <!-- Comments will be populated here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Teams Page -->
-                    <div id="teamsPage" class="page hidden">
-                        <div class="project-header">
-                            <div>
-                                <h1>Teams</h1>
-                                <p class="text-muted">Collaborate with clinicians and industry experts</p>
-                            </div>
-                        </div>
-                        
                         <div class="card">
-                            <div class="empty-state">
-                                <div class="empty-icon">👥</div>
-                                <h3 class="mb-2">Team Management</h3>
-                                <p class="text-muted mb-4">
-                                    Manage team members and their roles across all projects.
-                                </p>
-                                <p class="text-sm text-muted">
-                                    Feature coming soon.
-                                </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 class="mb-4">Documents</h3>
+                                    <div id="documentList">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">📄</div>
+                                            <p>No documents yet</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="mb-4">Team Members</h3>
+                                    <div id="teamList">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">👥</div>
+                                            <p>No team members</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1410,31 +712,29 @@
         </div>
         
         <!-- Modals -->
-        
-        <!-- New Project Modal -->
         <div id="newProjectModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">Create New Project</h2>
-                    <button class="modal-close" id="closeProjectModal" aria-label="Close modal">&times;</button>
+                    <button class="modal-close" id="closeProjectModal">&times;</button>
                 </div>
                 <form id="projectForm">
                     <div class="form-group">
-                        <label for="projectTitle" class="form-label">Project Title</label>
-                        <input type="text" id="projectTitle" class="form-input" required 
+                        <label for="modalProjectTitle" class="form-label">Project Title</label>
+                        <input type="text" id="modalProjectTitle" class="form-input" required 
                                placeholder="e.g., COPD Exacerbation Prediction">
                     </div>
                     
                     <div class="form-group">
-                        <label for="projectDescription" class="form-label">Description</label>
-                        <textarea id="projectDescription" class="form-input form-textarea" required 
-                                  placeholder="Describe the clinical problem and desired collaboration..."
+                        <label for="modalProjectDescription" class="form-label">Description</label>
+                        <textarea id="modalProjectDescription" class="form-input form-textarea" 
+                                  placeholder="Describe the clinical problem..."
                                   rows="4"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="projectType" class="form-label">Project Type</label>
-                        <select id="projectType" class="form-input form-select" required>
+                        <label for="modalProjectType" class="form-label">Project Type</label>
+                        <select id="modalProjectType" class="form-input" required>
                             <option value="">Select project focus</option>
                             <option value="clinical">Clinical-Led Research</option>
                             <option value="industry">Industry-Led Development</option>
@@ -1454,61 +754,42 @@
             </div>
         </div>
         
-        <!-- Upload Document Modal -->
         <div id="uploadModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">Upload Document</h2>
-                    <button class="modal-close" id="closeUploadModal" aria-label="Close modal">&times;</button>
+                    <button class="modal-close" id="closeUploadModal">&times;</button>
                 </div>
                 <form id="uploadForm">
                     <div class="form-group">
                         <label for="documentTitle" class="form-label">Document Title</label>
                         <input type="text" id="documentTitle" class="form-input" required 
-                               placeholder="e.g., Clinical Trial Protocol v2.1">
+                               placeholder="e.g., Clinical Trial Protocol">
                     </div>
                     
                     <div class="form-group">
                         <label for="documentDescription" class="form-label">Description</label>
                         <textarea id="documentDescription" class="form-input form-textarea" 
-                                  placeholder="Brief description of the document..."
+                                  placeholder="Brief description..."
                                   rows="3"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="documentAudience" class="form-label">Primary Audience</label>
-                        <select id="documentAudience" class="form-input form-select">
-                            <option value="both">Both Clinical & Technical</option>
-                            <option value="clinical">Clinical Team</option>
-                            <option value="technical">Technical Team</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="documentTags" class="form-label">Tags (comma-separated)</label>
-                        <input type="text" id="documentTags" class="form-input" 
-                               placeholder="e.g., protocol, dataset, analysis">
-                    </div>
-                    
-                    <div class="form-group">
                         <label class="form-label">Upload File</label>
-                        <div class="dropzone" id="dropzone">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 1rem; color: var(--ui-mid);"></i>
-                            <p>Drag & drop files here or click to browse</p>
+                        <div class="form-input" style="padding: 2rem; text-align: center; cursor: pointer;" 
+                             onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--ui-mid); margin-bottom: 1rem;"></i>
+                            <p>Click to select file</p>
                             <p class="text-sm text-muted mt-2">Supports PDF, DOC, TXT, CSV, JSON (Max 10MB)</p>
                         </div>
-                        <input type="file" id="documentFile" class="hidden" accept=".pdf,.doc,.docx,.txt,.csv,.json,.xlsx">
-                    </div>
-                    
-                    <div class="progress-bar hidden" id="uploadProgress">
-                        <div class="progress-fill" style="width: 0%"></div>
+                        <input type="file" id="fileInput" class="hidden" accept=".pdf,.doc,.docx,.txt,.csv,.json">
                     </div>
                     
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="cancelUploadBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary" id="submitUploadBtn">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-upload"></i>
                             Upload
                         </button>
@@ -1516,88 +797,11 @@
                 </form>
             </div>
         </div>
-        
-        <!-- Add Glossary Term Modal -->
-        <div id="glossaryModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Add Glossary Term</h2>
-                    <button class="modal-close" id="closeGlossaryModal" aria-label="Close modal">&times;</button>
-                </div>
-                <form id="glossaryForm">
-                    <div class="form-group">
-                        <label for="glossaryTerm" class="form-label">Term</label>
-                        <input type="text" id="glossaryTerm" class="form-input" required 
-                               placeholder="e.g., COPD, FEV1, API">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="clinicalDefinition" class="form-label">Clinical Definition</label>
-                        <textarea id="clinicalDefinition" class="form-input form-textarea" 
-                                  placeholder="Clinical explanation of the term..."
-                                  rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="technicalDefinition" class="form-label">Technical Definition</label>
-                        <textarea id="technicalDefinition" class="form-input form-textarea" 
-                                  placeholder="Technical implementation perspective..."
-                                  rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelGlossaryBtn">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Add Term
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Document Preview Modal -->
-        <div id="previewModal" class="modal">
-            <div class="modal-content" style="max-width: 800px;">
-                <div class="modal-header">
-                    <h2 class="modal-title" id="previewTitle">Document Preview</h2>
-                    <button class="modal-close" id="closePreviewModal" aria-label="Close modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-4">
-                        <div class="flex items-center gap-4 text-sm text-muted mb-2">
-                            <span id="previewAuthor"></span>
-                            <span>•</span>
-                            <span id="previewDate"></span>
-                            <span>•</span>
-                            <span id="previewSize"></span>
-                        </div>
-                        <div id="previewTags"></div>
-                    </div>
-                    
-                    <div class="border rounded p-4 mb-4">
-                        <p id="previewDescription"></p>
-                    </div>
-                    
-                    <div class="flex gap-2">
-                        <button class="btn btn-primary" id="downloadPreviewBtn">
-                            <i class="fas fa-download"></i>
-                            Download
-                        </button>
-                        <button class="btn btn-secondary" id="sharePreviewBtn">
-                            <i class="fas fa-share"></i>
-                            Share
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
         // ============================================
-        // THORAXLAB SPA APPLICATION
+        // THORAXLAB APPLICATION
         // ============================================
         
         class ThoraxLabApp {
@@ -1605,18 +809,6 @@
                 this.token = localStorage.getItem('thoraxlab_token');
                 this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
                 this.currentProject = null;
-                this.activeFilters = new Set();
-                this.ws = null;
-                this.state = {
-                    page: 'dashboard',
-                    projectId: null,
-                    documents: [],
-                    glossary: [],
-                    translations: [],
-                    team: [],
-                    activity: []
-                };
-                
                 this.initialize();
             }
             
@@ -1624,7 +816,6 @@
                 this.setupEventListeners();
                 this.setupRouter();
                 this.checkAuth();
-                this.setupOfflineDetection();
             }
             
             // ========== AUTHENTICATION ==========
@@ -1632,7 +823,6 @@
                 if (this.token && this.user) {
                     this.showApp();
                     this.loadInitialData();
-                    this.connectWebSocket();
                 } else {
                     this.showAuth();
                 }
@@ -1661,18 +851,28 @@
                 spinner.classList.remove('hidden');
                 
                 try {
+                    const userData = {
+                        name: document.getElementById('userName').value.trim(),
+                        email: document.getElementById('userEmail').value.trim(),
+                        organization: document.getElementById('userOrganization').value.trim() || '',
+                        role: document.getElementById('userRole').value
+                    };
+                    
+                    if (!userData.email || !userData.name || !userData.role) {
+                        throw new Error('Please fill all required fields');
+                    }
+                    
                     const response = await fetch('/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: document.getElementById('userName').value,
-                            email: document.getElementById('userEmail').value,
-                            organization: document.getElementById('userOrganization').value,
-                            role: document.getElementById('userRole').value
-                        })
+                        body: JSON.stringify(userData)
                     });
                     
                     const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Login failed');
+                    }
                     
                     if (data.success) {
                         this.token = data.token;
@@ -1683,11 +883,8 @@
                         
                         this.showApp();
                         this.loadInitialData();
-                        this.connectWebSocket();
                         
                         this.showToast(`Welcome to ThoraxLab, ${data.user.name.split(' ')[0]}!`, 'success');
-                    } else {
-                        throw new Error(data.error || 'Login failed');
                     }
                 } catch (error) {
                     console.error('Login error:', error);
@@ -1702,23 +899,24 @@
             updateUserDisplay() {
                 if (!this.user) return;
                 
-                document.getElementById('userAvatar').textContent = 
-                    this.user.avatar_initials || 
-                    this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                const avatar = document.getElementById('userAvatar');
+                if (avatar) {
+                    avatar.textContent = this.user.name.split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                }
                 
-                document.getElementById('welcomeMessage').textContent = 
-                    `Welcome back, ${this.user.name.split(' ')[0]}`;
+                const welcome = document.getElementById('welcomeMessage');
+                if (welcome) {
+                    welcome.textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
+                }
             }
             
             // ========== ROUTER ==========
             setupRouter() {
-                // Handle hash changes
                 window.addEventListener('hashchange', () => this.handleRoute());
-                
-                // Handle back/forward buttons
-                window.addEventListener('popstate', () => this.handleRoute());
-                
-                // Initial route
                 this.handleRoute();
             }
             
@@ -1726,33 +924,26 @@
                 const hash = window.location.hash.substring(1) || 'dashboard';
                 const parts = hash.split('/');
                 
-                this.state.page = parts[0];
+                this.showPage(parts[0]);
                 
                 if (parts[0] === 'project' && parts[1]) {
-                    this.state.projectId = parts[1];
                     this.loadProject(parts[1]);
-                } else {
-                    this.state.projectId = null;
-                    this.showPage(parts[0]);
                 }
                 
-                // Update active nav link
+                // Update active nav
                 document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.toggle('active', 
-                        link.getAttribute('href').substring(1) === parts[0]);
+                    const linkPage = link.getAttribute('href').substring(1);
+                    link.classList.toggle('active', linkPage === parts[0]);
                 });
             }
             
             showPage(page) {
-                // Hide all pages
                 document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
                 
-                // Show requested page
                 const pageElement = document.getElementById(`${page}Page`);
                 if (pageElement) {
                     pageElement.classList.remove('hidden');
                     
-                    // Load page-specific data
                     switch(page) {
                         case 'dashboard':
                             this.loadDashboard();
@@ -1760,13 +951,7 @@
                         case 'projects':
                             this.loadAllProjects();
                             break;
-                        case 'teams':
-                            // Load teams data
-                            break;
                     }
-                } else {
-                    // Fallback to dashboard
-                    this.navigateTo('dashboard');
                 }
             }
             
@@ -1789,11 +974,9 @@
                     if (response.success) {
                         this.renderMetrics(response.dashboard.metrics);
                         this.renderProjects(response.dashboard.projects || []);
-                        this.renderActivity(response.dashboard.recentActivity || []);
                     }
                 } catch (error) {
                     console.error('Dashboard load error:', error);
-                    this.showToast('Failed to load dashboard', 'error');
                 }
             }
             
@@ -1815,18 +998,11 @@
                     
                     if (response.success) {
                         this.currentProject = response.project;
-                        this.state.documents = response.documents || [];
-                        this.state.glossary = response.glossary || [];
-                        this.state.translations = response.translations || [];
-                        this.state.team = response.team || [];
-                        this.state.activity = response.activity || [];
-                        
                         this.renderProjectDetail();
                         this.showPage('projectDetail');
                     }
                 } catch (error) {
                     console.error('Project load error:', error);
-                    this.showToast('Failed to load project', 'error');
                     this.navigateTo('projects');
                 }
             }
@@ -1872,7 +1048,7 @@
                         </div>
                     `;
                     
-                    document.getElementById('createFirstProjectBtn').addEventListener('click', () => {
+                    document.getElementById('createFirstProjectBtn')?.addEventListener('click', () => {
                         this.showModal('newProjectModal');
                     });
                     
@@ -1915,7 +1091,7 @@
                                 <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
                                 <p class="text-sm text-muted">${project.lead_name}</p>
                             </div>
-                            <span class="tag ${project.type === 'clinical' ? 'tag-clinical' : project.type === 'industry' ? 'tag-technical' : 'tag-both'}">
+                            <span class="tag ${project.type === 'clinical' ? 'tag-clinical' : 'tag-technical'}">
                                 ${project.type}
                             </span>
                         </div>
@@ -1923,14 +1099,6 @@
                             ${this.escapeHtml(project.description?.substring(0, 120) || '')}${project.description?.length > 120 ? '...' : ''}
                         </p>
                         <div class="flex items-center justify-between text-sm">
-                            <div class="flex items-center gap-4">
-                                <span class="text-muted">
-                                    <i class="fas fa-users"></i> ${project.team_count || 0}
-                                </span>
-                                <span class="text-muted">
-                                    <i class="fas fa-file"></i> ${project.document_count || 0}
-                                </span>
-                            </div>
                             <a href="#project/${project.id}" class="btn btn-secondary btn-sm">
                                 View Project
                             </a>
@@ -1942,472 +1110,75 @@
             renderProjectDetail() {
                 if (!this.currentProject) return;
                 
-                // Update project header
                 document.getElementById('projectTitle').textContent = this.currentProject.title;
-                document.getElementById('projectLead').textContent = `Lead: ${this.currentProject.lead_name || 'Unknown'}`;
-                document.getElementById('projectDate').textContent = 
-                    `Created: ${new Date(this.currentProject.created_at).toLocaleDateString()}`;
-                
-                // Update stats
-                document.getElementById('docCount').textContent = this.state.documents.length;
-                document.getElementById('teamCount').textContent = this.state.team.length;
-                document.getElementById('clinicalCount').textContent = 
-                    this.state.documents.filter(d => d.audience === 'clinical').length;
-                document.getElementById('technicalCount').textContent = 
-                    this.state.documents.filter(d => d.audience === 'technical').length;
+                document.getElementById('projectDescription').textContent = this.currentProject.description || 'No description';
                 
                 // Render documents
-                this.renderDocuments();
-                
-                // Render glossary
-                this.renderGlossary();
-                
-                // Render translations
-                this.renderTranslations();
+                const docContainer = document.getElementById('documentList');
+                if (docContainer && this.currentProject.documents) {
+                    if (this.currentProject.documents.length === 0) {
+                        docContainer.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">📄</div>
+                                <p>No documents yet</p>
+                            </div>
+                        `;
+                    } else {
+                        docContainer.innerHTML = this.currentProject.documents.map(doc => `
+                            <div class="border-b border-ui-border py-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium">${this.escapeHtml(doc.title)}</h4>
+                                        <p class="text-sm text-muted">${new Date(doc.created_at).toLocaleDateString()}</p>
+                                    </div>
+                                    <a href="/api/documents/${doc.id}/download" class="btn btn-sm btn-secondary">
+                                        Download
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
                 
                 // Render team
-                this.renderTeam();
-                
-                // Render activity
-                this.renderProjectActivity();
-                
-                // Setup tagging system
-                this.setupTaggingSystem();
-            }
-            
-            renderDocuments() {
-                const container = document.getElementById('documentGrid');
-                if (!container) return;
-                
-                const filteredDocs = this.getFilteredDocuments();
-                
-                if (filteredDocs.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state" style="grid-column: 1 / -1;">
-                            <div class="empty-icon">📄</div>
-                            <h3 class="mb-2">No Documents</h3>
-                            <p class="text-muted mb-4">Upload your first document to get started.</p>
-                            <button class="btn btn-primary" id="uploadFirstDocBtn">
-                                <i class="fas fa-upload"></i>
-                                Upload Document
-                            </button>
-                        </div>
-                    `;
-                    
-                    document.getElementById('uploadFirstDocBtn').addEventListener('click', () => {
-                        this.showModal('uploadModal');
-                    });
-                    
-                    return;
-                }
-                
-                container.innerHTML = filteredDocs.map(doc => `
-                    <div class="document-card" data-doc-id="${doc.id}" onclick="app.previewDocument('${doc.id}')">
-                        <div class="document-header">
-                            <div class="document-icon ${doc.audience === 'clinical' ? 'icon-clinical' : doc.audience === 'technical' ? 'icon-technical' : 'icon-both'}">
-                                <i class="fas ${this.getDocumentIcon(doc.filetype)}"></i>
+                const teamContainer = document.getElementById('teamList');
+                if (teamContainer && this.currentProject.team) {
+                    if (this.currentProject.team.length === 0) {
+                        teamContainer.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">👥</div>
+                                <p>No team members</p>
                             </div>
-                            <span class="tag ${doc.audience === 'clinical' ? 'tag-clinical' : doc.audience === 'technical' ? 'tag-technical' : 'tag-both'}">
-                                ${doc.audience}
-                            </span>
-                        </div>
-                        
-                        <h4 class="mb-2">${this.escapeHtml(doc.title)}</h4>
-                        
-                        <p class="text-sm text-muted mb-3">
-                            ${this.escapeHtml(doc.description?.substring(0, 80) || '')}${doc.description?.length > 80 ? '...' : ''}
-                        </p>
-                        
-                        ${doc.tags && doc.tags.length > 0 ? `
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                ${doc.tags.slice(0, 3).map(tag => `
-                                    <span class="tag" style="font-size: 0.625rem; padding: 0.125rem 0.375rem;">
-                                        ${this.escapeHtml(tag)}
-                                    </span>
-                                `).join('')}
-                                ${doc.tags.length > 3 ? `<span class="text-xs text-muted">+${doc.tags.length - 3} more</span>` : ''}
-                            </div>
-                        ` : ''}
-                        
-                        <div class="flex items-center justify-between text-xs text-muted">
-                            <span>${doc.author_name}</span>
-                            <span>${new Date(doc.created_at).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            
-            renderGlossary() {
-                const container = document.getElementById('glossaryList');
-                if (!container) return;
-                
-                if (this.state.glossary.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">📖</div>
-                            <p class="text-muted">No glossary terms yet.</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = this.state.glossary.map(term => `
-                    <div class="border-b border-ui-border py-3 last:border-b-0">
-                        <div class="flex items-start justify-between mb-2">
-                            <h4 class="font-semibold">${this.escapeHtml(term.term)}</h4>
-                        </div>
-                        ${term.clinical_definition ? `
-                            <div class="mb-2">
-                                <span class="tag tag-clinical text-xs">Clinical</span>
-                                <p class="text-sm mt-1">${this.escapeHtml(term.clinical_definition)}</p>
-                            </div>
-                        ` : ''}
-                        ${term.technical_definition ? `
-                            <div>
-                                <span class="tag tag-technical text-xs">Technical</span>
-                                <p class="text-sm mt-1">${this.escapeHtml(term.technical_definition)}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                `).join('');
-            }
-            
-            renderTranslations() {
-                const container = document.getElementById('translationHistory');
-                if (!container) return;
-                
-                if (this.state.translations.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <p class="text-muted">No translations yet.</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = this.state.translations.slice(0, 5).map(trans => `
-                    <div class="border-b border-ui-border py-2 last:border-b-0">
-                        <div class="font-medium">${this.escapeHtml(trans.clinical_term)}</div>
-                        <div class="text-sm text-muted">${this.escapeHtml(trans.technical_explanation.substring(0, 60))}...</div>
-                    </div>
-                `).join('');
-            }
-            
-            renderTeam() {
-                const container = document.getElementById('teamMembers');
-                if (!container) return;
-                
-                container.innerHTML = this.state.team.map(member => `
-                    <div class="flex items-center gap-3 py-3 border-b border-ui-border last:border-b-0">
-                        <div class="user-avatar">${member.avatar_initials}</div>
-                        <div class="flex-1">
-                            <div class="font-medium">${this.escapeHtml(member.name)}</div>
-                            <div class="text-sm text-muted">${member.email}</div>
-                        </div>
-                        <span class="tag ${member.user_role === 'clinician' ? 'tag-clinical' : 'tag-technical'}">
-                            ${member.user_role}
-                        </span>
-                    </div>
-                `).join('');
-            }
-            
-            renderActivity(activity = null) {
-                const activityData = activity || this.state.activity;
-                const container = activity ? 
-                    document.getElementById('activityFeed') : 
-                    document.getElementById('projectActivity');
-                
-                if (!container) return;
-                
-                if (activityData.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <p class="text-muted">No activity yet.</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = activityData.map(item => `
-                    <div class="activity-item">
-                        <div class="activity-avatar">
-                            ${item.avatar_initials || item.user_name?.substring(0, 2) || '??'}
-                        </div>
-                        <div class="flex-1">
-                            <div class="text-sm">
-                                <span class="font-medium">${this.escapeHtml(item.user_name || 'Unknown')}</span>
-                                <span> ${this.getActionText(item.action)}</span>
-                                ${item.details ? `<span class="text-muted">: ${this.escapeHtml(item.details)}</span>` : ''}
-                            </div>
-                            <div class="text-xs text-muted mt-1">
-                                ${new Date(item.created_at).toLocaleString()}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            
-            // ========== FILTERING & TAGGING ==========
-            setupTaggingSystem() {
-                const container = document.getElementById('filterTags');
-                if (!container) return;
-                
-                // Extract unique tags from documents
-                const allTags = new Set();
-                this.state.documents.forEach(doc => {
-                    if (doc.tags && Array.isArray(doc.tags)) {
-                        doc.tags.forEach(tag => allTags.add(tag));
-                    }
-                });
-                
-                // Add audience tags
-                ['clinical', 'technical', 'both'].forEach(audience => {
-                    allTags.add(`audience:${audience}`);
-                });
-                
-                container.innerHTML = Array.from(allTags).map(tag => `
-                    <span class="tag ${this.getTagClass(tag)}" data-filter="${tag}">
-                        ${this.escapeHtml(tag.includes(':') ? tag.split(':')[1] : tag)}
-                    </span>
-                `).join('');
-                
-                // Add event listeners
-                container.querySelectorAll('.tag').forEach(tag => {
-                    tag.addEventListener('click', (e) => {
-                        const filter = e.currentTarget.dataset.filter;
-                        this.toggleFilter(filter);
-                    });
-                });
-            }
-            
-            toggleFilter(filter) {
-                if (this.activeFilters.has(filter)) {
-                    this.activeFilters.delete(filter);
-                } else {
-                    this.activeFilters.add(filter);
-                }
-                
-                this.updateFilterDisplay();
-                this.renderDocuments();
-            }
-            
-            updateFilterDisplay() {
-                const container = document.getElementById('activeFiltersContainer');
-                if (!container) return;
-                
-                if (this.activeFilters.size === 0) {
-                    container.innerHTML = '<span class="text-sm text-muted">No active filters</span>';
-                    return;
-                }
-                
-                container.innerHTML = Array.from(this.activeFilters).map(filter => `
-                    <div class="tag" style="display: inline-flex; align-items: center; gap: 0.25rem;">
-                        ${this.escapeHtml(filter.includes(':') ? filter.split(':')[1] : filter)}
-                        <button class="text-xs" onclick="app.removeFilter('${filter}')">&times;</button>
-                    </div>
-                `).join('');
-            }
-            
-            removeFilter(filter) {
-                this.activeFilters.delete(filter);
-                this.updateFilterDisplay();
-                this.renderDocuments();
-            }
-            
-            getFilteredDocuments() {
-                if (this.activeFilters.size === 0) {
-                    return this.state.documents;
-                }
-                
-                return this.state.documents.filter(doc => {
-                    const docTags = new Set(doc.tags || []);
-                    docTags.add(`audience:${doc.audience}`);
-                    
-                    return Array.from(this.activeFilters).every(filter => 
-                        docTags.has(filter)
-                    );
-                });
-            }
-            
-            // ========== DOCUMENT MANAGEMENT ==========
-            async uploadDocument(formData) {
-                try {
-                    const response = await fetch(`/api/projects/${this.state.projectId}/documents`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`
-                        },
-                        body: formData
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.showToast('Document uploaded successfully', 'success');
-                        this.hideModal('uploadModal');
-                        await this.loadProject(this.state.projectId);
+                        `;
                     } else {
-                        throw new Error(data.error || 'Upload failed');
-                    }
-                } catch (error) {
-                    console.error('Upload error:', error);
-                    this.showToast(error.message, 'error');
-                }
-            }
-            
-            previewDocument(docId) {
-                const doc = this.state.documents.find(d => d.id === docId);
-                if (!doc) return;
-                
-                document.getElementById('previewTitle').textContent = doc.title;
-                document.getElementById('previewAuthor').textContent = `By ${doc.author_name}`;
-                document.getElementById('previewDate').textContent = 
-                    new Date(doc.created_at).toLocaleDateString();
-                document.getElementById('previewSize').textContent = 
-                    doc.filesize ? this.formatFileSize(doc.filesize) : 'Unknown size';
-                document.getElementById('previewDescription').textContent = 
-                    doc.description || 'No description provided';
-                
-                if (doc.tags && doc.tags.length > 0) {
-                    document.getElementById('previewTags').innerHTML = doc.tags.map(tag => `
-                        <span class="tag" style="margin-right: 0.25rem; margin-bottom: 0.25rem;">
-                            ${this.escapeHtml(tag)}
-                        </span>
-                    `).join('');
-                } else {
-                    document.getElementById('previewTags').innerHTML = '';
-                }
-                
-                this.showModal('previewModal');
-            }
-            
-            // ========== KNOWLEDGE BRIDGE ==========
-            async translateConcept() {
-                const input = document.getElementById('bridgeInput').value.trim();
-                if (!input) {
-                    this.showToast('Please enter a concept to translate', 'warning');
-                    return;
-                }
-                
-                const direction = document.querySelector('[data-direction].active')?.dataset.direction || 'clinical-to-technical';
-                
-                try {
-                    // For now, use a simple manual translation
-                    const translation = this.generateTranslation(input, direction);
-                    this.displayTranslation(translation);
-                    
-                    // Save to server
-                    await this.apiRequest(`/api/projects/${this.state.projectId}/translations`, 'POST', {
-                        clinical_term: direction === 'clinical-to-technical' ? input : '',
-                        technical_explanation: direction === 'technical-to-clinical' ? input : translation.technical,
-                        analogy: translation.analogy
-                    });
-                    
-                } catch (error) {
-                    console.error('Translation error:', error);
-                    this.showToast('Translation failed', 'error');
-                }
-            }
-            
-            generateTranslation(input, direction) {
-                // Simple manual translations for demo
-                const translations = {
-                    'copd': {
-                        clinical: 'Chronic Obstructive Pulmonary Disease - A chronic inflammatory lung disease causing obstructed airflow',
-                        technical: 'Time-series classification problem for exacerbation prediction using multivariate physiological data',
-                        analogy: 'Like monitoring car engine performance - early detection of issues prevents breakdowns'
-                    },
-                    'fev1': {
-                        clinical: 'Forced Expiratory Volume in 1 second - Key spirometry metric for lung function assessment',
-                        technical: 'Primary feature in pulmonary time-series data requiring normalization and outlier detection',
-                        analogy: 'Like measuring CPU performance under load - indicates system capacity'
-                    }
-                };
-                
-                const lowerInput = input.toLowerCase();
-                const matchedTerm = Object.keys(translations).find(term => lowerInput.includes(term));
-                
-                if (matchedTerm) {
-                    return translations[matchedTerm];
-                }
-                
-                // Default translation
-                return {
-                    clinical: direction === 'clinical-to-technical' ? 
-                        `${input} - Clinical assessment through symptoms, diagnostics, and treatment response` :
-                        `Technical implementation of ${input} involves data collection, algorithm development, and validation`,
-                    technical: direction === 'clinical-to-technical' ?
-                        `Technical implementation involves ${input} monitoring through sensor data analysis, predictive modeling, and automated alerts` :
-                        `${input} helps monitor patient status, predict risks, guide decisions, and improve outcomes`,
-                    analogy: 'Like building a bridge between two cities - requires solid foundations on both sides'
-                };
-            }
-            
-            displayTranslation(translation) {
-                const output = document.getElementById('bridgeOutput');
-                output.innerHTML = `
-                    <div class="bg-white/10 rounded-lg p-4 mb-4">
-                        <div class="font-semibold text-lg mb-2">Translation Result</div>
-                        <div class="space-y-3">
-                            <div>
-                                <div class="tag tag-clinical mb-1">Clinical Perspective</div>
-                                <p class="text-sm">${translation.clinical}</p>
-                            </div>
-                            <div>
-                                <div class="tag tag-technical mb-1">Technical Perspective</div>
-                                <p class="text-sm">${translation.technical}</p>
-                            </div>
-                            ${translation.analogy ? `
-                                <div>
-                                    <div class="tag mb-1" style="background: rgba(251, 191, 36, 0.2); color: #FBBF24;">Analogy</div>
-                                    <p class="text-sm italic">"${translation.analogy}"</p>
+                        teamContainer.innerHTML = this.currentProject.team.map(member => `
+                            <div class="flex items-center gap-3 py-3 border-b border-ui-border">
+                                <div class="user-avatar">${member.avatar_initials || '??'}</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">${this.escapeHtml(member.name)}</div>
+                                    <div class="text-sm text-muted">${member.email}</div>
                                 </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            // ========== GLOSSARY ==========
-            async addGlossaryTerm() {
-                const term = document.getElementById('glossaryTerm').value.trim();
-                const clinical = document.getElementById('clinicalDefinition').value.trim();
-                const technical = document.getElementById('technicalDefinition').value.trim();
-                
-                if (!term) {
-                    this.showToast('Term is required', 'warning');
-                    return;
-                }
-                
-                try {
-                    await this.apiRequest(`/api/projects/${this.state.projectId}/glossary`, 'POST', {
-                        term,
-                        clinical_definition: clinical,
-                        technical_definition: technical
-                    });
-                    
-                    this.showToast('Term added to glossary', 'success');
-                    this.hideModal('glossaryModal');
-                    await this.loadProject(this.state.projectId);
-                    
-                } catch (error) {
-                    console.error('Add glossary error:', error);
-                    this.showToast('Failed to add term', 'error');
+                                <span class="tag ${member.user_role === 'clinician' ? 'tag-clinical' : 'tag-technical'}">
+                                    ${member.user_role}
+                                </span>
+                            </div>
+                        `).join('');
+                    }
                 }
             }
             
             // ========== PROJECT MANAGEMENT ==========
             async createProject() {
-                const title = document.getElementById('projectTitle').value.trim();
-                const description = document.getElementById('projectDescription').value.trim();
-                const type = document.getElementById('projectType').value;
-                
-                if (!title || !type) {
-                    this.showToast('Title and type are required', 'warning');
-                    return;
-                }
-                
                 try {
+                    const title = document.getElementById('modalProjectTitle').value.trim();
+                    const description = document.getElementById('modalProjectDescription').value.trim();
+                    const type = document.getElementById('modalProjectType').value;
+                    
+                    if (!title || !type) {
+                        this.showToast('Title and type are required', 'warning');
+                        return;
+                    }
+                    
                     const response = await this.apiRequest('/api/projects', 'POST', {
                         title,
                         description,
@@ -2422,57 +1193,51 @@
                     }
                 } catch (error) {
                     console.error('Create project error:', error);
-                    this.showToast('Failed to create project', 'error');
+                    this.showToast(error.message || 'Failed to create project', 'error');
                 }
             }
             
-            // ========== WEBSOCKET ==========
-            connectWebSocket() {
-                if (!this.token || this.ws) return;
-                
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}`;
-                
+            async uploadDocument() {
                 try {
-                    this.ws = new WebSocket(wsUrl);
+                    const title = document.getElementById('documentTitle').value.trim();
+                    const description = document.getElementById('documentDescription').value.trim();
+                    const fileInput = document.getElementById('fileInput');
                     
-                    // Add error handler for Railway
-                    this.ws.onerror = (error) => {
-                        console.error('WebSocket connection error:', error);
-                        // Don't show toast - might be expected in some environments
-                    };
+                    if (!title) {
+                        this.showToast('Title is required', 'warning');
+                        return;
+                    }
                     
-                    this.ws.onopen = () => {
-                        this.ws.send(JSON.stringify({
-                            type: 'auth',
-                            token: this.token
-                        }));
-                    };
+                    if (!fileInput.files.length) {
+                        this.showToast('Please select a file', 'warning');
+                        return;
+                    }
                     
-                    this.ws.onmessage = (event) => {
-                        const message = JSON.parse(event.data);
-                        
-                        switch (message.type) {
-                            case 'new_comment':
-                                this.handleNewComment(message);
-                                break;
-                            case 'user_joined':
-                                this.showToast(`${message.userId} joined the project`, 'info');
-                                break;
-                            case 'user_typing':
-                                // Update UI to show typing indicator
-                                break;
-                        }
-                    };
+                    const formData = new FormData();
+                    formData.append('title', title);
+                    formData.append('description', description);
+                    formData.append('file', fileInput.files[0]);
                     
-                    this.ws.onclose = () => {
-                        console.log('WebSocket disconnected');
-                        this.ws = null;
-                        // Try to reconnect after 5 seconds
-                        setTimeout(() => this.connectWebSocket(), 5000);
-                    };
+                    const response = await fetch(`/api/projects/${this.currentProject.id}/documents`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        },
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        this.showToast('Document uploaded successfully', 'success');
+                        this.hideModal('uploadModal');
+                        await this.loadProject(this.currentProject.id);
+                    } else {
+                        throw new Error(data.error || 'Upload failed');
+                    }
                 } catch (error) {
-                    console.error('Failed to create WebSocket:', error);
+                    console.error('Upload error:', error);
+                    this.showToast(error.message, 'error');
                 }
             }
             
@@ -2505,106 +1270,16 @@
                     this.showModal('uploadModal');
                 });
                 
-                const dropzone = document.getElementById('dropzone');
-                const fileInput = document.getElementById('documentFile');
-                
-                dropzone?.addEventListener('click', () => fileInput.click());
-                
-                dropzone?.addEventListener('dragover', (e) => {
+                document.getElementById('uploadForm')?.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    dropzone.classList.add('active');
+                    this.uploadDocument();
                 });
                 
-                dropzone?.addEventListener('dragleave', () => {
-                    dropzone.classList.remove('active');
-                });
-                
-                dropzone?.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    dropzone.classList.remove('active');
-                    if (e.dataTransfer.files.length > 0) {
-                        fileInput.files = e.dataTransfer.files;
-                    }
-                });
-                
-                fileInput?.addEventListener('change', () => {
-                    if (fileInput.files.length > 0) {
-                        dropzone.innerHTML = `
-                            <i class="fas fa-file" style="font-size: 2rem; margin-bottom: 1rem; color: var(--thorax-blue);"></i>
-                            <p>${fileInput.files[0].name}</p>
-                            <p class="text-sm text-muted mt-2">${this.formatFileSize(fileInput.files[0].size)}</p>
-                        `;
-                    }
-                });
-                
-                document.getElementById('uploadForm')?.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const formData = new FormData();
-                    formData.append('title', document.getElementById('documentTitle').value);
-                    formData.append('description', document.getElementById('documentDescription').value);
-                    formData.append('audience', document.getElementById('documentAudience').value);
-                    formData.append('tags', document.getElementById('documentTags').value);
-                    
-                    if (fileInput.files.length > 0) {
-                        formData.append('file', fileInput.files[0]);
-                    }
-                    
-                    await this.uploadDocument(formData);
-                });
-                
-                // Glossary
-                document.getElementById('addTermBtn')?.addEventListener('click', () => {
-                    this.showModal('glossaryModal');
-                });
-                
-                document.getElementById('glossaryForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.addGlossaryTerm();
-                });
-                
-                // Knowledge Bridge
-                document.getElementById('translateBtn')?.addEventListener('click', () => {
-                    this.translateConcept();
-                });
-                
-                document.querySelectorAll('[data-direction]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('[data-direction]').forEach(b => b.classList.remove('active'));
-                        e.currentTarget.classList.add('active');
-                    });
-                });
-                
-                // Search
-                const searchInput = document.getElementById('globalSearch');
-                let searchTimeout;
-                
-                searchInput?.addEventListener('input', (e) => {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        this.performSearch(e.target.value);
-                    }, 300);
-                });
-                
-                // Quick filters
-                document.getElementById('filterClinicalViewBtn')?.addEventListener('click', () => {
-                    this.activeFilters.clear();
-                    this.activeFilters.add('audience:clinical');
-                    this.updateFilterDisplay();
-                    this.renderDocuments();
-                });
-                
-                document.getElementById('filterTechnicalViewBtn')?.addEventListener('click', () => {
-                    this.activeFilters.clear();
-                    this.activeFilters.add('audience:technical');
-                    this.updateFilterDisplay();
-                    this.renderDocuments();
-                });
-                
-                document.getElementById('clearFiltersBtn')?.addEventListener('click', () => {
-                    this.activeFilters.clear();
-                    this.updateFilterDisplay();
-                    this.renderDocuments();
+                // Refresh
+                document.getElementById('refreshProjectsBtn')?.addEventListener('click', () => {
+                    this.loadDashboard();
+                    this.loadAllProjects();
+                    this.showToast('Refreshed', 'success');
                 });
                 
                 // Modal close buttons
@@ -2625,26 +1300,6 @@
                         }
                     });
                 });
-                
-                // Tab switching
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        const tabId = e.currentTarget.dataset.tab;
-                        this.switchTab(tabId);
-                    });
-                });
-            }
-            
-            switchTab(tabId) {
-                // Update active tab
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.classList.toggle('active', tab.dataset.tab === tabId);
-                });
-                
-                // Update active content
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.toggle('active', content.id === `${tabId}Tab`);
-                });
             }
             
             // ========== UTILITY METHODS ==========
@@ -2657,17 +1312,18 @@
                 // Reset forms
                 const form = document.getElementById(modalId.replace('Modal', 'Form'));
                 if (form) form.reset();
+                
+                // Reset file input
+                if (modalId === 'uploadModal') {
+                    document.getElementById('fileInput').value = '';
+                }
             }
             
             async apiRequest(url, method = 'GET', data = null) {
                 const headers = {
-                    'Authorization': `Bearer ${this.token}`,
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'Content-Type': 'application/json',
+                    'Authorization': this.token ? `Bearer ${this.token}` : ''
                 };
-                
-                if (data && !(data instanceof FormData)) {
-                    headers['Content-Type'] = 'application/json';
-                }
                 
                 const options = {
                     method,
@@ -2675,21 +1331,27 @@
                 };
                 
                 if (data) {
-                    if (data instanceof FormData) {
-                        options.body = data;
-                    } else {
-                        options.body = JSON.stringify(data);
-                    }
+                    options.body = JSON.stringify(data);
                 }
                 
                 const response = await fetch(url, options);
-                const result = await response.json();
                 
-                if (!response.ok) {
-                    throw new Error(result.error || 'API request failed');
+                // Handle 401 - session expired
+                if (response.status === 401) {
+                    this.token = null;
+                    this.user = null;
+                    localStorage.removeItem('thoraxlab_token');
+                    localStorage.removeItem('thoraxlab_user');
+                    this.showAuth();
+                    throw new Error('Session expired. Please login again.');
                 }
                 
-                return result;
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+                
+                return await response.json();
             }
             
             showToast(message, type = 'info') {
@@ -2704,15 +1366,14 @@
                                    type === 'warning' ? 'fa-exclamation-triangle' : 
                                    'fa-info-circle'}"></i>
                     <span>${this.escapeHtml(message)}</span>
-                    <button class="ml-auto text-sm" onclick="this.parentElement.remove()" aria-label="Close toast">&times;</button>
+                    <button class="ml-auto text-sm" onclick="this.parentElement.remove()">&times;</button>
                 `;
                 
                 container.appendChild(toast);
                 
                 setTimeout(() => {
                     if (toast.parentElement) {
-                        toast.style.animation = 'toastSlideIn 0.3s ease reverse';
-                        setTimeout(() => toast.remove(), 300);
+                        toast.remove();
                     }
                 }, 4000);
             }
@@ -2722,70 +1383,6 @@
                 div.textContent = text;
                 return div.innerHTML;
             }
-            
-            getDocumentIcon(filetype) {
-                if (!filetype) return 'fa-file';
-                
-                if (filetype.includes('pdf')) return 'fa-file-pdf';
-                if (filetype.includes('word') || filetype.includes('document')) return 'fa-file-word';
-                if (filetype.includes('excel') || filetype.includes('spreadsheet')) return 'fa-file-excel';
-                if (filetype.includes('image')) return 'fa-file-image';
-                if (filetype.includes('text')) return 'fa-file-alt';
-                if (filetype.includes('json') || filetype.includes('code')) return 'fa-file-code';
-                return 'fa-file';
-            }
-            
-            getTagClass(tag) {
-                if (tag.includes('clinical')) return 'tag-clinical';
-                if (tag.includes('technical')) return 'tag-technical';
-                if (tag.includes('both')) return 'tag-both';
-                return '';
-            }
-            
-            getActionText(action) {
-                const actions = {
-                    'create_project': 'created project',
-                    'upload_document': 'uploaded document',
-                    'add_glossary': 'added glossary term',
-                    'add_translation': 'added translation',
-                    'add_comment': 'commented on',
-                    'user_login': 'logged in'
-                };
-                return actions[action] || action;
-            }
-            
-            formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-            
-            async performSearch(query) {
-                if (!query.trim()) return;
-                
-                try {
-                    const response = await this.apiRequest(`/api/search?q=${encodeURIComponent(query)}`);
-                    
-                    if (response.success && response.results.length > 0) {
-                        // Display search results
-                        console.log('Search results:', response.results);
-                    }
-                } catch (error) {
-                    console.error('Search error:', error);
-                }
-            }
-            
-            setupOfflineDetection() {
-                window.addEventListener('online', () => {
-                    this.showToast('Back online', 'success');
-                });
-                
-                window.addEventListener('offline', () => {
-                    this.showToast('You are offline', 'warning');
-                });
-            }
         }
         
         // Initialize the application
@@ -2793,24 +1390,16 @@
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + K for search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.getElementById('globalSearch').focus();
-            }
-            
-            // Ctrl/Cmd + N for new project
             if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                 e.preventDefault();
-                if (app.user) {
-                    app.showModal('newProjectModal');
+                if (window.app.user) {
+                    window.app.showModal('newProjectModal');
                 }
             }
             
-            // Escape to close modals
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal.active').forEach(modal => {
-                    app.hideModal(modal.id);
+                    window.app.hideModal(modal.id);
                 });
             }
         });
