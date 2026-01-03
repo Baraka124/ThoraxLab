@@ -1,756 +1,375 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const jwt = require('jsonwebtoken');
+const { database } = require('./database.js');
 
-class ThoraxLabDatabase {
-    constructor() {
-        this.db = null;
-        this.connected = false;
-        this.DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'thoraxlab.db');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Configuration
+const JWT_SECRET = process.env.JWT_SECRET || 'thoraxlab-secret-key-change-in-production';
+const JWT_EXPIRES_IN = '24h';
+
+// Security middleware
+app.use(helmet({
+    contentSecurityPolicy: false // Allow inline styles for demo
+}));
+
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://*.railway.app', 'https://*.vercel.app']
+        : ['http://localhost:3000', 'http://127.0.0.1:3000']
+}));
+
+app.use(compression());
+app.use(express.json({ limit: '10mb' }));
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100
+});
+app.use('/api/', limiter);
+
+// Static files
+app.use(express.static(__dirname));
+
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Authentication middleware
+const authenticate = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Token required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const session = await database.getSessionByToken(token);
         
-        // Ensure data directory exists
-        const dataDir = path.dirname(this.DB_PATH);
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
+        if (!session) {
+            return res.status(401).json({ error: 'Invalid session' });
         }
-    }
 
-    async connect() {
-        if (this.connected) return this.db;
-        
-        return new Promise((resolve, reject) => {
-            this.db = new sqlite3.Database(this.DB_PATH, (err) => {
-                if (err) {
-                    console.error('Database connection failed:', err.message);
-                    reject(err);
-                } else {
-                    this.connected = true;
-                    console.log('✅ Database connected to:', this.DB_PATH);
-                    this.initializeSchema()
-                        .then(() => resolve(this.db))
-                        .catch(reject);
-                }
-            });
+        const user = await database.getUser(session.user_id);
+        if (!user) {
+            return res.status(401).json({ error: 'User not found' });
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expired' });
+        }
+        return res.status(403).json({ error: 'Invalid token' });
+    }
+};
+
+// Routes
+app.post('/api/login', async (req, res) => {
+    try {
+        const { name, email, organization, role } = req.body;
+
+        if (!name || !email || !role) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        let user = await database.findUserByEmail(email);
+        if (!user) {
+            user = await database.createUser({ name, email, organization, role });
+        }
+
+        const token = jwt.sign(
+            { userId: user.id, email: user.email, role: user.role },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN }
+        );
+
+        await database.createSession(user.id, token);
+
+        res.json({
+            success: true,
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                organization: user.organization,
+                role: user.role,
+                avatar_initials: user.avatar_initials
+            }
         });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Server error' });
     }
+});
 
-    async initializeSchema() {
-        await this.run('PRAGMA foreign_keys = ON');
-        await this.run('PRAGMA journal_mode = WAL');
+app.post('/api/logout', authenticate, async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        await database.deleteSession(token);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.get('/api/dashboard', authenticate, async (req, res) => {
+    try {
+        const dashboardData = await database.getDashboardData(req.user.id);
         
-        const tables = [
-            // Users table
-            `CREATE TABLE IF NOT EXISTS users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                name TEXT NOT NULL,
-                organization TEXT DEFAULT '',
-                role TEXT DEFAULT 'clinician',
-                avatar_initials TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )`,
-            
-            // Sessions table
-            `CREATE TABLE IF NOT EXISTS sessions (
-                id TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL,
-                token TEXT UNIQUE NOT NULL,
-                expires_at DATETIME NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )`,
-            
-            // Projects table
-            `CREATE TABLE IF NOT EXISTS projects (
-                id TEXT PRIMARY KEY,
-                title TEXT NOT NULL,
-                description TEXT NOT NULL,
-                type TEXT DEFAULT 'clinical',
-                lead_id TEXT NOT NULL,
-                status TEXT DEFAULT 'active',
-                objectives TEXT DEFAULT '{"clinical":[],"industry":[],"shared":[]}',
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (lead_id) REFERENCES users(id)
-            )`,
-            
-            // Project team table
-            `CREATE TABLE IF NOT EXISTS project_team (
-                id TEXT PRIMARY KEY,
-                project_id TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                role TEXT NOT NULL,
-                joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(project_id, user_id),
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )`,
-            
-            // Discussions table
-            `CREATE TABLE IF NOT EXISTS discussions (
-                id TEXT PRIMARY KEY,
-                project_id TEXT NOT NULL,
-                title TEXT NOT NULL,
-                content TEXT NOT NULL,
-                type TEXT NOT NULL,
-                author_id TEXT NOT NULL,
-                evidence_count INTEGER DEFAULT 0,
-                comment_count INTEGER DEFAULT 0,
-                vote_count INTEGER DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (author_id) REFERENCES users(id)
-            )`,
-            
-            // Discussion votes table
-            `CREATE TABLE IF NOT EXISTS discussion_votes (
-                id TEXT PRIMARY KEY,
-                discussion_id TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                vote_type TEXT CHECK(vote_type IN ('upvote', 'downvote')) NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(discussion_id, user_id),
-                FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )`,
-            
-            // Comments table
-            `CREATE TABLE IF NOT EXISTS comments (
-                id TEXT PRIMARY KEY,
-                discussion_id TEXT NOT NULL,
-                content TEXT NOT NULL,
-                author_id TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
-                FOREIGN KEY (author_id) REFERENCES users(id)
-            )`,
-            
-            // Decisions table
-            `CREATE TABLE IF NOT EXISTS decisions (
-                id TEXT PRIMARY KEY,
-                discussion_id TEXT NOT NULL,
-                title TEXT NOT NULL,
-                description TEXT NOT NULL,
-                created_by TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
-                FOREIGN KEY (created_by) REFERENCES users(id)
-            )`
+        // Add demo metrics
+        const clinicalCount = Math.floor(Math.random() * 50) + 10;
+        const industryCount = Math.floor(Math.random() * 30) + 5;
+        const crossCount = Math.floor(Math.random() * 20) + 3;
+        
+        res.json({
+            success: true,
+            dashboard: {
+                metrics: {
+                    ...dashboardData.metrics,
+                    clinicalActivity: clinicalCount,
+                    industryActivity: industryCount,
+                    crossPollination: crossCount
+                },
+                activeProjects: dashboardData.recentProjects.map(p => ({
+                    ...p,
+                    team_count: 3 // Demo count
+                })),
+                recentActivity: dashboardData.recentActivity
+            }
+        });
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.get('/api/projects', authenticate, async (req, res) => {
+    try {
+        const projects = await database.getProjectsForUser(req.user.id);
+        
+        res.json({
+            success: true,
+            projects: projects.map(p => ({
+                ...p,
+                team_count: Math.floor(Math.random() * 5) + 1
+            }))
+        });
+    } catch (error) {
+        console.error('Projects error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.post('/api/projects', authenticate, async (req, res) => {
+    try {
+        const { title, description, type } = req.body;
+
+        if (!title || !description || !type) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const project = await database.createProject({
+            title,
+            description,
+            type
+        }, req.user.id);
+
+        res.status(201).json({
+            success: true,
+            project: {
+                ...project,
+                team_count: 1
+            }
+        });
+    } catch (error) {
+        console.error('Create project error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.get('/api/projects/:id', authenticate, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const hasAccess = await database.isUserInProject(id, req.user.id);
+        
+        if (!hasAccess) {
+            return res.status(403).json({ error: 'Access denied' });
+        }
+
+        const project = await database.getProject(id);
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        const team = await database.getProjectTeam(id);
+        const metrics = await database.getProjectMetrics(id);
+        
+        res.json({
+            success: true,
+            project: {
+                ...project,
+                team,
+                metrics,
+                team_count: team.length
+            }
+        });
+    } catch (error) {
+        console.error('Project error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.get('/api/projects/:id/documents', authenticate, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const hasAccess = await database.isUserInProject(id, req.user.id);
+        
+        if (!hasAccess) {
+            return res.status(403).json({ error: 'Access denied' });
+        }
+
+        // Demo documents
+        const documents = [
+            {
+                id: "doc_1",
+                title: "COPD Clinical Trial Protocol v2.1",
+                description: "Phase III trial design for exacerbation prediction algorithm validation.",
+                tags: ["audience:clinical", "specialty:pulmonology", "type:protocol"],
+                audience: "clinical",
+                date: "2024-01-15",
+                author: "Dr. Alex Chen",
+                icon: "fas fa-file-medical"
+            },
+            {
+                id: "doc_2",
+                title: "Spirometry Data Pipeline Architecture",
+                description: "Technical specification for real-time data ingestion and preprocessing.",
+                tags: ["audience:technical", "domain:data", "type:api"],
+                audience: "technical",
+                date: "2024-01-20",
+                author: "Sarah Rodriguez",
+                icon: "fas fa-database"
+            }
         ];
 
-        for (const tableSql of tables) {
-            await this.run(tableSql);
-        }
-
-        console.log('✅ Database schema initialized');
-        return true;
-    }
-
-    // ===== CORE DATABASE METHODS =====
-
-    run(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, params, function(err) {
-                if (err) reject(err);
-                else resolve({ lastID: this.lastID, changes: this.changes });
-            });
+        res.json({
+            success: true,
+            documents
         });
+    } catch (error) {
+        console.error('Documents error:', error);
+        res.status(500).json({ error: 'Server error' });
     }
+});
 
-    get(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.get(sql, params, (err, row) => {
-                if (err) reject(err);
-                else resolve(row || null);
-            });
-        });
-    }
+app.post('/api/translate', authenticate, async (req, res) => {
+    try {
+        const { text, direction = 'clinical-to-technical' } = req.body;
 
-    all(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.all(sql, params, (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows || []);
-            });
-        });
-    }
-
-    // ===== USER METHODS =====
-
-    async createUser(userData) {
-        const userId = `user_${uuidv4()}`;
-        const initials = userData.name
-            .split(' ')
-            .map(n => n[0])
-            .join('')
-            .toUpperCase()
-            .substring(0, 2);
-        
-        await this.run(
-            `INSERT INTO users (id, email, name, organization, role, avatar_initials) 
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [
-                userId,
-                userData.email.toLowerCase(),
-                userData.name,
-                userData.organization || '',
-                userData.role || 'clinician',
-                initials
-            ]
-        );
-        
-        return this.getUser(userId);
-    }
-
-    async getUser(userId) {
-        return this.get('SELECT * FROM users WHERE id = ?', [userId]);
-    }
-
-    async findUserByEmail(email) {
-        return this.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase()]);
-    }
-
-    // ===== SESSION METHODS =====
-
-    async createSession(userId, token, expiresInHours = 24) {
-        const sessionId = `sess_${uuidv4()}`;
-        const expiresAt = new Date(Date.now() + expiresInHours * 3600000);
-        
-        await this.run(
-            'INSERT INTO sessions (id, user_id, token, expires_at) VALUES (?, ?, ?, ?)',
-            [sessionId, userId, token, expiresAt.toISOString()]
-        );
-        
-        return this.getSessionByToken(token);
-    }
-
-    async getSessionByToken(token) {
-        const session = await this.get('SELECT * FROM sessions WHERE token = ?', [token]);
-        if (!session) return null;
-        
-        // Check expiration
-        if (new Date() > new Date(session.expires_at)) {
-            await this.deleteSession(token);
-            return null;
+        if (!text) {
+            return res.status(400).json({ error: 'Text required' });
         }
-        
-        return session;
-    }
 
-    async deleteSession(token) {
-        await this.run('DELETE FROM sessions WHERE token = ?', [token]);
-        return true;
-    }
-
-    // ===== PROJECT METHODS =====
-
-    async createProject(projectData, userId) {
-        const projectId = `project_${uuidv4()}`;
-        const user = await this.getUser(userId);
-        if (!user) throw new Error('User not found');
-        
-        await this.run(
-            `INSERT INTO projects (id, title, description, type, lead_id, objectives) 
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [
-                projectId,
-                projectData.title,
-                projectData.description,
-                projectData.type || 'clinical',
-                userId,
-                JSON.stringify(projectData.objectives || { clinical: [], industry: [], shared: [] })
-            ]
-        );
-        
-        // Add creator as lead
-        await this.addTeamMember(projectId, userId, 'lead');
-        
-        return this.getProject(projectId);
-    }
-
-    async getProject(projectId) {
-        const project = await this.get(`
-            SELECT p.*, u.name as lead_name, u.email as lead_email 
-            FROM projects p 
-            LEFT JOIN users u ON p.lead_id = u.id 
-            WHERE p.id = ?
-        `, [projectId]);
-        
-        if (project && project.objectives) {
-            try {
-                project.objectives = JSON.parse(project.objectives);
-            } catch {
-                project.objectives = { clinical: [], industry: [], shared: [] };
-            }
-        }
-        
-        return project;
-    }
-
-    async getProjectsForUser(userId) {
-        const projects = await this.all(`
-            SELECT p.*, u.name as lead_name, pt.role as user_role 
-            FROM projects p 
-            JOIN project_team pt ON p.id = pt.project_id 
-            LEFT JOIN users u ON p.lead_id = u.id 
-            WHERE pt.user_id = ? 
-            ORDER BY p.updated_at DESC
-        `, [userId]);
-        
-        return projects.map(project => {
-            if (project.objectives) {
-                try {
-                    project.objectives = JSON.parse(project.objectives);
-                } catch {
-                    project.objectives = { clinical: [], industry: [], shared: [] };
-                }
-            }
-            return project;
-        });
-    }
-
-    async updateProject(projectId, updates) {
-        const allowedFields = ['title', 'description', 'type', 'status'];
-        const setClauses = [];
-        const values = [];
-        
-        for (const [field, value] of Object.entries(updates)) {
-            if (allowedFields.includes(field) && value !== undefined) {
-                setClauses.push(`${field} = ?`);
-                values.push(value);
-            }
-        }
-        
-        if (setClauses.length === 0) {
-            return this.getProject(projectId);
-        }
-        
-        setClauses.push('updated_at = CURRENT_TIMESTAMP');
-        values.push(projectId);
-        
-        const sql = `UPDATE projects SET ${setClauses.join(', ')} WHERE id = ?`;
-        await this.run(sql, values);
-        
-        return this.getProject(projectId);
-    }
-
-    async isUserInProject(projectId, userId) {
-        const result = await this.get(
-            'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
-            [projectId, userId]
-        );
-        return !!result;
-    }
-
-    async addTeamMember(projectId, userId, role = 'member') {
-        const teamId = `team_${uuidv4()}`;
-        
-        try {
-            await this.run(
-                'INSERT INTO project_team (id, project_id, user_id, role) VALUES (?, ?, ?, ?)',
-                [teamId, projectId, userId, role]
-            );
-        } catch (error) {
-            if (error.message.includes('UNIQUE constraint failed')) {
-                // User already in project
-                return this.get('SELECT * FROM project_team WHERE project_id = ? AND user_id = ?', [projectId, userId]);
-            }
-            throw error;
-        }
-        
-        return { id: teamId, project_id: projectId, user_id: userId, role };
-    }
-
-    async getProjectTeam(projectId) {
-        return this.all(`
-            SELECT pt.*, u.name, u.email, u.role as user_role, u.avatar_initials
-            FROM project_team pt
-            JOIN users u ON pt.user_id = u.id
-            WHERE pt.project_id = ?
-            ORDER BY 
-                CASE pt.role 
-                    WHEN 'lead' THEN 1
-                    WHEN 'admin' THEN 2
-                    ELSE 3 
-                END,
-                pt.joined_at
-        `, [projectId]);
-    }
-
-    // ===== DASHBOARD METHODS =====
-
-    async getDashboardData(userId) {
-        const projects = await this.getProjectsForUser(userId);
-        const projectCount = projects.length;
-        
-        // Get all discussions from user's projects
-        let discussionCount = 0;
-        let upvoteCount = 0;
-        
-        for (const project of projects.slice(0, 10)) { // Limit to first 10 for performance
-            const metrics = await this.getProjectMetrics(project.id);
-            discussionCount += metrics.threads;
-            upvoteCount += metrics.upvotes;
-        }
-        
-        // Get team members count (excluding self)
-        const teamCount = await this.getUserTeamCount(userId);
-        
-        // Get recent activity
-        const recentActivity = await this.getRecentActivity(userId, 8);
-        
-        return {
-            metrics: {
-                projectCount,
-                discussionCount,
-                upvoteCount,
-                teamMembers: teamCount
+        // Demo translations
+        const translations = {
+            'copd exacerbation': {
+                term: 'COPD Exacerbation',
+                clinical: 'A sudden worsening of COPD symptoms requiring medical intervention.',
+                technical: 'Time-series classification problem detecting deterioration patterns.',
+                analogy: 'Like a car engine warning light.'
             },
-            recentProjects: projects.slice(0, 5).map(p => ({
-                id: p.id,
-                title: p.title,
-                type: p.type,
-                status: p.status,
-                updated_at: p.updated_at
-            })),
-            recentActivity
-        };
-    }
-
-    async getUserTeamCount(userId) {
-        const result = await this.get(
-            `SELECT COUNT(DISTINCT pt2.user_id) as count 
-             FROM project_team pt1 
-             JOIN project_team pt2 ON pt1.project_id = pt2.project_id 
-             WHERE pt1.user_id = ? AND pt2.user_id != ?`,
-            [userId, userId]
-        );
-        return result?.count || 0;
-    }
-
-    async getRecentActivity(userId, limit = 10) {
-        return this.all(`
-            SELECT 
-                d.id,
-                d.title,
-                d.type,
-                d.created_at,
-                u.name as author_name,
-                p.title as project_title,
-                'discussion' as activity_type,
-                'Discussion: ' || d.title as activity_title
-            FROM discussions d
-            JOIN projects p ON d.project_id = p.id
-            JOIN users u ON d.author_id = u.id
-            WHERE p.id IN (
-                SELECT project_id FROM project_team WHERE user_id = ?
-            )
-            UNION ALL
-            SELECT 
-                c.id,
-                d.title,
-                NULL as type,
-                c.created_at,
-                u.name as author_name,
-                p.title as project_title,
-                'comment' as activity_type,
-                'Comment on: ' || d.title as activity_title
-            FROM comments c
-            JOIN discussions d ON c.discussion_id = d.id
-            JOIN projects p ON d.project_id = p.id
-            JOIN users u ON c.author_id = u.id
-            WHERE p.id IN (
-                SELECT project_id FROM project_team WHERE user_id = ?
-            )
-            ORDER BY created_at DESC
-            LIMIT ?
-        `, [userId, userId, limit]);
-    }
-
-    // ===== PROJECT METRICS & ACTIVITY =====
-
-    async getProjectMetrics(projectId) {
-        const [threadCount, commentCount, memberCount, upvoteCount] = await Promise.all([
-            this.get('SELECT COUNT(*) as count FROM discussions WHERE project_id = ?', [projectId]),
-            this.get(`
-                SELECT COUNT(*) as count FROM comments 
-                WHERE discussion_id IN (SELECT id FROM discussions WHERE project_id = ?)
-            `, [projectId]),
-            this.get('SELECT COUNT(*) as count FROM project_team WHERE project_id = ?', [projectId]),
-            this.get(`
-                SELECT COUNT(*) as count FROM discussion_votes 
-                WHERE vote_type = 'upvote' 
-                AND discussion_id IN (SELECT id FROM discussions WHERE project_id = ?)
-            `, [projectId])
-        ]);
-        
-        return {
-            threads: threadCount?.count || 0,
-            comments: commentCount?.count || 0,
-            members: memberCount?.count || 0,
-            files: 0, // Placeholder for future implementation
-            upvotes: upvoteCount?.count || 0
-        };
-    }
-
-    async getProjectActivity(projectId, limit = 20) {
-        return this.all(`
-            SELECT * FROM (
-                SELECT 
-                    d.id,
-                    d.title,
-                    d.type,
-                    d.created_at,
-                    u.name as author_name,
-                    'discussion' as activity_type,
-                    'Discussion: ' || d.title as activity_title
-                FROM discussions d
-                JOIN users u ON d.author_id = u.id
-                WHERE d.project_id = ?
-                UNION ALL
-                SELECT 
-                    c.id,
-                    d.title,
-                    NULL as type,
-                    c.created_at,
-                    u.name as author_name,
-                    'comment' as activity_type,
-                    'Comment on: ' || d.title as activity_title
-                FROM comments c
-                JOIN discussions d ON c.discussion_id = d.id
-                JOIN users u ON c.author_id = u.id
-                WHERE d.project_id = ?
-            )
-            ORDER BY created_at DESC
-            LIMIT ?
-        `, [projectId, projectId, limit]);
-    }
-
-    async getProjectThreads(projectId) {
-        return this.all(`
-            SELECT 
-                d.*,
-                u.name as author_name,
-                u.role as author_role,
-                u.avatar_initials,
-                (SELECT COUNT(*) FROM comments WHERE discussion_id = d.id) as comment_count,
-                (SELECT COUNT(*) FROM discussion_votes WHERE discussion_id = d.id AND vote_type = 'upvote') as upvotes,
-                (SELECT COUNT(*) FROM discussion_votes WHERE discussion_id = d.id AND vote_type = 'downvote') as downvotes
-            FROM discussions d
-            JOIN users u ON d.author_id = u.id
-            WHERE d.project_id = ?
-            ORDER BY d.created_at DESC
-        `, [projectId]);
-    }
-
-    // ===== DISCUSSION METHODS =====
-
-    async createDiscussion(discussionData) {
-        const discussionId = `disc_${uuidv4()}`;
-        
-        await this.run(
-            'INSERT INTO discussions (id, project_id, title, content, type, author_id) VALUES (?, ?, ?, ?, ?, ?)',
-            [
-                discussionId,
-                discussionData.projectId,
-                discussionData.title,
-                discussionData.content,
-                discussionData.type,
-                discussionData.authorId
-            ]
-        );
-        
-        return this.getDiscussion(discussionId);
-    }
-
-    async getDiscussion(discussionId) {
-        const discussion = await this.get(`
-            SELECT 
-                d.*,
-                u.name as author_name,
-                u.role as author_role,
-                u.avatar_initials,
-                p.title as project_title
-            FROM discussions d
-            JOIN users u ON d.author_id = u.id
-            JOIN projects p ON d.project_id = p.id
-            WHERE d.id = ?
-        `, [discussionId]);
-        
-        if (discussion) {
-            discussion.votes = await this.getDiscussionVotes(discussionId);
-            discussion.comments = await this.getDiscussionComments(discussionId);
-        }
-        
-        return discussion;
-    }
-
-    async getProjectDiscussions(projectId) {
-        const discussions = await this.all(`
-            SELECT 
-                d.*,
-                u.name as author_name,
-                u.role as author_role,
-                u.avatar_initials
-            FROM discussions d
-            JOIN users u ON d.author_id = u.id
-            WHERE d.project_id = ?
-            ORDER BY d.created_at DESC
-        `, [projectId]);
-        
-        // Get votes for each discussion
-        for (const discussion of discussions) {
-            discussion.votes = await this.getDiscussionVotes(discussion.id);
-        }
-        
-        return discussions;
-    }
-
-    async addDiscussionVote(discussionId, userId, voteType) {
-        const voteId = `vote_${uuidv4()}`;
-        
-        try {
-            await this.run(
-                'INSERT INTO discussion_votes (id, discussion_id, user_id, vote_type) VALUES (?, ?, ?, ?)',
-                [voteId, discussionId, userId, voteType]
-            );
-        } catch (error) {
-            if (error.message.includes('UNIQUE constraint failed')) {
-                // Update existing vote
-                await this.run(
-                    'UPDATE discussion_votes SET vote_type = ? WHERE discussion_id = ? AND user_id = ?',
-                    [voteType, discussionId, userId]
-                );
-            } else {
-                throw error;
+            'fev1 variability': {
+                term: 'FEV1 Variability',
+                clinical: 'Changes in lung function measurements over time.',
+                technical: 'Standard deviation analysis of pulmonary function data.',
+                analogy: 'Like monitoring battery degradation.'
             }
+        };
+
+        const lowerText = text.toLowerCase();
+        let translation = translations[lowerText];
+
+        if (!translation) {
+            translation = {
+                term: text.charAt(0).toUpperCase() + text.slice(1),
+                clinical: `${text} is assessed through diagnostic tests and tracking.`,
+                technical: `Technical implementation involves ${text.toLowerCase()} monitoring.`,
+                analogy: 'Like building a weather station network.'
+            };
         }
         
-        // Update discussion vote count
-        await this.run(`
-            UPDATE discussions 
-            SET vote_count = (
-                SELECT COUNT(*) FROM discussion_votes 
-                WHERE discussion_id = ? AND vote_type = 'upvote'
-            ) - (
-                SELECT COUNT(*) FROM discussion_votes 
-                WHERE discussion_id = ? AND vote_type = 'downvote'
-            )
-            WHERE id = ?
-        `, [discussionId, discussionId, discussionId]);
-        
-        return { id: voteId, discussion_id: discussionId, user_id: userId, vote_type: voteType };
+        res.json({
+            success: true,
+            translation: {
+                ...translation,
+                direction,
+                timestamp: new Date().toISOString()
+            }
+        });
+    } catch (error) {
+        console.error('Translate error:', error);
+        res.status(500).json({ error: 'Server error' });
     }
+});
 
-    async getDiscussionVotes(discussionId) {
-        return this.all(`
-            SELECT dv.*, u.name as user_name
-            FROM discussion_votes dv
-            JOIN users u ON dv.user_id = u.id
-            WHERE dv.discussion_id = ?
-        `, [discussionId]);
-    }
+// Error handling
+app.use((err, req, res, next) => {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+});
 
-    // ===== COMMENT METHODS =====
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ error: 'Not found' });
+});
 
-    async createComment(commentData) {
-        const commentId = `comment_${uuidv4()}`;
+// Start server
+async function startServer() {
+    try {
+        await database.connect();
         
-        await this.run(
-            'INSERT INTO comments (id, discussion_id, content, author_id) VALUES (?, ?, ?, ?)',
-            [commentId, commentData.discussionId, commentData.content, commentData.authorId]
-        );
-        
-        // Update discussion comment count
-        await this.run(
-            'UPDATE discussions SET comment_count = comment_count + 1 WHERE id = ?',
-            [commentData.discussionId]
-        );
-        
-        return this.get('SELECT * FROM comments WHERE id = ?', [commentId]);
-    }
+        app.listen(PORT, () => {
+            console.log(`
+🚀 ThoraxLab Server Started
+─────────────────────────────
+✅ Port: ${PORT}
+✅ Health: http://localhost:${PORT}/health
+✅ Database: Connected
+─────────────────────────────
+            `);
+        });
 
-    async getDiscussionComments(discussionId) {
-        return this.all(`
-            SELECT 
-                c.*,
-                u.name as author_name,
-                u.role as author_role,
-                u.avatar_initials
-            FROM comments c
-            JOIN users u ON c.author_id = u.id
-            WHERE c.discussion_id = ?
-            ORDER BY c.created_at ASC
-        `, [discussionId]);
-    }
+        // Graceful shutdown
+        process.on('SIGTERM', async () => {
+            console.log('Shutting down gracefully...');
+            await database.close();
+            process.exit(0);
+        });
 
-    // ===== DECISION METHODS =====
+        process.on('SIGINT', async () => {
+            console.log('Shutting down gracefully...');
+            await database.close();
+            process.exit(0);
+        });
 
-    async createDecision(decisionData) {
-        const decisionId = `dec_${uuidv4()}`;
-        
-        await this.run(
-            'INSERT INTO decisions (id, discussion_id, title, description, created_by) VALUES (?, ?, ?, ?, ?)',
-            [
-                decisionId,
-                decisionData.discussionId,
-                decisionData.title,
-                decisionData.description,
-                decisionData.createdBy
-            ]
-        );
-        
-        return this.get('SELECT * FROM decisions WHERE id = ?', [decisionId]);
-    }
-
-    async getProjectDecisions(projectId) {
-        return this.all(`
-            SELECT 
-                d.*,
-                u.name as created_by_name,
-                u.avatar_initials,
-                disc.title as discussion_title
-            FROM decisions d
-            JOIN users u ON d.created_by = u.id
-            JOIN discussions disc ON d.discussion_id = disc.id
-            WHERE disc.project_id = ?
-            ORDER BY d.created_at DESC
-        `, [projectId]);
-    }
-
-    // ===== CLEANUP =====
-
-    async close() {
-        if (this.db) {
-            return new Promise((resolve, reject) => {
-                this.db.close((err) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        this.db = null;
-                        this.connected = false;
-                        console.log('Database connection closed');
-                        resolve();
-                    }
-                });
-            });
-        }
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
     }
 }
 
-// Create singleton instance
-const database = new ThoraxLabDatabase();
+startServer();
 
-// Handle process termination
-process.on('SIGTERM', async () => {
-    await database.close();
-});
-
-process.on('SIGINT', async () => {
-    await database.close();
-});
-
-module.exports = { database };
+module.exports = app;
