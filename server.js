@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');  // PostgreSQL instead of sqlite3
 const multer = require('multer');
 const rateLimit = require('express-rate-limit');
 
@@ -13,29 +13,25 @@ class ThoraxLabServer {
         this.app = express();
         this.server = http.createServer(this.app);
         this.wss = new WebSocket.Server({ server: this.server });
-        this.db = null;
-        this.connected = false;
-        this.activeConnections = new Map();
         
-        this.ensureDirectories();
-        this.initialize();
-    }
-
-    ensureDirectories() {
-        // Railway uses /tmp for ephemeral storage
-        const baseDir = process.env.NODE_ENV === 'production' ? '/tmp' : __dirname;
-        
-        this.DB_PATH = path.join(baseDir, 'data', 'thoraxlab.db');
-        this.UPLOAD_PATH = path.join(baseDir, 'uploads');
-        
-        [path.dirname(this.DB_PATH), this.UPLOAD_PATH].forEach(dir => {
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
+        // PostgreSQL connection for Railway
+        this.pool = new Pool({
+            connectionString: process.env.DATABASE_URL || 
+                             'postgresql://localhost:5432/thoraxlab',
+            ssl: process.env.NODE_ENV === 'production' ? { 
+                rejectUnauthorized: false 
+            } : false,
+            max: 20,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 2000
         });
         
-        console.log(`Database path: ${this.DB_PATH}`);
-        console.log(`Upload path: ${this.UPLOAD_PATH}`);
+        this.activeConnections = new Map();
+        
+        // No need for DB_PATH or UPLOAD_PATH setup for Railway
+        // Railway provides DATABASE_URL automatically when PostgreSQL plugin is added
+        
+        this.initialize();
     }
 
     async initialize() {
@@ -50,149 +46,150 @@ class ThoraxLabServer {
 
     // ========== DATABASE SETUP ==========
     async setupDatabase() {
-        return new Promise((resolve, reject) => {
-            this.db = new sqlite3.Database(this.DB_PATH, (err) => {
-                if (err) {
-                    console.error('Database connection failed:', err.message);
-                    reject(err);
-                } else {
-                    this.connected = true;
-                    console.log('Database connected:', this.DB_PATH);
-                    this.initializeSchema().then(resolve).catch(reject);
-                }
-            });
-        });
+        try {
+            // Test connection
+            await this.pool.query('SELECT NOW()');
+            console.log('✅ PostgreSQL connected via DATABASE_URL');
+            
+            await this.initializeSchema();
+        } catch (error) {
+            console.error('❌ Database connection failed:', error.message);
+            console.log('💡 Make sure to add PostgreSQL plugin in Railway dashboard');
+            console.log('💡 Railway will automatically set DATABASE_URL environment variable');
+            process.exit(1);
+        }
     }
 
     async initializeSchema() {
-        await this.runQuery('PRAGMA foreign_keys = ON');
-        
         const tables = [
+            // Enable UUID extension
+            `CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`,
+            
+            // Users table
             `CREATE TABLE IF NOT EXISTS users (
-                id TEXT PRIMARY KEY,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                 email TEXT UNIQUE NOT NULL,
                 name TEXT NOT NULL,
-                organization TEXT NOT NULL,
+                organization TEXT,
                 role TEXT NOT NULL,
                 avatar_initials TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Sessions table
             `CREATE TABLE IF NOT EXISTS sessions (
-                id TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                 token TEXT UNIQUE NOT NULL,
-                expires_at DATETIME NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                expires_at TIMESTAMP NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Projects table
             `CREATE TABLE IF NOT EXISTS projects (
-                id TEXT PRIMARY KEY,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                 title TEXT NOT NULL,
                 description TEXT NOT NULL,
                 type TEXT NOT NULL,
-                lead_id TEXT NOT NULL,
+                lead_id UUID NOT NULL REFERENCES users(id),
                 status TEXT DEFAULT 'active',
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (lead_id) REFERENCES users(id)
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Project team table
             `CREATE TABLE IF NOT EXISTS project_team (
-                id TEXT PRIMARY KEY,
-                project_id TEXT NOT NULL,
-                user_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+                user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                 role TEXT NOT NULL,
-                joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(project_id, user_id),
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(project_id, user_id)
             )`,
             
+            // Documents table - STORE FILES IN DATABASE FOR RAILWAY
             `CREATE TABLE IF NOT EXISTS documents (
-                id TEXT PRIMARY KEY,
-                project_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
                 title TEXT NOT NULL,
                 description TEXT,
                 filename TEXT,
-                filepath TEXT,
+                file_content TEXT, -- Store as base64 for Railway persistence
                 filetype TEXT,
                 filesize INTEGER,
-                tags TEXT DEFAULT '[]',
+                tags JSONB DEFAULT '[]'::jsonb,
                 audience TEXT DEFAULT 'both',
-                author_id TEXT NOT NULL,
+                author_id UUID NOT NULL REFERENCES users(id),
                 version INTEGER DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (author_id) REFERENCES users(id)
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Document tags table
             `CREATE TABLE IF NOT EXISTS document_tags (
-                id TEXT PRIMARY KEY,
-                document_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
                 tag TEXT NOT NULL,
                 category TEXT NOT NULL,
-                FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
                 UNIQUE(document_id, tag)
             )`,
             
+            // Comments table
             `CREATE TABLE IF NOT EXISTS comments (
-                id TEXT PRIMARY KEY,
-                document_id TEXT,
-                project_id TEXT,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                document_id UUID REFERENCES documents(id) ON DELETE CASCADE,
+                project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
                 content TEXT NOT NULL,
-                author_id TEXT NOT NULL,
-                parent_id TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (author_id) REFERENCES users(id)
+                author_id UUID NOT NULL REFERENCES users(id),
+                parent_id UUID REFERENCES comments(id) ON DELETE CASCADE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Glossary table
             `CREATE TABLE IF NOT EXISTS glossary (
-                id TEXT PRIMARY KEY,
-                project_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
                 term TEXT NOT NULL,
                 clinical_definition TEXT,
                 technical_definition TEXT,
-                created_by TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (created_by) REFERENCES users(id)
+                created_by UUID NOT NULL REFERENCES users(id),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Translations table
             `CREATE TABLE IF NOT EXISTS translations (
-                id TEXT PRIMARY KEY,
-                project_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
                 clinical_term TEXT NOT NULL,
                 technical_explanation TEXT NOT NULL,
                 analogy TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`,
             
+            // Activity log table
             `CREATE TABLE IF NOT EXISTS activity_log (
-                id TEXT PRIMARY KEY,
-                project_id TEXT,
-                user_id TEXT NOT NULL,
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+                user_id UUID NOT NULL REFERENCES users(id),
                 action TEXT NOT NULL,
                 target_type TEXT,
-                target_id TEXT,
+                target_id UUID,
                 details TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id)
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`
         ];
 
         for (const sql of tables) {
-            await this.runQuery(sql);
+            try {
+                await this.pool.query(sql);
+            } catch (error) {
+                console.error('Schema creation error:', error.message);
+            }
         }
         
         // Create indexes for performance
         await this.createIndexes();
         
-        console.log('Database schema and indexes ready');
+        console.log('✅ Database schema ready');
     }
 
     async createIndexes() {
@@ -213,43 +210,43 @@ class ThoraxLabServer {
         ];
 
         for (const sql of indexes) {
-            await this.runQuery(sql);
+            try {
+                await this.pool.query(sql);
+            } catch (error) {
+                console.error('Index creation error:', error.message);
+            }
         }
     }
 
     // ========== DATABASE HELPERS ==========
-    runQuery(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, params, function(err) {
-                err ? reject(err) : resolve(this);
-            });
-        });
+    async runQuery(sql, params = []) {
+        try {
+            const result = await this.pool.query(sql, params);
+            return result;
+        } catch (error) {
+            console.error('Query error:', error.message, '\nSQL:', sql);
+            throw error;
+        }
     }
 
-    getQuery(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.get(sql, params, (err, row) => {
-                err ? reject(err) : resolve(row);
-            });
-        });
+    async getQuery(sql, params = []) {
+        const result = await this.runQuery(sql, params);
+        return result.rows[0] || null;
     }
 
-    allQuery(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.all(sql, params, (err, rows) => {
-                err ? reject(err) : resolve(rows);
-            });
-        });
+    async allQuery(sql, params = []) {
+        const result = await this.runQuery(sql, params);
+        return result.rows;
     }
 
     // ========== MIDDLEWARE ==========
     setupMiddleware() {
-        // Static files
+        // Static files from public folder
         this.app.use(express.static('public'));
         
         // JSON parsing
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(express.json({ limit: '10mb' })); // Increased for file uploads
+        this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
         
         // Rate limiting
         const limiter = rateLimit({
@@ -260,17 +257,26 @@ class ThoraxLabServer {
             legacyHeaders: false
         });
         
-        // CORS
+        // CORS for Railway
         this.app.use((req, res, next) => {
             const allowedOrigins = [
                 'http://localhost:3000',
                 'https://thoraxlab-production.up.railway.app',
-                'https://thoraxlab.railway.app'
+                'https://thoraxlab.railway.app',
+                /\.railway\.app$/ // Allow all Railway subdomains
             ];
             
             const origin = req.headers.origin;
-            if (allowedOrigins.includes(origin)) {
-                res.header('Access-Control-Allow-Origin', origin);
+            if (origin) {
+                const isAllowed = allowedOrigins.some(allowed => {
+                    if (typeof allowed === 'string') return origin === allowed;
+                    if (allowed instanceof RegExp) return allowed.test(origin);
+                    return false;
+                });
+                
+                if (isAllowed) {
+                    res.header('Access-Control-Allow-Origin', origin);
+                }
             }
             
             res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -311,17 +317,16 @@ class ThoraxLabServer {
 
     // ========== ROUTES ==========
     setupRoutes() {
-        // Health check with database test
+        // Health check
         this.app.get('/api/health', async (req, res) => {
             try {
-                const dbTest = await this.getQuery('SELECT 1 as test');
-                
+                await this.pool.query('SELECT NOW()');
                 res.json({
                     status: 'ok',
                     timestamp: new Date().toISOString(),
-                    database: dbTest ? 'connected' : 'disconnected',
+                    database: 'connected',
                     uptime: process.uptime(),
-                    memory: process.memoryUsage()
+                    environment: process.env.NODE_ENV || 'development'
                 });
             } catch (error) {
                 res.status(503).json({
@@ -333,7 +338,7 @@ class ThoraxLabServer {
             }
         });
 
-        // Authentication
+        // Authentication (unchanged mostly)
         this.app.post('/api/login', async (req, res) => {
             try {
                 const { email, name, organization, role } = req.body;
@@ -344,24 +349,23 @@ class ThoraxLabServer {
 
                 // Find or create user
                 let user = await this.getQuery(
-                    'SELECT * FROM users WHERE email = ?',
+                    'SELECT * FROM users WHERE email = $1',
                     [email.toLowerCase()]
                 );
 
                 if (!user) {
-                    const userId = `user_${crypto.randomUUID()}`;
                     const initials = name.split(' ')
                         .map(n => n[0])
                         .join('')
                         .toUpperCase()
                         .substring(0, 2);
 
-                    await this.runQuery(
-                        'INSERT INTO users (id, email, name, organization, role, avatar_initials) VALUES (?, ?, ?, ?, ?, ?)',
-                        [userId, email.toLowerCase(), name, organization || '', role || 'clinician', initials]
+                    const result = await this.runQuery(
+                        'INSERT INTO users (email, name, organization, role, avatar_initials) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                        [email.toLowerCase(), name, organization || '', role || 'clinician', initials]
                     );
 
-                    user = await this.getQuery('SELECT * FROM users WHERE id = ?', [userId]);
+                    user = result.rows[0];
                 }
 
                 // Create session
@@ -369,8 +373,8 @@ class ThoraxLabServer {
                 const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
                 await this.runQuery(
-                    'INSERT INTO sessions (id, user_id, token, expires_at) VALUES (?, ?, ?, ?)',
-                    [`sess_${crypto.randomUUID()}`, user.id, token, expiresAt.toISOString()]
+                    'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3)',
+                    [user.id, token, expiresAt.toISOString()]
                 );
 
                 // Log activity
@@ -395,19 +399,7 @@ class ThoraxLabServer {
             }
         });
 
-        this.app.post('/api/logout', async (req, res) => {
-            try {
-                const token = req.headers.authorization?.replace('Bearer ', '');
-                if (token) {
-                    await this.runQuery('DELETE FROM sessions WHERE token = ?', [token]);
-                }
-                res.json({ success: true });
-            } catch (error) {
-                res.status(500).json({ error: 'Logout failed' });
-            }
-        });
-
-        // Dashboard
+        // Dashboard (updated for PostgreSQL)
         this.app.get('/api/dashboard', async (req, res) => {
             try {
                 const userId = req.userId;
@@ -417,24 +409,24 @@ class ThoraxLabServer {
                     SELECT p.*, pt.role as user_role 
                     FROM projects p 
                     JOIN project_team pt ON p.id = pt.project_id 
-                    WHERE pt.user_id = ? 
+                    WHERE pt.user_id = $1 
                     ORDER BY p.updated_at DESC
                 `, [userId]);
 
                 // Get metrics
                 const [projectCount, documentCount, teamCount, activityCount] = await Promise.all([
-                    this.getQuery('SELECT COUNT(*) as count FROM projects WHERE lead_id = ?', [userId]),
+                    this.getQuery('SELECT COUNT(*) as count FROM projects WHERE lead_id = $1', [userId]),
                     this.getQuery(`
                         SELECT COUNT(*) as count FROM documents 
-                        WHERE project_id IN (SELECT project_id FROM project_team WHERE user_id = ?)
+                        WHERE project_id IN (SELECT project_id FROM project_team WHERE user_id = $1)
                     `, [userId]),
                     this.getQuery(`
                         SELECT COUNT(DISTINCT pt2.user_id) as count 
                         FROM project_team pt1 
                         JOIN project_team pt2 ON pt1.project_id = pt2.project_id 
-                        WHERE pt1.user_id = ? AND pt2.user_id != ?
+                        WHERE pt1.user_id = $1 AND pt2.user_id != $2
                     `, [userId, userId]),
-                    this.getQuery('SELECT COUNT(*) as count FROM activity_log WHERE user_id = ?', [userId])
+                    this.getQuery('SELECT COUNT(*) as count FROM activity_log WHERE user_id = $1', [userId])
                 ]);
 
                 // Recent activity
@@ -443,7 +435,7 @@ class ThoraxLabServer {
                     FROM activity_log al
                     LEFT JOIN projects p ON al.project_id = p.id
                     JOIN users u ON al.user_id = u.id
-                    WHERE al.project_id IN (SELECT project_id FROM project_team WHERE user_id = ?)
+                    WHERE al.project_id IN (SELECT project_id FROM project_team WHERE user_id = $1)
                     ORDER BY al.created_at DESC
                     LIMIT 10
                 `, [userId]);
@@ -452,10 +444,10 @@ class ThoraxLabServer {
                     success: true,
                     dashboard: {
                         metrics: {
-                            projects: projectCount?.count || 0,
-                            documents: documentCount?.count || 0,
-                            teamMembers: teamCount?.count || 0,
-                            activities: activityCount?.count || 0
+                            projects: parseInt(projectCount?.count || 0),
+                            documents: parseInt(documentCount?.count || 0),
+                            teamMembers: parseInt(teamCount?.count || 0),
+                            activities: parseInt(activityCount?.count || 0)
                         },
                         projects: projects.slice(0, 5),
                         recentActivity
@@ -468,7 +460,7 @@ class ThoraxLabServer {
             }
         });
 
-        // Projects
+        // Projects (updated for PostgreSQL)
         this.app.get('/api/projects', async (req, res) => {
             try {
                 const projects = await this.allQuery(`
@@ -479,7 +471,7 @@ class ThoraxLabServer {
                     FROM projects p
                     JOIN project_team pt ON p.id = pt.project_id
                     JOIN users u ON p.lead_id = u.id
-                    WHERE pt.user_id = ?
+                    WHERE pt.user_id = $1
                     ORDER BY p.updated_at DESC
                 `, [req.userId]);
 
@@ -489,6 +481,7 @@ class ThoraxLabServer {
                 });
 
             } catch (error) {
+                console.error('Projects error:', error);
                 res.status(500).json({ error: 'Failed to load projects' });
             }
         });
@@ -500,32 +493,32 @@ class ThoraxLabServer {
                 if (!title || !type) {
                     return res.status(400).json({ error: 'Title and type are required' });
                 }
-                
-                const projectId = `project_${crypto.randomUUID()}`;
 
-                await this.runQuery(
-                    'INSERT INTO projects (id, title, description, type, lead_id) VALUES (?, ?, ?, ?, ?)',
-                    [projectId, title, description || '', type || 'clinical', req.userId]
+                const result = await this.runQuery(
+                    'INSERT INTO projects (title, description, type, lead_id) VALUES ($1, $2, $3, $4) RETURNING *',
+                    [title, description || '', type || 'clinical', req.userId]
                 );
 
+                const project = result.rows[0];
+
                 await this.runQuery(
-                    'INSERT INTO project_team (id, project_id, user_id, role) VALUES (?, ?, ?, ?)',
-                    [`team_${crypto.randomUUID()}`, projectId, req.userId, 'lead']
+                    'INSERT INTO project_team (project_id, user_id, role) VALUES ($1, $2, $3)',
+                    [project.id, req.userId, 'lead']
                 );
 
                 // Log activity
-                await this.logActivity(req.userId, projectId, 'create_project', 'project', projectId, `Created project: ${title}`);
+                await this.logActivity(req.userId, project.id, 'create_project', 'project', project.id, `Created project: ${title}`);
 
-                const project = await this.getQuery(`
+                const projectWithLead = await this.getQuery(`
                     SELECT p.*, u.name as lead_name 
                     FROM projects p 
                     JOIN users u ON p.lead_id = u.id 
-                    WHERE p.id = ?
-                `, [projectId]);
+                    WHERE p.id = $1
+                `, [project.id]);
 
                 res.json({
                     success: true,
-                    project
+                    project: projectWithLead
                 });
 
             } catch (error) {
@@ -540,7 +533,7 @@ class ThoraxLabServer {
                 
                 // Verify access
                 const hasAccess = await this.getQuery(
-                    'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
+                    'SELECT 1 FROM project_team WHERE project_id = $1 AND user_id = $2',
                     [projectId, req.userId]
                 );
                 
@@ -549,28 +542,28 @@ class ThoraxLabServer {
                 }
 
                 const [project, team, documents, glossary, translations, activity] = await Promise.all([
-                    this.getQuery('SELECT * FROM projects WHERE id = ?', [projectId]),
+                    this.getQuery('SELECT * FROM projects WHERE id = $1', [projectId]),
                     this.allQuery(`
                         SELECT pt.*, u.name, u.email, u.role as user_role, u.avatar_initials
                         FROM project_team pt
                         JOIN users u ON pt.user_id = u.id
-                        WHERE pt.project_id = ?
+                        WHERE pt.project_id = $1
                         ORDER BY pt.joined_at
                     `, [projectId]),
                     this.allQuery(`
                         SELECT d.*, u.name as author_name, u.avatar_initials
                         FROM documents d
                         JOIN users u ON d.author_id = u.id
-                        WHERE d.project_id = ?
+                        WHERE d.project_id = $1
                         ORDER BY d.created_at DESC
                     `, [projectId]),
-                    this.allQuery('SELECT * FROM glossary WHERE project_id = ? ORDER BY term', [projectId]),
-                    this.allQuery('SELECT * FROM translations WHERE project_id = ? ORDER BY created_at DESC', [projectId]),
+                    this.allQuery('SELECT * FROM glossary WHERE project_id = $1 ORDER BY term', [projectId]),
+                    this.allQuery('SELECT * FROM translations WHERE project_id = $1 ORDER BY created_at DESC', [projectId]),
                     this.allQuery(`
                         SELECT al.*, u.name as user_name, u.avatar_initials
                         FROM activity_log al
                         JOIN users u ON al.user_id = u.id
-                        WHERE al.project_id = ?
+                        WHERE al.project_id = $1
                         ORDER BY al.created_at DESC
                         LIMIT 20
                     `, [projectId])
@@ -583,7 +576,7 @@ class ThoraxLabServer {
                 // Parse JSON fields
                 const parsedDocuments = documents.map(doc => ({
                     ...doc,
-                    tags: doc.tags ? JSON.parse(doc.tags) : []
+                    tags: doc.tags || []
                 }));
 
                 res.json({
@@ -602,21 +595,8 @@ class ThoraxLabServer {
             }
         });
 
-        // Documents
-        const storage = multer.diskStorage({
-            destination: (req, file, cb) => {
-                cb(null, this.UPLOAD_PATH);
-            },
-            filename: (req, file, cb) => {
-                // Sanitize filename to prevent path traversal
-                const sanitizedName = file.originalname
-                    .replace(/[^a-zA-Z0-9.\-_]/g, '_')
-                    .substring(0, 255);
-                const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2)}${path.extname(sanitizedName)}`;
-                cb(null, uniqueName);
-            }
-        });
-
+        // Documents - STORE IN DATABASE FOR RAILWAY
+        const storage = multer.memoryStorage(); // Store in memory for database
         const upload = multer({
             storage,
             limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
@@ -624,7 +604,6 @@ class ThoraxLabServer {
                 const allowedTypes = ['.pdf', '.doc', '.docx', '.txt', '.csv', '.json', '.xlsx', '.jpg', '.png'];
                 const ext = path.extname(file.originalname).toLowerCase();
                 
-                // Check both extension and MIME type
                 const allowedMimes = [
                     'application/pdf',
                     'application/msword',
@@ -655,25 +634,28 @@ class ThoraxLabServer {
                     return res.status(400).json({ error: 'Title is required' });
                 }
 
-                // Check if file was uploaded or if this is a text-only document
                 if (!file && !req.body.content) {
                     return res.status(400).json({ error: 'No file or content provided' });
                 }
 
-                const documentId = `doc_${crypto.randomUUID()}`;
                 const tagArray = tags ? tags.split(',').map(t => t.trim()).filter(t => t) : [];
+                let fileContent = null;
 
-                await this.runQuery(
-                    `INSERT INTO documents (id, project_id, title, description, filename, filepath, 
+                if (file) {
+                    // Convert file to base64 for database storage
+                    fileContent = file.buffer.toString('base64');
+                }
+
+                const result = await this.runQuery(
+                    `INSERT INTO documents (project_id, title, description, filename, file_content, 
                      filetype, filesize, tags, audience, author_id) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
                     [
-                        documentId,
                         projectId,
                         title,
                         description || '',
                         file ? file.originalname : 'untitled.txt',
-                        file ? file.path : '',
+                        fileContent,
                         file ? file.mimetype : 'text/plain',
                         file ? file.size : 0,
                         JSON.stringify(tagArray),
@@ -682,32 +664,33 @@ class ThoraxLabServer {
                     ]
                 );
 
+                const document = result.rows[0];
+
                 // Add tags to document_tags table
                 for (const tag of tagArray) {
                     const [category, value] = tag.includes(':') ? tag.split(':') : ['custom', tag];
                     await this.runQuery(
-                        'INSERT INTO document_tags (id, document_id, tag, category) VALUES (?, ?, ?, ?)',
-                        [`tag_${crypto.randomUUID()}`, documentId, tag, category]
+                        'INSERT INTO document_tags (document_id, tag, category) VALUES ($1, $2, $3)',
+                        [document.id, tag, category]
                     );
                 }
 
                 // Log activity
-                await this.logActivity(req.userId, projectId, 'upload_document', 'document', documentId, `Uploaded: ${title}`);
+                await this.logActivity(req.userId, projectId, 'upload_document', 'document', document.id, `Uploaded: ${title}`);
 
                 res.json({
                     success: true,
                     document: {
-                        id: documentId,
+                        id: document.id,
                         title,
                         filename: file ? file.originalname : null,
-                        created_at: new Date().toISOString()
+                        created_at: document.created_at
                     }
                 });
 
             } catch (error) {
                 console.error('Upload error:', error);
                 
-                // Handle specific errors
                 if (error instanceof multer.MulterError) {
                     if (error.code === 'LIMIT_FILE_SIZE') {
                         return res.status(413).json({ error: 'File too large. Maximum size is 10MB' });
@@ -719,7 +702,38 @@ class ThoraxLabServer {
             }
         });
 
-        // Glossary
+        // Download endpoint
+        this.app.get('/api/documents/:id/download', async (req, res) => {
+            try {
+                const doc = await this.getQuery(
+                    'SELECT * FROM documents WHERE id = $1',
+                    [req.params.id]
+                );
+                
+                if (!doc) {
+                    return res.status(404).json({ error: 'Document not found' });
+                }
+                
+                if (!doc.file_content) {
+                    return res.status(404).json({ error: 'No file content available' });
+                }
+                
+                // Convert base64 back to buffer
+                const buffer = Buffer.from(doc.file_content, 'base64');
+                
+                res.setHeader('Content-Type', doc.filetype || 'application/octet-stream');
+                res.setHeader('Content-Length', buffer.length);
+                res.setHeader('Content-Disposition', `attachment; filename="${doc.filename}"`);
+                
+                res.send(buffer);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                res.status(500).json({ error: 'Download failed' });
+            }
+        });
+
+        // Glossary (updated for PostgreSQL)
         this.app.post('/api/projects/:id/glossary', async (req, res) => {
             try {
                 const { term, clinical_definition, technical_definition } = req.body;
@@ -728,23 +742,24 @@ class ThoraxLabServer {
                     return res.status(400).json({ error: 'Term is required' });
                 }
 
-                const glossaryId = `gloss_${crypto.randomUUID()}`;
-                
-                await this.runQuery(
-                    'INSERT INTO glossary (id, project_id, term, clinical_definition, technical_definition, created_by) VALUES (?, ?, ?, ?, ?, ?)',
-                    [glossaryId, req.params.id, term, clinical_definition || '', technical_definition || '', req.userId]
+                const result = await this.runQuery(
+                    'INSERT INTO glossary (project_id, term, clinical_definition, technical_definition, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+                    [req.params.id, term, clinical_definition || '', technical_definition || '', req.userId]
                 );
+
+                const glossaryId = result.rows[0].id;
 
                 await this.logActivity(req.userId, req.params.id, 'add_glossary', 'glossary', glossaryId, `Added term: ${term}`);
 
                 res.json({ success: true, id: glossaryId });
 
             } catch (error) {
+                console.error('Glossary error:', error);
                 res.status(500).json({ error: 'Failed to add glossary term' });
             }
         });
 
-        // Translations
+        // Translations (updated for PostgreSQL)
         this.app.post('/api/projects/:id/translations', async (req, res) => {
             try {
                 const { clinical_term, technical_explanation, analogy } = req.body;
@@ -753,18 +768,19 @@ class ThoraxLabServer {
                     return res.status(400).json({ error: 'Both terms are required' });
                 }
 
-                const translationId = `trans_${crypto.randomUUID()}`;
-                
-                await this.runQuery(
-                    'INSERT INTO translations (id, project_id, clinical_term, technical_explanation, analogy) VALUES (?, ?, ?, ?, ?)',
-                    [translationId, req.params.id, clinical_term, technical_explanation, analogy || '']
+                const result = await this.runQuery(
+                    'INSERT INTO translations (project_id, clinical_term, technical_explanation, analogy) VALUES ($1, $2, $3, $4) RETURNING id',
+                    [req.params.id, clinical_term, technical_explanation, analogy || '']
                 );
+
+                const translationId = result.rows[0].id;
 
                 await this.logActivity(req.userId, req.params.id, 'add_translation', 'translation', translationId, `Added translation: ${clinical_term}`);
 
                 res.json({ success: true, id: translationId });
 
             } catch (error) {
+                console.error('Translation error:', error);
                 res.status(500).json({ error: 'Failed to add translation' });
             }
         });
@@ -778,12 +794,12 @@ class ThoraxLabServer {
                     return res.status(400).json({ error: 'Comment content required' });
                 }
 
-                const commentId = `comment_${crypto.randomUUID()}`;
-                
-                await this.runQuery(
-                    'INSERT INTO comments (id, document_id, project_id, content, author_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)',
-                    [commentId, document_id || null, project_id || null, content, req.userId, parent_id || null]
+                const result = await this.runQuery(
+                    'INSERT INTO comments (document_id, project_id, content, author_id, parent_id) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+                    [document_id || null, project_id || null, content, req.userId, parent_id || null]
                 );
+
+                const commentId = result.rows[0].id;
 
                 const targetId = document_id || project_id;
                 const targetType = document_id ? 'document' : 'project';
@@ -792,11 +808,12 @@ class ThoraxLabServer {
                 res.json({ success: true, id: commentId });
 
             } catch (error) {
+                console.error('Comment error:', error);
                 res.status(500).json({ error: 'Failed to add comment' });
             }
         });
 
-        // Search
+        // Search (updated for PostgreSQL)
         this.app.get('/api/search', async (req, res) => {
             try {
                 const { q, project_id } = req.query;
@@ -813,29 +830,30 @@ class ThoraxLabServer {
                     query = `
                         SELECT 'document' as type, id, title, description, created_at 
                         FROM documents 
-                        WHERE project_id = ? AND (title LIKE ? OR description LIKE ?)
+                        WHERE project_id = $1 AND (title ILIKE $2 OR description ILIKE $2)
                         UNION
                         SELECT 'glossary' as type, id, term as title, clinical_definition as description, created_at 
                         FROM glossary 
-                        WHERE project_id = ? AND (term LIKE ? OR clinical_definition LIKE ? OR technical_definition LIKE ?)
+                        WHERE project_id = $1 AND (term ILIKE $2 OR clinical_definition ILIKE $2 OR technical_definition ILIKE $2)
                         ORDER BY created_at DESC
                     `;
-                    params = [project_id, searchTerm, searchTerm, project_id, searchTerm, searchTerm, searchTerm];
+                    params = [project_id, searchTerm];
                 } else {
                     query = `
                         SELECT 'project' as type, id, title, description, created_at 
                         FROM projects 
-                        WHERE id IN (SELECT project_id FROM project_team WHERE user_id = ?) 
-                        AND (title LIKE ? OR description LIKE ?)
+                        WHERE id IN (SELECT project_id FROM project_team WHERE user_id = $1) 
+                        AND (title ILIKE $2 OR description ILIKE $2)
                         ORDER BY created_at DESC
                     `;
-                    params = [req.userId, searchTerm, searchTerm];
+                    params = [req.userId, searchTerm];
                 }
 
                 const results = await this.allQuery(query, params);
                 res.json({ success: true, results });
 
             } catch (error) {
+                console.error('Search error:', error);
                 res.status(500).json({ error: 'Search failed' });
             }
         });
@@ -851,14 +869,25 @@ class ThoraxLabServer {
         this.wss = new WebSocket.Server({ 
             server: this.server,
             verifyClient: (info, callback) => {
-                // Allow connections from Railway domain and localhost
                 const allowedOrigins = [
                     'http://localhost:3000',
                     'https://thoraxlab-production.up.railway.app',
-                    'https://thoraxlab.railway.app'
+                    'https://thoraxlab.railway.app',
+                    /\.railway\.app$/
                 ];
                 
-                if (!info.origin || allowedOrigins.some(origin => info.origin.includes(origin))) {
+                if (!info.origin) {
+                    callback(true);
+                    return;
+                }
+                
+                const isAllowed = allowedOrigins.some(allowed => {
+                    if (typeof allowed === 'string') return info.origin === allowed;
+                    if (allowed instanceof RegExp) return allowed.test(info.origin);
+                    return false;
+                });
+                
+                if (isAllowed) {
                     callback(true);
                 } else {
                     console.log('WebSocket connection rejected from origin:', info.origin);
@@ -947,17 +976,16 @@ class ThoraxLabServer {
     // ========== HELPER METHODS ==========
     async getSession(token) {
         const session = await this.getQuery(
-            'SELECT * FROM sessions WHERE token = ? AND expires_at > ?',
+            'SELECT * FROM sessions WHERE token = $1 AND expires_at > $2',
             [token, new Date().toISOString()]
         );
         return session;
     }
 
     async logActivity(userId, projectId, action, targetType, targetId, details) {
-        const activityId = `act_${crypto.randomUUID()}`;
         await this.runQuery(
-            'INSERT INTO activity_log (id, project_id, user_id, action, target_type, target_id, details) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [activityId, projectId, userId, action, targetType, targetId, details]
+            'INSERT INTO activity_log (project_id, user_id, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)',
+            [projectId, userId, action, targetType, targetId, details]
         );
     }
 
@@ -965,12 +993,12 @@ class ThoraxLabServer {
         // Clean up expired sessions every hour
         setInterval(async () => {
             try {
-                const deleted = await this.runQuery(
-                    'DELETE FROM sessions WHERE expires_at < ?',
+                const result = await this.runQuery(
+                    'DELETE FROM sessions WHERE expires_at < $1',
                     [new Date().toISOString()]
                 );
-                if (deleted.changes > 0) {
-                    console.log(`Cleaned up ${deleted.changes} expired sessions`);
+                if (result.rowCount > 0) {
+                    console.log(`Cleaned up ${result.rowCount} expired sessions`);
                 }
             } catch (error) {
                 console.error('Session cleanup error:', error);
@@ -1005,15 +1033,20 @@ class ThoraxLabServer {
         this.server.listen(PORT, HOST, () => {
             console.log(`
 ╔══════════════════════════════════════════════════════╗
-║     THORAXLAB SERVER STARTED                         ║
+║     THORAXLAB SERVER STARTED (PostgreSQL)            ║
 ╠══════════════════════════════════════════════════════╣
 ║     Server: http://${HOST}:${PORT}                      ║
 ║     API:    http://${HOST}:${PORT}/api/*              ║
 ║     WebSocket: ws://${HOST}:${PORT}                   ║
-║     Database: ${this.connected ? 'Connected' : 'Failed'}                ║
+║     Database: PostgreSQL (Railway)                   ║
 ║     Environment: ${process.env.NODE_ENV || 'development'}         ║
 ╚══════════════════════════════════════════════════════╝
             `);
+            
+            console.log('💡 Railway Deployment Notes:');
+            console.log('1. Add PostgreSQL plugin in Railway dashboard');
+            console.log('2. Railway will automatically set DATABASE_URL');
+            console.log('3. Files are stored IN DATABASE for persistence');
         });
     }
 }
