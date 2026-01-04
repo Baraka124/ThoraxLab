@@ -1,1352 +1,1707 @@
-const express = require('express');
-const http = require('http');
-const path = require('path');
-const fs = require('fs');
-const crypto = require('crypto');
-const sqlite3 = require('sqlite3').verbose();
-
-class ThoraxLabServer {
-    constructor() {
-        this.app = express();
-        this.server = http.createServer(this.app);
-        
-        // Configuration
-        this.DB_PATH = './thoraxlab.db';
-        this.db = new sqlite3.Database(this.DB_PATH);
-        
-        console.log('🚀 ThoraxLab Pro Server Initializing...');
-        this.initialize();
-    }
-
-    // ========== INITIALIZATION ==========
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[THØRAX][LAB] PRO | Clinical-Technical Collaboration</title>
     
-    async initialize() {
-        // Setup middleware first
-        this.setupMiddleware();
-        
-        // Initialize database
-        await this.initializeDatabase();
-        
-        // Setup all routes
-        this.setupRoutes();
-        
-        // Start server
-        this.startServer();
-    }
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    async initializeDatabase() {
-        try {
-            console.log('📦 Initializing database...');
+    <style>
+        /* ====== VARIABLES ====== */
+        :root {
+            --thorax-blue: #1A5F7A;
+            --thorax-blue-light: rgba(26, 95, 122, 0.1);
+            --thorax-teal: #0D8B70;
+            --thorax-purple: #6D5ACF;
+            --thorax-orange: #F59E0B;
             
-            // Enable foreign keys and WAL mode
-            await this.runQuery('PRAGMA foreign_keys = ON');
-            await this.runQuery('PRAGMA journal_mode = WAL');
+            --ui-dark: #1E293B;
+            --ui-mid: #64748B;
+            --ui-light: #94A3B8;
+            --ui-bg: #F8FAFC;
+            --ui-card: #FFFFFF;
+            --ui-border: #E2E8F0;
+            --ui-hover: #F1F5F9;
             
-            // Users table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS users (
-                    id TEXT PRIMARY KEY,
-                    email TEXT UNIQUE NOT NULL,
-                    name TEXT NOT NULL,
-                    organization TEXT,
-                    primary_role TEXT CHECK(primary_role IN ('clinical', 'technical', 'both')),
-                    expertise_tags TEXT DEFAULT '[]',
-                    avatar_initials TEXT,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
-            `);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
             
-            // Sessions table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS sessions (
-                    id TEXT PRIMARY KEY,
-                    user_id TEXT NOT NULL,
-                    token TEXT UNIQUE NOT NULL,
-                    expires_at DATETIME NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-                )
-            `);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             
-            // Projects table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS projects (
-                    id TEXT PRIMARY KEY,
-                    title TEXT NOT NULL,
-                    description TEXT,
-                    clinical_context TEXT,
-                    technical_challenge TEXT,
-                    expected_outcomes TEXT,
-                    status TEXT DEFAULT 'planning',
-                    phase TEXT DEFAULT 'discovery',
-                    created_by TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (created_by) REFERENCES users(id)
-                )
-            `);
-            
-            // Project team
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS project_team (
-                    id TEXT PRIMARY KEY,
-                    project_id TEXT NOT NULL,
-                    user_id TEXT NOT NULL,
-                    role TEXT DEFAULT 'contributor',
-                    perspective TEXT,
-                    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(project_id, user_id),
-                    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-                )
-            `);
-            
-            // Threads table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS threads (
-                    id TEXT PRIMARY KEY,
-                    project_id TEXT NOT NULL,
-                    title TEXT NOT NULL,
-                    type TEXT CHECK(type IN ('discussion', 'hypothesis', 'question', 'decision', 'insight', 'progress')),
-                    clinical_context TEXT,
-                    technical_context TEXT,
-                    bridge_insights TEXT,
-                    status TEXT DEFAULT 'active',
-                    tags TEXT DEFAULT '[]',
-                    created_by TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                    FOREIGN KEY (created_by) REFERENCES users(id)
-                )
-            `);
-            
-            // Posts table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS posts (
-                    id TEXT PRIMARY KEY,
-                    thread_id TEXT NOT NULL,
-                    content TEXT NOT NULL,
-                    perspective TEXT CHECK(perspective IN ('clinical', 'technical', 'bridge')),
-                    evidence_refs TEXT DEFAULT '[]',
-                    tags TEXT DEFAULT '[]',
-                    created_by TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE CASCADE,
-                    FOREIGN KEY (created_by) REFERENCES users(id)
-                )
-            `);
-            
-            // Evidence table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS evidence (
-                    id TEXT PRIMARY KEY,
-                    project_id TEXT NOT NULL,
-                    title TEXT NOT NULL,
-                    type TEXT CHECK(type IN ('paper', 'dataset', 'protocol', 'result', 'regulation', 'internal')),
-                    source_type TEXT,
-                    source_id TEXT,
-                    clinical_relevance TEXT,
-                    technical_utility TEXT,
-                    bridge_notes TEXT,
-                    tags TEXT DEFAULT '[]',
-                    uploaded_file TEXT,
-                    created_by TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                    FOREIGN KEY (created_by) REFERENCES users(id)
-                )
-            `);
-            
-            // Decisions table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS decisions (
-                    id TEXT PRIMARY KEY,
-                    project_id TEXT NOT NULL,
-                    thread_id TEXT,
-                    title TEXT NOT NULL,
-                    description TEXT,
-                    options TEXT DEFAULT '[]',
-                    chosen_option TEXT,
-                    rationale TEXT,
-                    clinical_impact TEXT,
-                    technical_impact TEXT,
-                    evidence_refs TEXT DEFAULT '[]',
-                    created_by TEXT NOT NULL,
-                    made_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                    FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE SET NULL,
-                    FOREIGN KEY (created_by) REFERENCES users(id)
-                )
-            `);
-            
-            // Milestones table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS milestones (
-                    id TEXT PRIMARY KEY,
-                    project_id TEXT NOT NULL,
-                    title TEXT NOT NULL,
-                    type TEXT CHECK(type IN ('clinical', 'technical', 'regulatory', 'collaboration', 'deliverable')),
-                    description TEXT,
-                    due_date DATETIME,
-                    completed_at DATETIME,
-                    clinical_owner TEXT,
-                    technical_owner TEXT,
-                    status TEXT DEFAULT 'planned',
-                    dependencies TEXT DEFAULT '[]',
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-                )
-            `);
-            
-            // Bridge terms table
-            await this.runQuery(`
-                CREATE TABLE IF NOT EXISTS bridge_terms (
-                    id TEXT PRIMARY KEY,
-                    project_id TEXT NOT NULL,
-                    term TEXT NOT NULL,
-                    clinical_definition TEXT,
-                    technical_definition TEXT,
-                    analogy TEXT,
-                    usage_examples TEXT,
-                    confidence_score INTEGER DEFAULT 1 CHECK(confidence_score BETWEEN 1 AND 5),
-                    created_by TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(project_id, term),
-                    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                    FOREIGN KEY (created_by) REFERENCES users(id)
-                )
-            `);
-            
-            // Create indexes for better performance
-            await this.runQuery('CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token)');
-            await this.runQuery('CREATE INDEX IF NOT EXISTS idx_threads_project ON threads(project_id)');
-            await this.runQuery('CREATE INDEX IF NOT EXISTS idx_posts_thread ON posts(thread_id)');
-            await this.runQuery('CREATE INDEX IF NOT EXISTS idx_evidence_project ON evidence(project_id)');
-            await this.runQuery('CREATE INDEX IF NOT EXISTS idx_projects_created ON projects(created_by)');
-            
-            console.log('✅ Database initialized successfully');
-            
-        } catch (error) {
-            console.error('❌ Database initialization failed:', error.message);
-            console.error('Full error:', error);
+            --transition: 200ms ease;
         }
-    }
+        
+        /* ====== BASE RESET ====== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--ui-bg);
+            color: var(--ui-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* ====== UTILITY CLASSES ====== */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .text-muted { color: var(--ui-mid); }
+        .text-center { text-align: center; }
+        
+        /* ====== LAYOUT ====== */
+        #app { min-height: 100vh; display: flex; flex-direction: column; }
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* ====== TYPOGRAPHY ====== */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--ui-dark);
+        }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+        .font-mono { font-family: 'SF Mono', monospace; }
+        
+        /* ====== COMPONENTS ====== */
+        
+        /* Header */
+        .app-header {
+            background: var(--ui-card);
+            border-bottom: 1px solid var(--ui-border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .brand-logo {
+            font-family: 'SF Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--thorax-blue);
+            text-decoration: none;
+        }
+        
+        /* Navigation */
+        .nav-main {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            color: var(--ui-mid);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition);
+        }
+        
+        .nav-link:hover {
+            background: var(--ui-hover);
+            color: var(--ui-dark);
+        }
+        
+        .nav-link.active {
+            background: var(--thorax-blue-light);
+            color: var(--thorax-blue);
+        }
+        
+        /* User Menu */
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--thorax-blue), var(--thorax-purple));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary {
+            background: var(--thorax-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #14485E;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: var(--ui-card);
+            color: var(--ui-dark);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--ui-hover);
+            border-color: var(--ui-mid);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            padding: 1.5rem;
+            transition: all var(--transition);
+        }
+        
+        .card:hover {
+            border-color: var(--thorax-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .col-span-4 { grid-column: span 4; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-8 { grid-column: span 8; }
+        .col-span-12 { grid-column: span 12; }
+        
+        @media (max-width: 1024px) {
+            .col-span-4, .col-span-6, .col-span-8 { grid-column: span 12; }
+        }
+        
+        /* Thread Types */
+        .thread-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--ui-hover);
+        }
+        
+        .thread-type-discussion { background: #DBEAFE; color: #1E40AF; }
+        .thread-type-hypothesis { background: #FEF3C7; color: #92400E; }
+        .thread-type-question { background: #E0E7FF; color: #3730A3; }
+        .thread-type-decision { background: #D1FAE5; color: #065F46; }
+        .thread-type-insight { background: #F3E8FF; color: #5B21B6; }
+        .thread-type-progress { background: #FCE7F3; color: #9D174D; }
+        
+        /* Evidence Types */
+        .evidence-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .evidence-paper { background: #DBEAFE; color: #1E40AF; }
+        .evidence-dataset { background: #D1FAE5; color: #065F46; }
+        .evidence-protocol { background: #FEF3C7; color: #92400E; }
+        .evidence-regulation { background: #FCE7F3; color: #9D174D; }
+        
+        /* Bridge Translation */
+        .bridge-card {
+            border-left: 4px solid var(--thorax-teal);
+            background: rgba(13, 139, 112, 0.05);
+        }
+        
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--ui-dark);
+            font-size: 0.875rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            background: var(--ui-card);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--thorax-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--ui-card);
+            border-left: 4px solid var(--thorax-blue);
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--ui-mid);
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--ui-border);
+            border-top-color: var(--thorax-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+        
+        /* Page Transitions */
+        .page {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Auth Screen */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--thorax-blue) 0%, #14485E 100%);
+            padding: 2rem;
+        }
+        .auth-card {
+            background: var(--ui-card);
+            border-radius: 18px;
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .auth-header {
+            background: linear-gradient(135deg, var(--thorax-blue) 0%, var(--thorax-purple) 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+        .auth-body { padding: 2.5rem 2rem; }
+        .auth-form { display: flex; flex-direction: column; gap: 1.5rem; }
+        
+        /* Thread Card */
+        .thread-card {
+            padding: 1.25rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+        .thread-card:hover {
+            border-color: var(--thorax-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Evidence Card */
+        .evidence-card {
+            padding: 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+        
+        /* Timeline */
+        .timeline-item {
+            padding: 1rem;
+            border-left: 3px solid var(--thorax-blue);
+            margin-bottom: 1rem;
+            background: var(--ui-card);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 0 0.5rem; }
+            .dashboard-grid { gap: 1rem; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.25rem; }
+            .card { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
+        
+        <!-- Auth Screen -->
+        <div id="authScreen" class="auth-screen">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="brand-logo" style="color: white; font-size: 2rem; justify-content: center;" class="flex">
+                        [THØRAX][LAB] PRO
+                    </div>
+                    <p style="opacity: 0.9; margin-top: 0.5rem;">Clinical-Technical Collaboration Platform</p>
+                </div>
+                <div class="auth-body">
+                    <form id="authForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="userName" class="form-label">Full Name</label>
+                            <input type="text" id="userName" class="form-input" placeholder="Dr. Alex Chen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail" class="form-label">Email Address</label>
+                            <input type="email" id="userEmail" class="form-input" placeholder="alex.chen@hospital.org" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userRole" class="form-label">Primary Perspective</label>
+                            <select id="userRole" class="form-input" required>
+                                <option value="">Select your perspective</option>
+                                <option value="clinical">Clinical Professional</option>
+                                <option value="technical">Technical Professional</option>
+                                <option value="both">Both Clinical & Technical</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="userExpertise" class="form-label">Expertise Tags (comma separated)</label>
+                            <input type="text" id="userExpertise" class="form-input" placeholder="cardiology, machine learning, clinical trials">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span id="authSubmitText">Enter Collaboration Platform</span>
+                            <i id="authSpinner" class="fas fa-spinner fa-spin hidden"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main App -->
+        <div id="mainApp" class="hidden">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="container">
+                    <div class="flex items-center justify-between">
+                        <a href="#dashboard" class="brand-logo">
+                            [THØRAX][LAB] PRO
+                        </a>
+                        <nav class="nav-main">
+                            <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a>
+                            <a href="#projects" class="nav-link" data-page="projects">
+                                <i class="fas fa-project-diagram"></i>
+                                Projects
+                            </a>
+                            <a href="#search" class="nav-link" data-page="search">
+                                <i class="fas fa-search"></i>
+                                Search
+                            </a>
+                        </nav>
+                        <div class="flex items-center gap-4">
+                            <button id="newProjectBtn" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i>
+                                New Project
+                            </button>
+                            <div id="userAvatar" class="user-avatar">AC</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="container">
+                    <!-- Dashboard Page -->
+                    <div id="dashboardPage" class="page">
+                        <div class="mb-6">
+                            <h1 id="welcomeMessage">Collaboration Dashboard</h1>
+                            <p class="text-muted">Bridge clinical insights with technical implementation</p>
+                        </div>
+                        
+                        <!-- Project Dashboard (Loaded dynamically) -->
+                        <div id="projectDashboard">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading project dashboard...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Projects Page -->
+                    <div id="projectsPage" class="page hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h1>Projects</h1>
+                                <p class="text-muted">Manage your clinical-technical collaborations</p>
+                            </div>
+                            <button id="createProjectBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                New Project
+                            </button>
+                        </div>
+                        
+                        <div id="projectsList">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading projects...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Page -->
+                    <div id="searchPage" class="page hidden">
+                        <div class="mb-6">
+                            <h1>Search & Discover</h1>
+                            <p class="text-muted">Find threads, evidence, and bridge terms across projects</p>
+                        </div>
+                        
+                        <div class="card mb-6">
+                            <div class="form-group">
+                                <input type="text" id="searchInput" class="form-input" placeholder="Search for terms, threads, evidence...">
+                            </div>
+                        </div>
+                        
+                        <div id="searchResults">
+                            <div class="empty-state">
+                                <div class="empty-icon">🔍</div>
+                                <p>Enter a search term to begin</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Detail Page -->
+                    <div id="projectDetailPage" class="page hidden">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Modals -->
+        
+        <!-- New Project Modal -->
+        <div id="newProjectModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Create New Project</h2>
+                    <button class="btn btn-icon" id="closeProjectModal">&times;</button>
+                </div>
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label for="projectTitle" class="form-label">Project Title</label>
+                        <input type="text" id="projectTitle" class="form-input" placeholder="e.g., COPD Exacerbation Prediction" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription" class="form-label">Description</label>
+                        <textarea id="projectDescription" class="form-input form-textarea" placeholder="Describe the collaboration goals..." rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="clinicalContext" class="form-label">Clinical Context</label>
+                        <textarea id="clinicalContext" class="form-input form-textarea" placeholder="Clinical problem or opportunity..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="technicalChallenge" class="form-label">Technical Challenge</label>
+                        <textarea id="technicalChallenge" class="form-input form-textarea" placeholder="Technical implementation challenges..." rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelProjectBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- New Thread Modal -->
+        <div id="newThreadModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Start Discussion</h2>
+                    <button class="btn btn-icon" id="closeThreadModal">&times;</button>
+                </div>
+                <form id="threadForm">
+                    <div class="form-group">
+                        <label class="form-label">Thread Type</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn active" data-type="discussion">💬 Discussion</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="hypothesis">🔍 Hypothesis</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="question">❓ Question</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="decision">🤔 Decision</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="insight">💡 Insight</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="progress">🔄 Progress</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="threadTitle" class="form-label">Title</label>
+                        <input type="text" id="threadTitle" class="form-input" placeholder="Enter thread title..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clinicalContext" class="form-label">Clinical Perspective</label>
+                        <textarea id="threadClinical" class="form-input form-textarea" placeholder="Clinical context or observation..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="technicalContext" class="form-label">Technical Perspective</label>
+                        <textarea id="threadTechnical" class="form-input form-textarea" placeholder="Technical implementation or challenge..." rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelThreadBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Start Thread</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Add Evidence Modal -->
+        <div id="evidenceModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Add Evidence</h2>
+                    <button class="btn btn-icon" id="closeEvidenceModal">&times;</button>
+                </div>
+                <form id="evidenceForm">
+                    <div class="form-group">
+                        <label class="form-label">Evidence Type</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn active" data-type="paper">📄 Paper</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="dataset">📊 Dataset</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="protocol">📋 Protocol</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="regulation">⚖️ Regulation</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidenceTitle" class="form-label">Title</label>
+                        <input type="text" id="evidenceTitle" class="form-input" placeholder="Enter evidence title..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidenceSource" class="form-label">Source</label>
+                        <input type="text" id="evidenceSource" class="form-input" placeholder="PMID, DOI, URL, or internal reference...">
+                    </div>
+                    <div class="form-group">
+                        <label for="clinicalRelevance" class="form-label">Clinical Relevance</label>
+                        <textarea id="clinicalRelevance" class="form-input form-textarea" placeholder="How this impacts patient care..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="technicalUtility" class="form-label">Technical Utility</label>
+                        <textarea id="technicalUtility" class="form-input form-textarea" placeholder="How this informs algorithms or systems..." rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelEvidenceBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Evidence</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Bridge Translation Modal -->
+        <div id="bridgeModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Bridge Translation</h2>
+                    <button class="btn btn-icon" id="closeBridgeModal">&times;</button>
+                </div>
+                <form id="bridgeForm">
+                    <div class="form-group">
+                        <label for="bridgeTerm" class="form-label">Term to Bridge</label>
+                        <input type="text" id="bridgeTerm" class="form-input" placeholder="Enter clinical or technical term..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bridgeContext" class="form-label">Context (optional)</label>
+                        <textarea id="bridgeContext" class="form-input form-textarea" placeholder="Provide context for better translation..." rows="2"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelBridgeBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Translate</button>
+                    </div>
+                </form>
+                <div id="bridgeResult" class="mt-6 hidden">
+                    <div class="card bridge-card">
+                        <h4 class="mb-4">Translation Result</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Clinical Definition</div>
+                                <p id="clinicalDefinition"></p>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Technical Definition</div>
+                                <p id="technicalDefinition"></p>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Analogy</div>
+                                <p id="bridgeAnalogy"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thread Detail Modal -->
+        <div id="threadModal" class="modal">
+            <div class="modal-content" style="max-width: 800px;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
 
-    // ========== DATABASE HELPERS ==========
-    
-    runQuery(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, params, function(err) {
-                if (err) {
-                    console.error('❌ DB RUN Error:', err.message);
-                    console.error('SQL:', sql);
-                    console.error('Params:', params);
-                    reject(err);
+    <script>
+        // ============================================
+        // THORAXLAB PRO - COLLABORATION PLATFORM
+        // ============================================
+        
+        class ThoraxLabPro {
+            constructor() {
+                this.token = localStorage.getItem('thoraxlab_token');
+                this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
+                this.currentProject = null;
+                this.currentThread = null;
+                this.ws = null;
+                this.initialize();
+            }
+            
+            initialize() {
+                this.setupEventListeners();
+                this.setupRouter();
+                this.checkAuth();
+            }
+            
+            // ========== AUTHENTICATION ==========
+            checkAuth() {
+                if (this.token && this.user) {
+                    this.showApp();
+                    this.updateUserDisplay();
                 } else {
-                    resolve(this);
+                    this.showAuth();
                 }
-            });
-        });
-    }
-
-    getQuery(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.get(sql, params, (err, row) => {
-                if (err) {
-                    console.error('❌ DB GET Error:', err.message);
-                    console.error('SQL:', sql);
-                    reject(err);
-                } else {
-                    resolve(row || null);
-                }
-            });
-        });
-    }
-
-    allQuery(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.all(sql, params, (err, rows) => {
-                if (err) {
-                    console.error('❌ DB ALL Error:', err.message);
-                    console.error('SQL:', sql);
-                    reject(err);
-                } else {
-                    resolve(rows || []);
-                }
-            });
-        });
-    }
-
-    // ========== MIDDLEWARE ==========
-    
-    setupMiddleware() {
-        // CORS headers
-        this.app.use((req, res, next) => {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            
-            if (req.method === 'OPTIONS') {
-                return res.status(200).end();
-            }
-            next();
-        });
-        
-        // Body parsing
-        this.app.use(express.json({ limit: '10mb' }));
-        this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-        
-        // Static files
-        this.app.use(express.static('public'));
-        
-        // Logging middleware
-        this.app.use((req, res, next) => {
-            const start = Date.now();
-            console.log(`📡 ${req.method} ${req.path}`);
-            next();
-        });
-        
-        // Authentication middleware
-        this.app.use(async (req, res, next) => {
-            const publicRoutes = [
-                '/api/health',
-                '/api/login',
-                '/api/bridge/translate'
-            ];
-            
-            // Skip auth for public routes
-            if (publicRoutes.includes(req.path)) {
-                return next();
             }
             
-            // Check for Authorization header
-            const authHeader = req.headers.authorization;
-            if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                console.log('❌ No auth header for:', req.path);
-                return res.status(401).json({ 
-                    error: 'Authentication required',
-                    code: 'NO_TOKEN'
-                });
+            showAuth() {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
             }
             
-            const token = authHeader.substring(7);
+            showApp() {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            }
             
-            try {
-                // Find valid session
-                const session = await this.getQuery(
-                    'SELECT * FROM sessions WHERE token = ? AND expires_at > datetime("now")',
-                    [token]
-                );
+            async handleLogin(e) {
+                e.preventDefault();
                 
-                if (!session) {
-                    console.log('❌ Invalid/expired token');
-                    return res.status(401).json({ 
-                        error: 'Session expired or invalid',
-                        code: 'INVALID_SESSION'
-                    });
-                }
+                const submitBtn = document.querySelector('#authForm button[type="submit"]');
+                const submitText = document.querySelector('#authSubmitText');
+                const spinner = document.querySelector('#authSpinner');
                 
-                // Get user info
-                const user = await this.getQuery(
-                    'SELECT id, email, name, organization, primary_role, expertise_tags, avatar_initials FROM users WHERE id = ?',
-                    [session.user_id]
-                );
+                submitBtn.disabled = true;
+                submitText.textContent = 'Entering...';
+                spinner.classList.remove('hidden');
                 
-                if (!user) {
-                    return res.status(401).json({ 
-                        error: 'User not found',
-                        code: 'USER_NOT_FOUND'
-                    });
-                }
-                
-                // Parse JSON fields
-                if (user.expertise_tags) {
-                    user.expertise_tags = JSON.parse(user.expertise_tags);
-                }
-                
-                // Attach to request
-                req.user = user;
-                req.userId = user.id;
-                req.session = session;
-                
-                console.log(`✅ Authenticated: ${user.name} (${user.email})`);
-                next();
-                
-            } catch (error) {
-                console.error('Auth middleware error:', error);
-                res.status(500).json({ 
-                    error: 'Authentication error',
-                    code: 'AUTH_ERROR'
-                });
-            }
-        });
-    }
-
-    // ========== ROUTES ==========
-    
-    setupRoutes() {
-        // ===== HEALTH CHECK =====
-        this.app.get('/api/health', async (req, res) => {
-            try {
-                await this.getQuery('SELECT 1 as test');
-                res.json({
-                    status: 'ok',
-                    service: 'thoraxlab-pro',
-                    timestamp: new Date().toISOString(),
-                    uptime: process.uptime()
-                });
-            } catch (error) {
-                res.status(500).json({
-                    status: 'error',
-                    error: 'Database connection failed'
-                });
-            }
-        });
-        
-        // ===== AUTHENTICATION =====
-        this.app.post('/api/login', async (req, res) => {
-            try {
-                console.log('🔐 Login attempt:', req.body.email);
-                
-                const { email, name, organization, primary_role, expertise } = req.body;
-                
-                // Validation
-                if (!email || !name || !primary_role) {
-                    return res.status(400).json({ 
-                        error: 'Email, name, and role are required',
-                        code: 'MISSING_FIELDS'
-                    });
-                }
-                
-                // Generate avatar initials
-                const initials = name.split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
-                
-                // Find or create user
-                let user = await this.getQuery(
-                    'SELECT * FROM users WHERE email = ?',
-                    [email.toLowerCase()]
-                );
-                
-                if (!user) {
-                    const userId = `user_${crypto.randomBytes(8).toString('hex')}`;
-                    const expertiseTags = expertise ? 
-                        JSON.stringify(expertise.split(',').map(t => t.trim())) : 
-                        '[]';
+                try {
+                    const userData = {
+                        name: document.getElementById('userName').value.trim(),
+                        email: document.getElementById('userEmail').value.trim(),
+                        primary_role: document.getElementById('userRole').value,
+                        expertise: document.getElementById('userExpertise').value.trim()
+                    };
                     
-                    await this.runQuery(
-                        `INSERT INTO users (id, email, name, organization, primary_role, expertise_tags, avatar_initials) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                        [
-                            userId,
-                            email.toLowerCase(),
-                            name.trim(),
-                            (organization || '').trim(),
-                            primary_role,
-                            expertiseTags,
-                            initials
-                        ]
-                    );
-                    
-                    user = await this.getQuery('SELECT * FROM users WHERE id = ?', [userId]);
-                }
-                
-                // Clean up old sessions
-                await this.runQuery(
-                    'DELETE FROM sessions WHERE user_id = ? AND expires_at < datetime("now")',
-                    [user.id]
-                );
-                
-                // Create new session (30 days)
-                const token = crypto.randomBytes(32).toString('hex');
-                const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-                
-                await this.runQuery(
-                    'INSERT INTO sessions (id, user_id, token, expires_at) VALUES (?, ?, ?, ?)',
-                    [
-                        `sess_${crypto.randomBytes(8).toString('hex')}`,
-                        user.id,
-                        token,
-                        expiresAt.toISOString()
-                    ]
-                );
-                
-                // Prepare response
-                const userResponse = {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    organization: user.organization,
-                    primary_role: user.primary_role,
-                    expertise_tags: JSON.parse(user.expertise_tags || '[]'),
-                    avatar_initials: user.avatar_initials
-                };
-                
-                console.log(`✅ Login successful: ${user.email}`);
-                
-                res.json({
-                    success: true,
-                    token,
-                    user: userResponse
-                });
-                
-            } catch (error) {
-                console.error('❌ Login error:', error);
-                res.status(500).json({ 
-                    error: 'Login failed',
-                    code: 'LOGIN_FAILED',
-                    details: error.message
-                });
-            }
-        });
-        
-        // ===== PROJECTS =====
-        
-        // Get user's projects
-        this.app.get('/api/projects', async (req, res) => {
-            try {
-                console.log(`📂 Getting projects for user: ${req.userId}`);
-                
-                const projects = await this.allQuery(`
-                    SELECT p.*, u.name as creator_name 
-                    FROM projects p
-                    JOIN users u ON p.created_by = u.id
-                    WHERE p.created_by = ?
-                    ORDER BY p.updated_at DESC
-                `, [req.userId]);
-                
-                console.log(`📂 Found ${projects.length} projects`);
-                
-                res.json({
-                    success: true,
-                    projects: projects || []
-                });
-                
-            } catch (error) {
-                console.error('❌ Get projects error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to load projects',
-                    code: 'PROJECTS_LOAD_ERROR'
-                });
-            }
-        });
-        
-        // Create project
-        this.app.post('/api/projects', async (req, res) => {
-            try {
-                console.log('🆕 Creating project for user:', req.userId);
-                
-                const { 
-                    title, 
-                    description, 
-                    clinical_context, 
-                    technical_challenge,
-                    status = 'planning',
-                    phase = 'discovery'
-                } = req.body;
-                
-                if (!title) {
-                    return res.status(400).json({ 
-                        error: 'Project title is required',
-                        code: 'MISSING_TITLE'
-                    });
-                }
-                
-                const projectId = `proj_${crypto.randomBytes(8).toString('hex')}`;
-                
-                await this.runQuery(
-                    `INSERT INTO projects (
-                        id, title, description, clinical_context, technical_challenge,
-                        status, phase, created_by
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [
-                        projectId,
-                        title.trim(),
-                        (description || '').trim(),
-                        (clinical_context || '').trim(),
-                        (technical_challenge || '').trim(),
-                        status,
-                        phase,
-                        req.userId
-                    ]
-                );
-                
-                // Add creator to project team
-                await this.runQuery(
-                    'INSERT INTO project_team (id, project_id, user_id, role) VALUES (?, ?, ?, ?)',
-                    [
-                        `team_${crypto.randomBytes(8).toString('hex')}`,
-                        projectId,
-                        req.userId,
-                        'lead'
-                    ]
-                );
-                
-                const project = await this.getQuery(
-                    'SELECT * FROM projects WHERE id = ?',
-                    [projectId]
-                );
-                
-                console.log(`✅ Project created: ${projectId} - ${title}`);
-                
-                res.status(201).json({
-                    success: true,
-                    project
-                });
-                
-            } catch (error) {
-                console.error('❌ Create project error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to create project',
-                    code: 'PROJECT_CREATE_ERROR',
-                    details: error.message
-                });
-            }
-        });
-        
-        // Get project dashboard
-        this.app.get('/api/projects/:id/dashboard', async (req, res) => {
-            try {
-                const projectId = req.params.id;
-                console.log(`📊 Loading dashboard for project: ${projectId}`);
-                
-                // Verify access
-                const hasAccess = await this.getQuery(
-                    'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
-                    [projectId, req.userId]
-                );
-                
-                if (!hasAccess) {
-                    return res.status(403).json({ 
-                        error: 'Access denied to project',
-                        code: 'ACCESS_DENIED'
-                    });
-                }
-                
-                // Get project details
-                const project = await this.getQuery(`
-                    SELECT p.*, u.name as creator_name 
-                    FROM projects p
-                    JOIN users u ON p.created_by = u.id
-                    WHERE p.id = ?
-                `, [projectId]);
-                
-                if (!project) {
-                    return res.status(404).json({ 
-                        error: 'Project not found',
-                        code: 'PROJECT_NOT_FOUND'
-                    });
-                }
-                
-                // Get all dashboard data in parallel
-                const [threads, evidence, decisions, milestones, bridgeTerms, team] = await Promise.all([
-                    // Recent threads
-                    this.allQuery(`
-                        SELECT t.*, u.name as author_name, u.avatar_initials
-                        FROM threads t
-                        JOIN users u ON t.created_by = u.id
-                        WHERE t.project_id = ?
-                        ORDER BY t.updated_at DESC
-                        LIMIT 10
-                    `, [projectId]),
-                    
-                    // Recent evidence
-                    this.allQuery(`
-                        SELECT e.*, u.name as author_name
-                        FROM evidence e
-                        JOIN users u ON e.created_by = u.id
-                        WHERE e.project_id = ?
-                        ORDER BY e.created_at DESC
-                        LIMIT 10
-                    `, [projectId]),
-                    
-                    // Recent decisions
-                    this.allQuery(`
-                        SELECT d.*, u.name as author_name
-                        FROM decisions d
-                        JOIN users u ON d.created_by = u.id
-                        WHERE d.project_id = ?
-                        ORDER BY d.made_at DESC
-                        LIMIT 5
-                    `, [projectId]),
-                    
-                    // Milestones
-                    this.allQuery(`
-                        SELECT m.* 
-                        FROM milestones m
-                        WHERE m.project_id = ?
-                        ORDER BY m.due_date
-                        LIMIT 10
-                    `, [projectId]),
-                    
-                    // Bridge terms
-                    this.allQuery(`
-                        SELECT b.*, u.name as author_name
-                        FROM bridge_terms b
-                        JOIN users u ON b.created_by = u.id
-                        WHERE b.project_id = ?
-                        ORDER BY b.confidence_score DESC
-                        LIMIT 10
-                    `, [projectId]),
-                    
-                    // Team members
-                    this.allQuery(`
-                        SELECT pt.*, u.name, u.email, u.primary_role, u.avatar_initials
-                        FROM project_team pt
-                        JOIN users u ON pt.user_id = u.id
-                        WHERE pt.project_id = ?
-                        ORDER BY pt.joined_at
-                    `, [projectId])
-                ]);
-                
-                // Get engagement metrics
-                const engagement = await this.getQuery(`
-                    SELECT 
-                        COUNT(DISTINCT t.id) as active_threads,
-                        COUNT(DISTINCT e.id) as evidence_count,
-                        COUNT(DISTINCT b.id) as bridge_terms_count,
-                        COUNT(DISTINCT m.id) as milestones_count
-                    FROM projects p
-                    LEFT JOIN threads t ON p.id = t.project_id AND t.status = 'active'
-                    LEFT JOIN evidence e ON p.id = e.project_id
-                    LEFT JOIN bridge_terms b ON p.id = b.project_id
-                    LEFT JOIN milestones m ON p.id = m.project_id
-                    WHERE p.id = ?
-                    GROUP BY p.id
-                `, [projectId]);
-                
-                // Parse JSON fields
-                const parseJSONFields = (items) => items.map(item => ({
-                    ...item,
-                    tags: item.tags ? JSON.parse(item.tags) : [],
-                    evidence_refs: item.evidence_refs ? JSON.parse(item.evidence_refs) : []
-                }));
-                
-                const dashboard = {
-                    project,
-                    threads: parseJSONFields(threads),
-                    evidence: parseJSONFields(evidence),
-                    decisions: decisions.map(d => ({
-                        ...d,
-                        options: d.options ? JSON.parse(d.options) : [],
-                        evidence_refs: d.evidence_refs ? JSON.parse(d.evidence_refs) : []
-                    })),
-                    milestones: milestones.map(m => ({
-                        ...m,
-                        dependencies: m.dependencies ? JSON.parse(m.dependencies) : []
-                    })),
-                    bridgeTerms,
-                    team,
-                    engagement: engagement || {
-                        active_threads: 0,
-                        evidence_count: 0,
-                        bridge_terms_count: 0,
-                        milestones_count: 0
+                    if (!userData.email || !userData.name || !userData.primary_role) {
+                        throw new Error('Please fill all required fields');
                     }
-                };
-                
-                console.log(`✅ Dashboard loaded: ${engagement?.active_threads || 0} threads, ${engagement?.evidence_count || 0} evidence items`);
-                
-                res.json({
-                    success: true,
-                    dashboard
-                });
-                
-            } catch (error) {
-                console.error('❌ Dashboard error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to load dashboard',
-                    code: 'DASHBOARD_ERROR'
-                });
-            }
-        });
-        
-        // ===== THREADS =====
-        
-        // Create thread
-        this.app.post('/api/projects/:id/threads', async (req, res) => {
-            try {
-                const projectId = req.params.id;
-                console.log(`💬 Creating thread in project: ${projectId} by user: ${req.userId}`);
-                
-                // Verify project exists and user has access
-                const hasAccess = await this.getQuery(
-                    'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
-                    [projectId, req.userId]
-                );
-                
-                if (!hasAccess) {
-                    return res.status(403).json({ 
-                        error: 'Access denied to project',
-                        code: 'ACCESS_DENIED'
+                    
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData)
                     });
-                }
-                
-                const {
-                    title,
-                    type = 'discussion',
-                    clinical_context,
-                    technical_context,
-                    bridge_insights,
-                    tags = []
-                } = req.body;
-                
-                if (!title) {
-                    return res.status(400).json({ 
-                        error: 'Thread title is required',
-                        code: 'MISSING_TITLE'
-                    });
-                }
-                
-                // Validate thread type
-                const validTypes = ['discussion', 'hypothesis', 'question', 'decision', 'insight', 'progress'];
-                if (!validTypes.includes(type)) {
-                    return res.status(400).json({ 
-                        error: `Invalid thread type. Must be one of: ${validTypes.join(', ')}`,
-                        code: 'INVALID_TYPE'
-                    });
-                }
-                
-                const threadId = `thread_${crypto.randomBytes(8).toString('hex')}`;
-                const tagArray = JSON.stringify(tags);
-                
-                await this.runQuery(
-                    `INSERT INTO threads (
-                        id, project_id, title, type, clinical_context, 
-                        technical_context, bridge_insights, tags, created_by
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [
-                        threadId,
-                        projectId,
-                        title.trim(),
-                        type,
-                        (clinical_context || '').trim(),
-                        (technical_context || '').trim(),
-                        (bridge_insights || '').trim(),
-                        tagArray,
-                        req.userId
-                    ]
-                );
-                
-                const thread = await this.getQuery(`
-                    SELECT t.*, u.name as author_name, u.avatar_initials 
-                    FROM threads t
-                    JOIN users u ON t.created_by = u.id
-                    WHERE t.id = ?
-                `, [threadId]);
-                
-                console.log(`✅ Thread created: ${threadId} - ${title}`);
-                
-                res.status(201).json({
-                    success: true,
-                    thread: {
-                        ...thread,
-                        tags: JSON.parse(thread.tags)
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Login failed');
                     }
-                });
-                
-            } catch (error) {
-                console.error('❌ Create thread error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to create thread',
-                    code: 'THREAD_CREATE_ERROR',
-                    details: error.message
-                });
-            }
-        });
-        
-        // Get thread with posts
-        this.app.get('/api/threads/:id', async (req, res) => {
-            try {
-                const threadId = req.params.id;
-                console.log(`📄 Loading thread: ${threadId}`);
-                
-                // Get thread
-                const thread = await this.getQuery(`
-                    SELECT t.*, u.name as author_name, u.avatar_initials, p.title as project_title
-                    FROM threads t
-                    JOIN users u ON t.created_by = u.id
-                    JOIN projects p ON t.project_id = p.id
-                    WHERE t.id = ?
-                `, [threadId]);
-                
-                if (!thread) {
-                    return res.status(404).json({ 
-                        error: 'Thread not found',
-                        code: 'THREAD_NOT_FOUND'
-                    });
-                }
-                
-                // Verify access
-                const hasAccess = await this.getQuery(
-                    'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
-                    [thread.project_id, req.userId]
-                );
-                
-                if (!hasAccess) {
-                    return res.status(403).json({ 
-                        error: 'Access denied to thread',
-                        code: 'ACCESS_DENIED'
-                    });
-                }
-                
-                // Get posts
-                const posts = await this.allQuery(`
-                    SELECT p.*, u.name as author_name, u.avatar_initials, u.primary_role
-                    FROM posts p
-                    JOIN users u ON p.created_by = u.id
-                    WHERE p.thread_id = ?
-                    ORDER BY p.created_at
-                `, [threadId]);
-                
-                // Parse JSON fields
-                const parsedPosts = posts.map(p => ({
-                    ...p,
-                    evidence_refs: p.evidence_refs ? JSON.parse(p.evidence_refs) : [],
-                    tags: p.tags ? JSON.parse(p.tags) : []
-                }));
-                
-                console.log(`✅ Thread loaded: ${thread.title} with ${posts.length} posts`);
-                
-                res.json({
-                    success: true,
-                    thread: {
-                        ...thread,
-                        tags: thread.tags ? JSON.parse(thread.tags) : []
-                    },
-                    posts: parsedPosts
-                });
-                
-            } catch (error) {
-                console.error('❌ Get thread error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to load thread',
-                    code: 'THREAD_LOAD_ERROR'
-                });
-            }
-        });
-        
-        // Add post to thread
-        this.app.post('/api/threads/:id/posts', async (req, res) => {
-            try {
-                const threadId = req.params.id;
-                console.log(`💭 Adding post to thread: ${threadId} by user: ${req.userId}`);
-                
-                // Get thread to verify access
-                const thread = await this.getQuery(
-                    'SELECT project_id FROM threads WHERE id = ?',
-                    [threadId]
-                );
-                
-                if (!thread) {
-                    return res.status(404).json({ 
-                        error: 'Thread not found',
-                        code: 'THREAD_NOT_FOUND'
-                    });
-                }
-                
-                // Verify access
-                const hasAccess = await this.getQuery(
-                    'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
-                    [thread.project_id, req.userId]
-                );
-                
-                if (!hasAccess) {
-                    return res.status(403).json({ 
-                        error: 'Access denied',
-                        code: 'ACCESS_DENIED'
-                    });
-                }
-                
-                const {
-                    content,
-                    perspective,
-                    evidence_refs = [],
-                    tags = []
-                } = req.body;
-                
-                if (!content) {
-                    return res.status(400).json({ 
-                        error: 'Post content is required',
-                        code: 'MISSING_CONTENT'
-                    });
-                }
-                
-                // Validate perspective
-                const validPerspectives = ['clinical', 'technical', 'bridge', null];
-                if (perspective && !validPerspectives.includes(perspective)) {
-                    return res.status(400).json({ 
-                        error: 'Invalid perspective',
-                        code: 'INVALID_PERSPECTIVE'
-                    });
-                }
-                
-                const postId = `post_${crypto.randomBytes(8).toString('hex')}`;
-                const evidenceArray = JSON.stringify(evidence_refs);
-                const tagArray = JSON.stringify(tags);
-                
-                await this.runQuery(
-                    `INSERT INTO posts (
-                        id, thread_id, content, perspective, evidence_refs, tags, created_by
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [
-                        postId,
-                        threadId,
-                        content.trim(),
-                        perspective || null,
-                        evidenceArray,
-                        tagArray,
-                        req.userId
-                    ]
-                );
-                
-                // Update thread timestamp
-                await this.runQuery(
-                    'UPDATE threads SET updated_at = datetime("now") WHERE id = ?',
-                    [threadId]
-                );
-                
-                const post = await this.getQuery(`
-                    SELECT p.*, u.name as author_name, u.avatar_initials 
-                    FROM posts p
-                    JOIN users u ON p.created_by = u.id
-                    WHERE p.id = ?
-                `, [postId]);
-                
-                console.log(`✅ Post added: ${postId}`);
-                
-                res.status(201).json({
-                    success: true,
-                    post: {
-                        ...post,
-                        evidence_refs: JSON.parse(post.evidence_refs),
-                        tags: JSON.parse(post.tags)
+                    
+                    if (data.success) {
+                        this.token = data.token;
+                        this.user = data.user;
+                        
+                        localStorage.setItem('thoraxlab_token', data.token);
+                        localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
+                        
+                        this.showApp();
+                        this.updateUserDisplay();
+                        this.showToast(`Welcome to ThoraxLab Pro, ${data.user.name.split(' ')[0]}!`, 'success');
                     }
-                });
+                } catch (error) {
+                    console.error('Login error:', error);
+                    this.showToast(error.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitText.textContent = 'Enter Collaboration Platform';
+                    spinner.classList.add('hidden');
+                }
+            }
+            
+            updateUserDisplay() {
+                if (!this.user) return;
                 
-            } catch (error) {
-                console.error('❌ Add post error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to add post',
-                    code: 'POST_CREATE_ERROR'
+                const avatar = document.getElementById('userAvatar');
+                if (avatar) {
+                    avatar.textContent = this.user.name.split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                }
+                
+                const welcome = document.getElementById('welcomeMessage');
+                if (welcome) {
+                    welcome.textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
+                }
+            }
+            
+            // ========== ROUTER ==========
+            setupRouter() {
+                window.addEventListener('hashchange', () => this.handleRoute());
+                this.handleRoute();
+            }
+            
+            handleRoute() {
+                const hash = window.location.hash.substring(1) || 'dashboard';
+                const parts = hash.split('/');
+                
+                this.showPage(parts[0]);
+                
+                if (parts[0] === 'project' && parts[1]) {
+                    this.loadProject(parts[1]);
+                }
+                
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    const linkPage = link.getAttribute('href').substring(1);
+                    link.classList.toggle('active', linkPage === parts[0]);
                 });
             }
-        });
-        
-        // ===== EVIDENCE =====
-        
-        this.app.post('/api/projects/:id/evidence', async (req, res) => {
-            try {
-                const projectId = req.params.id;
-                console.log(`📚 Adding evidence to project: ${projectId}`);
+            
+            showPage(page) {
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
                 
-                // Verify access
-                const hasAccess = await this.getQuery(
-                    'SELECT 1 FROM project_team WHERE project_id = ? AND user_id = ?',
-                    [projectId, req.userId]
-                );
-                
-                if (!hasAccess) {
-                    return res.status(403).json({ 
-                        error: 'Access denied',
-                        code: 'ACCESS_DENIED'
-                    });
-                }
-                
-                const {
-                    title,
-                    type = 'paper',
-                    source_id,
-                    clinical_relevance,
-                    technical_utility,
-                    bridge_notes,
-                    tags = []
-                } = req.body;
-                
-                if (!title || !type) {
-                    return res.status(400).json({ 
-                        error: 'Title and type are required',
-                        code: 'MISSING_FIELDS'
-                    });
-                }
-                
-                // Validate evidence type
-                const validTypes = ['paper', 'dataset', 'protocol', 'result', 'regulation', 'internal'];
-                if (!validTypes.includes(type)) {
-                    return res.status(400).json({ 
-                        error: `Invalid evidence type`,
-                        code: 'INVALID_TYPE'
-                    });
-                }
-                
-                const evidenceId = `evid_${crypto.randomBytes(8).toString('hex')}`;
-                const tagArray = JSON.stringify(tags);
-                
-                await this.runQuery(
-                    `INSERT INTO evidence (
-                        id, project_id, title, type, source_id,
-                        clinical_relevance, technical_utility, bridge_notes, tags, created_by
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [
-                        evidenceId,
-                        projectId,
-                        title.trim(),
-                        type,
-                        (source_id || '').trim(),
-                        (clinical_relevance || '').trim(),
-                        (technical_utility || '').trim(),
-                        (bridge_notes || '').trim(),
-                        tagArray,
-                        req.userId
-                    ]
-                );
-                
-                const evidence = await this.getQuery(`
-                    SELECT e.*, u.name as author_name 
-                    FROM evidence e
-                    JOIN users u ON e.created_by = u.id
-                    WHERE e.id = ?
-                `, [evidenceId]);
-                
-                console.log(`✅ Evidence added: ${evidenceId} - ${title}`);
-                
-                res.status(201).json({
-                    success: true,
-                    evidence: {
-                        ...evidence,
-                        tags: JSON.parse(evidence.tags)
+                const pageElement = document.getElementById(`${page}Page`);
+                if (pageElement) {
+                    pageElement.classList.remove('hidden');
+                    
+                    switch(page) {
+                        case 'dashboard':
+                            this.loadDashboard();
+                            break;
+                        case 'projects':
+                            this.loadProjects();
+                            break;
+                        case 'search':
+                            // Initialize search
+                            break;
                     }
+                }
+            }
+            
+            navigateTo(page) {
+                window.location.hash = page;
+            }
+            
+            // ========== DATA LOADING ==========
+            async loadDashboard() {
+                try {
+                    // For now, just show projects list
+                    await this.loadProjects();
+                } catch (error) {
+                    console.error('Dashboard load error:', error);
+                }
+            }
+            
+            async loadProjects() {
+                try {
+                    const response = await this.apiRequest('/api/projects');
+                    
+                    if (response.success) {
+                        this.renderProjects(response.projects || []);
+                    }
+                } catch (error) {
+                    console.error('Projects load error:', error);
+                    this.renderProjects([]);
+                }
+            }
+            
+            async loadProject(projectId) {
+                try {
+                    const response = await this.apiRequest(`/api/projects/${projectId}/dashboard`);
+                    
+                    if (response.success) {
+                        this.currentProject = response.dashboard;
+                        this.renderProjectDashboard();
+                        this.showPage('projectDetail');
+                    }
+                } catch (error) {
+                    console.error('Project load error:', error);
+                    this.navigateTo('projects');
+                }
+            }
+            
+            // ========== RENDERING ==========
+            renderProjects(projects) {
+                const container = document.getElementById('projectsList');
+                if (!container) return;
+                
+                if (projects.length === 0) {
+                    container.innerHTML = `
+                        <div class="card">
+                            <div class="empty-state">
+                                <div class="empty-icon">📂</div>
+                                <h3 class="mb-2">No Projects Yet</h3>
+                                <p class="text-muted mb-4">Start your first clinical-technical collaboration.</p>
+                                <button class="btn btn-primary" id="createFirstProjectBtn">
+                                    Create First Project
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('createFirstProjectBtn')?.addEventListener('click', () => {
+                        this.showModal('newProjectModal');
+                    });
+                    
+                    return;
+                }
+                
+                container.innerHTML = projects.map(project => `
+                    <div class="card mb-4">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="mb-2">${this.escapeHtml(project.title)}</h3>
+                                <p class="text-sm text-muted">${project.phase} • ${project.status}</p>
+                            </div>
+                            <a href="#project/${project.id}" class="btn btn-primary btn-sm">
+                                Open Project
+                            </a>
+                        </div>
+                        <p class="text-muted mb-4">${this.escapeHtml(project.description?.substring(0, 200) || '')}${project.description?.length > 200 ? '...' : ''}</p>
+                        <div class="flex items-center text-sm text-muted">
+                            <span>Created: ${new Date(project.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            renderProjectDashboard() {
+                const container = document.getElementById('projectDetailPage');
+                if (!container || !this.currentProject) return;
+                
+                const { project, threads, evidence, decisions, milestones, bridgeTerms, team, engagement } = this.currentProject;
+                
+                container.innerHTML = `
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h1>${this.escapeHtml(project.title)}</h1>
+                                <p class="text-muted">${project.phase} • ${project.status}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="btn btn-secondary" id="backToProjectsBtn">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back
+                                </button>
+                                <button class="btn btn-primary" id="addThreadBtn">
+                                    <i class="fas fa-plus"></i>
+                                    New Thread
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-grid mb-6">
+                            <!-- Engagement Metrics -->
+                            <div class="card col-span-4">
+                                <h3 class="mb-4">Engagement</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.active_threads || 0}</div>
+                                        <div class="text-sm text-muted">Active Threads</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.evidence_count || 0}</div>
+                                        <div class="text-sm text-muted">Evidence</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.bridge_terms_count || 0}</div>
+                                        <div class="text-sm text-muted">Bridge Terms</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.milestones_count || 0}</div>
+                                        <div class="text-sm text-muted">Milestones</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="card col-span-4">
+                                <h3 class="mb-4">Quick Actions</h3>
+                                <div class="space-y-2">
+                                    <button class="btn btn-secondary w-full justify-start" id="addEvidenceBtn">
+                                        <i class="fas fa-file-medical"></i>
+                                        Add Evidence
+                                    </button>
+                                    <button class="btn btn-secondary w-full justify-start" id="bridgeTermBtn">
+                                        <i class="fas fa-bridge"></i>
+                                        Bridge a Term
+                                    </button>
+                                    <button class="btn btn-secondary w-full justify-start" id="addMilestoneBtn">
+                                        <i class="fas fa-flag"></i>
+                                        Add Milestone
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Team -->
+                            <div class="card col-span-4">
+                                <h3 class="mb-4">Team</h3>
+                                <div class="space-y-3">
+                                    ${team && team.length > 0 ? team.map(member => `
+                                        <div class="flex items-center gap-3">
+                                            <div class="user-avatar">${member.avatar_initials || '??'}</div>
+                                            <div>
+                                                <div class="font-medium">${this.escapeHtml(member.name)}</div>
+                                                <div class="text-sm text-muted">${member.primary_role || 'contributor'}</div>
+                                            </div>
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No team members</p>'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Threads -->
+                        <div class="card mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3>Recent Discussions</h3>
+                                <button class="btn btn-sm btn-secondary" id="viewAllThreadsBtn">
+                                    View All
+                                </button>
+                            </div>
+                            <div id="threadsList">
+                                ${threads && threads.length > 0 ? threads.map(thread => `
+                                    <div class="thread-card" data-thread-id="${thread.id}">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center gap-2">
+                                                <span class="thread-type-badge thread-type-${thread.type}">
+                                                    ${this.getThreadIcon(thread.type)} ${thread.type}
+                                                </span>
+                                                <span class="text-sm text-muted">${new Date(thread.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <span class="text-sm">${thread.author_name}</span>
+                                        </div>
+                                        <h4 class="mb-2">${this.escapeHtml(thread.title)}</h4>
+                                        ${thread.clinical_context ? `
+                                            <div class="text-sm mb-2">
+                                                <span class="font-semibold">Clinical:</span> 
+                                                ${this.escapeHtml(thread.clinical_context.substring(0, 100))}${thread.clinical_context.length > 100 ? '...' : ''}
+                                            </div>
+                                        ` : ''}
+                                        ${thread.technical_context ? `
+                                            <div class="text-sm mb-2">
+                                                <span class="font-semibold">Technical:</span> 
+                                                ${this.escapeHtml(thread.technical_context.substring(0, 100))}${thread.technical_context.length > 100 ? '...' : ''}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('') : '<p class="text-muted text-center py-4">No discussions yet</p>'}
+                            </div>
+                        </div>
+                        
+                        <!-- Evidence & Decisions Grid -->
+                        <div class="dashboard-grid mb-6">
+                            <!-- Evidence -->
+                            <div class="card col-span-6">
+                                <h3 class="mb-4">Recent Evidence</h3>
+                                <div id="evidenceList">
+                                    ${evidence && evidence.length > 0 ? evidence.map(item => `
+                                        <div class="evidence-card">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="evidence-badge evidence-${item.type}">
+                                                    ${this.getEvidenceIcon(item.type)} ${item.type}
+                                                </span>
+                                                <span class="text-sm text-muted">${new Date(item.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <h4 class="mb-2">${this.escapeHtml(item.title)}</h4>
+                                            <div class="text-sm text-muted">${item.author_name}</div>
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No evidence yet</p>'}
+                                </div>
+                            </div>
+                            
+                            <!-- Decisions -->
+                            <div class="card col-span-6">
+                                <h3 class="mb-4">Recent Decisions</h3>
+                                <div id="decisionsList">
+                                    ${decisions && decisions.length > 0 ? decisions.map(decision => `
+                                        <div class="border-b border-ui-border py-3 last:border-b-0">
+                                            <h4 class="mb-1">${this.escapeHtml(decision.title)}</h4>
+                                            <div class="text-sm text-muted mb-2">Decided: ${new Date(decision.made_at).toLocaleDateString()}</div>
+                                            ${decision.chosen_option ? `
+                                                <div class="text-sm">
+                                                    <span class="font-semibold">Chosen:</span> ${this.escapeHtml(decision.chosen_option)}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No decisions yet</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners
+                document.getElementById('backToProjectsBtn')?.addEventListener('click', () => {
+                    this.navigateTo('projects');
                 });
                 
-            } catch (error) {
-                console.error('❌ Add evidence error:', error);
-                res.status(500).json({ 
-                    error: 'Failed to add evidence',
-                    code: 'EVIDENCE_CREATE_ERROR'
+                document.getElementById('addThreadBtn')?.addEventListener('click', () => {
+                    this.showModal('newThreadModal');
+                });
+                
+                document.getElementById('addEvidenceBtn')?.addEventListener('click', () => {
+                    this.showModal('evidenceModal');
+                });
+                
+                document.getElementById('bridgeTermBtn')?.addEventListener('click', () => {
+                    this.showModal('bridgeModal');
+                });
+                
+                // Thread click handlers
+                container.querySelectorAll('.thread-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const threadId = e.currentTarget.dataset.threadId;
+                        this.openThread(threadId);
+                    });
                 });
             }
-        });
-        
-        // ===== BRIDGE TRANSLATION =====
-        
-        this.app.post('/api/bridge/translate', async (req, res) => {
-            try {
-                const { term, context, project_id } = req.body;
-                
-                if (!term) {
-                    return res.status(400).json({ 
-                        error: 'Term is required',
-                        code: 'MISSING_TERM'
+            
+            // ========== PROJECT MANAGEMENT ==========
+            async createProject() {
+                try {
+                    const projectData = {
+                        title: document.getElementById('projectTitle').value.trim(),
+                        description: document.getElementById('projectDescription').value.trim(),
+                        clinical_context: document.getElementById('clinicalContext').value.trim(),
+                        technical_challenge: document.getElementById('technicalChallenge').value.trim(),
+                        status: 'planning',
+                        phase: 'discovery'
+                    };
+                    
+                    if (!projectData.title) {
+                        this.showToast('Project title is required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest('/api/projects', 'POST', projectData);
+                    
+                    if (response.success) {
+                        this.showToast('Project created successfully', 'success');
+                        this.hideModal('newProjectModal');
+                        await this.loadProjects();
+                        this.navigateTo(`project/${response.project.id}`);
+                    }
+                } catch (error) {
+                    console.error('Create project error:', error);
+                    this.showToast(error.message || 'Failed to create project', 'error');
+                }
+            }
+            
+            async createThread() {
+                try {
+                    if (!this.currentProject) {
+                        this.showToast('No project selected', 'error');
+                        return;
+                    }
+                    
+                    const threadData = {
+                        title: document.getElementById('threadTitle').value.trim(),
+                        type: document.querySelector('.thread-type-btn.active').dataset.type,
+                        clinical_context: document.getElementById('threadClinical').value.trim(),
+                        technical_context: document.getElementById('threadTechnical').value.trim()
+                    };
+                    
+                    if (!threadData.title || !threadData.type) {
+                        this.showToast('Title and type are required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/projects/${this.currentProject.project.id}/threads`, 'POST', threadData);
+                    
+                    if (response.success) {
+                        this.showToast('Thread started successfully', 'success');
+                        this.hideModal('newThreadModal');
+                        await this.loadProject(this.currentProject.project.id);
+                    }
+                } catch (error) {
+                    console.error('Create thread error:', error);
+                    this.showToast(error.message || 'Failed to create thread', 'error');
+                }
+            }
+            
+            async addEvidence() {
+                try {
+                    if (!this.currentProject) {
+                        this.showToast('No project selected', 'error');
+                        return;
+                    }
+                    
+                    const evidenceData = {
+                        title: document.getElementById('evidenceTitle').value.trim(),
+                        type: document.querySelector('.evidence-type-btn.active').dataset.type,
+                        source_id: document.getElementById('evidenceSource').value.trim(),
+                        clinical_relevance: document.getElementById('clinicalRelevance').value.trim(),
+                        technical_utility: document.getElementById('technicalUtility').value.trim()
+                    };
+                    
+                    if (!evidenceData.title || !evidenceData.type) {
+                        this.showToast('Title and type are required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/projects/${this.currentProject.project.id}/evidence`, 'POST', evidenceData);
+                    
+                    if (response.success) {
+                        this.showToast('Evidence added successfully', 'success');
+                        this.hideModal('evidenceModal');
+                        await this.loadProject(this.currentProject.project.id);
+                    }
+                } catch (error) {
+                    console.error('Add evidence error:', error);
+                    this.showToast(error.message || 'Failed to add evidence', 'error');
+                }
+            }
+            
+            async translateTerm() {
+                try {
+                    const term = document.getElementById('bridgeTerm').value.trim();
+                    const context = document.getElementById('bridgeContext').value.trim();
+                    
+                    if (!term) {
+                        this.showToast('Please enter a term to translate', 'warning');
+                        return;
+                    }
+                    
+                    const response = await fetch('/api/bridge/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': this.token ? `Bearer ${this.token}` : ''
+                        },
+                        body: JSON.stringify({
+                            term,
+                            context,
+                            project_id: this.currentProject?.project?.id
+                        })
                     });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        const result = document.getElementById('bridgeResult');
+                        const clinicalDef = document.getElementById('clinicalDefinition');
+                        const technicalDef = document.getElementById('technicalDefinition');
+                        const analogy = document.getElementById('bridgeAnalogy');
+                        
+                        clinicalDef.textContent = data.translation.clinical_definition || 'No clinical definition available';
+                        technicalDef.textContent = data.translation.technical_definition || 'No technical definition available';
+                        analogy.textContent = data.translation.analogy || 'No analogy available';
+                        
+                        result.classList.remove('hidden');
+                        
+                        // Scroll to result
+                        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        throw new Error(data.error || 'Translation failed');
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                    this.showToast(error.message, 'error');
                 }
+            }
+            
+            // ========== EVENT HANDLERS ==========
+            setupEventListeners() {
+                // Authentication
+                document.getElementById('authForm').addEventListener('submit', (e) => this.handleLogin(e));
                 
-                console.log(`🌉 Translating term: "${term}"`);
+                // Project creation
+                document.getElementById('newProjectBtn').addEventListener('click', () => {
+                    this.showModal('newProjectModal');
+                });
                 
-                // Check if term exists in project glossary
-                let existingTerm = null;
-                if (project_id) {
-                    existingTerm = await this.getQuery(
-                        'SELECT * FROM bridge_terms WHERE project_id = ? AND LOWER(term) = LOWER(?)',
-                        [project_id, term]
-                    );
-                }
+                document.getElementById('createProjectBtn').addEventListener('click', () => {
+                    this.showModal('newProjectModal');
+                });
                 
-                if (existingTerm) {
-                    console.log(`✅ Found existing translation for: "${term}"`);
-                    return res.json({
-                        success: true,
-                        translation: {
-                            term: existingTerm.term,
-                            clinical_definition: existingTerm.clinical_definition,
-                            technical_definition: existingTerm.technical_definition,
-                            analogy: existingTerm.analogy,
-                            confidence: existingTerm.confidence_score,
-                            existing: true
+                document.getElementById('projectForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createProject();
+                });
+                
+                // Thread creation
+                document.querySelectorAll('.thread-type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.thread-type-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                    });
+                });
+                
+                document.getElementById('threadForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createThread();
+                });
+                
+                // Evidence creation
+                document.querySelectorAll('.evidence-type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.evidence-type-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                    });
+                });
+                
+                document.getElementById('evidenceForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addEvidence();
+                });
+                
+                // Bridge translation
+                document.getElementById('bridgeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.translateTerm();
+                });
+                
+                // Modal close buttons
+                document.querySelectorAll('.modal-close, .modal .btn-secondary').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const modal = e.currentTarget.closest('.modal');
+                        if (modal) {
+                            this.hideModal(modal.id);
                         }
                     });
+                });
+                
+                // Close modal on outside click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.hideModal(modal.id);
+                        }
+                    });
+                });
+            }
+            
+            // ========== UTILITY METHODS ==========
+            showModal(modalId) {
+                document.getElementById(modalId).classList.add('active');
+            }
+            
+            hideModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('active');
+                    
+                    // Reset forms
+                    const form = modal.querySelector('form');
+                    if (form) form.reset();
+                    
+                    // Hide bridge result
+                    const result = modal.querySelector('#bridgeResult');
+                    if (result) result.classList.add('hidden');
+                }
+            }
+            
+            async apiRequest(url, method = 'GET', data = null) {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': this.token ? `Bearer ${this.token}` : ''
+                };
+                
+                const options = {
+                    method,
+                    headers
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
                 }
                 
-                // Generate translation
-                const translation = this.generateBridgeTranslation(term, context);
+                const response = await fetch(url, options);
                 
-                console.log(`✅ Generated translation for: "${term}"`);
+                // Handle 401 - session expired
+                if (response.status === 401) {
+                    this.token = null;
+                    this.user = null;
+                    localStorage.removeItem('thoraxlab_token');
+                    localStorage.removeItem('thoraxlab_user');
+                    this.showAuth();
+                    throw new Error('Session expired. Please login again.');
+                }
                 
-                res.json({
-                    success: true,
-                    translation: {
-                        ...translation,
-                        existing: false
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+                
+                return await response.json();
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.innerHTML = `
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                                   type === 'error' ? 'fa-exclamation-circle' : 
+                                   type === 'warning' ? 'fa-exclamation-triangle' : 
+                                   'fa-info-circle'}"></i>
+                    <span>${this.escapeHtml(message)}</span>
+                    <button class="ml-auto text-sm" onclick="this.parentElement.remove()">&times;</button>
+                `;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
                     }
-                });
-                
-            } catch (error) {
-                console.error('❌ Translation error:', error);
-                res.status(500).json({ 
-                    error: 'Translation failed',
-                    code: 'TRANSLATION_ERROR'
-                });
+                }, 4000);
             }
-        });
-        
-        // ===== 404 HANDLER =====
-        this.app.use((req, res) => {
-            if (req.path.startsWith('/api/')) {
-                res.status(404).json({ 
-                    error: 'API endpoint not found',
-                    path: req.path 
-                });
-            } else {
-                // Serve frontend SPA
-                const indexPath = path.join(__dirname, 'public', 'index.html');
-                if (fs.existsSync(indexPath)) {
-                    res.sendFile(indexPath);
-                } else {
-                    res.status(404).send('Page not found');
+            
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            getThreadIcon(type) {
+                const icons = {
+                    'discussion': '💬',
+                    'hypothesis': '🔍',
+                    'question': '❓',
+                    'decision': '🤔',
+                    'insight': '💡',
+                    'progress': '🔄'
+                };
+                return icons[type] || '💬';
+            }
+            
+            getEvidenceIcon(type) {
+                const icons = {
+                    'paper': '📄',
+                    'dataset': '📊',
+                    'protocol': '📋',
+                    'regulation': '⚖️',
+                    'result': '📈',
+                    'internal': '🏢'
+                };
+                return icons[type] || '📄';
+            }
+            
+            async openThread(threadId) {
+                try {
+                    const response = await this.apiRequest(`/api/threads/${threadId}`);
+                    
+                    if (response.success) {
+                        this.currentThread = response;
+                        this.showThreadModal();
+                    }
+                } catch (error) {
+                    console.error('Open thread error:', error);
+                    this.showToast('Failed to load thread', 'error');
                 }
             }
-        });
-        
-        // ===== ERROR HANDLER =====
-        this.app.use((error, req, res, next) => {
-            console.error('🔥 Server error:', error);
-            res.status(500).json({
-                error: 'Internal server error',
-                code: 'INTERNAL_ERROR'
-            });
-        });
-    }
-    
-    // ========== HELPER METHODS ==========
-    
-    generateBridgeTranslation(term, context) {
-        // Predefined translations for common terms
-        const translations = {
-            'sensitivity': {
-                clinical_definition: 'Ability to correctly identify true positive cases in clinical screening or diagnosis',
-                technical_definition: 'True Positive Rate: TP/(TP+FN). Measures how well a model identifies positive cases.',
-                analogy: 'Like a highly sensitive smoke detector - rarely misses actual fires but might have false alarms',
-                confidence: 4
-            },
-            'specificity': {
-                clinical_definition: 'Ability to correctly identify true negative cases, avoiding false diagnoses',
-                technical_definition: 'True Negative Rate: TN/(TN+FP). Measures how well a model rules out negative cases.',
-                analogy: 'Like a precise key - only fits the correct lock, avoids opening wrong doors',
-                confidence: 4
-            },
-            'validation': {
-                clinical_definition: 'Process of confirming diagnostic tools work correctly in target population',
-                technical_definition: 'Testing model performance on independent dataset to ensure generalizability',
-                analogy: 'Like test-driving a car - making sure it works in real conditions, not just on paper',
-                confidence: 5
-            },
-            'algorithm': {
-                clinical_definition: 'Step-by-step procedure for clinical decision making or treatment',
-                technical_definition: 'Set of rules or instructions for data processing and analysis',
-                analogy: 'Like a cooking recipe - specific steps to transform ingredients (data) into results',
-                confidence: 5
-            },
-            'cohort': {
-                clinical_definition: 'Group of patients sharing characteristics for observational study or trial',
-                technical_definition: 'Filtered dataset based on inclusion/exclusion criteria for analysis',
-                analogy: 'Like selecting specific ingredients for a recipe - defines what goes into the analysis',
-                confidence: 5
+            
+            showThreadModal() {
+                const modal = document.getElementById('threadModal');
+                const content = modal.querySelector('.modal-content');
+                
+                if (!this.currentThread) return;
+                
+                const { thread, posts } = this.currentThread;
+                
+                content.innerHTML = `
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2>${this.escapeHtml(thread.title)}</h2>
+                            <p class="text-muted">${thread.project_title} • ${thread.type}</p>
+                        </div>
+                        <button class="btn btn-icon" onclick="app.hideModal('threadModal')">&times;</button>
+                    </div>
+                    
+                    <div class="card mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="user-avatar">${thread.avatar_initials || '??'}</div>
+                                <div>
+                                    <div class="font-medium">${thread.author_name}</div>
+                                    <div class="text-sm text-muted">${new Date(thread.created_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            <span class="thread-type-badge thread-type-${thread.type}">
+                                ${this.getThreadIcon(thread.type)} ${thread.type}
+                            </span>
+                        </div>
+                        
+                        ${thread.clinical_context ? `
+                            <div class="mb-4">
+                                <div class="text-sm font-semibold text-muted mb-1">Clinical Context</div>
+                                <p>${this.escapeHtml(thread.clinical_context)}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${thread.technical_context ? `
+                            <div class="mb-4">
+                                <div class="text-sm font-semibold text-muted mb-1">Technical Context</div>
+                                <p>${this.escapeHtml(thread.technical_context)}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${thread.bridge_insights ? `
+                            <div class="mb-4 p-3 bg-blue-50 rounded">
+                                <div class="text-sm font-semibold text-blue-700 mb-1">Bridge Insights</div>
+                                <p class="text-blue-800">${this.escapeHtml(thread.bridge_insights)}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="mb-4">Discussion</h3>
+                        <div id="postsContainer">
+                            ${posts && posts.length > 0 ? posts.map(post => `
+                                <div class="border-b border-ui-border py-4 last:border-b-0">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="user-avatar">${post.avatar_initials || '??'}</div>
+                                            <div>
+                                                <div class="font-medium">${post.author_name}</div>
+                                                <div class="text-sm text-muted">${new Date(post.created_at).toLocaleDateString()}</div>
+                                            </div>
+                                        </div>
+                                        ${post.perspective ? `
+                                            <span class="text-xs px-2 py-1 rounded bg-gray-100">
+                                                ${post.perspective} perspective
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                    <p>${this.escapeHtml(post.content)}</p>
+                                </div>
+                            `).join('') : '<p class="text-muted text-center py-4">No posts yet</p>'}
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4 class="mb-4">Add to Discussion</h4>
+                        <form id="postForm">
+                            <div class="form-group">
+                                <textarea id="postContent" class="form-input form-textarea" placeholder="Share your perspective..." rows="3" required></textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                <select id="postPerspective" class="form-input flex-1">
+                                    <option value="">Select perspective</option>
+                                    <option value="clinical">Clinical</option>
+                                    <option value="technical">Technical</option>
+                                    <option value="bridge">Bridge</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                
+                // Add post form handler
+                const postForm = content.querySelector('#postForm');
+                if (postForm) {
+                    postForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        await this.addPostToThread();
+                    });
+                }
+                
+                this.showModal('threadModal');
             }
-        };
-        
-        const lowerTerm = term.toLowerCase().trim();
-        
-        if (translations[lowerTerm]) {
-            return translations[lowerTerm];
+            
+            async addPostToThread() {
+                try {
+                    if (!this.currentThread) return;
+                    
+                    const postData = {
+                        content: document.getElementById('postContent').value.trim(),
+                        perspective: document.getElementById('postPerspective').value
+                    };
+                    
+                    if (!postData.content) {
+                        this.showToast('Post content is required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/threads/${this.currentThread.thread.id}/posts`, 'POST', postData);
+                    
+                    if (response.success) {
+                        this.showToast('Posted successfully', 'success');
+                        await this.openThread(this.currentThread.thread.id);
+                    }
+                } catch (error) {
+                    console.error('Add post error:', error);
+                    this.showToast(error.message || 'Failed to post', 'error');
+                }
+            }
         }
         
-        // Generate based on term patterns
-        if (term.includes('score') || term.includes('index')) {
-            return {
-                clinical_definition: `${term}: Quantitative measure used to assess severity, risk, or progression in clinical settings`,
-                technical_definition: `${term}: Numerical feature derived from data for prediction, classification, or risk assessment`,
-                analogy: 'Like a thermometer reading - converts complex clinical reality into actionable numbers',
-                confidence: 3
-            };
-        }
+        // Initialize the application
+        window.app = new ThoraxLabPro();
         
-        if (term.includes('protocol') || term.includes('guideline')) {
-            return {
-                clinical_definition: `${term}: Standardized procedure for patient care, diagnosis, or treatment`,
-                technical_definition: `${term}: Defined sequence of operations or algorithm implementation`,
-                analogy: 'Like a recipe - step-by-step instructions to achieve consistent, reproducible results',
-                confidence: 4
-            };
-        }
+        // Global helper functions
+        window.showModal = (modalId) => window.app.showModal(modalId);
+        window.hideModal = (modalId) => window.app.hideModal(modalId);
         
-        // Default generic translation
-        return {
-            clinical_definition: `${term}: Clinical concept relating to patient care, diagnosis, treatment, or outcomes`,
-            technical_definition: `${term}: Technical implementation involving data, algorithms, systems, or analysis`,
-            analogy: 'Bridging patient-centered clinical care with data-driven technical implementation',
-            confidence: 2
-        };
-    }
-    
-    // ========== START SERVER ==========
-    
-    startServer() {
-        const PORT = process.env.PORT || 3000;
-        const HOST = '0.0.0.0';
-        
-        this.server.listen(PORT, HOST, () => {
-            console.log(`
-╔════════════════════════════════════════════════════════════╗
-║     [THØRAX][LAB] PRO - COLLABORATION PLATFORM            ║
-╠════════════════════════════════════════════════════════════╣
-║     🌐 Server: http://${HOST}:${PORT}                          ║
-║     ❤️  Health: http://${HOST}:${PORT}/api/health             ║
-║                                                          ║
-║     ✅ ALL API ENDPOINTS READY:                           ║
-║     • POST /api/login                                     ║
-║     • GET  /api/projects                                  ║
-║     • POST /api/projects                                  ║
-║     • GET  /api/projects/:id/dashboard                    ║
-║     • POST /api/projects/:id/threads                      ║
-║     • GET  /api/threads/:id                               ║
-║     • POST /api/threads/:id/posts                         ║
-║     • POST /api/projects/:id/evidence                     ║
-║     • POST /api/bridge/translate                          ║
-║                                                          ║
-║     🔧 FIXES APPLIED:                                     ║
-║     • Fixed 401 authentication errors                     ║
-║     • Fixed 500 thread creation errors                    ║
-║     • Fixed session expiration                            ║
-║     • Fixed CORS issues                                   ║
-║     • Added comprehensive error handling                  ║
-║     • Added detailed logging                              ║
-╚════════════════════════════════════════════════════════════╝
-            `);
-        });
-        
-        // Handle server errors
-        this.server.on('error', (error) => {
-            console.error('❌ Server error:', error);
-            if (error.code === 'EADDRINUSE') {
-                console.log(`Port ${PORT} is busy. Trying ${parseInt(PORT) + 1}...`);
-                this.server.listen(parseInt(PORT) + 1, HOST);
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                if (window.app.user) {
+                    window.app.showModal('newProjectModal');
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    window.app.hideModal(modal.id);
+                });
             }
         });
-        
-        // Graceful shutdown
-        process.on('SIGINT', () => {
-            console.log('\n🛑 Shutting down server...');
-            this.server.close(() => {
-                console.log('✅ Server stopped');
-                process.exit(0);
-            });
-        });
-    }
-}
-
-// Start the server
-const server = new ThoraxLabServer();
-module.exports = server;
+    </script>
+</body>
+</html>
