@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[THØRAX][LAB] PRO | Clinical-Technical Collaboration</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ====== VARIABLES ====== */
+        :root {
+            --thorax-blue: #1A5F7A;
+            --thorax-blue-light: rgba(26, 95, 122, 0.1);
+            --thorax-teal: #0D8B70;
+            --thorax-purple: #6D5ACF;
+            --thorax-orange: #F59E0B;
+            --thorax-green: #10B981;
+            
+            --ui-dark: #1E293B;
+            --ui-mid: #64748B;
+            --ui-light: #94A3B8;
+            --ui-bg: #F8FAFC;
+            --ui-card: #FFFFFF;
+            --ui-border: #E2E8F0;
+            --ui-hover: #F1F5F9;
+            
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            --transition: 200ms ease;
+        }
+        
+        /* ====== BASE RESET ====== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--ui-bg);
+            color: var(--ui-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* ====== UTILITY CLASSES ====== */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .text-muted { color: var(--ui-mid); }
+        .text-center { text-align: center; }
+        .w-full { width: 100%; }
+        .space-y-2 > * + * { margin-top: 0.5rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        
+        /* ====== LAYOUT ====== */
+        #app { min-height: 100vh; display: flex; flex-direction: column; }
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* ====== TYPOGRAPHY ====== */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--ui-dark);
+        }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+        .font-mono { font-family: 'SF Mono', monospace; }
+        
+        /* ====== COMPONENTS ====== */
+        
+        /* Header */
+        .app-header {
+            background: var(--ui-card);
+            border-bottom: 1px solid var(--ui-border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .brand-logo {
+            font-family: 'SF Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--thorax-blue);
+            text-decoration: none;
+        }
+        
+        /* Navigation */
+        .nav-main {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            color: var(--ui-mid);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition);
+        }
+        
+        .nav-link:hover {
+            background: var(--ui-hover);
+            color: var(--ui-dark);
+        }
+        
+        .nav-link.active {
+            background: var(--thorax-blue-light);
+            color: var(--thorax-blue);
+        }
+        
+        /* User Menu */
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--thorax-blue), var(--thorax-purple));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary {
+            background: var(--thorax-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #14485E;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: var(--ui-card);
+            color: var(--ui-dark);
+            border: 1px solid var(--ui-border);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--ui-hover);
+            border-color: var(--ui-mid);
+        }
+        
+        .btn-success {
+            background: var(--thorax-green);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            padding: 1.5rem;
+            transition: all var(--transition);
+        }
+        
+        .card:hover {
+            border-color: var(--thorax-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .col-span-4 { grid-column: span 4; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-8 { grid-column: span 8; }
+        .col-span-12 { grid-column: span 12; }
+        
+        @media (max-width: 1024px) {
+            .col-span-4, .col-span-6, .col-span-8 { grid-column: span 12; }
+        }
+        
+        /* Thread Types */
+        .thread-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--ui-hover);
+        }
+        
+        .thread-type-discussion { background: #DBEAFE; color: #1E40AF; }
+        .thread-type-hypothesis { background: #FEF3C7; color: #92400E; }
+        .thread-type-question { background: #E0E7FF; color: #3730A3; }
+        .thread-type-decision { background: #D1FAE5; color: #065F46; }
+        .thread-type-insight { background: #F3E8FF; color: #5B21B6; }
+        .thread-type-progress { background: #FCE7F3; color: #9D174D; }
+        
+        /* Evidence Types */
+        .evidence-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .evidence-paper { background: #DBEAFE; color: #1E40AF; }
+        .evidence-dataset { background: #D1FAE5; color: #065F46; }
+        .evidence-protocol { background: #FEF3C7; color: #92400E; }
+        .evidence-regulation { background: #FCE7F3; color: #9D174D; }
+        .evidence-result { background: #F0F9FF; color: #0C4A6E; }
+        .evidence-internal { background: #F5F3FF; color: #5B21B6; }
+        
+        /* Bridge Translation */
+        .bridge-card {
+            border-left: 4px solid var(--thorax-teal);
+            background: rgba(13, 139, 112, 0.05);
+        }
+        
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--ui-dark);
+            font-size: 0.875rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            background: var(--ui-card);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--thorax-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Select styles */
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748B' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--ui-card);
+            min-width: 300px;
+        }
+        
+        .toast-success { border-left: 4px solid var(--success); }
+        .toast-error { border-left: 4px solid var(--error); }
+        .toast-warning { border-left: 4px solid var(--warning); }
+        .toast-info { border-left: 4px solid var(--info); }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--ui-mid);
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--ui-border);
+            border-top-color: var(--thorax-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Search Results */
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--ui-border);
+            cursor: pointer;
+        }
+        
+        .search-result-item:hover {
+            background: var(--ui-hover);
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+        
+        /* Page Transitions */
+        .page {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Auth Screen */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--thorax-blue) 0%, #14485E 100%);
+            padding: 2rem;
+        }
+        .auth-card {
+            background: var(--ui-card);
+            border-radius: 18px;
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .auth-header {
+            background: linear-gradient(135deg, var(--thorax-blue) 0%, var(--thorax-purple) 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+        .auth-body { padding: 2.5rem 2rem; }
+        .auth-form { display: flex; flex-direction: column; gap: 1.5rem; }
+        
+        /* Thread Card */
+        .thread-card {
+            padding: 1.25rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+        .thread-card:hover {
+            border-color: var(--thorax-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Evidence Card */
+        .evidence-card {
+            padding: 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+        
+        /* Timeline */
+        .timeline-item {
+            padding: 1rem;
+            border-left: 3px solid var(--thorax-blue);
+            margin-bottom: 1rem;
+            background: var(--ui-card);
+        }
+        
+        /* Milestone Card */
+        .milestone-card {
+            padding: 1rem;
+            border-left: 4px solid var(--thorax-green);
+            background: var(--ui-card);
+            margin-bottom: 1rem;
+            border-radius: var(--radius-md);
+        }
+        
+        .milestone-completed {
+            border-left-color: var(--success);
+            opacity: 0.8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 0 0.5rem; }
+            .dashboard-grid { gap: 1rem; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.25rem; }
+            .card { padding: 1rem; }
+            .nav-main { gap: 0.5rem; }
+            .nav-link { padding: 0.5rem 0.75rem; }
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-clinical { background: #DBEAFE; color: #1E40AF; }
+        .badge-technical { background: #D1FAE5; color: #065F46; }
+        .badge-bridge { background: #F3E8FF; color: #5B21B6; }
+        
+        /* Bridge Term */
+        .bridge-term-card {
+            border: 2px solid var(--thorax-teal);
+            background: rgba(13, 139, 112, 0.05);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+        
+        .confidence-indicator {
+            display: inline-block;
+            width: 60px;
+            height: 6px;
+            background: var(--ui-border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-left: 0.5rem;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: var(--thorax-green);
+            border-radius: 3px;
+        }
+        
+        /* Search Filters */
+        .search-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-chip {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background: var(--ui-hover);
+            border: 1px solid var(--ui-border);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .filter-chip.active {
+            background: var(--thorax-blue);
+            color: white;
+            border-color: var(--thorax-blue);
+        }
+        
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--ui-border);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--thorax-blue);
+            background: var(--ui-hover);
+        }
+        
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--ui-hover);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
+        
+        <!-- Auth Screen -->
+        <div id="authScreen" class="auth-screen">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="brand-logo" style="color: white; font-size: 2rem;" class="flex items-center justify-center">
+                        [THØRAX][LAB] PRO
+                    </div>
+                    <p style="opacity: 0.9; margin-top: 0.5rem;">Clinical-Technical Collaboration Platform</p>
+                </div>
+                <div class="auth-body">
+                    <form id="authForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="userName" class="form-label">Full Name</label>
+                            <input type="text" id="userName" class="form-input" placeholder="Dr. Alex Chen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail" class="form-label">Email Address</label>
+                            <input type="email" id="userEmail" class="form-input" placeholder="alex.chen@hospital.org" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userRole" class="form-label">Primary Perspective</label>
+                            <select id="userRole" class="form-input" required>
+                                <option value="">Select your perspective</option>
+                                <option value="clinical">Clinical Professional</option>
+                                <option value="technical">Technical Professional</option>
+                                <option value="both">Both Clinical & Technical</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="userExpertise" class="form-label">Expertise Tags (comma separated)</label>
+                            <input type="text" id="userExpertise" class="form-input" placeholder="cardiology, machine learning, clinical trials">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span id="authSubmitText">Enter Collaboration Platform</span>
+                            <i id="authSpinner" class="fas fa-spinner fa-spin hidden"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main App -->
+        <div id="mainApp" class="hidden">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="container">
+                    <div class="flex items-center justify-between">
+                        <a href="#dashboard" class="brand-logo">
+                            [THØRAX][LAB] PRO
+                        </a>
+                        <nav class="nav-main">
+                            <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a>
+                            <a href="#projects" class="nav-link" data-page="projects">
+                                <i class="fas fa-project-diagram"></i>
+                                Projects
+                            </a>
+                            <a href="#search" class="nav-link" data-page="search">
+                                <i class="fas fa-search"></i>
+                                Search
+                            </a>
+                        </nav>
+                        <div class="flex items-center gap-4">
+                            <button id="newProjectBtn" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i>
+                                New Project
+                            </button>
+                            <div id="userAvatar" class="user-avatar">AC</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="container">
+                    <!-- Dashboard Page -->
+                    <div id="dashboardPage" class="page">
+                        <div class="mb-6">
+                            <h1 id="welcomeMessage">Collaboration Dashboard</h1>
+                            <p class="text-muted">Bridge clinical insights with technical implementation</p>
+                        </div>
+                        
+                        <!-- Project Dashboard (Loaded dynamically) -->
+                        <div id="projectDashboard">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading project dashboard...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Projects Page -->
+                    <div id="projectsPage" class="page hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h1>Projects</h1>
+                                <p class="text-muted">Manage your clinical-technical collaborations</p>
+                            </div>
+                            <button id="createProjectBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                New Project
+                            </button>
+                        </div>
+                        
+                        <div id="projectsList">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading projects...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Page -->
+                    <div id="searchPage" class="page hidden">
+                        <div class="mb-6">
+                            <h1>Search & Discover</h1>
+                            <p class="text-muted">Find threads, evidence, and bridge terms across projects</p>
+                        </div>
+                        
+                        <div class="card mb-6">
+                            <div class="form-group">
+                                <div class="flex gap-2">
+                                    <input type="text" id="searchInput" class="form-input" placeholder="Search for terms, threads, evidence...">
+                                    <button id="searchButton" class="btn btn-primary">
+                                        <i class="fas fa-search"></i>
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="search-filters">
+                                <span class="filter-chip active" data-type="all">All</span>
+                                <span class="filter-chip" data-type="threads">Threads</span>
+                                <span class="filter-chip" data-type="evidence">Evidence</span>
+                                <span class="filter-chip" data-type="bridge_terms">Bridge Terms</span>
+                                <span class="filter-chip" data-type="projects">Projects</span>
+                            </div>
+                        </div>
+                        
+                        <div id="searchResults">
+                            <div class="empty-state">
+                                <div class="empty-icon">🔍</div>
+                                <h3 class="mb-2">Search Across Projects</h3>
+                                <p class="text-muted mb-4">Enter a search term to find discussions, evidence, and bridge translations</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Detail Page -->
+                    <div id="projectDetailPage" class="page hidden">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Modals -->
+        
+        <!-- New Project Modal -->
+        <div id="newProjectModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Create New Project</h2>
+                    <button class="btn btn-icon" id="closeProjectModal">&times;</button>
+                </div>
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label for="projectTitle" class="form-label">Project Title</label>
+                        <input type="text" id="projectTitle" class="form-input" placeholder="e.g., COPD Exacerbation Prediction" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription" class="form-label">Description</label>
+                        <textarea id="projectDescription" class="form-input form-textarea" placeholder="Describe the collaboration goals..." rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="clinicalContext" class="form-label">Clinical Context</label>
+                        <textarea id="clinicalContext" class="form-input form-textarea" placeholder="Clinical problem or opportunity..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="technicalChallenge" class="form-label">Technical Challenge</label>
+                        <textarea id="technicalChallenge" class="form-input form-textarea" placeholder="Technical implementation challenges..." rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelProjectBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- New Thread Modal -->
+        <div id="newThreadModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Start Discussion</h2>
+                    <button class="btn btn-icon" id="closeThreadModal">&times;</button>
+                </div>
+                <form id="threadForm">
+                    <input type="hidden" id="threadProjectId">
+                    <div class="form-group">
+                        <label class="form-label">Thread Type</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn active" data-type="discussion">💬 Discussion</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="hypothesis">🔍 Hypothesis</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="question">❓ Question</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="decision">🤔 Decision</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="insight">💡 Insight</button>
+                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="progress">🔄 Progress</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="threadTitle" class="form-label">Title</label>
+                        <input type="text" id="threadTitle" class="form-input" placeholder="Enter thread title..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="threadClinical" class="form-label">Clinical Perspective</label>
+                        <textarea id="threadClinical" class="form-input form-textarea" placeholder="Clinical context or observation..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="threadTechnical" class="form-label">Technical Perspective</label>
+                        <textarea id="threadTechnical" class="form-input form-textarea" placeholder="Technical implementation or challenge..." rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelThreadBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Start Thread</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Add Evidence Modal -->
+        <div id="evidenceModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Add Evidence</h2>
+                    <button class="btn btn-icon" id="closeEvidenceModal">&times;</button>
+                </div>
+                <form id="evidenceForm">
+                    <input type="hidden" id="evidenceProjectId">
+                    <div class="form-group">
+                        <label class="form-label">Evidence Type</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn active" data-type="paper">📄 Paper</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="dataset">📊 Dataset</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="protocol">📋 Protocol</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="regulation">⚖️ Regulation</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="result">📈 Result</button>
+                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="internal">🏢 Internal</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidenceTitle" class="form-label">Title</label>
+                        <input type="text" id="evidenceTitle" class="form-input" placeholder="Enter evidence title..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidenceSource" class="form-label">Source</label>
+                        <input type="text" id="evidenceSource" class="form-input" placeholder="PMID, DOI, URL, or internal reference...">
+                    </div>
+                    <div class="form-group">
+                        <label for="clinicalRelevance" class="form-label">Clinical Relevance</label>
+                        <textarea id="clinicalRelevance" class="form-input form-textarea" placeholder="How this impacts patient care..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="technicalUtility" class="form-label">Technical Utility</label>
+                        <textarea id="technicalUtility" class="form-input form-textarea" placeholder="How this informs algorithms or systems..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload File (Optional)</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--ui-mid);"></i>
+                            <p class="text-sm text-muted">Drag & drop or click to upload</p>
+                            <p class="text-xs text-muted mt-1">Max file size: 10MB</p>
+                        </div>
+                        <input type="file" id="fileUpload" class="hidden" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.png,.jpg,.jpeg">
+                        <div id="filePreview" class="hidden">
+                            <div class="file-preview">
+                                <i class="fas fa-file"></i>
+                                <span id="fileName"></span>
+                                <button type="button" class="ml-auto text-sm text-error" id="removeFile">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelEvidenceBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Evidence</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Add Milestone Modal -->
+        <div id="milestoneModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Add Milestone</h2>
+                    <button class="btn btn-icon" id="closeMilestoneModal">&times;</button>
+                </div>
+                <form id="milestoneForm">
+                    <input type="hidden" id="milestoneProjectId">
+                    <div class="form-group">
+                        <label for="milestoneTitle" class="form-label">Title</label>
+                        <input type="text" id="milestoneTitle" class="form-input" placeholder="e.g., Complete Data Collection Phase" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="milestoneType" class="form-label">Type</label>
+                        <select id="milestoneType" class="form-input">
+                            <option value="deliverable">Deliverable</option>
+                            <option value="clinical">Clinical</option>
+                            <option value="technical">Technical</option>
+                            <option value="regulatory">Regulatory</option>
+                            <option value="collaboration">Collaboration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="milestoneDescription" class="form-label">Description</label>
+                        <textarea id="milestoneDescription" class="form-input form-textarea" placeholder="Describe the milestone..." rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="milestoneDueDate" class="form-label">Due Date</label>
+                        <input type="date" id="milestoneDueDate" class="form-input">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="clinicalOwner" class="form-label">Clinical Owner (Optional)</label>
+                            <input type="text" id="clinicalOwner" class="form-input" placeholder="Name or role">
+                        </div>
+                        <div class="form-group">
+                            <label for="technicalOwner" class="form-label">Technical Owner (Optional)</label>
+                            <input type="text" id="technicalOwner" class="form-input" placeholder="Name or role">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelMilestoneBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Milestone</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Bridge Translation Modal -->
+        <div id="bridgeModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Bridge Translation</h2>
+                    <button class="btn btn-icon" id="closeBridgeModal">&times;</button>
+                </div>
+                <form id="bridgeForm">
+                    <input type="hidden" id="bridgeProjectId">
+                    <div class="form-group">
+                        <label for="bridgeTerm" class="form-label">Term to Bridge</label>
+                        <input type="text" id="bridgeTerm" class="form-input" placeholder="Enter clinical or technical term..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bridgeContext" class="form-label">Context (optional)</label>
+                        <textarea id="bridgeContext" class="form-input form-textarea" placeholder="Provide context for better translation..." rows="2"></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelBridgeBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Translate</button>
+                    </div>
+                </form>
+                <div id="bridgeResult" class="mt-6 hidden">
+                    <div class="bridge-term-card">
+                        <h4 class="mb-4">Translation Result</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Clinical Definition</div>
+                                <p id="clinicalDefinition"></p>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Technical Definition</div>
+                                <p id="technicalDefinition"></p>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Analogy</div>
+                                <p id="bridgeAnalogy"></p>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-muted mb-1">Confidence</div>
+                                <div class="flex items-center">
+                                    <span id="confidenceScore"></span>
+                                    <div class="confidence-indicator">
+                                        <div id="confidenceFill" class="confidence-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-ui-border">
+                            <button id="saveBridgeTermBtn" class="btn btn-success w-full">
+                                <i class="fas fa-save"></i>
+                                Save to Project Glossary
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thread Detail Modal -->
+        <div id="threadModal" class="modal">
+            <div class="modal-content" style="max-width: 800px;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // THORAXLAB PRO - COLLABORATION PLATFORM
+        // ============================================
+        
+        class ThoraxLabPro {
+            constructor() {
+                this.token = localStorage.getItem('thoraxlab_token');
+                this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
+                this.currentProject = null;
+                this.currentThread = null;
+                this.currentBridgeTerm = null;
+                this.ws = null;
+                this.initialize();
+            }
+            
+            initialize() {
+                this.setupEventListeners();
+                this.setupRouter();
+                this.checkAuth();
+            }
+            
+            // ========== AUTHENTICATION ==========
+            checkAuth() {
+                if (this.token && this.user) {
+                    this.showApp();
+                    this.updateUserDisplay();
+                } else {
+                    this.showAuth();
+                }
+            }
+            
+            showAuth() {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+            
+            showApp() {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            }
+            
+            async handleLogin(e) {
+                e.preventDefault();
+                
+                const submitBtn = document.querySelector('#authForm button[type="submit"]');
+                const submitText = document.querySelector('#authSubmitText');
+                const spinner = document.querySelector('#authSpinner');
+                
+                submitBtn.disabled = true;
+                submitText.textContent = 'Entering...';
+                spinner.classList.remove('hidden');
+                
+                try {
+                    const userData = {
+                        name: document.getElementById('userName').value.trim(),
+                        email: document.getElementById('userEmail').value.trim(),
+                        primary_role: document.getElementById('userRole').value,
+                        expertise: document.getElementById('userExpertise').value.trim()
+                    };
+                    
+                    if (!userData.email || !userData.name || !userData.primary_role) {
+                        throw new Error('Please fill all required fields');
+                    }
+                    
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Login failed');
+                    }
+                    
+                    if (data.success) {
+                        this.token = data.token;
+                        this.user = data.user;
+                        
+                        localStorage.setItem('thoraxlab_token', data.token);
+                        localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
+                        
+                        this.showApp();
+                        this.updateUserDisplay();
+                        this.showToast(`Welcome to ThoraxLab Pro, ${data.user.name.split(' ')[0]}!`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    this.showToast(error.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitText.textContent = 'Enter Collaboration Platform';
+                    spinner.classList.add('hidden');
+                }
+            }
+            
+            updateUserDisplay() {
+                if (!this.user) return;
+                
+                const avatar = document.getElementById('userAvatar');
+                if (avatar) {
+                    avatar.textContent = this.user.name.split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                }
+                
+                const welcome = document.getElementById('welcomeMessage');
+                if (welcome) {
+                    welcome.textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
+                }
+            }
+            
+            // ========== ROUTER ==========
+            setupRouter() {
+                window.addEventListener('hashchange', () => this.handleRoute());
+                this.handleRoute();
+            }
+            
+            handleRoute() {
+                const hash = window.location.hash.substring(1) || 'dashboard';
+                const parts = hash.split('/');
+                
+                this.showPage(parts[0]);
+                
+                if (parts[0] === 'project' && parts[1]) {
+                    this.loadProject(parts[1]);
+                }
+                
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    const linkPage = link.getAttribute('href').substring(1);
+                    link.classList.toggle('active', linkPage === parts[0]);
+                });
+            }
+            
+            showPage(page) {
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                
+                const pageElement = document.getElementById(`${page}Page`);
+                if (pageElement) {
+                    pageElement.classList.remove('hidden');
+                    
+                    switch(page) {
+                        case 'dashboard':
+                            this.loadDashboard();
+                            break;
+                        case 'projects':
+                            this.loadProjects();
+                            break;
+                        case 'search':
+                            this.setupSearch();
+                            break;
+                    }
+                }
+            }
+            
+            navigateTo(page) {
+                window.location.hash = page;
+            }
+            
+            // ========== DATA LOADING ==========
+            async loadDashboard() {
+                try {
+                    // Load user's projects for dashboard
+                    await this.loadProjects();
+                } catch (error) {
+                    console.error('Dashboard load error:', error);
+                }
+            }
+            
+            async loadProjects() {
+                try {
+                    const response = await this.apiRequest('/api/projects');
+                    
+                    if (response.success) {
+                        this.renderProjects(response.projects || []);
+                    }
+                } catch (error) {
+                    console.error('Projects load error:', error);
+                    this.renderProjects([]);
+                }
+            }
+            
+            async loadProject(projectId) {
+                try {
+                    const response = await this.apiRequest(`/api/projects/${projectId}/dashboard`);
+                    
+                    if (response.success) {
+                        this.currentProject = response.dashboard;
+                        this.renderProjectDashboard();
+                        this.showPage('projectDetail');
+                    }
+                } catch (error) {
+                    console.error('Project load error:', error);
+                    this.navigateTo('projects');
+                }
+            }
+            
+            // ========== SEARCH ==========
+            setupSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const searchButton = document.getElementById('searchButton');
+                const filters = document.querySelectorAll('.filter-chip');
+                
+                searchButton.addEventListener('click', () => this.performSearch());
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performSearch();
+                });
+                
+                filters.forEach(filter => {
+                    filter.addEventListener('click', (e) => {
+                        filters.forEach(f => f.classList.remove('active'));
+                        e.target.classList.add('active');
+                        if (searchInput.value.trim()) {
+                            this.performSearch();
+                        }
+                    });
+                });
+            }
+            
+            async performSearch() {
+                const query = document.getElementById('searchInput').value.trim();
+                const activeFilter = document.querySelector('.filter-chip.active').dataset.type;
+                
+                if (!query) {
+                    this.showToast('Please enter a search term', 'warning');
+                    return;
+                }
+                
+                try {
+                    const response = await this.apiRequest('/api/search', 'POST', {
+                        query,
+                        filter: activeFilter
+                    });
+                    
+                    if (response.success) {
+                        this.renderSearchResults(response.results);
+                    }
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.showToast('Search failed', 'error');
+                }
+            }
+            
+            renderSearchResults(results) {
+                const container = document.getElementById('searchResults');
+                
+                if (!results || results.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">🔍</div>
+                            <h3 class="mb-2">No Results Found</h3>
+                            <p class="text-muted mb-4">Try different search terms or filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = results.map(result => {
+                    if (result.type === 'thread') {
+                        return `
+                            <div class="search-result-item" data-thread-id="${result.id}" data-project-id="${result.project_id}">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="thread-type-badge thread-type-${result.thread_type}">
+                                        ${this.getThreadIcon(result.thread_type)} ${result.thread_type}
+                                    </span>
+                                    <span class="text-sm text-muted">Project: ${result.project_title}</span>
+                                </div>
+                                <h4 class="mb-2">${this.escapeHtml(result.title)}</h4>
+                                <p class="text-sm text-muted">${this.escapeHtml(result.content?.substring(0, 150) || '')}${result.content?.length > 150 ? '...' : ''}</p>
+                            </div>
+                        `;
+                    } else if (result.type === 'evidence') {
+                        return `
+                            <div class="search-result-item" data-evidence-id="${result.id}">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="evidence-badge evidence-${result.evidence_type}">
+                                        ${this.getEvidenceIcon(result.evidence_type)} ${result.evidence_type}
+                                    </span>
+                                    <span class="text-sm text-muted">Project: ${result.project_title}</span>
+                                </div>
+                                <h4 class="mb-2">${this.escapeHtml(result.title)}</h4>
+                                <p class="text-sm text-muted">${this.escapeHtml(result.clinical_relevance?.substring(0, 150) || '')}${result.clinical_relevance?.length > 150 ? '...' : ''}</p>
+                            </div>
+                        `;
+                    } else if (result.type === 'bridge_term') {
+                        return `
+                            <div class="search-result-item" data-term="${result.term}" data-project-id="${result.project_id}">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="badge badge-bridge">🌉 Bridge Term</span>
+                                    <span class="text-sm text-muted">Project: ${result.project_title}</span>
+                                </div>
+                                <h4 class="mb-2">${this.escapeHtml(result.term)}</h4>
+                                <div class="text-sm">
+                                    <div class="font-semibold">Clinical:</div>
+                                    <p class="text-muted">${this.escapeHtml(result.clinical_definition?.substring(0, 100) || '')}${result.clinical_definition?.length > 100 ? '...' : ''}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else if (result.type === 'project') {
+                        return `
+                            <div class="search-result-item" data-project-id="${result.id}">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="badge">📁 Project</span>
+                                    <span class="text-sm text-muted">${result.phase} • ${result.status}</span>
+                                </div>
+                                <h4 class="mb-2">${this.escapeHtml(result.title)}</h4>
+                                <p class="text-sm text-muted">${this.escapeHtml(result.description?.substring(0, 150) || '')}${result.description?.length > 150 ? '...' : ''}</p>
+                            </div>
+                        `;
+                    }
+                }).join('');
+                
+                // Add click handlers
+                container.querySelectorAll('.search-result-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        if (item.dataset.projectId) {
+                            this.navigateTo(`project/${item.dataset.projectId}`);
+                        }
+                    });
+                });
+            }
+            
+            // ========== RENDERING ==========
+            renderProjects(projects) {
+                const container = document.getElementById('projectsList');
+                if (!container) return;
+                
+                if (projects.length === 0) {
+                    container.innerHTML = `
+                        <div class="card">
+                            <div class="empty-state">
+                                <div class="empty-icon">📂</div>
+                                <h3 class="mb-2">No Projects Yet</h3>
+                                <p class="text-muted mb-4">Start your first clinical-technical collaboration.</p>
+                                <button class="btn btn-primary" id="createFirstProjectBtn">
+                                    Create First Project
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('createFirstProjectBtn')?.addEventListener('click', () => {
+                        this.showModal('newProjectModal');
+                    });
+                    
+                    return;
+                }
+                
+                container.innerHTML = projects.map(project => `
+                    <div class="card mb-4">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="mb-2">${this.escapeHtml(project.title)}</h3>
+                                <p class="text-sm text-muted">${project.phase} • ${project.status}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="btn btn-secondary btn-sm" onclick="app.exportProject('${project.id}')">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                                <a href="#project/${project.id}" class="btn btn-primary btn-sm">
+                                    Open Project
+                                </a>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-4">${this.escapeHtml(project.description?.substring(0, 200) || '')}${project.description?.length > 200 ? '...' : ''}</p>
+                        <div class="flex items-center justify-between text-sm text-muted">
+                            <span>Created: ${new Date(project.created_at).toLocaleDateString()}</span>
+                            <span>Last updated: ${new Date(project.updated_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            renderProjectDashboard() {
+                const container = document.getElementById('projectDetailPage');
+                if (!container || !this.currentProject) return;
+                
+                const { project, threads, evidence, decisions, milestones, bridgeTerms, team, engagement } = this.currentProject;
+                
+                container.innerHTML = `
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h1>${this.escapeHtml(project.title)}</h1>
+                                <p class="text-muted">${project.phase} • ${project.status}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="btn btn-secondary" id="backToProjectsBtn">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back
+                                </button>
+                                <button class="btn btn-primary" id="addThreadBtn">
+                                    <i class="fas fa-plus"></i>
+                                    New Thread
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-grid mb-6">
+                            <!-- Engagement Metrics -->
+                            <div class="card col-span-4">
+                                <h3 class="mb-4">Engagement</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.active_threads || 0}</div>
+                                        <div class="text-sm text-muted">Active Threads</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.evidence_count || 0}</div>
+                                        <div class="text-sm text-muted">Evidence</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.bridge_terms_count || 0}</div>
+                                        <div class="text-sm text-muted">Bridge Terms</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${engagement?.milestones_count || 0}</div>
+                                        <div class="text-sm text-muted">Milestones</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <button class="btn btn-secondary w-full" onclick="app.exportProject('${project.id}')">
+                                        <i class="fas fa-download"></i>
+                                        Export Project Data
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="card col-span-4">
+                                <h3 class="mb-4">Quick Actions</h3>
+                                <div class="space-y-2">
+                                    <button class="btn btn-secondary w-full justify-start" id="addEvidenceBtn">
+                                        <i class="fas fa-file-medical"></i>
+                                        Add Evidence
+                                    </button>
+                                    <button class="btn btn-secondary w-full justify-start" id="bridgeTermBtn">
+                                        <i class="fas fa-bridge"></i>
+                                        Bridge a Term
+                                    </button>
+                                    <button class="btn btn-secondary w-full justify-start" id="addMilestoneBtn">
+                                        <i class="fas fa-flag"></i>
+                                        Add Milestone
+                                    </button>
+                                    <button class="btn btn-secondary w-full justify-start" id="inviteTeamBtn">
+                                        <i class="fas fa-user-plus"></i>
+                                        Invite Team Member
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Team -->
+                            <div class="card col-span-4">
+                                <h3 class="mb-4">Team</h3>
+                                <div class="space-y-3">
+                                    ${team && team.length > 0 ? team.map(member => `
+                                        <div class="flex items-center gap-3">
+                                            <div class="user-avatar">${member.avatar_initials || '??'}</div>
+                                            <div class="flex-1">
+                                                <div class="font-medium">${this.escapeHtml(member.name)}</div>
+                                                <div class="text-sm text-muted">${member.primary_role || 'contributor'}</div>
+                                            </div>
+                                            <span class="text-xs px-2 py-1 rounded ${member.role === 'lead' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}">
+                                                ${member.role}
+                                            </span>
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No team members</p>'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Threads -->
+                        <div class="card mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3>Recent Discussions</h3>
+                                <button class="btn btn-sm btn-secondary" id="viewAllThreadsBtn">
+                                    View All
+                                </button>
+                            </div>
+                            <div id="threadsList">
+                                ${threads && threads.length > 0 ? threads.map(thread => `
+                                    <div class="thread-card" data-thread-id="${thread.id}">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center gap-2">
+                                                <span class="thread-type-badge thread-type-${thread.type}">
+                                                    ${this.getThreadIcon(thread.type)} ${thread.type}
+                                                </span>
+                                                <span class="text-sm text-muted">${new Date(thread.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-sm">${thread.author_name}</span>
+                                                <div class="user-avatar" style="width:24px;height:24px;font-size:10px;">${thread.avatar_initials || '??'}</div>
+                                            </div>
+                                        </div>
+                                        <h4 class="mb-2">${this.escapeHtml(thread.title)}</h4>
+                                        ${thread.clinical_context ? `
+                                            <div class="text-sm mb-2">
+                                                <span class="font-semibold">Clinical:</span> 
+                                                ${this.escapeHtml(thread.clinical_context.substring(0, 100))}${thread.clinical_context.length > 100 ? '...' : ''}
+                                            </div>
+                                        ` : ''}
+                                        ${thread.technical_context ? `
+                                            <div class="text-sm mb-2">
+                                                <span class="font-semibold">Technical:</span> 
+                                                ${this.escapeHtml(thread.technical_context.substring(0, 100))}${thread.technical_context.length > 100 ? '...' : ''}
+                                            </div>
+                                        ` : ''}
+                                        <div class="flex items-center justify-between mt-2 text-sm text-muted">
+                                            <span>${thread.status === 'active' ? '🟢 Active' : '⚪ Closed'}</span>
+                                            <span>Click to view discussion</span>
+                                        </div>
+                                    </div>
+                                `).join('') : '<p class="text-muted text-center py-4">No discussions yet</p>'}
+                            </div>
+                        </div>
+                        
+                        <!-- Evidence & Decisions Grid -->
+                        <div class="dashboard-grid mb-6">
+                            <!-- Evidence -->
+                            <div class="card col-span-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3>Recent Evidence</h3>
+                                    <button class="btn btn-sm btn-secondary" id="viewAllEvidenceBtn">
+                                        View All
+                                    </button>
+                                </div>
+                                <div id="evidenceList">
+                                    ${evidence && evidence.length > 0 ? evidence.map(item => `
+                                        <div class="evidence-card" data-evidence-id="${item.id}">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="evidence-badge evidence-${item.type}">
+                                                    ${this.getEvidenceIcon(item.type)} ${item.type}
+                                                </span>
+                                                <span class="text-sm text-muted">${new Date(item.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <h4 class="mb-2">${this.escapeHtml(item.title)}</h4>
+                                            ${item.source_id ? `
+                                                <div class="text-sm text-muted mb-2">
+                                                    Source: ${this.escapeHtml(item.source_id.substring(0, 50))}${item.source_id.length > 50 ? '...' : ''}
+                                                </div>
+                                            ` : ''}
+                                            <div class="text-sm text-muted">By ${item.author_name}</div>
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No evidence yet</p>'}
+                                </div>
+                            </div>
+                            
+                            <!-- Decisions -->
+                            <div class="card col-span-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3>Recent Decisions</h3>
+                                    <button class="btn btn-sm btn-secondary" id="viewAllDecisionsBtn">
+                                        View All
+                                    </button>
+                                </div>
+                                <div id="decisionsList">
+                                    ${decisions && decisions.length > 0 ? decisions.map(decision => `
+                                        <div class="border-b border-ui-border py-3 last:border-b-0">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="mb-1">${this.escapeHtml(decision.title)}</h4>
+                                                <span class="text-xs px-2 py-1 rounded ${decision.chosen_option ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                                    ${decision.chosen_option ? 'Decided' : 'Pending'}
+                                                </span>
+                                            </div>
+                                            <div class="text-sm text-muted mb-2">Decided: ${new Date(decision.made_at).toLocaleDateString()}</div>
+                                            ${decision.chosen_option ? `
+                                                <div class="text-sm mb-2">
+                                                    <span class="font-semibold">Chosen:</span> ${this.escapeHtml(decision.chosen_option)}
+                                                </div>
+                                            ` : ''}
+                                            ${decision.rationale ? `
+                                                <div class="text-sm">
+                                                    <span class="font-semibold">Rationale:</span> ${this.escapeHtml(decision.rationale.substring(0, 100))}${decision.rationale.length > 100 ? '...' : ''}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No decisions yet</p>'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Milestones & Bridge Terms Grid -->
+                        <div class="dashboard-grid">
+                            <!-- Milestones -->
+                            <div class="card col-span-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3>Milestones</h3>
+                                    <button class="btn btn-sm btn-secondary" id="viewAllMilestonesBtn">
+                                        View All
+                                    </button>
+                                </div>
+                                <div id="milestonesList">
+                                    ${milestones && milestones.length > 0 ? milestones.map(milestone => `
+                                        <div class="milestone-card ${milestone.status === 'completed' ? 'milestone-completed' : ''}">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="mb-1">${this.escapeHtml(milestone.title)}</h4>
+                                                <span class="text-xs px-2 py-1 rounded ${milestone.status === 'completed' ? 'bg-green-100 text-green-800' : milestone.status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}">
+                                                    ${milestone.status || 'planned'}
+                                                </span>
+                                            </div>
+                                            ${milestone.description ? `
+                                                <p class="text-sm text-muted mb-2">${this.escapeHtml(milestone.description.substring(0, 100))}${milestone.description.length > 100 ? '...' : ''}</p>
+                                            ` : ''}
+                                            <div class="flex items-center justify-between text-sm text-muted">
+                                                ${milestone.due_date ? `
+                                                    <span>Due: ${new Date(milestone.due_date).toLocaleDateString()}</span>
+                                                ` : '<span>No due date</span>'}
+                                                <span>${milestone.type}</span>
+                                            </div>
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No milestones yet</p>'}
+                                </div>
+                            </div>
+                            
+                            <!-- Bridge Terms -->
+                            <div class="card col-span-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3>Bridge Terms</h3>
+                                    <button class="btn btn-sm btn-secondary" id="viewAllBridgeTermsBtn">
+                                        View All
+                                    </button>
+                                </div>
+                                <div id="bridgeTermsList">
+                                    ${bridgeTerms && bridgeTerms.length > 0 ? bridgeTerms.map(term => `
+                                        <div class="bridge-term-card" data-term="${term.term}">
+                                            <h4 class="mb-2">${this.escapeHtml(term.term)}</h4>
+                                            <div class="text-sm mb-2">
+                                                <div class="font-semibold">Clinical:</div>
+                                                <p class="text-muted">${this.escapeHtml(term.clinical_definition?.substring(0, 100) || '')}${term.clinical_definition?.length > 100 ? '...' : ''}</p>
+                                            </div>
+                                            <div class="flex items-center justify-between text-sm text-muted">
+                                                <span>By ${term.author_name}</span>
+                                                <div class="flex items-center">
+                                                    <span>Confidence:</span>
+                                                    <div class="confidence-indicator ml-1">
+                                                        <div class="confidence-fill" style="width: ${(term.confidence_score || 1) * 20}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('') : '<p class="text-muted">No bridge terms yet</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners
+                this.setupProjectEventListeners();
+                
+                // Thread click handlers
+                container.querySelectorAll('.thread-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const threadId = e.currentTarget.dataset.threadId;
+                        this.openThread(threadId);
+                    });
+                });
+            }
+            
+            setupProjectEventListeners() {
+                document.getElementById('backToProjectsBtn')?.addEventListener('click', () => {
+                    this.navigateTo('projects');
+                });
+                
+                document.getElementById('addThreadBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        document.getElementById('threadProjectId').value = this.currentProject.project.id;
+                        this.showModal('newThreadModal');
+                    }
+                });
+                
+                document.getElementById('addEvidenceBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        document.getElementById('evidenceProjectId').value = this.currentProject.project.id;
+                        this.showModal('evidenceModal');
+                    }
+                });
+                
+                document.getElementById('addMilestoneBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        document.getElementById('milestoneProjectId').value = this.currentProject.project.id;
+                        this.showModal('milestoneModal');
+                    }
+                });
+                
+                document.getElementById('bridgeTermBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        document.getElementById('bridgeProjectId').value = this.currentProject.project.id;
+                        this.showModal('bridgeModal');
+                    }
+                });
+                
+                document.getElementById('inviteTeamBtn')?.addEventListener('click', () => {
+                    this.showToast('Team invitation feature coming soon!', 'info');
+                });
+            }
+            
+            // ========== PROJECT MANAGEMENT ==========
+            async createProject() {
+                try {
+                    const projectData = {
+                        title: document.getElementById('projectTitle').value.trim(),
+                        description: document.getElementById('projectDescription').value.trim(),
+                        clinical_context: document.getElementById('clinicalContext').value.trim(),
+                        technical_challenge: document.getElementById('technicalChallenge').value.trim(),
+                        status: 'planning',
+                        phase: 'discovery'
+                    };
+                    
+                    if (!projectData.title) {
+                        this.showToast('Project title is required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest('/api/projects', 'POST', projectData);
+                    
+                    if (response.success) {
+                        this.showToast('Project created successfully', 'success');
+                        this.hideModal('newProjectModal');
+                        await this.loadProjects();
+                        this.navigateTo(`project/${response.project.id}`);
+                    }
+                } catch (error) {
+                    console.error('Create project error:', error);
+                    this.showToast(error.message || 'Failed to create project', 'error');
+                }
+            }
+            
+            async createThread() {
+                try {
+                    const projectId = document.getElementById('threadProjectId').value;
+                    if (!projectId) {
+                        this.showToast('No project selected', 'error');
+                        return;
+                    }
+                    
+                    const threadData = {
+                        title: document.getElementById('threadTitle').value.trim(),
+                        type: document.querySelector('.thread-type-btn.active').dataset.type,
+                        clinical_context: document.getElementById('threadClinical').value.trim(),
+                        technical_context: document.getElementById('threadTechnical').value.trim()
+                    };
+                    
+                    if (!threadData.title || !threadData.type) {
+                        this.showToast('Title and type are required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/projects/${projectId}/threads`, 'POST', threadData);
+                    
+                    if (response.success) {
+                        this.showToast('Thread started successfully', 'success');
+                        this.hideModal('newThreadModal');
+                        await this.loadProject(projectId);
+                    }
+                } catch (error) {
+                    console.error('Create thread error:', error);
+                    this.showToast(error.message || 'Failed to create thread', 'error');
+                }
+            }
+            
+            async addEvidence() {
+                try {
+                    const projectId = document.getElementById('evidenceProjectId').value;
+                    if (!projectId) {
+                        this.showToast('No project selected', 'error');
+                        return;
+                    }
+                    
+                    const evidenceData = {
+                        title: document.getElementById('evidenceTitle').value.trim(),
+                        type: document.querySelector('.evidence-type-btn.active').dataset.type,
+                        source_id: document.getElementById('evidenceSource').value.trim(),
+                        clinical_relevance: document.getElementById('clinicalRelevance').value.trim(),
+                        technical_utility: document.getElementById('technicalUtility').value.trim()
+                    };
+                    
+                    if (!evidenceData.title || !evidenceData.type) {
+                        this.showToast('Title and type are required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/projects/${projectId}/evidence`, 'POST', evidenceData);
+                    
+                    if (response.success) {
+                        this.showToast('Evidence added successfully', 'success');
+                        this.hideModal('evidenceModal');
+                        await this.loadProject(projectId);
+                    }
+                } catch (error) {
+                    console.error('Add evidence error:', error);
+                    this.showToast(error.message || 'Failed to add evidence', 'error');
+                }
+            }
+            
+            async addMilestone() {
+                try {
+                    const projectId = document.getElementById('milestoneProjectId').value;
+                    if (!projectId) {
+                        this.showToast('No project selected', 'error');
+                        return;
+                    }
+                    
+                    const milestoneData = {
+                        title: document.getElementById('milestoneTitle').value.trim(),
+                        type: document.getElementById('milestoneType').value,
+                        description: document.getElementById('milestoneDescription').value.trim(),
+                        due_date: document.getElementById('milestoneDueDate').value,
+                        clinical_owner: document.getElementById('clinicalOwner').value.trim(),
+                        technical_owner: document.getElementById('technicalOwner').value.trim()
+                    };
+                    
+                    if (!milestoneData.title) {
+                        this.showToast('Title is required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/projects/${projectId}/milestones`, 'POST', milestoneData);
+                    
+                    if (response.success) {
+                        this.showToast('Milestone added successfully', 'success');
+                        this.hideModal('milestoneModal');
+                        await this.loadProject(projectId);
+                    }
+                } catch (error) {
+                    console.error('Add milestone error:', error);
+                    this.showToast(error.message || 'Failed to add milestone', 'error');
+                }
+            }
+            
+            async translateTerm() {
+                try {
+                    const term = document.getElementById('bridgeTerm').value.trim();
+                    const context = document.getElementById('bridgeContext').value.trim();
+                    const projectId = document.getElementById('bridgeProjectId').value;
+                    
+                    if (!term) {
+                        this.showToast('Please enter a term to translate', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest('/api/bridge/translate', 'POST', {
+                        term,
+                        context,
+                        project_id: projectId
+                    });
+                    
+                    if (response.success) {
+                        this.currentBridgeTerm = response.translation;
+                        this.currentBridgeTerm.project_id = projectId;
+                        this.currentBridgeTerm.term = term;
+                        
+                        const result = document.getElementById('bridgeResult');
+                        const clinicalDef = document.getElementById('clinicalDefinition');
+                        const technicalDef = document.getElementById('technicalDefinition');
+                        const analogy = document.getElementById('bridgeAnalogy');
+                        const confidenceScore = document.getElementById('confidenceScore');
+                        const confidenceFill = document.getElementById('confidenceFill');
+                        
+                        clinicalDef.textContent = response.translation.clinical_definition || 'No clinical definition available';
+                        technicalDef.textContent = response.translation.technical_definition || 'No technical definition available';
+                        analogy.textContent = response.translation.analogy || 'No analogy available';
+                        
+                        const confidence = response.translation.confidence || 1;
+                        confidenceScore.textContent = `${confidence}/5`;
+                        confidenceFill.style.width = `${confidence * 20}%`;
+                        
+                        result.classList.remove('hidden');
+                        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                    this.showToast(error.message, 'error');
+                }
+            }
+            
+            async saveBridgeTerm() {
+                try {
+                    if (!this.currentBridgeTerm) {
+                        this.showToast('No translation to save', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest('/api/bridge/terms', 'POST', this.currentBridgeTerm);
+                    
+                    if (response.success) {
+                        this.showToast('Bridge term saved to project glossary', 'success');
+                        this.hideModal('bridgeModal');
+                        if (this.currentProject) {
+                            await this.loadProject(this.currentProject.project.id);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Save bridge term error:', error);
+                    this.showToast(error.message || 'Failed to save term', 'error');
+                }
+            }
+            
+            async exportProject(projectId) {
+                try {
+                    const response = await this.apiRequest(`/api/projects/${projectId}/export`);
+                    
+                    if (response.success && response.data) {
+                        // Create and download JSON file
+                        const dataStr = JSON.stringify(response.data, null, 2);
+                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                        const url = URL.createObjectURL(dataBlob);
+                        
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `thoraxlab-project-${projectId}-${new Date().toISOString().split('T')[0]}.json`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                        
+                        this.showToast('Project exported successfully', 'success');
+                    }
+                } catch (error) {
+                    console.error('Export error:', error);
+                    this.showToast('Export failed', 'error');
+                }
+            }
+            
+            // ========== EVENT HANDLERS ==========
+            setupEventListeners() {
+                // Authentication
+                document.getElementById('authForm').addEventListener('submit', (e) => this.handleLogin(e));
+                
+                // Project creation
+                document.getElementById('newProjectBtn').addEventListener('click', () => {
+                    this.showModal('newProjectModal');
+                });
+                
+                document.getElementById('createProjectBtn').addEventListener('click', () => {
+                    this.showModal('newProjectModal');
+                });
+                
+                document.getElementById('projectForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createProject();
+                });
+                
+                // Thread creation
+                document.querySelectorAll('.thread-type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.thread-type-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                    });
+                });
+                
+                document.getElementById('threadForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createThread();
+                });
+                
+                // Evidence creation
+                document.querySelectorAll('.evidence-type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.evidence-type-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                    });
+                });
+                
+                // File upload
+                const fileUploadArea = document.getElementById('fileUploadArea');
+                const fileUpload = document.getElementById('fileUpload');
+                const filePreview = document.getElementById('filePreview');
+                const fileName = document.getElementById('fileName');
+                const removeFile = document.getElementById('removeFile');
+                
+                if (fileUploadArea && fileUpload) {
+                    fileUploadArea.addEventListener('click', () => fileUpload.click());
+                    fileUploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.style.borderColor = 'var(--thorax-blue)';
+                    });
+                    fileUploadArea.addEventListener('dragleave', () => {
+                        fileUploadArea.style.borderColor = 'var(--ui-border)';
+                    });
+                    fileUploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.style.borderColor = 'var(--ui-border)';
+                        if (e.dataTransfer.files.length) {
+                            fileUpload.files = e.dataTransfer.files;
+                            this.handleFileSelect(e.dataTransfer.files[0]);
+                        }
+                    });
+                    
+                    fileUpload.addEventListener('change', (e) => {
+                        if (e.target.files.length) {
+                            this.handleFileSelect(e.target.files[0]);
+                        }
+                    });
+                }
+                
+                if (removeFile) {
+                    removeFile.addEventListener('click', () => {
+                        fileUpload.value = '';
+                        filePreview.classList.add('hidden');
+                    });
+                }
+                
+                document.getElementById('evidenceForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addEvidence();
+                });
+                
+                // Milestone creation
+                document.getElementById('milestoneForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addMilestone();
+                });
+                
+                // Bridge translation
+                document.getElementById('bridgeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.translateTerm();
+                });
+                
+                document.getElementById('saveBridgeTermBtn')?.addEventListener('click', () => {
+                    this.saveBridgeTerm();
+                });
+                
+                // Modal close buttons
+                document.querySelectorAll('.btn-icon, .modal .btn-secondary').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        if (e.currentTarget.id.includes('close') || e.currentTarget.id.includes('cancel')) {
+                            const modal = e.currentTarget.closest('.modal');
+                            if (modal) {
+                                this.hideModal(modal.id);
+                            }
+                        }
+                    });
+                });
+                
+                // Close modal on outside click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.hideModal(modal.id);
+                        }
+                    });
+                });
+            }
+            
+            handleFileSelect(file) {
+                const filePreview = document.getElementById('filePreview');
+                const fileName = document.getElementById('fileName');
+                
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    this.showToast('File size exceeds 10MB limit', 'error');
+                    return;
+                }
+                
+                fileName.textContent = file.name;
+                filePreview.classList.remove('hidden');
+            }
+            
+            // ========== UTILITY METHODS ==========
+            showModal(modalId) {
+                document.getElementById(modalId).classList.add('active');
+            }
+            
+            hideModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('active');
+                    
+                    // Reset forms
+                    const form = modal.querySelector('form');
+                    if (form) form.reset();
+                    
+                    // Hide bridge result
+                    const result = modal.querySelector('#bridgeResult');
+                    if (result) result.classList.add('hidden');
+                    
+                    // Hide file preview
+                    const filePreview = modal.querySelector('#filePreview');
+                    if (filePreview) filePreview.classList.add('hidden');
+                    
+                    this.currentBridgeTerm = null;
+                }
+            }
+            
+            async apiRequest(url, method = 'GET', data = null) {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': this.token ? `Bearer ${this.token}` : ''
+                };
+                
+                const options = {
+                    method,
+                    headers
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(url, options);
+                
+                // Handle 401 - session expired
+                if (response.status === 401) {
+                    this.token = null;
+                    this.user = null;
+                    localStorage.removeItem('thoraxlab_token');
+                    localStorage.removeItem('thoraxlab_user');
+                    this.showAuth();
+                    throw new Error('Session expired. Please login again.');
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+                
+                return await response.json();
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    warning: 'fa-exclamation-triangle',
+                    info: 'fa-info-circle'
+                };
+                
+                toast.innerHTML = `
+                    <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
+                    <span>${this.escapeHtml(message)}</span>
+                    <button class="ml-auto text-sm" onclick="this.parentElement.remove()">&times;</button>
+                `;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 4000);
+            }
+            
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            getThreadIcon(type) {
+                const icons = {
+                    'discussion': '💬',
+                    'hypothesis': '🔍',
+                    'question': '❓',
+                    'decision': '🤔',
+                    'insight': '💡',
+                    'progress': '🔄'
+                };
+                return icons[type] || '💬';
+            }
+            
+            getEvidenceIcon(type) {
+                const icons = {
+                    'paper': '📄',
+                    'dataset': '📊',
+                    'protocol': '📋',
+                    'regulation': '⚖️',
+                    'result': '📈',
+                    'internal': '🏢'
+                };
+                return icons[type] || '📄';
+            }
+            
+            async openThread(threadId) {
+                try {
+                    const response = await this.apiRequest(`/api/threads/${threadId}`);
+                    
+                    if (response.success) {
+                        this.currentThread = response;
+                        this.showThreadModal();
+                    }
+                } catch (error) {
+                    console.error('Open thread error:', error);
+                    this.showToast('Failed to load thread', 'error');
+                }
+            }
+            
+            showThreadModal() {
+                const modal = document.getElementById('threadModal');
+                const content = modal.querySelector('.modal-content');
+                
+                if (!this.currentThread) return;
+                
+                const { thread, posts } = this.currentThread;
+                
+                content.innerHTML = `
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2>${this.escapeHtml(thread.title)}</h2>
+                            <p class="text-muted">${thread.project_title} • ${thread.type}</p>
+                        </div>
+                        <button class="btn btn-icon" onclick="app.hideModal('threadModal')">&times;</button>
+                    </div>
+                    
+                    <div class="card mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="user-avatar">${thread.avatar_initials || '??'}</div>
+                                <div>
+                                    <div class="font-medium">${thread.author_name}</div>
+                                    <div class="text-sm text-muted">${new Date(thread.created_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            <span class="thread-type-badge thread-type-${thread.type}">
+                                ${this.getThreadIcon(thread.type)} ${thread.type}
+                            </span>
+                        </div>
+                        
+                        ${thread.clinical_context ? `
+                            <div class="mb-4">
+                                <div class="text-sm font-semibold text-muted mb-1">Clinical Context</div>
+                                <p>${this.escapeHtml(thread.clinical_context)}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${thread.technical_context ? `
+                            <div class="mb-4">
+                                <div class="text-sm font-semibold text-muted mb-1">Technical Context</div>
+                                <p>${this.escapeHtml(thread.technical_context)}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${thread.bridge_insights ? `
+                            <div class="mb-4 p-3 bg-blue-50 rounded">
+                                <div class="text-sm font-semibold text-blue-700 mb-1">Bridge Insights</div>
+                                <p class="text-blue-800">${this.escapeHtml(thread.bridge_insights)}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="mb-4">Discussion (${posts.length})</h3>
+                        <div id="postsContainer">
+                            ${posts && posts.length > 0 ? posts.map(post => `
+                                <div class="border-b border-ui-border py-4 last:border-b-0">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="user-avatar">${post.avatar_initials || '??'}</div>
+                                            <div>
+                                                <div class="font-medium">${post.author_name}</div>
+                                                <div class="text-sm text-muted">${new Date(post.created_at).toLocaleDateString()}</div>
+                                            </div>
+                                        </div>
+                                        ${post.perspective ? `
+                                            <span class="badge badge-${post.perspective}">
+                                                ${post.perspective} perspective
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                    <p class="mb-3">${this.escapeHtml(post.content)}</p>
+                                    ${post.evidence_refs && post.evidence_refs.length > 0 ? `
+                                        <div class="text-sm text-muted">
+                                            <i class="fas fa-paperclip"></i>
+                                            References: ${post.evidence_refs.length} evidence items
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('') : '<p class="text-muted text-center py-4">No posts yet</p>'}
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4 class="mb-4">Add to Discussion</h4>
+                        <form id="postForm">
+                            <div class="form-group">
+                                <textarea id="postContent" class="form-input form-textarea" placeholder="Share your perspective..." rows="3" required></textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                <select id="postPerspective" class="form-input flex-1">
+                                    <option value="">Select perspective</option>
+                                    <option value="clinical">Clinical</option>
+                                    <option value="technical">Technical</option>
+                                    <option value="bridge">Bridge</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                
+                // Add post form handler
+                const postForm = content.querySelector('#postForm');
+                if (postForm) {
+                    postForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        await this.addPostToThread();
+                    });
+                }
+                
+                this.showModal('threadModal');
+            }
+            
+            async addPostToThread() {
+                try {
+                    if (!this.currentThread) return;
+                    
+                    const postData = {
+                        content: document.getElementById('postContent').value.trim(),
+                        perspective: document.getElementById('postPerspective').value
+                    };
+                    
+                    if (!postData.content) {
+                        this.showToast('Post content is required', 'warning');
+                        return;
+                    }
+                    
+                    const response = await this.apiRequest(`/api/threads/${this.currentThread.thread.id}/posts`, 'POST', postData);
+                    
+                    if (response.success) {
+                        this.showToast('Posted successfully', 'success');
+                        await this.openThread(this.currentThread.thread.id);
+                    }
+                } catch (error) {
+                    console.error('Add post error:', error);
+                    this.showToast(error.message || 'Failed to post', 'error');
+                }
+            }
+        }
+        
+        // Initialize the application
+        window.app = new ThoraxLabPro();
+        
+        // Global helper functions
+        window.showModal = (modalId) => window.app.showModal(modalId);
+        window.hideModal = (modalId) => window.app.hideModal(modalId);
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                if (window.app.user) {
+                    window.app.showModal('newProjectModal');
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    window.app.hideModal(modal.id);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
