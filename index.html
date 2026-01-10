@@ -3,26 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thorax Lab Pro | Clinical Research & Innovation Platform</title>
+    <title>ThoraxLab | Clinical Research Collaboration Platform</title>
     
-    <!-- Fonts -->
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔬</text></svg>">
     
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="app">
-        <!-- Toast Container -->
+        <!-- Toast Notifications -->
         <div id="toastContainer" class="toast-container"></div>
         
-        <!-- Auth Screen -->
+        <!-- Authentication Screen -->
         <div id="authScreen" class="auth-screen">
             <div class="auth-card">
                 <div class="auth-header">
-                    <div class="brand-logo-auth">Thorax Lab Pro</div>
-                    <p class="brand-subtitle">Clinical Research & Innovation Platform</p>
+                    <div class="brand-logo-auth">
+                        <i class="fas fa-flask mr-2"></i>
+                        <span>Thorax</span>Lab
+                    </div>
+                    <p class="brand-subtitle">Clinical Research Collaboration Platform</p>
                 </div>
                 
                 <div class="auth-body">
@@ -33,7 +38,7 @@
                     
                     <div class="auth-choice">
                         <button id="professionalLoginBtn" class="auth-choice-btn active">
-                            <i class="auth-choice-icon fas fa-user-tie"></i>
+                            <i class="auth-choice-icon fas fa-user-md"></i>
                             <span>Research Professional</span>
                         </button>
                         <button id="visitorLoginBtn" class="auth-choice-btn">
@@ -64,8 +69,8 @@
                             <input type="text" id="professionalInstitution" class="form-input" 
                                    placeholder="e.g., Cambridge University Hospitals, PharmaCorp, etc.">
                         </div>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-arrow-right"></i>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-arrow-right mr-2"></i>
                             Enter Platform
                         </button>
                     </form>
@@ -77,8 +82,8 @@
                             <input type="text" id="visitorName" class="form-input" 
                                    placeholder="Enter name or remain anonymous">
                         </div>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-eye"></i>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-eye mr-2"></i>
                             Browse Research
                         </button>
                     </form>
@@ -86,33 +91,40 @@
             </div>
         </div>
         
-        <!-- Main App -->
+        <!-- Main Application -->
         <div id="mainApp" class="hidden">
-            <!-- Elite Header -->
+            <!-- Modern Header -->
             <header class="app-header">
                 <div class="container">
                     <div class="header-container">
                         <a href="#dashboard" class="brand-main">
-                            [THØRAX]<span class="brand-accent">[LAB]</span> PRO
+                            <i class="fas fa-flask mr-2"></i>
+                            <span>Thorax</span>Lab
                         </a>
                         
                         <nav class="nav-main">
                             <div class="nav-item">
                                 <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                                    <i class="fas fa-home"></i>
+                                    <i class="fas fa-chart-line mr-2"></i>
                                     Dashboard
                                 </a>
                             </div>
                             <div class="nav-item">
                                 <a href="#projects" class="nav-link" data-page="projects">
-                                    <i class="fas fa-flask"></i>
+                                    <i class="fas fa-flask mr-2"></i>
                                     Research Projects
                                 </a>
                             </div>
                             <div class="nav-item">
                                 <a href="#myprojects" class="nav-link" data-page="myprojects">
-                                    <i class="fas fa-folder"></i>
+                                    <i class="fas fa-folder mr-2"></i>
                                     My Projects
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="#collaborations" class="nav-link" data-page="collaborations">
+                                    <i class="fas fa-users mr-2"></i>
+                                    Collaborations
                                 </a>
                             </div>
                         </nav>
@@ -120,11 +132,11 @@
                         <div class="user-section">
                             <div class="flex items-center gap-4">
                                 <span class="visitor-badge hidden" id="visitorBadge">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="fas fa-eye mr-1"></i>
                                     Guest
                                 </span>
-                                <button id="newProjectBtn" class="btn btn-elite-primary btn-sm hidden">
-                                    <i class="fas fa-plus"></i>
+                                <button id="newProjectBtn" class="btn btn-primary btn-sm hidden">
+                                    <i class="fas fa-plus mr-2"></i>
                                     New Project
                                 </button>
                             </div>
@@ -135,7 +147,7 @@
                                     <div id="userName" class="user-name">Loading...</div>
                                     <div id="userRole" class="user-role">Loading...</div>
                                 </div>
-                                <button id="logoutBtn" class="btn btn-elite-ghost btn-icon">
+                                <button id="logoutBtn" class="btn btn-ghost btn-icon">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </button>
                             </div>
@@ -144,20 +156,20 @@
                 </div>
             </header>
             
-            <!-- Main Content -->
+            <!-- Main Content Area -->
             <main class="main-content">
                 <div class="container">
                     <!-- Dashboard Page -->
                     <div id="dashboardPage" class="page">
                         <div class="page-header">
                             <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
-                            <p class="page-subtitle">Monitor and contribute to elite clinical innovation projects</p>
+                            <p class="page-subtitle">Monitor and contribute to clinical innovation projects</p>
                         </div>
                         
                         <!-- User Stats -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-12">
-                                <div class="elite-card">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-chart-line"></i>
@@ -174,7 +186,7 @@
                         <!-- Activity Feed & Tags -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-8">
-                                <div class="elite-card">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-bolt"></i>
@@ -182,8 +194,9 @@
                                         </h2>
                                         <div class="activity-filters">
                                             <button class="activity-filter active" data-filter="all">All</button>
-                                            <button class="activity-filter" data-filter="projects">Projects</button>
-                                            <button class="activity-filter" data-filter="discussions">Discussions</button>
+                                            <button class="activity-filter" data-filter="project">Projects</button>
+                                            <button class="activity-filter" data-filter="discussion">Discussions</button>
+                                            <button class="activity-filter" data-filter="comment">Comments</button>
                                         </div>
                                     </div>
                                     <div id="activityFeed">
@@ -193,7 +206,7 @@
                             </div>
                             
                             <div class="col-span-4">
-                                <div class="elite-card">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-tags"></i>
@@ -210,7 +223,7 @@
                         <!-- Featured Discussions -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-12">
-                                <div class="elite-card">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-fire"></i>
@@ -232,15 +245,15 @@
                         <!-- Recent Projects -->
                         <div class="dashboard-grid">
                             <div class="col-span-12">
-                                <div class="elite-card">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-project-diagram"></i>
                                             Active Research Projects
                                         </h2>
-                                        <button id="viewAllProjectsBtn" class="btn btn-elite-outline btn-sm">
+                                        <button id="viewAllProjectsBtn" class="btn btn-outline btn-sm">
                                             View All
-                                            <i class="fas fa-arrow-right"></i>
+                                            <i class="fas fa-arrow-right ml-2"></i>
                                         </button>
                                     </div>
                                     <div id="recentProjects" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -257,18 +270,25 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h1 class="page-title">Research Projects</h1>
-                                    <p class="page-subtitle">Explore elite clinical innovation collaborations</p>
+                                    <p class="page-subtitle">Explore clinical innovation collaborations</p>
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <div class="search-bar">
                                         <i class="search-icon fas fa-search"></i>
                                         <input type="text" id="projectSearch" class="search-input" 
-                                               placeholder="Search projects...">
+                                               placeholder="Search projects by title, tags, or institution...">
                                     </div>
-                                    <button id="sortProjectsBtn" class="btn btn-elite-outline btn-sm">
-                                        <i class="fas fa-sort"></i>
-                                        Sort
-                                    </button>
+                                    <div class="dropdown">
+                                        <button id="sortProjectsBtn" class="btn btn-outline btn-sm">
+                                            <i class="fas fa-sort mr-2"></i>
+                                            Sort
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button class="dropdown-item" data-sort="recent">Most Recent</button>
+                                            <button class="dropdown-item" data-sort="popular">Most Popular</button>
+                                            <button class="dropdown-item" data-sort="title">Alphabetical</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -286,8 +306,8 @@
                                     <h1 class="page-title">My Research Projects</h1>
                                     <p class="page-subtitle">Manage your clinical innovation initiatives</p>
                                 </div>
-                                <button id="createMyProjectBtn" class="btn btn-elite-primary">
-                                    <i class="fas fa-plus"></i>
+                                <button id="createMyProjectBtn" class="btn btn-primary">
+                                    <i class="fas fa-plus mr-2"></i>
                                     New Project
                                 </button>
                             </div>
@@ -295,6 +315,26 @@
                         
                         <div id="myProjectsList" class="grid grid-cols-1 gap-6">
                             <!-- My projects loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Collaborations Page -->
+                    <div id="collaborationsPage" class="page hidden">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">Collaborations</h1>
+                                    <p class="page-subtitle">Manage your research partnerships and team members</p>
+                                </div>
+                                <button id="inviteCollaboratorBtn" class="btn btn-primary">
+                                    <i class="fas fa-user-plus mr-2"></i>
+                                    Invite Collaborator
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="collaborationsList" class="grid grid-cols-1 gap-6">
+                            <!-- Collaborations loaded dynamically -->
                         </div>
                     </div>
                     
@@ -307,10 +347,66 @@
                     <div id="discussionDetailPage" class="page hidden">
                         <!-- Loaded dynamically -->
                     </div>
+                    
+                    <!-- Profile Page -->
+                    <div id="profilePage" class="page hidden">
+                        <div class="page-header">
+                            <h1 class="page-title">Profile Settings</h1>
+                            <p class="page-subtitle">Manage your account and preferences</p>
+                        </div>
+                        
+                        <div class="dashboard-grid">
+                            <div class="col-span-4">
+                                <div class="card">
+                                    <div class="text-center p-6">
+                                        <div id="profileAvatar" class="user-avatar mx-auto mb-4" style="width: 80px; height: 80px; font-size: 1.5rem;"></div>
+                                        <h3 id="profileName" class="mb-1">Loading...</h3>
+                                        <p id="profileRole" class="text-muted mb-4">Loading...</p>
+                                        <button class="btn btn-outline btn-sm w-full">
+                                            <i class="fas fa-camera mr-2"></i>
+                                            Update Photo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-span-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">Profile Information</h2>
+                                    </div>
+                                    <form id="profileForm" class="space-y-4 p-6">
+                                        <div class="form-group">
+                                            <label for="profileNameInput" class="form-label">Full Name</label>
+                                            <input type="text" id="profileNameInput" class="form-input" placeholder="Your full name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profileInstitution" class="form-label">Institution</label>
+                                            <input type="text" id="profileInstitution" class="form-input" placeholder="Your institution or organization">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profileBio" class="form-label">Bio</label>
+                                            <textarea id="profileBio" class="form-input form-textarea" rows="4" placeholder="Tell us about your research interests and expertise..."></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profileExpertise" class="form-label">Research Domains</label>
+                                            <input type="text" id="profileExpertise" class="form-input" placeholder="e.g., Oncology, AI, Genomics, Clinical Trials">
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save mr-2"></i>
+                                                Save Changes
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
             
-            <!-- Quick Actions Menu -->
+            <!-- Quick Actions Menu (Floating Action Button) -->
             <div class="quick-actions-menu">
                 <button class="quick-actions-btn" id="quickActionsMainBtn">
                     <i class="fas fa-plus"></i>
@@ -328,8 +424,36 @@
                         <i class="fas fa-stethoscope"></i>
                         <span>Request Expert Review</span>
                     </div>
+                    <div class="quick-action-item" data-action="find-collaborator">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Find Collaborator</span>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Bottom Navigation (Mobile) -->
+            <nav class="mobile-nav lg:hidden">
+                <a href="#dashboard" class="mobile-nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#projects" class="mobile-nav-item">
+                    <i class="fas fa-flask"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="#myprojects" class="mobile-nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>My Projects</span>
+                </a>
+                <a href="#collaborations" class="mobile-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Teams</span>
+                </a>
+                <a href="#profile" class="mobile-nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
         </div>
         
         <!-- Modals -->
@@ -339,7 +463,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">
-                        <i class="fas fa-plus-circle"></i>
+                        <i class="fas fa-plus-circle mr-2"></i>
                         Initiate Research Project
                     </h2>
                     <button class="modal-close" id="closeProjectModal">&times;</button>
@@ -382,11 +506,11 @@
                         </select>
                     </div>
                     <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-elite-outline" id="cancelProjectBtn">
+                        <button type="button" class="btn btn-outline" id="cancelProjectBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-flask"></i>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-flask mr-2"></i>
                             Initiate Project
                         </button>
                     </div>
@@ -399,7 +523,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">
-                        <i class="fas fa-comments"></i>
+                        <i class="fas fa-comments mr-2"></i>
                         Initiate Discussion
                     </h2>
                     <button class="modal-close" id="closeDiscussionModal">&times;</button>
@@ -409,24 +533,24 @@
                     <div class="form-group">
                         <label class="form-label">Discussion Type</label>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn active" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn active" 
                                     data-type="brainstorm">
-                                <i class="fas fa-lightbulb"></i>
+                                <i class="fas fa-lightbulb mr-2"></i>
                                 Brainstorm
                             </button>
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
                                     data-type="question">
-                                <i class="fas fa-question-circle"></i>
+                                <i class="fas fa-question-circle mr-2"></i>
                                 Question
                             </button>
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
                                     data-type="decision">
-                                <i class="fas fa-gavel"></i>
+                                <i class="fas fa-gavel mr-2"></i>
                                 Decision
                             </button>
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
                                     data-type="insight">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-eye mr-2"></i>
                                 Insight
                             </button>
                         </div>
@@ -444,11 +568,11 @@
                         <div class="char-counter" id="discussionCounter">0/5000</div>
                     </div>
                     <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-elite-outline" id="cancelDiscussionBtn">
+                        <button type="button" class="btn btn-outline" id="cancelDiscussionBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-paper-plane"></i>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-2"></i>
                             Initiate Discussion
                         </button>
                     </div>
@@ -456,35 +580,214 @@
             </div>
         </div>
         
-        <!-- Add Comment Modal -->
-        <div id="commentModal" class="modal">
+        <!-- Add Team Member Modal -->
+        <div id="addTeamMemberModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">
-                        <i class="fas fa-comment-medical"></i>
-                        Contribute Insight
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Add Team Member
                     </h2>
-                    <button class="modal-close" id="closeCommentModal">&times;</button>
+                    <button class="modal-close">&times;</button>
                 </div>
-                <form id="commentForm">
-                    <input type="hidden" id="commentDiscussionId">
+                <form id="teamMemberForm">
+                    <input type="hidden" id="teamProjectId">
                     <div class="form-group">
-                        <label for="commentContent" class="form-label">Expert Insight *</label>
-                        <textarea id="commentContent" class="form-input form-textarea" 
-                                  placeholder="Share your expert perspective, analysis, or recommendation..."
-                                  rows="3" maxlength="1000" required></textarea>
-                        <div class="char-counter" id="commentCounter">0/1000</div>
+                        <label for="memberName" class="form-label">Full Name *</label>
+                        <input type="text" id="memberName" class="form-input" 
+                               placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberEmail" class="form-label">Email Address</label>
+                        <input type="email" id="memberEmail" class="form-input" 
+                               placeholder="Optional: email for notifications">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberPosition" class="form-label">Position/Role *</label>
+                        <input type="text" id="memberPosition" class="form-input" 
+                               placeholder="e.g., Co-Investigator, Data Analyst" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberInstitution" class="form-label">Institution</label>
+                        <input type="text" id="memberInstitution" class="form-input" 
+                               placeholder="Optional: their institution">
                     </div>
                     <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-elite-outline" id="cancelCommentBtn">
+                        <button type="button" class="btn btn-outline" onclick="app.hideModal('addTeamMemberModal')">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-share"></i>
-                            Contribute
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Add Member
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+        
+        <!-- Edit Project Modal -->
+        <div id="editProjectModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit Project
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="editProjectForm">
+                    <input type="hidden" id="editProjectId">
+                    <div class="form-group">
+                        <label for="editProjectTitle" class="form-label">Project Title *</label>
+                        <input type="text" id="editProjectTitle" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProjectDescription" class="form-label">Research Description *</label>
+                        <textarea id="editProjectDescription" class="form-input form-textarea" 
+                                  rows="4" maxlength="2000" required></textarea>
+                        <div class="char-counter" id="editDescCounter">0/2000</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProjectTags" class="form-label">Research Domains</label>
+                        <input type="text" id="editProjectTags" class="form-input">
+                        <p class="text-muted mt-1">Separate domains with commas</p>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" onclick="app.hideModal('editProjectModal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Invite Collaborator Modal -->
+        <div id="inviteCollaboratorModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Invite Collaborator
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="inviteCollaboratorForm">
+                    <div class="form-group">
+                        <label class="form-label">Invite Method</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-outline btn-sm invite-method-btn active" 
+                                    data-method="email">
+                                <i class="fas fa-envelope mr-2"></i>
+                                Email
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm invite-method-btn" 
+                                    data-method="link">
+                                <i class="fas fa-link mr-2"></i>
+                                Share Link
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="emailInviteSection">
+                        <div class="form-group">
+                            <label for="collaboratorEmail" class="form-label">Email Address *</label>
+                            <input type="email" id="collaboratorEmail" class="form-input" 
+                                   placeholder="Enter email address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inviteMessage" class="form-label">Personal Message</label>
+                            <textarea id="inviteMessage" class="form-input form-textarea" 
+                                      rows="3" placeholder="Add a personal message..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="linkInviteSection" class="hidden">
+                        <div class="card bg-surface p-4 mb-4">
+                            <p class="text-sm text-muted mb-2">Share this link with collaborators:</p>
+                            <div class="flex gap-2">
+                                <input type="text" id="shareableLink" class="form-input flex-1" 
+                                       value="https://thoraxlab.com/invite/abc123" readonly>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="app.copyInviteLink()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" onclick="app.hideModal('inviteCollaboratorModal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Send Invitation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Notification Settings Modal -->
+        <div id="notificationSettingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-bell mr-2"></i>
+                        Notification Settings
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="space-y-4 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Project Updates</div>
+                            <div class="text-sm text-muted">Get notified about project activities</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Discussion Replies</div>
+                            <div class="text-sm text-muted">Notify when someone replies to your discussions</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Collaboration Requests</div>
+                            <div class="text-sm text-muted">Notify about new collaboration requests</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Weekly Digest</div>
+                            <div class="text-sm text-muted">Receive weekly summary of activities</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end p-6 pt-0">
+                    <button class="btn btn-primary" onclick="app.hideModal('notificationSettingsModal')">
+                        Save Settings
+                    </button>
+                </div>
             </div>
         </div>
     </div>
