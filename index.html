@@ -3,156 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[THØRAX][LAB] PRO | Clinical Innovation Collaboration</title>
+    <title>[THØRAX][LAB] PRO | Elite Clinical Innovation Platform</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ====== VARIABLES ====== */
+        /* ====== ELITE DESIGN SYSTEM ====== */
         :root {
-            --thorax-blue: #1A5F7A;
-            --thorax-blue-light: rgba(26, 95, 122, 0.1);
-            --thorax-teal: #0D8B70;
-            --thorax-purple: #6D5ACF;
-            --thorax-orange: #F59E0B;
-            --thorax-green: #10B981;
+            /* Primary Colors - Academic Blue & Gold */
+            --elite-blue: #0A2342;
+            --elite-blue-light: #1A365D;
+            --elite-blue-dark: #051326;
+            --elite-gold: #C5A572;
+            --elite-gold-light: #D4B483;
+            --elite-gold-dark: #B89650;
             
-            --ui-dark: #1E293B;
-            --ui-mid: #64748B;
-            --ui-light: #94A3B8;
-            --ui-bg: #F8FAFC;
+            /* Secondary Colors */
+            --academic-crimson: #8C1515;
+            --academic-oxford: #002147;
+            --academic-cambridge: #A51C30;
+            --academic-stanford: #8C1515;
+            --academic-harvard: #A51C30;
+            
+            /* UI Colors */
+            --ui-bg: #F8F9FA;
             --ui-card: #FFFFFF;
-            --ui-border: #E2E8F0;
-            --ui-hover: #F1F5F9;
+            --ui-card-dark: #0A2342;
+            --ui-border: #E1E8ED;
+            --ui-border-light: #F1F5F9;
+            --ui-hover: #F8FAFC;
+            --ui-text: #1A202C;
+            --ui-text-light: #64748B;
+            --ui-text-muted: #94A3B8;
             
+            /* Status Colors */
             --success: #10B981;
             --warning: #F59E0B;
             --error: #EF4444;
             --info: #3B82F6;
             
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
+            /* Gradients */
+            --gradient-elite: linear-gradient(135deg, var(--elite-blue) 0%, var(--elite-blue-light) 100%);
+            --gradient-gold: linear-gradient(135deg, var(--elite-gold) 0%, var(--elite-gold-light) 100%);
+            --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+            
+            /* Shadows */
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-elite: 0 20px 25px -5px rgba(10, 35, 66, 0.1);
+            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.08);
             
-            --transition: 200ms ease;
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-full: 9999px;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Source Serif Pro', Georgia, serif;
         }
         
         /* ====== BASE RESET ====== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--ui-bg);
-            color: var(--ui-dark);
-            line-height: 1.6;
-            min-height: 100vh;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        /* ====== UTILITY CLASSES ====== */
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .grid { display: grid; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-4 { gap: 1rem; }
-        .gap-6 { gap: 1.5rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .text-sm { font-size: 0.875rem; }
-        .text-xs { font-size: 0.75rem; }
-        .text-muted { color: var(--ui-mid); }
-        .text-center { text-align: center; }
-        .w-full { width: 100%; }
-        .space-y-2 > * + * { margin-top: 0.5rem; }
-        .space-y-4 > * + * { margin-top: 1rem; }
+        html {
+            scroll-behavior: smooth;
+        }
         
-        /* ====== LAYOUT ====== */
-        #app { min-height: 100vh; display: flex; flex-direction: column; }
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        body {
+            font-family: var(--font-sans);
+            background: var(--ui-bg);
+            color: var(--ui-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
         /* ====== TYPOGRAPHY ====== */
-        h1, h2, h3, h4 {
-            font-weight: 600;
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-serif);
+            font-weight: 700;
             line-height: 1.2;
-            color: var(--ui-dark);
+            color: var(--elite-blue);
         }
-        h1 { font-size: 2rem; }
-        h2 { font-size: 1.5rem; }
-        h3 { font-size: 1.25rem; }
         
-        /* ====== COMPONENTS ====== */
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: -0.5px;
+        }
         
-        /* Header */
+        h2 {
+            font-size: 2rem;
+            letter-spacing: -0.3px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+        }
+        
+        .text-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--gradient-elite);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .text-lead {
+            font-size: 1.125rem;
+            color: var(--ui-text-light);
+            line-height: 1.7;
+        }
+        
+        .text-muted {
+            color: var(--ui-text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .text-small {
+            font-size: 0.875rem;
+        }
+        
+        .text-xsmall {
+            font-size: 0.75rem;
+        }
+        
+        /* ====== LAYOUT UTILITIES ====== */
+        .hidden {
+            display: none !important;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .grid {
+            display: grid;
+        }
+        
+        .block {
+            display: block;
+        }
+        
+        .inline-flex {
+            display: inline-flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .items-start {
+            align-items: flex-start;
+        }
+        
+        .items-end {
+            align-items: flex-end;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .justify-end {
+            justify-content: flex-end;
+        }
+        
+        .flex-col {
+            flex-direction: column;
+        }
+        
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        
+        .flex-1 {
+            flex: 1;
+        }
+        
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        
+        .w-full { width: 100%; }
+        .w-auto { width: auto; }
+        .h-full { height: 100%; }
+        
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-left { text-align: left; }
+        
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .sticky { position: sticky; }
+        
+        .z-10 { z-index: 10; }
+        .z-20 { z-index: 20; }
+        .z-30 { z-index: 30; }
+        
+        .overflow-hidden { overflow: hidden; }
+        .overflow-auto { overflow: auto; }
+        
+        .rounded-sm { border-radius: var(--radius-sm); }
+        .rounded-md { border-radius: var(--radius-md); }
+        .rounded-lg { border-radius: var(--radius-lg); }
+        .rounded-xl { border-radius: var(--radius-xl); }
+        .rounded-full { border-radius: var(--radius-full); }
+        
+        .shadow-sm { box-shadow: var(--shadow-sm); }
+        .shadow-md { box-shadow: var(--shadow-md); }
+        .shadow-lg { box-shadow: var(--shadow-lg); }
+        .shadow-elite { box-shadow: var(--shadow-elite); }
+        
+        /* ====== LAYOUT CONTAINERS ====== */
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .container-narrow {
+            max-width: 1000px;
+        }
+        
+        .section {
+            padding: var(--space-2xl) 0;
+        }
+        
+        .section-sm {
+            padding: var(--space-xl) 0;
+        }
+        
+        /* ====== AUTH SCREEN - ELITE DESIGN ====== */
+        .auth-screen {
+            min-height: 100vh;
+            background: var(--gradient-elite);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(197, 165, 114, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(10, 35, 66, 0.15) 0%, transparent 50%);
+        }
+        
+        .auth-card {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            box-shadow: var(--shadow-elite);
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .auth-header {
+            background: var(--gradient-elite);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+        
+        .brand-logo-auth {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .brand-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .auth-body {
+            padding: 3rem 2rem;
+        }
+        
+        .auth-choice {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-choice-btn {
+            padding: 1.5rem 1rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-lg);
+            background: var(--ui-card);
+            color: var(--ui-text);
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .auth-choice-btn:hover {
+            border-color: var(--elite-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .auth-choice-btn.active {
+            border-color: var(--elite-blue);
+            background: rgba(10, 35, 66, 0.05);
+        }
+        
+        .auth-choice-icon {
+            font-size: 1.5rem;
+            color: var(--elite-blue);
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        /* ====== MAIN APP LAYOUT ====== */
+        #mainApp {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ====== ELITE HEADER ====== */
         .app-header {
             background: var(--ui-card);
-            border-bottom: 1px solid var(--ui-border);
+            border-bottom: 1px solid var(--ui-border-light);
             padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
         
-        .brand-logo {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--thorax-blue);
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        
+        .brand-main {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--elite-blue);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
         
-        /* Navigation */
+        .brand-accent {
+            color: var(--elite-gold);
+        }
+        
         .nav-main {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.25rem;
             align-items: center;
+        }
+        
+        .nav-item {
+            position: relative;
         }
         
         .nav-link {
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-md);
-            color: var(--ui-mid);
+            padding: 0.75rem 1.25rem;
+            color: var(--ui-text-light);
             text-decoration: none;
-            font-weight: 500;
-            transition: all var(--transition);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
         
         .nav-link:hover {
+            color: var(--elite-blue);
             background: var(--ui-hover);
-            color: var(--ui-dark);
         }
         
         .nav-link.active {
-            background: var(--thorax-blue-light);
-            color: var(--thorax-blue);
+            color: var(--elite-blue);
+            background: rgba(10, 35, 66, 0.08);
         }
         
-        /* User Menu */
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--elite-blue);
+            border-radius: var(--radius-full);
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
         .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--thorax-blue), var(--thorax-purple));
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-elite);
             color: white;
             display: flex;
             align-items: center;
@@ -162,95 +501,105 @@
             flex-shrink: 0;
         }
         
-        /* Engagement Score */
-        .engagement-score {
-            display: inline-flex;
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--ui-text);
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--ui-text-muted);
+        }
+        
+        .visitor-badge {
+            padding: 0.25rem 0.75rem;
+            background: var(--ui-hover);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--ui-text-light);
+            display: flex;
             align-items: center;
             gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            background: linear-gradient(135deg, 
-                rgba(16, 185, 129, 0.1),
-                rgba(26, 95, 122, 0.1)
-            );
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--thorax-green);
         }
         
-        /* Buttons */
-        .btn {
-            display: inline-flex;
+        /* ====== MAIN CONTENT ====== */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+        
+        .page-header {
+            margin-bottom: 3rem;
+        }
+        
+        .page-title {
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--ui-text-light);
+            font-size: 1.125rem;
+        }
+        
+        /* ====== ELITE CARDS ====== */
+        .elite-card {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--ui-border-light);
+            padding: 1.75rem;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .elite-card:hover {
+            border-color: var(--elite-blue);
+            box-shadow: var(--shadow-elite);
+            transform: translateY(-2px);
+        }
+        
+        .elite-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-elite);
+        }
+        
+        .card-header {
+            display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--elite-blue);
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition);
         }
         
-        .btn-primary {
-            background: var(--thorax-blue);
-            color: white;
+        .card-icon {
+            color: var(--elite-gold);
         }
         
-        .btn-primary:hover:not(:disabled) {
-            background: #14485E;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-secondary {
-            background: var(--ui-card);
-            color: var(--ui-dark);
-            border: 1px solid var(--ui-border);
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--ui-hover);
-            border-color: var(--ui-mid);
-        }
-        
-        .btn-success {
-            background: var(--thorax-green);
-            color: white;
-        }
-        
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-        }
-        
-        .btn-icon {
-            padding: 0.5rem;
-            width: 36px;
-            height: 36px;
-        }
-        
-        /* Cards */
-        .card {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
-            padding: 1.5rem;
-            transition: all var(--transition);
-        }
-        
-        .card:hover {
-            border-color: var(--thorax-blue);
-            box-shadow: var(--shadow-md);
-        }
-        
-        /* Dashboard Grid */
+        /* ====== DASHBOARD SPECIFIC ====== */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: 1.5rem;
+            margin-bottom: 2rem;
         }
         
         .col-span-4 { grid-column: span 4; }
@@ -262,346 +611,493 @@
             .col-span-4, .col-span-6, .col-span-8 { grid-column: span 12; }
         }
         
-        /* Engagement Indicators */
-        .engagement-indicator {
-            display: inline-block;
-            width: 100%;
-            height: 4px;
-            border-radius: 2px;
-            background: var(--ui-border);
-            margin-top: 0.5rem;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--ui-border);
+            transition: all var(--transition-normal);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--elite-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: rgba(10, 35, 66, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--elite-blue);
+            font-size: 1.25rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--elite-blue);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--ui-text-light);
+        }
+        
+        /* ====== FEATURED DISCUSSIONS ====== */
+        .discussion-card {
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            padding: 1.5rem;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
             overflow: hidden;
         }
         
-        .engagement-fill {
-            height: 100%;
-            background: linear-gradient(90deg, 
-                #D1FAE5,
-                #10B981,
-                #065F46
-            );
-            transition: width 0.5s ease;
+        .discussion-card:hover {
+            border-color: var(--elite-blue);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
         
-        /* Discussion Types */
-        .discussion-type {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: var(--ui-hover);
-        }
-        
-        .type-brainstorm { background: #DBEAFE; color: #1E40AF; }
-        .type-question { background: #FEF3C7; color: #92400E; }
-        .type-decision { background: #D1FAE5; color: #065F46; }
-        .type-insight { background: #E0E7FF; color: #3730A3; }
-        
-        /* Forms */
-        .form-group { margin-bottom: 1.5rem; }
-        .form-label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--ui-dark);
-            font-size: 0.875rem;
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 0.875rem;
-            background: var(--ui-card);
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: var(--thorax-blue);
-            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-        }
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        /* Select styles */
-        select.form-input {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748B' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-        }
-        
-        /* Tag Input */
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            background: var(--ui-hover);
-            border-radius: 9999px;
-            font-size: 0.75rem;
-        }
-        
-        .tag-remove {
-            cursor: pointer;
-            padding-left: 0.25rem;
-        }
-        
-        /* Modals */
-        .modal {
-            position: fixed;
+        .discussion-card::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+            width: 4px;
+            background: var(--gradient-elite);
         }
         
-        /* Toast */
-        .toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .toast {
-            padding: 1rem 1.25rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-md);
-            animation: slideIn 0.3s ease;
+        .discussion-header {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            background: var(--ui-card);
-            min-width: 300px;
-        }
-        
-        .toast-success { border-left: 4px solid var(--success); }
-        .toast-error { border-left: 4px solid var(--error); }
-        .toast-warning { border-left: 4px solid var(--warning); }
-        .toast-info { border-left: 4px solid var(--info); }
-        
-        /* Loading */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
-            color: var(--ui-mid);
-        }
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--ui-border);
-            border-top-color: var(--thorax-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        
-        .empty-icon {
-            font-size: 3rem;
+            justify-content: space-between;
             margin-bottom: 1rem;
-            opacity: 0.5;
         }
         
-        /* Discussion Card */
-        .discussion-card {
-            padding: 1.25rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
+        .discussion-type {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .type-brainstorm {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1E40AF;
+        }
+        
+        .type-question {
+            background: rgba(245, 158, 11, 0.1);
+            color: #92400E;
+        }
+        
+        .type-decision {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065F46;
+        }
+        
+        .type-insight {
+            background: rgba(139, 92, 246, 0.1);
+            color: #5B21B6;
+        }
+        
+        .elite-badge {
+            padding: 0.25rem 0.75rem;
+            background: var(--gradient-gold);
+            color: var(--elite-blue);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .discussion-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--elite-blue);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .discussion-excerpt {
+            color: var(--ui-text-light);
+            font-size: 0.875rem;
+            line-height: 1.6;
             margin-bottom: 1rem;
-            transition: all var(--transition);
-            cursor: pointer;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         
-        .discussion-card:hover {
-            border-color: var(--thorax-blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        /* Engagement Actions */
-        .engagement-actions {
+        .discussion-meta {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            align-items: center;
+            justify-content: space-between;
             padding-top: 1rem;
             border-top: 1px solid var(--ui-border);
         }
         
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: none;
-            border: none;
-            color: var(--ui-mid);
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius-sm);
-            transition: all var(--transition);
-        }
-        
-        .action-btn:hover {
-            background: var(--ui-hover);
-            color: var(--ui-dark);
-        }
-        
-        .action-btn.liked {
-            color: var(--thorax-green);
-        }
-        
-        /* Comment Section */
-        .comment-section {
-            margin-top: 1.5rem;
-        }
-        
-        .comment {
-            padding: 1rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-            background: var(--ui-bg);
-        }
-        
-        .comment-header {
+        .author-info {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 0.75rem;
         }
         
-        /* Visitor Badge */
-        .visitor-badge {
-            display: inline-flex;
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-elite);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--ui-text);
+        }
+        
+        .author-institution {
+            font-size: 0.75rem;
+            color: var(--ui-text-muted);
+        }
+        
+        .engagement-metrics {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .metric {
+            display: flex;
             align-items: center;
             gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            background: var(--ui-hover);
-            border-radius: 9999px;
+            color: var(--ui-text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .metric i {
+            color: var(--elite-gold);
+        }
+        
+        /* ====== PROJECT CARDS ====== */
+        .project-card {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--ui-border);
+            padding: 2rem;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card:hover {
+            border-color: var(--elite-blue);
+            box-shadow: var(--shadow-elite);
+            transform: translateY(-4px);
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-elite);
+        }
+        
+        .project-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(10, 35, 66, 0.08);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--elite-blue);
+        }
+        
+        .project-institution {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--ui-text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--elite-blue);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .project-excerpt {
+            color: var(--ui-text-light);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-tag {
+            padding: 0.375rem 0.875rem;
+            background: rgba(10, 35, 66, 0.08);
+            color: var(--elite-blue);
+            border-radius: var(--radius-full);
             font-size: 0.75rem;
             font-weight: 600;
         }
         
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .project-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--ui-border);
         }
         
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 2rem 0;
+        .project-stats {
+            display: flex;
+            gap: 1.5rem;
         }
         
-        /* Page Transitions */
-        .page {
-            animation: fadeIn 0.3s ease;
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--ui-text-muted);
+            font-size: 0.875rem;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .stat i {
+            color: var(--elite-gold);
         }
         
-        /* Auth Screen */
-        .auth-screen {
-            min-height: 100vh;
+        .project-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .author-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-elite);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--thorax-blue) 0%, #14485E 100%);
-            padding: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
         }
-        .auth-card {
-            background: var(--ui-card);
-            border-radius: 18px;
-            width: 100%;
-            max-width: 440px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-        .auth-header {
-            background: linear-gradient(135deg, var(--thorax-blue) 0%, var(--thorax-purple) 100%);
-            color: white;
-            padding: 2.5rem 2rem;
+        
+        /* ====== EMPTY STATES ====== */
+        .empty-state {
             text-align: center;
-        }
-        .auth-body { padding: 2.5rem 2rem; }
-        .auth-form { display: flex; flex-direction: column; gap: 1.5rem; }
-        
-        /* Project Card */
-        .project-card {
-            padding: 1.5rem;
-            border: 2px solid var(--ui-border);
-            border-radius: var(--radius-lg);
-            margin-bottom: 1rem;
-            transition: all var(--transition);
+            padding: 4rem 2rem;
         }
         
-        .project-card:hover {
-            border-color: var(--thorax-blue);
+        .empty-icon {
+            font-size: 3.5rem;
+            color: var(--ui-border);
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            color: var(--elite-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-description {
+            color: var(--ui-text-light);
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* ====== ELITE BUTTONS ====== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-elite-primary {
+            background: var(--gradient-elite);
+            color: white;
+        }
+        
+        .btn-elite-primary:hover {
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
+        }
+        
+        .btn-elite-secondary {
+            background: var(--ui-card);
+            color: var(--elite-blue);
+            border: 2px solid var(--elite-blue);
+        }
+        
+        .btn-elite-secondary:hover {
+            background: var(--elite-blue);
+            color: white;
             box-shadow: var(--shadow-md);
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container { padding: 0 0.5rem; }
-            .dashboard-grid { gap: 1rem; }
-            h1 { font-size: 1.5rem; }
-            h2 { font-size: 1.25rem; }
-            .card { padding: 1rem; }
-            .nav-main { gap: 0.5rem; }
-            .nav-link { padding: 0.5rem 0.75rem; }
-            .app-header .flex { flex-wrap: wrap; gap: 1rem; }
+        .btn-elite-outline {
+            background: transparent;
+            color: var(--elite-blue);
+            border: 2px solid var(--ui-border);
         }
         
-        /* Character Counter */
+        .btn-elite-outline:hover {
+            border-color: var(--elite-blue);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-elite-ghost {
+            background: transparent;
+            color: var(--ui-text);
+            border: 2px solid transparent;
+        }
+        
+        .btn-elite-ghost:hover {
+            background: var(--ui-hover);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+        }
+        
+        /* ====== FORMS ====== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--elite-blue);
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            background: var(--ui-card);
+            transition: all var(--transition-normal);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--elite-blue);
+            box-shadow: 0 0 0 3px rgba(10, 35, 66, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
         .char-counter {
             text-align: right;
             font-size: 0.75rem;
-            color: var(--ui-mid);
+            color: var(--ui-text-muted);
             margin-top: 0.25rem;
         }
         
@@ -613,24 +1109,293 @@
             color: var(--error);
         }
         
-        /* Popular Badge */
-        .popular-badge {
-            display: inline-flex;
+        /* ====== MODALS ====== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 35, 66, 0.8);
+            display: none;
             align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #D1FAE5, #10B981);
-            color: var(--green-dark);
-            animation: pulse 2s infinite;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
         }
         
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
+        .modal.active {
+            display: flex;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(4px);
+            }
+        }
+        
+        .modal-content {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid var(--ui-border-light);
+            box-shadow: var(--shadow-elite);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--elite-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--ui-text-muted);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+        }
+        
+        .modal-close:hover {
+            background: var(--ui-hover);
+            color: var(--elite-blue);
+        }
+        
+        /* ====== TOAST NOTIFICATIONS ====== */
+        .toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .toast {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--ui-card);
+            min-width: 300px;
+            border-left: 4px solid var(--elite-blue);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .toast::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--elite-blue), transparent);
+        }
+        
+        .toast-success {
+            border-left-color: var(--success);
+        }
+        
+        .toast-error {
+            border-left-color: var(--error);
+        }
+        
+        .toast-warning {
+            border-left-color: var(--warning);
+        }
+        
+        .toast-info {
+            border-left-color: var(--info);
+        }
+        
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-close {
+            background: transparent;
+            border: none;
+            color: var(--ui-text-muted);
+            cursor: pointer;
+            font-size: 1.25rem;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+            transition: all var(--transition-normal);
+        }
+        
+        .toast-close:hover {
+            background: var(--ui-hover);
+            color: var(--elite-blue);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ====== SEARCH BAR ====== */
+        .search-bar {
+            position: relative;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-full);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            background: var(--ui-card);
+            transition: all var(--transition-normal);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--elite-blue);
+            box-shadow: 0 0 0 3px rgba(10, 35, 66, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ui-text-muted);
+        }
+        
+        /* ====== PAGE TRANSITIONS ====== */
+        .page {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ====== RESPONSIVE DESIGN ====== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header-container {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .nav-main {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            .dashboard-grid {
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-choice {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+            
+            .project-card {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .discussion-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .engagement-metrics {
+                width: 100%;
+                justify-content: space-between;
+            }
         }
     </style>
 </head>
@@ -643,74 +1408,66 @@
         <div id="authScreen" class="auth-screen">
             <div class="auth-card">
                 <div class="auth-header">
-                    <div class="brand-logo" style="color: white; font-size: 2rem;">
-                        [THØRAX][LAB] PRO
-                    </div>
-                    <p style="opacity: 0.9; margin-top: 0.5rem;">Clinical Innovation Collaboration Platform</p>
+                    <div class="brand-logo-auth">[THØRAX][LAB] PRO</div>
+                    <p class="brand-subtitle">Elite Clinical Innovation Platform</p>
                 </div>
+                
                 <div class="auth-body">
-                    <div class="text-center mb-6">
-                        <h2 class="mb-2">Enter Platform</h2>
-                        <p class="text-muted">Join as creator or visitor</p>
+                    <div class="text-center mb-8">
+                        <h2 class="mb-2">Welcome to the Platform</h2>
+                        <p class="text-muted">Join as a research lead or explore as a guest</p>
                     </div>
                     
-                    <div class="flex gap-4 mb-6">
-                        <button id="creatorLoginBtn" class="btn btn-primary flex-1">
-                            <i class="fas fa-user-plus"></i>
-                            Join as Creator
+                    <div class="auth-choice">
+                        <button id="creatorLoginBtn" class="auth-choice-btn active">
+                            <i class="auth-choice-icon fas fa-user-tie"></i>
+                            <span>Research Lead</span>
                         </button>
-                        <button id="visitorLoginBtn" class="btn btn-secondary flex-1">
-                            <i class="fas fa-eye"></i>
-                            Browse as Visitor
+                        <button id="visitorLoginBtn" class="auth-choice-btn">
+                            <i class="auth-choice-icon fas fa-eye"></i>
+                            <span>Guest Researcher</span>
                         </button>
                     </div>
                     
                     <!-- Creator Form -->
-                    <form id="creatorForm" class="auth-form hidden">
+                    <form id="creatorForm" class="auth-form">
                         <div class="form-group">
-                            <label for="creatorName" class="form-label">Your Name *</label>
-                            <input type="text" id="creatorName" class="form-input" placeholder="Dr. Alex Chen" required>
+                            <label for="creatorName" class="form-label">Full Name *</label>
+                            <input type="text" id="creatorName" class="form-input" 
+                                   placeholder="Dr. Alexander Chen" required>
                         </div>
                         <div class="form-group">
-                            <label for="creatorRole" class="form-label">Your Role *</label>
+                            <label for="creatorRole" class="form-label">Primary Role *</label>
                             <select id="creatorRole" class="form-input" required>
                                 <option value="">Select your role</option>
-                                <option value="clinical">Clinical Professional</option>
-                                <option value="technical">Technical Professional</option>
-                                <option value="both">Both Clinical & Technical</option>
-                                <option value="researcher">Researcher</option>
-                                <option value="student">Student</option>
+                                <option value="clinical">Clinical Researcher</option>
+                                <option value="technical">Technical Lead</option>
+                                <option value="both">Clinical & Technical</option>
+                                <option value="principal">Principal Investigator</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="teamMembers" class="form-label">Team Members (Optional)</label>
-                            <input type="text" id="teamMembers" class="form-input" placeholder="Comma separated names: John, Sarah, Mike">
-                            <p class="text-xs text-muted mt-1">You can add more team members later</p>
+                            <label for="creatorInstitution" class="form-label">Institution</label>
+                            <input type="text" id="creatorInstitution" class="form-input" 
+                                   placeholder="Cambridge University Hospitals">
                         </div>
-                        <div class="flex gap-2">
-                            <button type="button" class="btn btn-secondary" id="backToChoiceBtn">
-                                Back
-                            </button>
-                            <button type="submit" class="btn btn-primary flex-1">
-                                Enter Platform
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-elite-primary">
+                            <i class="fas fa-arrow-right"></i>
+                            Enter Platform
+                        </button>
                     </form>
                     
                     <!-- Visitor Form -->
                     <form id="visitorForm" class="auth-form hidden">
                         <div class="form-group">
                             <label for="visitorName" class="form-label">Your Name (Optional)</label>
-                            <input type="text" id="visitorName" class="form-input" placeholder="Enter your name or remain anonymous">
+                            <input type="text" id="visitorName" class="form-input" 
+                                   placeholder="Enter name or remain anonymous">
                         </div>
-                        <div class="flex gap-2">
-                            <button type="button" class="btn btn-secondary" id="backToChoiceBtn2">
-                                Back
-                            </button>
-                            <button type="submit" class="btn btn-primary flex-1">
-                                Browse Projects
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-elite-primary">
+                            <i class="fas fa-eye"></i>
+                            Browse Research
+                        </button>
                     </form>
                 </div>
             </div>
@@ -718,47 +1475,57 @@
         
         <!-- Main App -->
         <div id="mainApp" class="hidden">
-            <!-- Header -->
+            <!-- Elite Header -->
             <header class="app-header">
                 <div class="container">
-                    <div class="flex items-center justify-between">
-                        <a href="#dashboard" class="brand-logo">
-                            [THØRAX][LAB] PRO
+                    <div class="header-container">
+                        <a href="#dashboard" class="brand-main">
+                            [THØRAX]<span class="brand-accent">[LAB]</span> PRO
                         </a>
+                        
                         <nav class="nav-main">
-                            <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                                <i class="fas fa-home"></i>
-                                Dashboard
-                            </a>
-                            <a href="#projects" class="nav-link" data-page="projects">
-                                <i class="fas fa-project-diagram"></i>
-                                All Projects
-                            </a>
-                            <a href="#myprojects" class="nav-link" data-page="myprojects">
-                                <i class="fas fa-folder"></i>
-                                My Projects
-                            </a>
-                            <span class="visitor-badge hidden" id="visitorBadge">
-                                <i class="fas fa-eye"></i>
-                                Visitor
-                            </span>
-                        </nav>
-                        <div class="flex items-center gap-4">
-                            <div id="userInfo" class="flex items-center gap-3">
-                                <div id="userAvatar" class="user-avatar">??</div>
-                                <div>
-                                    <div id="userName" class="text-sm font-semibold"></div>
-                                    <div id="userRole" class="text-xs text-muted"></div>
-                                </div>
+                            <div class="nav-item">
+                                <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                                    <i class="fas fa-home"></i>
+                                    Dashboard
+                                </a>
                             </div>
-                            <button id="newProjectBtn" class="btn btn-primary btn-sm hidden">
-                                <i class="fas fa-plus"></i>
-                                New Project
-                            </button>
-                            <button id="logoutBtn" class="btn btn-secondary btn-sm">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </button>
+                            <div class="nav-item">
+                                <a href="#projects" class="nav-link" data-page="projects">
+                                    <i class="fas fa-flask"></i>
+                                    Research Projects
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="#myprojects" class="nav-link" data-page="myprojects">
+                                    <i class="fas fa-folder"></i>
+                                    My Projects
+                                </a>
+                            </div>
+                        </nav>
+                        
+                        <div class="user-section">
+                            <div class="flex items-center gap-4">
+                                <span class="visitor-badge hidden" id="visitorBadge">
+                                    <i class="fas fa-eye"></i>
+                                    Guest
+                                </span>
+                                <button id="newProjectBtn" class="btn btn-elite-primary btn-sm hidden">
+                                    <i class="fas fa-plus"></i>
+                                    New Project
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <div id="userAvatar" class="user-avatar">??</div>
+                                <div class="user-info">
+                                    <div id="userName" class="user-name">Loading...</div>
+                                    <div id="userRole" class="user-role">Loading...</div>
+                                </div>
+                                <button id="logoutBtn" class="btn btn-elite-ghost btn-icon">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -769,70 +1536,116 @@
                 <div class="container">
                     <!-- Dashboard Page -->
                     <div id="dashboardPage" class="page">
-                        <div class="mb-6">
-                            <h1 id="welcomeMessage">Innovation Dashboard</h1>
-                            <p class="text-muted">Explore and contribute to clinical innovation projects</p>
+                        <div class="page-header">
+                            <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
+                            <p class="page-subtitle">Monitor and contribute to elite clinical innovation projects</p>
+                        </div>
+                        
+                        <!-- User Stats -->
+                        <div class="dashboard-grid mb-8">
+                            <div class="col-span-12">
+                                <div class="elite-card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-chart-line"></i>
+                                            Research Overview
+                                        </h2>
+                                    </div>
+                                    <div id="userStats">
+                                        <!-- Stats loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Featured Discussions -->
-                        <div class="card mb-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h2>Featured Discussions</h2>
-                                <div class="engagement-score">
-                                    <i class="fas fa-fire"></i>
-                                    <span>Trending Ideas</span>
+                        <div class="dashboard-grid mb-8">
+                            <div class="col-span-12">
+                                <div class="elite-card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-fire"></i>
+                                            Elite Discussions
+                                        </h2>
+                                        <div class="search-bar">
+                                            <i class="search-icon fas fa-search"></i>
+                                            <input type="text" id="discussionSearch" class="search-input" 
+                                                   placeholder="Search discussions...">
+                                        </div>
+                                    </div>
+                                    <div id="featuredDiscussions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- Discussions loaded dynamically -->
+                                    </div>
                                 </div>
-                            </div>
-                            <div id="featuredDiscussions">
-                                <!-- Loaded dynamically -->
                             </div>
                         </div>
                         
                         <!-- Recent Projects -->
-                        <div class="card">
-                            <h2 class="mb-6">Recent Projects</h2>
-                            <div id="recentProjects">
-                                <!-- Loaded dynamically -->
+                        <div class="dashboard-grid">
+                            <div class="col-span-12">
+                                <div class="elite-card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-project-diagram"></i>
+                                            Active Research Projects
+                                        </h2>
+                                        <button id="viewAllProjectsBtn" class="btn btn-elite-outline btn-sm">
+                                            View All
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                    <div id="recentProjects" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        <!-- Projects loaded dynamically -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- All Projects Page -->
                     <div id="projectsPage" class="page hidden">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h1>All Projects</h1>
-                                <p class="text-muted">Browse all clinical innovation collaborations</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button id="sortProjectsBtn" class="btn btn-secondary btn-sm">
-                                    <i class="fas fa-sort"></i>
-                                    Sort
-                                </button>
-                                <input type="text" id="projectSearch" class="form-input" placeholder="Search projects..." style="width: 200px;">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">Research Projects</h1>
+                                    <p class="page-subtitle">Explore elite clinical innovation collaborations</p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="search-bar">
+                                        <i class="search-icon fas fa-search"></i>
+                                        <input type="text" id="projectSearch" class="search-input" 
+                                               placeholder="Search projects...">
+                                    </div>
+                                    <button id="sortProjectsBtn" class="btn btn-elite-outline btn-sm">
+                                        <i class="fas fa-sort"></i>
+                                        Sort
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
-                        <div id="allProjectsList">
-                            <!-- Loaded dynamically -->
+                        <div id="allProjectsList" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Projects loaded dynamically -->
                         </div>
                     </div>
                     
                     <!-- My Projects Page -->
                     <div id="myProjectsPage" class="page hidden">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h1>My Projects</h1>
-                                <p class="text-muted">Manage your clinical innovation projects</p>
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">My Research Projects</h1>
+                                    <p class="page-subtitle">Manage your clinical innovation initiatives</p>
+                                </div>
+                                <button id="createMyProjectBtn" class="btn btn-elite-primary">
+                                    <i class="fas fa-plus"></i>
+                                    New Project
+                                </button>
                             </div>
-                            <button id="createMyProjectBtn" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                New Project
-                            </button>
                         </div>
                         
-                        <div id="myProjectsList">
-                            <!-- Loaded dynamically -->
+                        <div id="myProjectsList" class="grid grid-cols-1 gap-6">
+                            <!-- My projects loaded dynamically -->
                         </div>
                     </div>
                     
@@ -854,39 +1667,45 @@
         <!-- New Project Modal -->
         <div id="newProjectModal" class="modal">
             <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Create New Project</h2>
-                    <button class="btn btn-icon" id="closeProjectModal">&times;</button>
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-plus-circle"></i>
+                        Initiate Research Project
+                    </h2>
+                    <button class="modal-close" id="closeProjectModal">&times;</button>
                 </div>
                 <form id="projectForm">
                     <div class="form-group">
                         <label for="projectTitle" class="form-label">Project Title *</label>
-                        <input type="text" id="projectTitle" class="form-input" placeholder="e.g., AI-Powered COPD Diagnosis Tool" required>
+                        <input type="text" id="projectTitle" class="form-input" 
+                               placeholder="e.g., Genomic Biomarkers for Immunotherapy Response" required>
                     </div>
                     <div class="form-group">
-                        <label for="projectDescription" class="form-label">Description * (Max 200 words)</label>
+                        <label for="projectDescription" class="form-label">Research Description *</label>
                         <textarea id="projectDescription" class="form-input form-textarea" 
-                                  placeholder="Describe your clinical innovation project..." 
+                                  placeholder="Describe the clinical innovation focus, research questions, and objectives..."
                                   rows="4" maxlength="2000" required></textarea>
                         <div class="char-counter" id="descCounter">0/2000</div>
                     </div>
                     <div class="form-group">
-                        <label for="projectTags" class="form-label">Tags (Optional)</label>
-                        <input type="text" id="projectTags" class="form-input" placeholder="e.g., AI, cardiology, machine learning">
-                        <p class="text-xs text-muted mt-1">Separate tags with commas</p>
-                        <div class="tag-container" id="tagsContainer"></div>
+                        <label for="projectInstitution" class="form-label">Lead Institution</label>
+                        <input type="text" id="projectInstitution" class="form-input" 
+                               placeholder="e.g., Oxford University">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Add Team Members</label>
-                        <div class="flex gap-2 mb-2">
-                            <input type="text" id="teamMemberInput" class="form-input" placeholder="Enter team member name">
-                            <button type="button" class="btn btn-secondary btn-sm" id="addTeamMemberBtn">Add</button>
-                        </div>
-                        <div id="teamMembersList" class="space-y-2"></div>
+                        <label for="projectTags" class="form-label">Research Domains</label>
+                        <input type="text" id="projectTags" class="form-input" 
+                               placeholder="e.g., genomics, oncology, machine learning">
+                        <p class="text-muted mt-1">Separate domains with commas</p>
                     </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelProjectBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create Project</button>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-elite-outline" id="cancelProjectBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-elite-primary">
+                            <i class="fas fa-flask"></i>
+                            Initiate Project
+                        </button>
                     </div>
                 </form>
             </div>
@@ -895,43 +1714,60 @@
         <!-- New Discussion Modal -->
         <div id="newDiscussionModal" class="modal">
             <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Start Discussion</h2>
-                    <button class="btn btn-icon" id="closeDiscussionModal">&times;</button>
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-comments"></i>
+                        Initiate Discussion
+                    </h2>
+                    <button class="modal-close" id="closeDiscussionModal">&times;</button>
                 </div>
                 <form id="discussionForm">
                     <input type="hidden" id="discussionProjectId">
                     <div class="form-group">
                         <label class="form-label">Discussion Type</label>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn active" data-type="brainstorm">
-                                💡 Brainstorm
+                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn active" 
+                                    data-type="brainstorm">
+                                <i class="fas fa-lightbulb"></i>
+                                Brainstorm
                             </button>
-                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn" data-type="question">
-                                ❓ Question
+                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                                    data-type="question">
+                                <i class="fas fa-question-circle"></i>
+                                Question
                             </button>
-                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn" data-type="decision">
-                                🤔 Decision
+                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                                    data-type="decision">
+                                <i class="fas fa-gavel"></i>
+                                Decision
                             </button>
-                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn" data-type="insight">
-                                🔍 Insight
+                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                                    data-type="insight">
+                                <i class="fas fa-eye"></i>
+                                Insight
                             </button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="discussionTitle" class="form-label">Topic *</label>
-                        <input type="text" id="discussionTitle" class="form-input" placeholder="What clinical challenge are we solving?" required>
+                        <label for="discussionTitle" class="form-label">Discussion Topic *</label>
+                        <input type="text" id="discussionTitle" class="form-input" 
+                               placeholder="What research challenge are we addressing?" required>
                     </div>
                     <div class="form-group">
-                        <label for="discussionContent" class="form-label">Description * (Max 500 words)</label>
+                        <label for="discussionContent" class="form-label">Research Context *</label>
                         <textarea id="discussionContent" class="form-input form-textarea" 
-                                  placeholder="Describe the topic for discussion..." 
+                                  placeholder="Provide background, context, and specific questions for discussion..."
                                   rows="4" maxlength="5000" required></textarea>
                         <div class="char-counter" id="discussionCounter">0/5000</div>
                     </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelDiscussionBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Start Discussion</button>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-elite-outline" id="cancelDiscussionBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-elite-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Initiate Discussion
+                        </button>
                     </div>
                 </form>
             </div>
@@ -940,1768 +1776,76 @@
         <!-- Add Comment Modal -->
         <div id="commentModal" class="modal">
             <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Add Comment</h2>
-                    <button class="btn btn-icon" id="closeCommentModal">&times;</button>
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-comment-medical"></i>
+                        Contribute Insight
+                    </h2>
+                    <button class="modal-close" id="closeCommentModal">&times;</button>
                 </div>
                 <form id="commentForm">
                     <input type="hidden" id="commentDiscussionId">
                     <div class="form-group">
-                        <label for="commentContent" class="form-label">Your Comment *</label>
+                        <label for="commentContent" class="form-label">Expert Insight *</label>
                         <textarea id="commentContent" class="form-input form-textarea" 
-                                  placeholder="Share your thoughts..." 
+                                  placeholder="Share your expert perspective, analysis, or recommendation..."
                                   rows="3" maxlength="1000" required></textarea>
                         <div class="char-counter" id="commentCounter">0/1000</div>
                     </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelCommentBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-elite-outline" id="cancelCommentBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-elite-primary">
+                            <i class="fas fa-share"></i>
+                            Contribute
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
         
-        <!-- Invite Team Modal -->
+        <!-- Invite Collaborator Modal -->
         <div id="inviteTeamModal" class="modal">
             <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Invite Team Members</h2>
-                    <button class="btn btn-icon" id="closeInviteModal">&times;</button>
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-user-plus"></i>
+                        Invite Collaborator
+                    </h2>
+                    <button class="modal-close" id="closeInviteModal">&times;</button>
                 </div>
                 <div class="form-group">
                     <label for="inviteEmail" class="form-label">Email Address</label>
-                    <input type="email" id="inviteEmail" class="form-input" placeholder="team.member@hospital.org">
+                    <input type="email" id="inviteEmail" class="form-input" 
+                           placeholder="researcher@institution.edu">
                 </div>
                 <div class="form-group">
                     <label for="inviteRole" class="form-label">Role</label>
                     <select id="inviteRole" class="form-input">
                         <option value="clinical">Clinical Expert</option>
                         <option value="technical">Technical Expert</option>
-                        <option value="both">Both</option>
+                        <option value="both">Clinical & Technical</option>
                         <option value="reviewer">Reviewer</option>
                     </select>
                 </div>
-                <div class="flex gap-2 justify-end mt-6">
-                    <button type="button" class="btn btn-secondary" id="cancelInviteBtn">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="sendInviteBtn">Send Invite</button>
+                <div class="flex gap-3 justify-end mt-8">
+                    <button type="button" class="btn btn-elite-outline" id="cancelInviteBtn">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-elite-primary" id="sendInviteBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Invitation
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JavaScript -->
     <script>
-        // ============================================
-        // [THØRAX][LAB] PRO - Frontend Only Platform
-        // ============================================
-        
-        class ThoraxLabPro {
-            constructor() {
-                this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
-                this.isVisitor = JSON.parse(localStorage.getItem('thoraxlab_visitor') || 'false');
-                this.currentProject = null;
-                this.currentDiscussion = null;
-                this.discussionSort = 'popular';
-                this.projectSort = 'recent';
-                this.initialize();
-            }
-            
-            initialize() {
-                this.setupEventListeners();
-                this.setupRouter();
-                this.checkAuth();
-                this.initializeDemoData();
-            }
-            
-            // ========== INITIALIZE DEMO DATA ==========
-            initializeDemoData() {
-                // Only create demo data if none exists
-                if (!localStorage.getItem('thoraxlab_projects')) {
-                    const demoProjects = [
-                        {
-                            id: 'proj_1',
-                            title: 'AI-Powered COPD Exacerbation Prediction',
-                            description: 'Developing machine learning models to predict COPD exacerbations 48 hours in advance using patient vitals, spirometry data, and environmental factors. This innovation aims to reduce hospital readmissions by enabling early intervention.',
-                            tags: ['AI', 'COPD', 'prediction', 'machine learning'],
-                            ownerId: 'demo_user',
-                            ownerName: 'Dr. Sarah Chen',
-                            ownerRole: 'clinical',
-                            teamMembers: ['Dr. Mike Johnson', 'Dr. Lisa Wang', 'Prof. James Wilson'],
-                            createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                            updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-                            discussions: [
-                                {
-                                    id: 'disc_1',
-                                    title: 'Which clinical features are most predictive?',
-                                    content: 'We need to decide on the most important clinical features for our prediction model. Should we prioritize spirometry data, patient-reported symptoms, or environmental factors?',
-                                    type: 'brainstorm',
-                                    authorId: 'demo_user',
-                                    authorName: 'Dr. Sarah Chen',
-                                    authorRole: 'clinical',
-                                    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-                                    likes: 15,
-                                    comments: 8,
-                                    views: 42
-                                },
-                                {
-                                    id: 'disc_2',
-                                    title: 'Data privacy considerations',
-                                    content: 'How do we ensure patient data privacy while training our models? Should we use federated learning or differential privacy techniques?',
-                                    type: 'question',
-                                    authorId: 'demo_user',
-                                    authorName: 'Dr. Mike Johnson',
-                                    authorRole: 'technical',
-                                    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                                    likes: 12,
-                                    comments: 6,
-                                    views: 38
-                                }
-                            ]
-                        },
-                        {
-                            id: 'proj_2',
-                            title: 'Tele-Rehabilitation for Cardiac Patients',
-                            description: 'Creating a remote monitoring platform for cardiac rehabilitation patients using wearable sensors and mobile apps. Focus on improving adherence and outcomes through personalized exercise programs.',
-                            tags: ['telemedicine', 'cardiology', 'wearables', 'rehabilitation'],
-                            ownerId: 'demo_user_2',
-                            ownerName: 'Dr. Robert Kim',
-                            ownerRole: 'both',
-                            teamMembers: ['Dr. Emma Davis', 'Prof. Alex Thompson'],
-                            createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-                            updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-                            discussions: [
-                                {
-                                    id: 'disc_3',
-                                    title: 'Best sensors for heart rate monitoring',
-                                    content: 'We need to select the most accurate and comfortable wearable sensors for continuous heart rate monitoring during rehabilitation exercises.',
-                                    type: 'decision',
-                                    authorId: 'demo_user_2',
-                                    authorName: 'Dr. Robert Kim',
-                                    authorRole: 'both',
-                                    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                                    likes: 18,
-                                    comments: 10,
-                                    views: 56
-                                }
-                            ]
-                        }
-                    ];
-                    
-                    localStorage.setItem('thoraxlab_projects', JSON.stringify(demoProjects));
-                    localStorage.setItem('thoraxlab_discussion_likes', JSON.stringify({}));
-                    localStorage.setItem('thoraxlab_comment_likes', JSON.stringify({}));
-                }
-            }
-            
-            // ========== AUTHENTICATION ==========
-            checkAuth() {
-                if (this.user || this.isVisitor) {
-                    this.showApp();
-                    this.updateUserDisplay();
-                } else {
-                    this.showAuth();
-                }
-            }
-            
-            showAuth() {
-                document.getElementById('authScreen').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('hidden');
-            }
-            
-            showApp() {
-                document.getElementById('authScreen').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-            }
-            
-            loginAsCreator(e) {
-                if (e) e.preventDefault();
-                
-                const name = document.getElementById('creatorName').value.trim();
-                const role = document.getElementById('creatorRole').value;
-                const teamMembersInput = document.getElementById('teamMembers').value.trim();
-                
-                if (!name || !role) {
-                    this.showToast('Name and role are required', 'error');
-                    return;
-                }
-                
-                // Generate avatar initials
-                const initials = name.split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
-                
-                // Parse team members
-                const teamMembers = teamMembersInput ? 
-                    teamMembersInput.split(',').map(m => m.trim()).filter(m => m) : [];
-                
-                this.user = {
-                    id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    name: name,
-                    role: role,
-                    avatar_initials: initials,
-                    teamMembers: teamMembers,
-                    createdAt: new Date().toISOString()
-                };
-                
-                this.isVisitor = false;
-                
-                localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
-                localStorage.setItem('thoraxlab_visitor', 'false');
-                
-                this.showApp();
-                this.updateUserDisplay();
-                this.showToast(`Welcome to [THØRAX][LAB] PRO, ${name.split(' ')[0]}!`, 'success');
-            }
-            
-            loginAsVisitor(e) {
-                if (e) e.preventDefault();
-                
-                const name = document.getElementById('visitorName').value.trim();
-                
-                this.user = {
-                    id: `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    name: name || 'Anonymous Visitor',
-                    role: 'visitor',
-                    avatar_initials: 'V',
-                    createdAt: new Date().toISOString()
-                };
-                
-                this.isVisitor = true;
-                
-                localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
-                localStorage.setItem('thoraxlab_visitor', 'true');
-                
-                this.showApp();
-                this.updateUserDisplay();
-                this.showToast('You are browsing as a visitor', 'info');
-            }
-            
-            logout() {
-                this.user = null;
-                this.isVisitor = false;
-                localStorage.removeItem('thoraxlab_user');
-                localStorage.removeItem('thoraxlab_visitor');
-                this.showAuth();
-            }
-            
-            updateUserDisplay() {
-                if (!this.user) return;
-                
-                const avatar = document.getElementById('userAvatar');
-                const name = document.getElementById('userName');
-                const role = document.getElementById('userRole');
-                const visitorBadge = document.getElementById('visitorBadge');
-                const newProjectBtn = document.getElementById('newProjectBtn');
-                
-                if (avatar) {
-                    avatar.textContent = this.user.avatar_initials || '??';
-                }
-                
-                if (name) {
-                    name.textContent = this.user.name;
-                }
-                
-                if (role) {
-                    role.textContent = this.isVisitor ? 'Visitor' : 
-                        this.user.role === 'clinical' ? 'Clinical Professional' :
-                        this.user.role === 'technical' ? 'Technical Professional' :
-                        this.user.role === 'both' ? 'Clinical & Technical' : this.user.role;
-                }
-                
-                if (visitorBadge) {
-                    visitorBadge.classList.toggle('hidden', !this.isVisitor);
-                }
-                
-                if (newProjectBtn) {
-                    newProjectBtn.classList.toggle('hidden', this.isVisitor);
-                }
-                
-                const welcome = document.getElementById('welcomeMessage');
-                if (welcome && !this.isVisitor) {
-                    welcome.textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
-                }
-            }
-            
-            // ========== ROUTER ==========
-            setupRouter() {
-                window.addEventListener('hashchange', () => this.handleRoute());
-                this.handleRoute();
-            }
-            
-            handleRoute() {
-                const hash = window.location.hash.substring(1) || 'dashboard';
-                const parts = hash.split('/');
-                
-                this.showPage(parts[0]);
-                
-                if (parts[0] === 'project' && parts[1]) {
-                    this.loadProject(parts[1]);
-                } else if (parts[0] === 'discussion' && parts[1]) {
-                    this.loadDiscussion(parts[1]);
-                }
-                
-                // Update active nav
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    const linkPage = link.getAttribute('href').substring(1);
-                    if (linkPage.includes('/')) {
-                        const linkBase = linkPage.split('/')[0];
-                        link.classList.toggle('active', linkBase === parts[0]);
-                    } else {
-                        link.classList.toggle('active', linkPage === parts[0]);
-                    }
-                });
-            }
-            
-            showPage(page) {
-                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-                
-                const pageElement = document.getElementById(`${page}Page`);
-                if (pageElement) {
-                    pageElement.classList.remove('hidden');
-                    
-                    switch(page) {
-                        case 'dashboard':
-                            this.loadDashboard();
-                            break;
-                        case 'projects':
-                            this.loadAllProjects();
-                            break;
-                        case 'myprojects':
-                            this.loadMyProjects();
-                            break;
-                    }
-                }
-            }
-            
-            navigateTo(page) {
-                window.location.hash = page;
-            }
-            
-            // ========== DATA LOADING ==========
-            loadDashboard() {
-                this.loadFeaturedDiscussions();
-                this.loadRecentProjects();
-            }
-            
-            loadFeaturedDiscussions() {
-                const projects = this.getProjects();
-                let allDiscussions = [];
-                
-                projects.forEach(project => {
-                    if (project.discussions) {
-                        project.discussions.forEach(disc => {
-                            allDiscussions.push({
-                                ...disc,
-                                projectId: project.id,
-                                projectTitle: project.title,
-                                projectTags: project.tags
-                            });
-                        });
-                    }
-                });
-                
-                // Sort by engagement (likes + comments)
-                allDiscussions.sort((a, b) => {
-                    const engagementA = (a.likes || 0) + (a.comments || 0);
-                    const engagementB = (b.likes || 0) + (b.comments || 0);
-                    return engagementB - engagementA;
-                });
-                
-                // Take top 3
-                const featured = allDiscussions.slice(0, 3);
-                this.renderFeaturedDiscussions(featured);
-            }
-            
-            loadRecentProjects() {
-                const projects = this.getProjects();
-                
-                // Sort by recent activity
-                projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                
-                // Take recent 4
-                const recent = projects.slice(0, 4);
-                this.renderRecentProjects(recent);
-            }
-            
-            loadAllProjects() {
-                const projects = this.getProjects();
-                
-                // Apply sorting
-                let sortedProjects = [...projects];
-                switch(this.projectSort) {
-                    case 'recent':
-                        sortedProjects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                        break;
-                    case 'popular':
-                        sortedProjects.sort((a, b) => {
-                            const engagementA = (a.discussions || []).reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0);
-                            const engagementB = (b.discussions || []).reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0);
-                            return engagementB - engagementA;
-                        });
-                        break;
-                    case 'alphabetical':
-                        sortedProjects.sort((a, b) => a.title.localeCompare(b.title));
-                        break;
-                }
-                
-                this.renderAllProjects(sortedProjects);
-            }
-            
-            loadMyProjects() {
-                if (this.isVisitor) {
-                    this.showToast('Visitors cannot create projects', 'warning');
-                    this.navigateTo('dashboard');
-                    return;
-                }
-                
-                const projects = this.getProjects();
-                const myProjects = projects.filter(p => p.ownerId === this.user.id);
-                this.renderMyProjects(myProjects);
-            }
-            
-            loadProject(projectId) {
-                const projects = this.getProjects();
-                const project = projects.find(p => p.id === projectId);
-                
-                if (!project) {
-                    this.showToast('Project not found', 'error');
-                    this.navigateTo('projects');
-                    return;
-                }
-                
-                this.currentProject = project;
-                this.renderProjectDetail();
-                this.showPage('projectDetail');
-            }
-            
-            loadDiscussion(discussionId) {
-                const projects = this.getProjects();
-                
-                for (const project of projects) {
-                    if (project.discussions) {
-                        const discussion = project.discussions.find(d => d.id === discussionId);
-                        if (discussion) {
-                            this.currentDiscussion = {
-                                ...discussion,
-                                projectId: project.id,
-                                projectTitle: project.title,
-                                projectOwnerId: project.ownerId
-                            };
-                            this.renderDiscussionDetail();
-                            this.showPage('discussionDetail');
-                            return;
-                        }
-                    }
-                }
-                
-                this.showToast('Discussion not found', 'error');
-                this.navigateTo('dashboard');
-            }
-            
-            // ========== RENDERING ==========
-            renderFeaturedDiscussions(discussions) {
-                const container = document.getElementById('featuredDiscussions');
-                
-                if (!discussions.length) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">💬</div>
-                            <h3 class="mb-2">No discussions yet</h3>
-                            <p class="text-muted">Start the first discussion in a project!</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = discussions.map(disc => {
-                    const engagementScore = (disc.likes || 0) + (disc.comments || 0);
-                    const engagementPercentage = Math.min(100, engagementScore * 5);
-                    const isPopular = engagementScore >= 10;
-                    
-                    return `
-                        <div class="discussion-card" data-discussion-id="${disc.id}" data-project-id="${disc.projectId}">
-                            <div class="flex items-start justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <span class="discussion-type type-${disc.type}">
-                                        ${this.getDiscussionIcon(disc.type)} ${disc.type}
-                                    </span>
-                                    ${isPopular ? `
-                                        <span class="popular-badge">
-                                            <i class="fas fa-fire"></i>
-                                            Popular
-                                        </span>
-                                    ` : ''}
-                                </div>
-                                <span class="text-sm text-muted">
-                                    ${this.formatDate(disc.createdAt)}
-                                </span>
-                            </div>
-                            <h3 class="mb-2">${this.escapeHtml(disc.title)}</h3>
-                            <p class="text-muted mb-3">
-                                ${this.escapeHtml(disc.content.substring(0, 150))}${disc.content.length > 150 ? '...' : ''}
-                            </p>
-                            <div class="flex items-center justify-between text-sm">
-                                <div class="flex items-center gap-4">
-                                    <span class="flex items-center gap-1">
-                                        <i class="fas fa-user-md"></i>
-                                        ${this.escapeHtml(disc.authorName)}
-                                    </span>
-                                    <span class="flex items-center gap-1">
-                                        <i class="fas fa-folder"></i>
-                                        ${this.escapeHtml(disc.projectTitle)}
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span class="flex items-center gap-1">
-                                        <i class="fas fa-heart"></i>
-                                        ${disc.likes || 0}
-                                    </span>
-                                    <span class="flex items-center gap-1">
-                                        <i class="fas fa-comment"></i>
-                                        ${disc.comments || 0}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="engagement-indicator">
-                                <div class="engagement-fill" style="width: ${engagementPercentage}%"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Add click handlers
-                container.querySelectorAll('.discussion-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        if (!e.target.closest('.action-btn')) {
-                            const discussionId = e.currentTarget.dataset.discussionId;
-                            this.navigateTo(`discussion/${discussionId}`);
-                        }
-                    });
-                });
-            }
-            
-            renderRecentProjects(projects) {
-                const container = document.getElementById('recentProjects');
-                
-                if (!projects.length) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">📁</div>
-                            <h3 class="mb-2">No projects yet</h3>
-                            <p class="text-muted">Create the first clinical innovation project!</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = projects.map(project => {
-                    const discussionCount = project.discussions ? project.discussions.length : 0;
-                    const totalEngagement = project.discussions ? 
-                        project.discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0) : 0;
-                    
-                    return `
-                        <div class="project-card" data-project-id="${project.id}">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
-                                    <p class="text-sm text-muted">
-                                        By ${this.escapeHtml(project.ownerName)} • 
-                                        ${this.formatDate(project.createdAt)}
-                                    </p>
-                                </div>
-                                <span class="engagement-score">
-                                    <i class="fas fa-chart-line"></i>
-                                    ${totalEngagement}
-                                </span>
-                            </div>
-                            <p class="text-muted mb-4">
-                                ${this.escapeHtml(project.description.substring(0, 180))}${project.description.length > 180 ? '...' : ''}
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-wrap gap-1">
-                                    ${project.tags.map(tag => `
-                                        <span class="tag">${this.escapeHtml(tag)}</span>
-                                    `).join('')}
-                                </div>
-                                <div class="text-sm text-muted">
-                                    ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Add click handlers
-                container.querySelectorAll('.project-card').forEach(card => {
-                    card.addEventListener('click', () => {
-                        const projectId = card.dataset.projectId;
-                        this.navigateTo(`project/${projectId}`);
-                    });
-                });
-            }
-            
-            renderAllProjects(projects) {
-                const container = document.getElementById('allProjectsList');
-                
-                if (!projects.length) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">📁</div>
-                            <h3 class="mb-2">No projects yet</h3>
-                            <p class="text-muted">Be the first to create a clinical innovation project!</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = projects.map(project => {
-                    const discussionCount = project.discussions ? project.discussions.length : 0;
-                    const totalEngagement = project.discussions ? 
-                        project.discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0) : 0;
-                    const isOwner = !this.isVisitor && project.ownerId === this.user.id;
-                    
-                    return `
-                        <div class="project-card" data-project-id="${project.id}">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
-                                    <p class="text-sm text-muted">
-                                        By ${this.escapeHtml(project.ownerName)} • 
-                                        ${this.formatDate(project.createdAt)}
-                                        ${isOwner ? ' • <span class="text-thorax-blue">(Your Project)</span>' : ''}
-                                    </p>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="engagement-score">
-                                        <i class="fas fa-chart-line"></i>
-                                        ${totalEngagement}
-                                    </span>
-                                    ${!this.isVisitor && !isOwner ? `
-                                        <button class="btn btn-sm btn-secondary join-project-btn" data-project-id="${project.id}">
-                                            <i class="fas fa-plus"></i>
-                                            Join
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            </div>
-                            <p class="text-muted mb-4">
-                                ${this.escapeHtml(project.description.substring(0, 200))}${project.description.length > 200 ? '...' : ''}
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-wrap gap-1">
-                                    ${project.tags.slice(0, 3).map(tag => `
-                                        <span class="tag">${this.escapeHtml(tag)}</span>
-                                    `).join('')}
-                                    ${project.tags.length > 3 ? `<span class="tag">+${project.tags.length - 3}</span>` : ''}
-                                </div>
-                                <div class="text-sm text-muted">
-                                    ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Add click handlers
-                container.querySelectorAll('.project-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        if (!e.target.closest('.join-project-btn')) {
-                            const projectId = card.dataset.projectId;
-                            this.navigateTo(`project/${projectId}`);
-                        }
-                    });
-                });
-                
-                // Join project buttons
-                container.querySelectorAll('.join-project-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const projectId = btn.dataset.projectId;
-                        this.joinProject(projectId);
-                    });
-                });
-            }
-            
-            renderMyProjects(projects) {
-                const container = document.getElementById('myProjectsList');
-                
-                if (!projects.length) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">📁</div>
-                            <h3 class="mb-2">No projects yet</h3>
-                            <p class="text-muted">Create your first clinical innovation project!</p>
-                            <button class="btn btn-primary mt-4" id="createFirstProjectBtn">
-                                Create First Project
-                            </button>
-                        </div>
-                    `;
-                    
-                    document.getElementById('createFirstProjectBtn')?.addEventListener('click', () => {
-                        this.showModal('newProjectModal');
-                    });
-                    
-                    return;
-                }
-                
-                container.innerHTML = projects.map(project => {
-                    const discussionCount = project.discussions ? project.discussions.length : 0;
-                    const totalEngagement = project.discussions ? 
-                        project.discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0) : 0;
-                    
-                    return `
-                        <div class="project-card" data-project-id="${project.id}">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
-                                    <p class="text-sm text-muted">
-                                        Created ${this.formatDate(project.createdAt)} • 
-                                        Last updated ${this.formatDate(project.updatedAt)}
-                                    </p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button class="btn btn-sm btn-secondary edit-project-btn" data-project-id="${project.id}">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-primary" onclick="app.navigateTo('project/${project.id}')">
-                                        Open
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="text-muted mb-4">
-                                ${this.escapeHtml(project.description.substring(0, 180))}${project.description.length > 180 ? '...' : ''}
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-4">
-                                    <div class="flex flex-wrap gap-1">
-                                        ${project.tags.map(tag => `
-                                            <span class="tag">${this.escapeHtml(tag)}</span>
-                                        `).join('')}
-                                    </div>
-                                    <span class="engagement-score">
-                                        <i class="fas fa-chart-line"></i>
-                                        ${totalEngagement}
-                                    </span>
-                                </div>
-                                <div class="text-sm text-muted">
-                                    ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Edit project buttons
-                container.querySelectorAll('.edit-project-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const projectId = btn.dataset.projectId;
-                        this.editProject(projectId);
-                    });
-                });
-                
-                // Project click handlers
-                container.querySelectorAll('.project-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        if (!e.target.closest('.edit-project-btn') && !e.target.closest('button')) {
-                            const projectId = card.dataset.projectId;
-                            this.navigateTo(`project/${projectId}`);
-                        }
-                    });
-                });
-            }
-            
-            renderProjectDetail() {
-                const container = document.getElementById('projectDetailPage');
-                if (!this.currentProject) return;
-                
-                const project = this.currentProject;
-                const isOwner = !this.isVisitor && project.ownerId === this.user.id;
-                const discussions = project.discussions || [];
-                
-                // Sort discussions by popularity
-                const sortedDiscussions = [...discussions].sort((a, b) => {
-                    const engagementA = (a.likes || 0) + (a.comments || 0);
-                    const engagementB = (b.likes || 0) + (b.comments || 0);
-                    return engagementB - engagementA;
-                });
-                
-                container.innerHTML = `
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h1>${this.escapeHtml(project.title)}</h1>
-                                <p class="text-muted">
-                                    By ${this.escapeHtml(project.ownerName)} • 
-                                    ${this.formatDate(project.createdAt)}
-                                </p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="btn btn-secondary" id="backToProjectsBtn">
-                                    <i class="fas fa-arrow-left"></i>
-                                    Back
-                                </button>
-                                ${isOwner ? `
-                                    <button class="btn btn-primary" id="addDiscussionBtn">
-                                        <i class="fas fa-plus"></i>
-                                        New Discussion
-                                    </button>
-                                ` : !this.isVisitor ? `
-                                    <button class="btn btn-primary" id="joinThisProjectBtn">
-                                        <i class="fas fa-user-plus"></i>
-                                        Join Project
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-6">
-                            <h3 class="mb-4">Project Description</h3>
-                            <p class="mb-4">${this.escapeHtml(project.description)}</p>
-                            
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                ${project.tags.map(tag => `
-                                    <span class="tag">${this.escapeHtml(tag)}</span>
-                                `).join('')}
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-4 mt-6">
-                                <div>
-                                    <h4 class="mb-2">Team Members</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center gap-2">
-                                            <div class="user-avatar">${project.ownerName.substring(0, 2).toUpperCase()}</div>
-                                            <div>
-                                                <div class="font-medium">${this.escapeHtml(project.ownerName)}</div>
-                                                <div class="text-sm text-muted">Project Lead</div>
-                                            </div>
-                                        </div>
-                                        ${project.teamMembers.map(member => `
-                                            <div class="flex items-center gap-2">
-                                                <div class="user-avatar" style="background: var(--ui-mid);">
-                                                    ${member.substring(0, 2).toUpperCase()}
-                                                </div>
-                                                <div class="font-medium">${this.escapeHtml(member)}</div>
-                                            </div>
-                                        `).join('')}
-                                        ${isOwner ? `
-                                            <button class="btn btn-sm btn-secondary mt-2" id="inviteTeamMemberBtn">
-                                                <i class="fas fa-user-plus"></i>
-                                                Invite Team Member
-                                            </button>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 class="mb-2">Project Stats</h4>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <div class="text-sm text-muted">Total Discussions</div>
-                                            <div class="text-2xl font-bold">${discussions.length}</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm text-muted">Total Engagement</div>
-                                            <div class="text-2xl font-bold">
-                                                ${discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0)}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm text-muted">Last Activity</div>
-                                            <div class="font-medium">${this.formatDate(project.updatedAt)}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="flex items-center justify-between mb-6">
-                                <h2>Discussions (${discussions.length})</h2>
-                                ${isOwner ? `
-                                    <button class="btn btn-primary btn-sm" id="startDiscussionBtn">
-                                        <i class="fas fa-plus"></i>
-                                        Start Discussion
-                                    </button>
-                                ` : ''}
-                            </div>
-                            
-                            <div id="projectDiscussions">
-                                ${sortedDiscussions.length > 0 ? sortedDiscussions.map(disc => {
-                                    const engagementScore = (disc.likes || 0) + (disc.comments || 0);
-                                    const engagementPercentage = Math.min(100, engagementScore * 5);
-                                    const isPopular = engagementScore >= 10;
-                                    
-                                    return `
-                                        <div class="discussion-card mb-4" data-discussion-id="${disc.id}">
-                                            <div class="flex items-start justify-between mb-3">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="discussion-type type-${disc.type}">
-                                                        ${this.getDiscussionIcon(disc.type)} ${disc.type}
-                                                    </span>
-                                                    ${isPopular ? `
-                                                        <span class="popular-badge">
-                                                            <i class="fas fa-fire"></i>
-                                                            Popular
-                                                        </span>
-                                                    ` : ''}
-                                                </div>
-                                                <span class="text-sm text-muted">
-                                                    ${this.formatDate(disc.createdAt)}
-                                                </span>
-                                            </div>
-                                            <h3 class="mb-2">${this.escapeHtml(disc.title)}</h3>
-                                            <p class="text-muted mb-3">
-                                                ${this.escapeHtml(disc.content.substring(0, 200))}${disc.content.length > 200 ? '...' : ''}
-                                            </p>
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center gap-4">
-                                                    <div class="flex items-center gap-2">
-                                                        <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">
-                                                            ${disc.authorName.substring(0, 2).toUpperCase()}
-                                                        </div>
-                                                        <span class="text-sm">${this.escapeHtml(disc.authorName)}</span>
-                                                    </div>
-                                                    <div class="flex items-center gap-3">
-                                                        <button class="action-btn like-btn ${this.hasLikedDiscussion(disc.id) ? 'liked' : ''}" 
-                                                                data-discussion-id="${disc.id}">
-                                                            <i class="fas fa-heart"></i>
-                                                            <span>${disc.likes || 0}</span>
-                                                        </button>
-                                                        <button class="action-btn comment-btn" data-discussion-id="${disc.id}">
-                                                            <i class="fas fa-comment"></i>
-                                                            <span>${disc.comments || 0}</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <span class="text-sm text-muted">
-                                                    Click to view discussion
-                                                </span>
-                                            </div>
-                                            <div class="engagement-indicator">
-                                                <div class="engagement-fill" style="width: ${engagementPercentage}%"></div>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('') : `
-                                    <div class="empty-state">
-                                        <div class="empty-icon">💬</div>
-                                        <h3 class="mb-2">No discussions yet</h3>
-                                        <p class="text-muted">Start the first discussion!</p>
-                                    </div>
-                                `}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Add event listeners
-                this.setupProjectDetailListeners();
-            }
-            
-            renderDiscussionDetail() {
-                const container = document.getElementById('discussionDetailPage');
-                if (!this.currentDiscussion) return;
-                
-                const discussion = this.currentDiscussion;
-                const projects = this.getProjects();
-                const project = projects.find(p => p.id === discussion.projectId);
-                const isOwner = !this.isVisitor && project.ownerId === this.user.id;
-                const hasLiked = this.hasLikedDiscussion(discussion.id);
-                
-                container.innerHTML = `
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h1>${this.escapeHtml(discussion.title)}</h1>
-                                <p class="text-muted">
-                                    In project: <a href="#project/${discussion.projectId}" class="text-thorax-blue">
-                                        ${this.escapeHtml(discussion.projectTitle)}
-                                    </a>
-                                </p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="btn btn-secondary" id="backToProjectBtn">
-                                    <i class="fas fa-arrow-left"></i>
-                                    Back to Project
-                                </button>
-                                ${!this.isVisitor ? `
-                                    <button class="btn btn-primary" id="addCommentBtn">
-                                        <i class="fas fa-comment"></i>
-                                        Add Comment
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-6">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="user-avatar">${discussion.authorName.substring(0, 2).toUpperCase()}</div>
-                                    <div>
-                                        <div class="font-medium">${this.escapeHtml(discussion.authorName)}</div>
-                                        <div class="text-sm text-muted">
-                                            ${this.formatDate(discussion.createdAt)} • 
-                                            <span class="discussion-type type-${discussion.type}">
-                                                ${discussion.type}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button class="action-btn like-btn ${hasLiked ? 'liked' : ''}" 
-                                            data-discussion-id="${discussion.id}">
-                                        <i class="fas fa-heart"></i>
-                                        <span>${discussion.likes || 0}</span>
-                                    </button>
-                                    <span class="text-sm text-muted">
-                                        ${discussion.views || 0} views
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-6">
-                                <p>${this.escapeHtml(discussion.content)}</p>
-                            </div>
-                            
-                            <div class="engagement-indicator">
-                                <div class="engagement-fill" style="width: ${Math.min(100, ((discussion.likes || 0) + (discussion.comments || 0)) * 5)}%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="card">
-                            <h3 class="mb-4">Comments</h3>
-                            <div id="commentsSection">
-                                <!-- Comments loaded dynamically -->
-                            </div>
-                            ${!this.isVisitor ? `
-                                <div class="mt-4">
-                                    <button class="btn btn-primary w-full" id="addNewCommentBtn">
-                                        <i class="fas fa-plus"></i>
-                                        Add a Comment
-                                    </button>
-                                </div>
-                            ` : `
-                                <div class="text-center py-4 text-muted">
-                                    <i class="fas fa-info-circle"></i>
-                                    Visitors can view but cannot comment
-                                </div>
-                            `}
-                        </div>
-                    </div>
-                `;
-                
-                // Load comments
-                this.loadComments();
-                
-                // Add event listeners
-                this.setupDiscussionDetailListeners();
-            }
-            
-            loadComments() {
-                const container = document.getElementById('commentsSection');
-                if (!container) return;
-                
-                const comments = this.currentDiscussion.comments || [];
-                
-                if (!comments.length) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">💭</div>
-                            <h3 class="mb-2">No comments yet</h3>
-                            <p class="text-muted">Be the first to share your thoughts!</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = comments.map(comment => {
-                    const hasLiked = this.hasLikedComment(comment.id);
-                    
-                    return `
-                        <div class="comment">
-                            <div class="comment-header">
-                                <div class="user-avatar" style="width: 32px; height: 32px; font-size: 12px;">
-                                    ${comment.authorName.substring(0, 2).toUpperCase()}
-                                </div>
-                                <div>
-                                    <div class="font-medium">${this.escapeHtml(comment.authorName)}</div>
-                                    <div class="text-sm text-muted">${this.formatDate(comment.createdAt)}</div>
-                                </div>
-                            </div>
-                            <p class="mb-3">${this.escapeHtml(comment.content)}</p>
-                            <div class="engagement-actions" style="border: none; padding: 0;">
-                                <button class="action-btn comment-like-btn ${hasLiked ? 'liked' : ''}" 
-                                        data-comment-id="${comment.id}">
-                                    <i class="fas fa-heart"></i>
-                                    <span>${comment.likes || 0}</span>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Add like handlers for comments
-                container.querySelectorAll('.comment-like-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        if (this.isVisitor) {
-                            this.showToast('Visitors cannot like comments', 'warning');
-                            return;
-                        }
-                        const commentId = e.currentTarget.dataset.commentId;
-                        this.toggleCommentLike(commentId);
-                    });
-                });
-            }
-            
-            // ========== PROJECT MANAGEMENT ==========
-            createProject() {
-                const title = document.getElementById('projectTitle').value.trim();
-                const description = document.getElementById('projectDescription').value.trim();
-                const tagsInput = document.getElementById('projectTags').value.trim();
-                
-                if (!title || !description) {
-                    this.showToast('Title and description are required', 'error');
-                    return;
-                }
-                
-                if (description.length > 2000) {
-                    this.showToast('Description must be 2000 characters or less', 'error');
-                    return;
-                }
-                
-                const tags = tagsInput ? 
-                    tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
-                
-                // Get team members from UI
-                const teamMembers = [];
-                document.querySelectorAll('#teamMembersList .team-member').forEach(item => {
-                    const name = item.dataset.name;
-                    if (name) teamMembers.push(name);
-                });
-                
-                const project = {
-                    id: `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    title: title,
-                    description: description,
-                    tags: tags,
-                    ownerId: this.user.id,
-                    ownerName: this.user.name,
-                    ownerRole: this.user.role,
-                    teamMembers: teamMembers,
-                    discussions: [],
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-                
-                // Save to localStorage
-                const projects = this.getProjects();
-                projects.push(project);
-                this.saveProjects(projects);
-                
-                this.showToast('Project created successfully!', 'success');
-                this.hideModal('newProjectModal');
-                this.navigateTo(`project/${project.id}`);
-            }
-            
-            editProject(projectId) {
-                this.showToast('Edit feature coming soon!', 'info');
-            }
-            
-            joinProject(projectId) {
-                const projects = this.getProjects();
-                const project = projects.find(p => p.id === projectId);
-                
-                if (!project) {
-                    this.showToast('Project not found', 'error');
-                    return;
-                }
-                
-                // Check if already in team
-                if (project.teamMembers.includes(this.user.name)) {
-                    this.showToast('You are already in this project team', 'info');
-                    return;
-                }
-                
-                // Add to team
-                project.teamMembers.push(this.user.name);
-                project.updatedAt = new Date().toISOString();
-                this.saveProjects(projects);
-                
-                this.showToast(`Joined project: ${project.title}`, 'success');
-                this.loadAllProjects();
-            }
-            
-            // ========== DISCUSSION MANAGEMENT ==========
-            createDiscussion() {
-                const projectId = document.getElementById('discussionProjectId').value;
-                const title = document.getElementById('discussionTitle').value.trim();
-                const content = document.getElementById('discussionContent').value.trim();
-                const type = document.querySelector('.discussion-type-btn.active').dataset.type;
-                
-                if (!title || !content) {
-                    this.showToast('Topic and description are required', 'error');
-                    return;
-                }
-                
-                if (content.length > 5000) {
-                    this.showToast('Description must be 5000 characters or less', 'error');
-                    return;
-                }
-                
-                const discussion = {
-                    id: `disc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    title: title,
-                    content: content,
-                    type: type,
-                    authorId: this.user.id,
-                    authorName: this.user.name,
-                    authorRole: this.user.role,
-                    createdAt: new Date().toISOString(),
-                    likes: 0,
-                    comments: 0,
-                    views: 0
-                };
-                
-                // Save to project
-                const projects = this.getProjects();
-                const projectIndex = projects.findIndex(p => p.id === projectId);
-                
-                if (projectIndex === -1) {
-                    this.showToast('Project not found', 'error');
-                    return;
-                }
-                
-                if (!projects[projectIndex].discussions) {
-                    projects[projectIndex].discussions = [];
-                }
-                
-                projects[projectIndex].discussions.push(discussion);
-                projects[projectIndex].updatedAt = new Date().toISOString();
-                this.saveProjects(projects);
-                
-                this.showToast('Discussion started successfully!', 'success');
-                this.hideModal('newDiscussionModal');
-                this.navigateTo(`discussion/${discussion.id}`);
-            }
-            
-            addComment() {
-                const discussionId = document.getElementById('commentDiscussionId').value;
-                const content = document.getElementById('commentContent').value.trim();
-                
-                if (!content) {
-                    this.showToast('Comment content is required', 'error');
-                    return;
-                }
-                
-                if (content.length > 1000) {
-                    this.showToast('Comment must be 1000 characters or less', 'error');
-                    return;
-                }
-                
-                const comment = {
-                    id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    content: content,
-                    authorId: this.user.id,
-                    authorName: this.user.name,
-                    authorRole: this.user.role,
-                    createdAt: new Date().toISOString(),
-                    likes: 0
-                };
-                
-                // Find and update discussion
-                const projects = this.getProjects();
-                let discussionUpdated = false;
-                
-                for (const project of projects) {
-                    if (project.discussions) {
-                        const discussionIndex = project.discussions.findIndex(d => d.id === discussionId);
-                        if (discussionIndex !== -1) {
-                            if (!project.discussions[discussionIndex].comments) {
-                                project.discussions[discussionIndex].comments = [];
-                            }
-                            project.discussions[discussionIndex].comments.push(comment);
-                            project.discussions[discussionIndex].comments++;
-                            project.discussions[discussionIndex].updatedAt = new Date().toISOString();
-                            project.updatedAt = new Date().toISOString();
-                            discussionUpdated = true;
-                            break;
-                        }
-                    }
-                }
-                
-                if (discussionUpdated) {
-                    this.saveProjects(projects);
-                    this.showToast('Comment added successfully!', 'success');
-                    this.hideModal('commentModal');
-                    this.loadDiscussion(discussionId);
-                } else {
-                    this.showToast('Discussion not found', 'error');
-                }
-            }
-            
-            // ========== ENGAGEMENT FEATURES ==========
-            toggleDiscussionLike(discussionId) {
-                const likedDiscussions = JSON.parse(localStorage.getItem('thoraxlab_discussion_likes') || '{}');
-                
-                if (likedDiscussions[discussionId]) {
-                    // Unlike
-                    delete likedDiscussions[discussionId];
-                    this.updateDiscussionLikes(discussionId, -1);
-                } else {
-                    // Like
-                    likedDiscussions[discussionId] = true;
-                    this.updateDiscussionLikes(discussionId, 1);
-                }
-                
-                localStorage.setItem('thoraxlab_discussion_likes', JSON.stringify(likedDiscussions));
-                this.loadDashboard(); // Refresh featured discussions
-            }
-            
-            toggleCommentLike(commentId) {
-                const likedComments = JSON.parse(localStorage.getItem('thoraxlab_comment_likes') || '{}');
-                
-                if (likedComments[commentId]) {
-                    // Unlike
-                    delete likedComments[commentId];
-                    this.updateCommentLikes(commentId, -1);
-                } else {
-                    // Like
-                    likedComments[commentId] = true;
-                    this.updateCommentLikes(commentId, 1);
-                }
-                
-                localStorage.setItem('thoraxlab_comment_likes', JSON.stringify(likedComments));
-            }
-            
-            updateDiscussionLikes(discussionId, delta) {
-                const projects = this.getProjects();
-                
-                for (const project of projects) {
-                    if (project.discussions) {
-                        const discussion = project.discussions.find(d => d.id === discussionId);
-                        if (discussion) {
-                            discussion.likes = (discussion.likes || 0) + delta;
-                            project.updatedAt = new Date().toISOString();
-                            break;
-                        }
-                    }
-                }
-                
-                this.saveProjects(projects);
-                
-                // Update UI if on discussion detail page
-                if (this.currentDiscussion && this.currentDiscussion.id === discussionId) {
-                    this.currentDiscussion.likes = (this.currentDiscussion.likes || 0) + delta;
-                    this.renderDiscussionDetail();
-                }
-            }
-            
-            updateCommentLikes(commentId, delta) {
-                const projects = this.getProjects();
-                
-                for (const project of projects) {
-                    if (project.discussions) {
-                        for (const discussion of project.discussions) {
-                            if (discussion.comments) {
-                                const comment = discussion.comments.find(c => c.id === commentId);
-                                if (comment) {
-                                    comment.likes = (comment.likes || 0) + delta;
-                                    project.updatedAt = new Date().toISOString();
-                                    this.saveProjects(projects);
-                                    
-                                    // Update current discussion if needed
-                                    if (this.currentDiscussion && this.currentDiscussion.id === discussion.id) {
-                                        this.loadDiscussion(discussion.id);
-                                    }
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            hasLikedDiscussion(discussionId) {
-                const likedDiscussions = JSON.parse(localStorage.getItem('thoraxlab_discussion_likes') || '{}');
-                return !!likedDiscussions[discussionId];
-            }
-            
-            hasLikedComment(commentId) {
-                const likedComments = JSON.parse(localStorage.getItem('thoraxlab_comment_likes') || '{}');
-                return !!likedComments[commentId];
-            }
-            
-            // ========== EVENT LISTENERS SETUP ==========
-            setupEventListeners() {
-                // Auth buttons
-                document.getElementById('creatorLoginBtn').addEventListener('click', () => {
-                    document.getElementById('creatorForm').classList.remove('hidden');
-                    document.getElementById('visitorForm').classList.add('hidden');
-                });
-                
-                document.getElementById('visitorLoginBtn').addEventListener('click', () => {
-                    document.getElementById('visitorForm').classList.remove('hidden');
-                    document.getElementById('creatorForm').classList.add('hidden');
-                });
-                
-                document.getElementById('backToChoiceBtn').addEventListener('click', () => {
-                    document.getElementById('creatorForm').classList.add('hidden');
-                });
-                
-                document.getElementById('backToChoiceBtn2').addEventListener('click', () => {
-                    document.getElementById('visitorForm').classList.add('hidden');
-                });
-                
-                document.getElementById('creatorForm').addEventListener('submit', (e) => this.loginAsCreator(e));
-                document.getElementById('visitorForm').addEventListener('submit', (e) => this.loginAsVisitor(e));
-                
-                // Logout
-                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
-                
-                // New project
-                document.getElementById('newProjectBtn').addEventListener('click', () => this.showModal('newProjectModal'));
-                document.getElementById('createMyProjectBtn').addEventListener('click', () => this.showModal('newProjectModal'));
-                
-                // Project form
-                document.getElementById('projectForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.createProject();
-                });
-                
-                // Team member management
-                document.getElementById('addTeamMemberBtn').addEventListener('click', () => {
-                    const input = document.getElementById('teamMemberInput');
-                    const name = input.value.trim();
-                    
-                    if (name) {
-                        this.addTeamMember(name);
-                        input.value = '';
-                    }
-                });
-                
-                // Character counters
-                document.getElementById('projectDescription').addEventListener('input', (e) => {
-                    const counter = document.getElementById('descCounter');
-                    const length = e.target.value.length;
-                    counter.textContent = `${length}/2000`;
-                    counter.classList.toggle('near-limit', length > 1800);
-                    counter.classList.toggle('over-limit', length > 2000);
-                });
-                
-                document.getElementById('discussionContent').addEventListener('input', (e) => {
-                    const counter = document.getElementById('discussionCounter');
-                    const length = e.target.value.length;
-                    counter.textContent = `${length}/5000`;
-                    counter.classList.toggle('near-limit', length > 4500);
-                    counter.classList.toggle('over-limit', length > 5000);
-                });
-                
-                document.getElementById('commentContent').addEventListener('input', (e) => {
-                    const counter = document.getElementById('commentCounter');
-                    const length = e.target.value.length;
-                    counter.textContent = `${length}/1000`;
-                    counter.classList.toggle('near-limit', length > 900);
-                    counter.classList.toggle('over-limit', length > 1000);
-                });
-                
-                // Discussion type selection
-                document.querySelectorAll('.discussion-type-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.discussion-type-btn').forEach(b => b.classList.remove('active'));
-                        e.currentTarget.classList.add('active');
-                    });
-                });
-                
-                // Discussion form
-                document.getElementById('discussionForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.createDiscussion();
-                });
-                
-                // Comment form
-                document.getElementById('commentForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.addComment();
-                });
-                
-                // Search
-                document.getElementById('projectSearch').addEventListener('input', (e) => {
-                    this.searchProjects(e.target.value);
-                });
-                
-                // Modal close buttons
-                document.querySelectorAll('.modal .btn-icon, .modal .btn-secondary').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const modal = e.currentTarget.closest('.modal');
-                        if (modal) {
-                            this.hideModal(modal.id);
-                        }
-                    });
-                });
-                
-                // Close modal on outside click
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) {
-                            this.hideModal(modal.id);
-                        }
-                    });
-                });
-            }
-            
-            setupProjectDetailListeners() {
-                document.getElementById('backToProjectsBtn')?.addEventListener('click', () => {
-                    this.navigateTo('projects');
-                });
-                
-                document.getElementById('addDiscussionBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        document.getElementById('discussionProjectId').value = this.currentProject.id;
-                        this.showModal('newDiscussionModal');
-                    }
-                });
-                
-                document.getElementById('startDiscussionBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        document.getElementById('discussionProjectId').value = this.currentProject.id;
-                        this.showModal('newDiscussionModal');
-                    }
-                });
-                
-                document.getElementById('joinThisProjectBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        this.joinProject(this.currentProject.id);
-                    }
-                });
-                
-                document.getElementById('inviteTeamMemberBtn')?.addEventListener('click', () => {
-                    this.showModal('inviteTeamModal');
-                });
-                
-                // Discussion like buttons
-                document.querySelectorAll('.like-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (this.isVisitor) {
-                            this.showToast('Visitors cannot like discussions', 'warning');
-                            return;
-                        }
-                        const discussionId = e.currentTarget.dataset.discussionId;
-                        this.toggleDiscussionLike(discussionId);
-                    });
-                });
-                
-                // Comment buttons
-                document.querySelectorAll('.comment-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const discussionId = e.currentTarget.dataset.discussionId;
-                        this.navigateTo(`discussion/${discussionId}`);
-                    });
-                });
-                
-                // Discussion click handlers
-                document.querySelectorAll('#projectDiscussions .discussion-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        if (!e.target.closest('.action-btn')) {
-                            const discussionId = card.dataset.discussionId;
-                            this.navigateTo(`discussion/${discussionId}`);
-                        }
-                    });
-                });
-            }
-            
-            setupDiscussionDetailListeners() {
-                document.getElementById('backToProjectBtn')?.addEventListener('click', () => {
-                    this.navigateTo(`project/${this.currentDiscussion.projectId}`);
-                });
-                
-                document.getElementById('addCommentBtn')?.addEventListener('click', () => {
-                    document.getElementById('commentDiscussionId').value = this.currentDiscussion.id;
-                    this.showModal('commentModal');
-                });
-                
-                document.getElementById('addNewCommentBtn')?.addEventListener('click', () => {
-                    document.getElementById('commentDiscussionId').value = this.currentDiscussion.id;
-                    this.showModal('commentModal');
-                });
-                
-                // Discussion like button
-                document.querySelector('.like-btn')?.addEventListener('click', (e) => {
-                    if (this.isVisitor) {
-                        this.showToast('Visitors cannot like discussions', 'warning');
-                        return;
-                    }
-                    const discussionId = e.currentTarget.dataset.discussionId;
-                    this.toggleDiscussionLike(discussionId);
-                });
-            }
-            
-            // ========== UTILITY METHODS ==========
-            showModal(modalId) {
-                document.getElementById(modalId).classList.add('active');
-            }
-            
-            hideModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.classList.remove('active');
-                    
-                    // Reset forms
-                    const form = modal.querySelector('form');
-                    if (form) {
-                        form.reset();
-                        
-                        // Reset character counters
-                        const counter = modal.querySelector('.char-counter');
-                        if (counter) {
-                            counter.textContent = '0/...';
-                            counter.className = 'char-counter';
-                        }
-                    }
-                    
-                    // Clear team members list
-                    if (modalId === 'newProjectModal') {
-                        document.getElementById('teamMembersList').innerHTML = '';
-                        document.getElementById('tagsContainer').innerHTML = '';
-                    }
-                }
-            }
-            
-            addTeamMember(name) {
-                const container = document.getElementById('teamMembersList');
-                const memberId = `member_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
-                
-                const memberDiv = document.createElement('div');
-                memberDiv.className = 'flex items-center justify-between p-2 bg-ui-bg rounded team-member';
-                memberDiv.dataset.name = name;
-                memberDiv.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px; background: var(--ui-mid);">
-                            ${name.substring(0, 2).toUpperCase()}
-                        </div>
-                        <span>${this.escapeHtml(name)}</span>
-                    </div>
-                    <button type="button" class="text-sm text-error remove-member-btn">&times;</button>
-                `;
-                
-                // Add remove listener
-                memberDiv.querySelector('.remove-member-btn').addEventListener('click', () => {
-                    memberDiv.remove();
-                });
-                
-                container.appendChild(memberDiv);
-            }
-            
-            searchProjects(query) {
-                const projects = this.getProjects();
-                const filtered = projects.filter(project => 
-                    project.title.toLowerCase().includes(query.toLowerCase()) ||
-                    project.description.toLowerCase().includes(query.toLowerCase()) ||
-                    project.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-                );
-                this.renderAllProjects(filtered);
-            }
-            
-            // ========== DATA STORAGE ==========
-            getProjects() {
-                return JSON.parse(localStorage.getItem('thoraxlab_projects') || '[]');
-            }
-            
-            saveProjects(projects) {
-                localStorage.setItem('thoraxlab_projects', JSON.stringify(projects));
-            }
-            
-            // ========== UI HELPERS ==========
-            showToast(message, type = 'info') {
-                const container = document.getElementById('toastContainer');
-                if (!container) return;
-                
-                const toast = document.createElement('div');
-                toast.className = `toast toast-${type}`;
-                
-                const icons = {
-                    success: 'fa-check-circle',
-                    error: 'fa-exclamation-circle',
-                    warning: 'fa-exclamation-triangle',
-                    info: 'fa-info-circle'
-                };
-                
-                toast.innerHTML = `
-                    <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
-                    <span>${this.escapeHtml(message)}</span>
-                    <button class="ml-auto text-sm" onclick="this.parentElement.remove()">&times;</button>
-                `;
-                
-                container.appendChild(toast);
-                
-                setTimeout(() => {
-                    if (toast.parentElement) {
-                        toast.remove();
-                    }
-                }, 4000);
-            }
-            
-            escapeHtml(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-            
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                
-                if (diffDays === 0) {
-                    return 'Today';
-                } else if (diffDays === 1) {
-                    return 'Yesterday';
-                } else if (diffDays < 7) {
-                    return `${diffDays} days ago`;
-                } else if (diffDays < 30) {
-                    const weeks = Math.floor(diffDays / 7);
-                    return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
-                } else {
-                    return date.toLocaleDateString();
-                }
-            }
-            
-            getDiscussionIcon(type) {
-                const icons = {
-                    'brainstorm': '💡',
-                    'question': '❓',
-                    'decision': '🤔',
-                    'insight': '🔍'
-                };
-                return icons[type] || '💬';
-            }
-        }
-        
-        // Initialize the application
-        window.app = new ThoraxLabPro();
-        
-        // Global helper functions
-        window.showModal = (modalId) => window.app.showModal(modalId);
-        window.hideModal = (modalId) => window.app.hideModal(modalId);
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.getElementById('projectSearch')?.focus();
-            }
-            
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal.active').forEach(modal => {
-                    window.app.hideModal(modal.id);
-                });
-            }
-        });
+        // JavaScript will be loaded separately in app.js
     </script>
+    <script src="app.js"></script>
 </body>
 </html>
