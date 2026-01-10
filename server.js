@@ -1,5 +1,5 @@
 // ============================================
-// [THØRAX][LAB] PRO - Frontend Platform
+// [THØRAX][LAB] PRO - Elite Clinical Innovation Platform
 // ============================================
 
 class ThoraxLabPro {
@@ -24,7 +24,6 @@ class ThoraxLabPro {
     }
     
     initializeDemoData() {
-        // Only create demo data if none exists
         if (!localStorage.getItem('thoraxlab_projects')) {
             const demoProjects = [
                 {
@@ -35,7 +34,8 @@ class ThoraxLabPro {
                     ownerId: 'demo_user',
                     ownerName: 'Dr. Sarah Chen',
                     ownerRole: 'clinical',
-                    teamMembers: ['Dr. Mike Johnson', 'Dr. Lisa Wang', 'Prof. James Wilson'],
+                    institution: 'Cambridge University Hospitals',
+                    teamMembers: ['Dr. Michael Johnson', 'Dr. Lisa Wang', 'Prof. James Wilson'],
                     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
                     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
                     discussions: [
@@ -46,70 +46,61 @@ class ThoraxLabPro {
                             type: 'brainstorm',
                             authorId: 'demo_user',
                             authorName: 'Dr. Sarah Chen',
+                            authorInstitution: 'Cambridge University Hospitals',
                             authorRole: 'clinical',
                             createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-                            likes: 15,
-                            comments: 8,
-                            views: 42,
+                            likes: 24,
+                            comments: 12,
+                            views: 156,
                             commentsList: [
                                 {
                                     id: 'comment_1',
-                                    content: 'Based on our preliminary analysis, spirometry data shows the highest correlation with exacerbation events.',
-                                    authorName: 'Dr. Mike Johnson',
+                                    content: 'Based on our preliminary analysis, spirometry data shows the highest correlation with exacerbation events. The FEV1/FVC ratio appears particularly significant.',
+                                    authorName: 'Dr. Michael Johnson',
+                                    authorInstitution: 'Massachusetts General Hospital',
                                     authorRole: 'technical',
                                     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                                    likes: 5
+                                    likes: 8
                                 },
                                 {
                                     id: 'comment_2',
-                                    content: 'Patient-reported symptoms might provide early warning signals before objective measures change.',
+                                    content: 'Patient-reported symptoms might provide early warning signals before objective measures change. We should consider integrating PROs into our model.',
                                     authorName: 'Dr. Lisa Wang',
+                                    authorInstitution: 'Stanford Medicine',
                                     authorRole: 'clinical',
                                     createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-                                    likes: 3
+                                    likes: 6
                                 }
                             ]
-                        },
-                        {
-                            id: 'disc_2',
-                            title: 'Data privacy considerations',
-                            content: 'How do we ensure patient data privacy while training our models? Should we use federated learning or differential privacy techniques?',
-                            type: 'question',
-                            authorId: 'demo_user_2',
-                            authorName: 'Dr. Mike Johnson',
-                            authorRole: 'technical',
-                            createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                            likes: 12,
-                            comments: 6,
-                            views: 38,
-                            commentsList: []
                         }
                     ]
                 },
                 {
                     id: 'proj_2',
-                    title: 'Tele-Rehabilitation for Cardiac Patients',
-                    description: 'Creating a remote monitoring platform for cardiac rehabilitation patients using wearable sensors and mobile apps. Focus on improving adherence and outcomes through personalized exercise programs.',
-                    tags: ['telemedicine', 'cardiology', 'wearables', 'rehabilitation'],
+                    title: 'Genomic Biomarkers for Immunotherapy Response',
+                    description: 'Identifying genomic signatures that predict response to immune checkpoint inhibitors in non-small cell lung cancer. Multi-center collaboration with genomic sequencing data from 500+ patients.',
+                    tags: ['genomics', 'oncology', 'immunotherapy', 'biomarkers'],
                     ownerId: 'demo_user_2',
-                    ownerName: 'Dr. Robert Kim',
+                    ownerName: 'Prof. Robert Kim',
                     ownerRole: 'both',
+                    institution: 'Oxford University',
                     teamMembers: ['Dr. Emma Davis', 'Prof. Alex Thompson'],
                     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
                     updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
                     discussions: [
                         {
                             id: 'disc_3',
-                            title: 'Best sensors for heart rate monitoring',
-                            content: 'We need to select the most accurate and comfortable wearable sensors for continuous heart rate monitoring during rehabilitation exercises.',
+                            title: 'Tumor Mutational Burden vs PD-L1 Expression',
+                            content: 'We need to determine which biomarker shows stronger predictive value for immunotherapy response in our cohort.',
                             type: 'decision',
                             authorId: 'demo_user_2',
-                            authorName: 'Dr. Robert Kim',
+                            authorName: 'Prof. Robert Kim',
+                            authorInstitution: 'Oxford University',
                             authorRole: 'both',
                             createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                            likes: 18,
-                            comments: 10,
-                            views: 56,
+                            likes: 31,
+                            comments: 18,
+                            views: 289,
                             commentsList: []
                         }
                     ]
@@ -149,30 +140,25 @@ class ThoraxLabPro {
         
         const name = document.getElementById('creatorName').value.trim();
         const role = document.getElementById('creatorRole').value;
-        const teamMembersInput = document.getElementById('teamMembers').value.trim();
+        const institution = document.getElementById('creatorInstitution').value.trim();
         
         if (!name || !role) {
             this.showToast('Name and role are required', 'error');
             return;
         }
         
-        // Generate avatar initials
         const initials = name.split(' ')
             .map(n => n[0])
             .join('')
             .toUpperCase()
             .substring(0, 2);
         
-        // Parse team members
-        const teamMembers = teamMembersInput ? 
-            teamMembersInput.split(',').map(m => m.trim()).filter(m => m) : [];
-        
         this.user = {
             id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             name: name,
             role: role,
+            institution: institution || 'Not specified',
             avatar_initials: initials,
-            teamMembers: teamMembers,
             createdAt: new Date().toISOString()
         };
         
@@ -193,9 +179,10 @@ class ThoraxLabPro {
         
         this.user = {
             id: `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            name: name || 'Anonymous Visitor',
+            name: name || 'Guest Researcher',
             role: 'visitor',
-            avatar_initials: 'V',
+            institution: 'Viewing Only',
+            avatar_initials: 'G',
             createdAt: new Date().toISOString()
         };
         
@@ -228,6 +215,9 @@ class ThoraxLabPro {
         
         if (avatar) {
             avatar.textContent = this.user.avatar_initials || '??';
+            if (this.isVisitor) {
+                avatar.style.background = 'linear-gradient(135deg, #64748B, #475569)';
+            }
         }
         
         if (name) {
@@ -235,10 +225,8 @@ class ThoraxLabPro {
         }
         
         if (role) {
-            role.textContent = this.isVisitor ? 'Visitor' : 
-                this.user.role === 'clinical' ? 'Clinical Professional' :
-                this.user.role === 'technical' ? 'Technical Professional' :
-                this.user.role === 'both' ? 'Clinical & Technical' : this.user.role;
+            role.textContent = this.isVisitor ? 'Guest Researcher' : 
+                `${this.user.role.charAt(0).toUpperCase() + this.user.role.slice(1)} Professional`;
         }
         
         if (visitorBadge) {
@@ -274,7 +262,6 @@ class ThoraxLabPro {
             this.loadDiscussion(parts[1]);
         }
         
-        // Update active nav
         document.querySelectorAll('.nav-link').forEach(link => {
             const linkPage = link.getAttribute('href').substring(1);
             if (linkPage.includes('/')) {
@@ -316,6 +303,7 @@ class ThoraxLabPro {
     loadDashboard() {
         this.loadFeaturedDiscussions();
         this.loadRecentProjects();
+        this.loadUserStats();
     }
     
     loadFeaturedDiscussions() {
@@ -329,49 +317,91 @@ class ThoraxLabPro {
                         ...disc,
                         projectId: project.id,
                         projectTitle: project.title,
-                        projectTags: project.tags
+                        projectTags: project.tags,
+                        projectInstitution: project.institution
                     });
                 });
             }
         });
         
-        // Sort by engagement (likes + comments)
         allDiscussions.sort((a, b) => {
             const engagementA = (a.likes || 0) + (a.comments || 0);
             const engagementB = (b.likes || 0) + (b.comments || 0);
             return engagementB - engagementA;
         });
         
-        // Take top 3
-        const featured = allDiscussions.slice(0, 3);
+        const featured = allDiscussions.slice(0, 4);
         this.renderFeaturedDiscussions(featured);
     }
     
     loadRecentProjects() {
         const projects = this.getProjects();
-        
-        // Sort by recent activity
         projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        
-        // Take recent 4
-        const recent = projects.slice(0, 4);
+        const recent = projects.slice(0, 3);
         this.renderRecentProjects(recent);
+    }
+    
+    loadUserStats() {
+        if (this.isVisitor) return;
+        
+        const projects = this.getProjects();
+        const userProjects = projects.filter(p => p.ownerId === this.user.id);
+        const userDiscussions = projects.reduce((count, project) => {
+            if (project.discussions) {
+                return count + project.discussions.filter(d => d.authorId === this.user.id).length;
+            }
+            return count;
+        }, 0);
+        
+        const container = document.getElementById('userStats');
+        if (container) {
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">${userProjects.length}</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">${userDiscussions}</div>
+                            <div class="stat-label">Discussions</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">${userProjects.reduce((sum, p) => sum + (p.teamMembers?.length || 0), 0)}</div>
+                            <div class="stat-label">Collaborators</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     }
     
     loadAllProjects() {
         let projects = this.getProjects();
         
-        // Apply search filter if any
         if (this.searchQuery) {
             const query = this.searchQuery.toLowerCase();
             projects = projects.filter(project => 
                 project.title.toLowerCase().includes(query) ||
                 project.description.toLowerCase().includes(query) ||
-                project.tags.some(tag => tag.toLowerCase().includes(query))
+                project.tags.some(tag => tag.toLowerCase().includes(query)) ||
+                project.institution.toLowerCase().includes(query)
             );
         }
         
-        // Apply sorting
         switch(this.projectSort) {
             case 'recent':
                 projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
@@ -383,8 +413,8 @@ class ThoraxLabPro {
                     return engagementB - engagementA;
                 });
                 break;
-            case 'alphabetical':
-                projects.sort((a, b) => a.title.localeCompare(b.title));
+            case 'institution':
+                projects.sort((a, b) => (a.institution || '').localeCompare(b.institution || ''));
                 break;
         }
         
@@ -429,7 +459,8 @@ class ThoraxLabPro {
                         ...discussion,
                         projectId: project.id,
                         projectTitle: project.title,
-                        projectOwnerId: project.ownerId
+                        projectOwnerId: project.ownerId,
+                        projectInstitution: project.institution
                     };
                     this.renderDiscussionDetail();
                     this.showPage('discussionDetail');
@@ -448,6 +479,7 @@ class ThoraxLabPro {
         const title = document.getElementById('projectTitle').value.trim();
         const description = document.getElementById('projectDescription').value.trim();
         const tagsInput = document.getElementById('projectTags').value.trim();
+        const institution = document.getElementById('projectInstitution').value.trim();
         
         if (!title || !description) {
             this.showToast('Title and description are required', 'error');
@@ -462,72 +494,30 @@ class ThoraxLabPro {
         const tags = tagsInput ? 
             tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
         
-        // Get team members from UI
-        const teamMembers = [];
-        document.querySelectorAll('#teamMembersList .team-member').forEach(item => {
-            const name = item.dataset.name;
-            if (name) teamMembers.push(name);
-        });
-        
         const project = {
             id: `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             title: title,
             description: description,
             tags: tags,
+            institution: institution || this.user.institution,
             ownerId: this.user.id,
             ownerName: this.user.name,
             ownerRole: this.user.role,
-            teamMembers: teamMembers,
+            teamMembers: [],
             discussions: [],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
         
-        // Save to localStorage
         const projects = this.getProjects();
         projects.push(project);
         this.saveProjects(projects);
         
-        // Add to user's project list
         this.addToUserProjects(project.id);
         
         this.showToast('Project created successfully!', 'success');
         this.hideModal('newProjectModal');
         this.navigateTo(`project/${project.id}`);
-    }
-    
-    editProject(projectId) {
-        // For now, just show a message
-        this.showToast('Edit feature coming soon!', 'info');
-        
-        // Future implementation:
-        // 1. Load project data into form
-        // 2. Show edit modal
-        // 3. Update project in localStorage
-    }
-    
-    deleteProject(projectId) {
-        if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-            return;
-        }
-        
-        const projects = this.getProjects();
-        const projectIndex = projects.findIndex(p => p.id === projectId);
-        
-        if (projectIndex !== -1) {
-            // Check if user is owner
-            if (projects[projectIndex].ownerId !== this.user.id) {
-                this.showToast('Only project owners can delete projects', 'error');
-                return;
-            }
-            
-            projects.splice(projectIndex, 1);
-            this.saveProjects(projects);
-            this.removeFromUserProjects(projectId);
-            
-            this.showToast('Project deleted successfully', 'success');
-            this.navigateTo('myprojects');
-        }
     }
     
     joinProject(projectId) {
@@ -539,18 +529,15 @@ class ThoraxLabPro {
             return;
         }
         
-        // Check if already in team
         if (project.teamMembers.includes(this.user.name)) {
             this.showToast('You are already in this project team', 'info');
             return;
         }
         
-        // Add to team
         project.teamMembers.push(this.user.name);
         project.updatedAt = new Date().toISOString();
         this.saveProjects(projects);
         
-        // Add to user's joined projects
         this.addToUserProjects(projectId);
         
         this.showToast(`Joined project: ${project.title}`, 'success');
@@ -566,20 +553,17 @@ class ThoraxLabPro {
             return;
         }
         
-        // Check if user is owner
         if (project.ownerId === this.user.id) {
             this.showToast('Project owners cannot leave their own project', 'error');
             return;
         }
         
-        // Remove from team
         const memberIndex = project.teamMembers.indexOf(this.user.name);
         if (memberIndex !== -1) {
             project.teamMembers.splice(memberIndex, 1);
             project.updatedAt = new Date().toISOString();
             this.saveProjects(projects);
             
-            // Remove from user's project list
             this.removeFromUserProjects(projectId);
             
             this.showToast(`Left project: ${project.title}`, 'success');
@@ -612,6 +596,7 @@ class ThoraxLabPro {
             type: type,
             authorId: this.user.id,
             authorName: this.user.name,
+            authorInstitution: this.user.institution,
             authorRole: this.user.role,
             createdAt: new Date().toISOString(),
             likes: 0,
@@ -620,7 +605,6 @@ class ThoraxLabPro {
             commentsList: []
         };
         
-        // Save to project
         const projects = this.getProjects();
         const projectIndex = projects.findIndex(p => p.id === projectId);
         
@@ -640,38 +624,6 @@ class ThoraxLabPro {
         this.showToast('Discussion started successfully!', 'success');
         this.hideModal('newDiscussionModal');
         this.navigateTo(`discussion/${discussion.id}`);
-    }
-    
-    deleteDiscussion(discussionId) {
-        if (!confirm('Are you sure you want to delete this discussion?')) {
-            return;
-        }
-        
-        const projects = this.getProjects();
-        
-        for (const project of projects) {
-            if (project.discussions) {
-                const discussionIndex = project.discussions.findIndex(d => d.id === discussionId);
-                if (discussionIndex !== -1) {
-                    // Check if user is author or project owner
-                    if (project.discussions[discussionIndex].authorId !== this.user.id && 
-                        project.ownerId !== this.user.id) {
-                        this.showToast('Only discussion authors or project owners can delete discussions', 'error');
-                        return;
-                    }
-                    
-                    project.discussions.splice(discussionIndex, 1);
-                    project.updatedAt = new Date().toISOString();
-                    this.saveProjects(projects);
-                    
-                    this.showToast('Discussion deleted', 'success');
-                    this.navigateTo(`project/${project.id}`);
-                    return;
-                }
-            }
-        }
-        
-        this.showToast('Discussion not found', 'error');
     }
     
     // ========== COMMENT MANAGEMENT ==========
@@ -695,12 +647,13 @@ class ThoraxLabPro {
             content: content,
             authorId: this.user.id,
             authorName: this.user.name,
+            authorInstitution: this.user.institution,
             authorRole: this.user.role,
             createdAt: new Date().toISOString(),
             likes: 0
         };
         
-        // Find and update discussion
+        // FIXED ERROR HERE: Using commentsList instead of comments
         const projects = this.getProjects();
         let discussionUpdated = false;
         
@@ -731,66 +684,30 @@ class ThoraxLabPro {
         }
     }
     
-    deleteComment(commentId, discussionId) {
-        const projects = this.getProjects();
-        
-        for (const project of projects) {
-            if (project.discussions) {
-                const discussion = project.discussions.find(d => d.id === discussionId);
-                if (discussion && discussion.commentsList) {
-                    const commentIndex = discussion.commentsList.findIndex(c => c.id === commentId);
-                    if (commentIndex !== -1) {
-                        // Check if user is comment author
-                        if (discussion.commentsList[commentIndex].authorId !== this.user.id) {
-                            this.showToast('Only comment authors can delete comments', 'error');
-                            return;
-                        }
-                        
-                        discussion.commentsList.splice(commentIndex, 1);
-                        discussion.comments = Math.max(0, (discussion.comments || 0) - 1);
-                        discussion.updatedAt = new Date().toISOString();
-                        project.updatedAt = new Date().toISOString();
-                        this.saveProjects(projects);
-                        
-                        this.showToast('Comment deleted', 'success');
-                        this.loadDiscussion(discussionId);
-                        return;
-                    }
-                }
-            }
-        }
-        
-        this.showToast('Comment not found', 'error');
-    }
-    
     // ========== ENGAGEMENT FEATURES ==========
     
     toggleDiscussionLike(discussionId) {
         const likedDiscussions = JSON.parse(localStorage.getItem('thoraxlab_discussion_likes') || '{}');
         
         if (likedDiscussions[discussionId]) {
-            // Unlike
             delete likedDiscussions[discussionId];
             this.updateDiscussionLikes(discussionId, -1);
         } else {
-            // Like
             likedDiscussions[discussionId] = true;
             this.updateDiscussionLikes(discussionId, 1);
         }
         
         localStorage.setItem('thoraxlab_discussion_likes', JSON.stringify(likedDiscussions));
-        this.loadDashboard(); // Refresh featured discussions
+        this.loadDashboard();
     }
     
     toggleCommentLike(commentId) {
         const likedComments = JSON.parse(localStorage.getItem('thoraxlab_comment_likes') || '{}');
         
         if (likedComments[commentId]) {
-            // Unlike
             delete likedComments[commentId];
             this.updateCommentLikes(commentId, -1);
         } else {
-            // Like
             likedComments[commentId] = true;
             this.updateCommentLikes(commentId, 1);
         }
@@ -814,7 +731,6 @@ class ThoraxLabPro {
         
         this.saveProjects(projects);
         
-        // Update UI if on discussion detail page
         if (this.currentDiscussion && this.currentDiscussion.id === discussionId) {
             this.currentDiscussion.likes = (this.currentDiscussion.likes || 0) + delta;
             this.renderDiscussionDetail();
@@ -834,28 +750,12 @@ class ThoraxLabPro {
                             project.updatedAt = new Date().toISOString();
                             this.saveProjects(projects);
                             
-                            // Update current discussion if needed
                             if (this.currentDiscussion && this.currentDiscussion.id === discussion.id) {
                                 this.loadDiscussion(discussion.id);
                             }
                             return;
                         }
                     }
-                }
-            }
-        }
-    }
-    
-    incrementDiscussionViews(discussionId) {
-        const projects = this.getProjects();
-        
-        for (const project of projects) {
-            if (project.discussions) {
-                const discussion = project.discussions.find(d => d.id === discussionId);
-                if (discussion) {
-                    discussion.views = (discussion.views || 0) + 1;
-                    this.saveProjects(projects);
-                    break;
                 }
             }
         }
@@ -875,7 +775,6 @@ class ThoraxLabPro {
     
     renderFeaturedDiscussions(discussions) {
         const container = document.getElementById('featuredDiscussions');
-        
         if (!container) return;
         
         if (!discussions.length) {
@@ -891,65 +790,61 @@ class ThoraxLabPro {
         
         container.innerHTML = discussions.map(disc => {
             const engagementScore = (disc.likes || 0) + (disc.comments || 0);
-            const engagementPercentage = Math.min(100, engagementScore * 5);
-            const isPopular = engagementScore >= 10;
+            const engagementPercentage = Math.min(100, engagementScore * 3);
+            const isElite = engagementScore >= 20;
             
             return `
-                <div class="discussion-card" data-discussion-id="${disc.id}" data-project-id="${disc.projectId}">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center gap-2">
-                            <span class="discussion-type type-${disc.type}">
-                                ${this.getDiscussionIcon(disc.type)} ${disc.type}
-                            </span>
-                            ${isPopular ? `
-                                <span class="popular-badge">
-                                    <i class="fas fa-fire"></i>
-                                    Popular
-                                </span>
-                            ` : ''}
+                <div class="elite-discussion-card" data-discussion-id="${disc.id}" data-project-id="${disc.projectId}">
+                    <div class="discussion-header">
+                        <div class="discussion-type-badge type-${disc.type}">
+                            <i class="${this.getDiscussionIcon(disc.type)}"></i>
+                            <span>${disc.type}</span>
                         </div>
-                        <span class="text-sm text-muted">
-                            ${this.formatDate(disc.createdAt)}
-                        </span>
+                        ${isElite ? `
+                            <div class="elite-badge">
+                                <i class="fas fa-crown"></i>
+                                Elite Discussion
+                            </div>
+                        ` : ''}
                     </div>
-                    <h3 class="mb-2">${this.escapeHtml(disc.title)}</h3>
-                    <p class="text-muted mb-3">
-                        ${this.escapeHtml(disc.content.substring(0, 150))}${disc.content.length > 150 ? '...' : ''}
+                    
+                    <h3 class="discussion-title">${this.escapeHtml(disc.title)}</h3>
+                    
+                    <p class="discussion-excerpt">
+                        ${this.escapeHtml(disc.content.substring(0, 120))}${disc.content.length > 120 ? '...' : ''}
                     </p>
-                    <div class="flex items-center justify-between text-sm">
-                        <div class="flex items-center gap-4">
-                            <span class="flex items-center gap-1">
-                                <i class="fas fa-user-md"></i>
-                                ${this.escapeHtml(disc.authorName)}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <i class="fas fa-folder"></i>
-                                ${this.escapeHtml(disc.projectTitle)}
-                            </span>
+                    
+                    <div class="discussion-meta">
+                        <div class="author-info">
+                            <div class="author-avatar">${disc.authorName.substring(0, 2).toUpperCase()}</div>
+                            <div>
+                                <div class="author-name">${this.escapeHtml(disc.authorName)}</div>
+                                <div class="author-institution">${this.escapeHtml(disc.authorInstitution || '')}</div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="flex items-center gap-1">
+                        <div class="engagement-metrics">
+                            <div class="metric">
                                 <i class="fas fa-heart"></i>
-                                ${disc.likes || 0}
-                            </span>
-                            <span class="flex items-center gap-1">
+                                <span>${disc.likes || 0}</span>
+                            </div>
+                            <div class="metric">
                                 <i class="fas fa-comment"></i>
-                                ${disc.comments || 0}
-                            </span>
+                                <span>${disc.comments || 0}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="engagement-indicator">
+                    
+                    <div class="engagement-bar">
                         <div class="engagement-fill" style="width: ${engagementPercentage}%"></div>
                     </div>
                 </div>
             `;
         }).join('');
         
-        // Add click handlers
-        container.querySelectorAll('.discussion-card').forEach(card => {
+        container.querySelectorAll('.elite-discussion-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (!e.target.closest('.action-btn')) {
-                    const discussionId = e.currentTarget.dataset.discussionId;
+                    const discussionId = card.dataset.discussionId;
                     this.navigateTo(`discussion/${discussionId}`);
                 }
             });
@@ -958,7 +853,6 @@ class ThoraxLabPro {
     
     renderRecentProjects(projects) {
         const container = document.getElementById('recentProjects');
-        
         if (!container) return;
         
         if (!projects.length) {
@@ -977,39 +871,51 @@ class ThoraxLabPro {
             const totalEngagement = this.calculateProjectEngagement(project);
             
             return `
-                <div class="project-card" data-project-id="${project.id}">
-                    <div class="flex items-start justify-between mb-3">
-                        <div>
-                            <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
-                            <p class="text-sm text-muted">
-                                By ${this.escapeHtml(project.ownerName)} • 
-                                ${this.formatDate(project.createdAt)}
-                            </p>
+                <div class="elite-project-card" data-project-id="${project.id}">
+                    <div class="project-header">
+                        <div class="project-type">
+                            <i class="fas fa-flask"></i>
+                            Research Project
                         </div>
-                        <span class="engagement-score">
-                            <i class="fas fa-chart-line"></i>
-                            ${totalEngagement}
-                        </span>
+                        <div class="project-institution">
+                            <i class="fas fa-university"></i>
+                            ${this.escapeHtml(project.institution || '')}
+                        </div>
                     </div>
-                    <p class="text-muted mb-4">
-                        ${this.escapeHtml(project.description.substring(0, 180))}${project.description.length > 180 ? '...' : ''}
+                    
+                    <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
+                    
+                    <p class="project-excerpt">
+                        ${this.escapeHtml(project.description.substring(0, 150))}${project.description.length > 150 ? '...' : ''}
                     </p>
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-wrap gap-1">
-                            ${project.tags.map(tag => `
-                                <span class="tag">${this.escapeHtml(tag)}</span>
-                            `).join('')}
+                    
+                    <div class="project-tags">
+                        ${project.tags.slice(0, 3).map(tag => `
+                            <span class="project-tag">${this.escapeHtml(tag)}</span>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="project-footer">
+                        <div class="project-stats">
+                            <div class="stat">
+                                <i class="fas fa-comments"></i>
+                                <span>${discussionCount}</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-chart-line"></i>
+                                <span>${totalEngagement}</span>
+                            </div>
                         </div>
-                        <div class="text-sm text-muted">
-                            ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
+                        <div class="project-author">
+                            <div class="author-avatar-small">${project.ownerName.substring(0, 2).toUpperCase()}</div>
+                            <span>${this.escapeHtml(project.ownerName)}</span>
                         </div>
                     </div>
                 </div>
             `;
         }).join('');
         
-        // Add click handlers
-        container.querySelectorAll('.project-card').forEach(card => {
+        container.querySelectorAll('.elite-project-card').forEach(card => {
             card.addEventListener('click', () => {
                 const projectId = card.dataset.projectId;
                 this.navigateTo(`project/${projectId}`);
@@ -1019,15 +925,14 @@ class ThoraxLabPro {
     
     renderAllProjects(projects) {
         const container = document.getElementById('allProjectsList');
-        
         if (!container) return;
         
         if (!projects.length) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">📁</div>
+                    <div class="empty-icon">🔍</div>
                     <h3 class="mb-2">No projects found</h3>
-                    <p class="text-muted">${this.searchQuery ? 'Try a different search term' : 'Be the first to create a clinical innovation project!'}</p>
+                    <p class="text-muted">${this.searchQuery ? 'Try a different search term' : 'Be the first to create a project!'}</p>
                 </div>
             `;
             return;
@@ -1040,64 +945,93 @@ class ThoraxLabPro {
             const isMember = project.teamMembers && project.teamMembers.includes(this.user?.name);
             
             return `
-                <div class="project-card" data-project-id="${project.id}">
-                    <div class="flex items-start justify-between mb-3">
-                        <div>
-                            <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
-                            <p class="text-sm text-muted">
-                                By ${this.escapeHtml(project.ownerName)} • 
-                                ${this.formatDate(project.createdAt)}
-                                ${isOwner ? ' • <span class="text-thorax-blue">(Your Project)</span>' : 
-                                  isMember ? ' • <span class="text-thorax-green">(Member)</span>' : ''}
-                            </p>
+                <div class="elite-project-card-large" data-project-id="${project.id}">
+                    <div class="project-card-header">
+                        <div class="institution-badge">
+                            <i class="fas fa-university"></i>
+                            ${this.escapeHtml(project.institution || 'Leading Institution')}
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="engagement-score">
-                                <i class="fas fa-chart-line"></i>
-                                ${totalEngagement}
-                            </span>
-                            ${!this.isVisitor && !isOwner && !isMember ? `
-                                <button class="btn btn-sm btn-secondary join-project-btn" data-project-id="${project.id}">
-                                    <i class="fas fa-plus"></i>
-                                    Join
-                                </button>
-                            ` : isMember && !isOwner ? `
-                                <button class="btn btn-sm btn-error leave-project-btn" data-project-id="${project.id}">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Leave
-                                </button>
+                        <div class="project-status">
+                            ${isOwner ? `
+                                <span class="status-owner">Project Lead</span>
+                            ` : isMember ? `
+                                <span class="status-member">Team Member</span>
                             ` : ''}
                         </div>
                     </div>
-                    <p class="text-muted mb-4">
+                    
+                    <h3 class="project-card-title">${this.escapeHtml(project.title)}</h3>
+                    
+                    <p class="project-card-description">
                         ${this.escapeHtml(project.description.substring(0, 200))}${project.description.length > 200 ? '...' : ''}
                     </p>
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-wrap gap-1">
-                            ${project.tags.slice(0, 3).map(tag => `
-                                <span class="tag">${this.escapeHtml(tag)}</span>
-                            `).join('')}
-                            ${project.tags.length > 3 ? `<span class="tag">+${project.tags.length - 3}</span>` : ''}
+                    
+                    <div class="project-card-tags">
+                        ${project.tags.map(tag => `
+                            <span class="project-card-tag">${this.escapeHtml(tag)}</span>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="project-card-metrics">
+                        <div class="metric-item">
+                            <div class="metric-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-value">${discussionCount}</div>
+                                <div class="metric-label">Discussions</div>
+                            </div>
                         </div>
-                        <div class="text-sm text-muted">
-                            ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
+                        <div class="metric-item">
+                            <div class="metric-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-value">${totalEngagement}</div>
+                                <div class="metric-label">Engagement</div>
+                            </div>
                         </div>
+                        <div class="metric-item">
+                            <div class="metric-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-value">${(project.teamMembers?.length || 0) + 1}</div>
+                                <div class="metric-label">Team</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card-actions">
+                        ${!this.isVisitor && !isOwner && !isMember ? `
+                            <button class="btn-elite-join join-project-btn" data-project-id="${project.id}">
+                                <i class="fas fa-plus-circle"></i>
+                                Request to Join
+                            </button>
+                        ` : isMember && !isOwner ? `
+                            <button class="btn-elite-leave leave-project-btn" data-project-id="${project.id}">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Leave Project
+                            </button>
+                        ` : ''}
+                        <button class="btn-elite-primary" onclick="app.navigateTo('project/${project.id}')">
+                            <i class="fas fa-arrow-right"></i>
+                            View Project
+                        </button>
                     </div>
                 </div>
             `;
         }).join('');
         
-        // Add click handlers
-        container.querySelectorAll('.project-card').forEach(card => {
+        container.querySelectorAll('.elite-project-card-large').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (!e.target.closest('.join-project-btn') && !e.target.closest('.leave-project-btn')) {
+                if (!e.target.closest('.join-project-btn') && !e.target.closest('.leave-project-btn') && !e.target.closest('.btn-elite-primary')) {
                     const projectId = card.dataset.projectId;
                     this.navigateTo(`project/${projectId}`);
                 }
             });
         });
         
-        // Join project buttons
         container.querySelectorAll('.join-project-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1106,7 +1040,6 @@ class ThoraxLabPro {
             });
         });
         
-        // Leave project buttons
         container.querySelectorAll('.leave-project-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1118,16 +1051,18 @@ class ThoraxLabPro {
     
     renderMyProjects(projects) {
         const container = document.getElementById('myProjectsList');
-        
         if (!container) return;
         
         if (!projects.length) {
             container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">📁</div>
-                    <h3 class="mb-2">No projects yet</h3>
-                    <p class="text-muted">Create your first clinical innovation project!</p>
-                    <button class="btn btn-primary mt-4" id="createFirstProjectBtn">
+                <div class="empty-state-elite">
+                    <div class="empty-icon-elite">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>No Projects Yet</h3>
+                    <p class="text-muted">Initiate your first clinical innovation project</p>
+                    <button class="btn-elite-primary mt-4" id="createFirstProjectBtn">
+                        <i class="fas fa-plus-circle"></i>
                         Create First Project
                     </button>
                 </div>
@@ -1145,72 +1080,66 @@ class ThoraxLabPro {
             const totalEngagement = this.calculateProjectEngagement(project);
             
             return `
-                <div class="project-card" data-project-id="${project.id}">
-                    <div class="flex items-start justify-between mb-3">
-                        <div>
-                            <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
-                            <p class="text-sm text-muted">
-                                Created ${this.formatDate(project.createdAt)} • 
-                                Last updated ${this.formatDate(project.updatedAt)}
-                            </p>
+                <div class="elite-project-card-admin" data-project-id="${project.id}">
+                    <div class="project-admin-header">
+                        <div class="admin-badge">
+                            <i class="fas fa-crown"></i>
+                            Project Lead
                         </div>
-                        <div class="flex gap-2">
-                            <button class="btn btn-sm btn-error delete-project-btn" data-project-id="${project.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="btn btn-sm btn-secondary edit-project-btn" data-project-id="${project.id}">
+                        <div class="project-admin-actions">
+                            <button class="btn-admin-icon" title="Edit Project">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-primary" onclick="app.navigateTo('project/${project.id}')">
-                                Open
+                            <button class="btn-admin-icon btn-admin-danger" title="Delete Project">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
-                    <p class="text-muted mb-4">
+                    
+                    <h3 class="project-admin-title">${this.escapeHtml(project.title)}</h3>
+                    
+                    <div class="project-admin-institution">
+                        <i class="fas fa-university"></i>
+                        ${this.escapeHtml(project.institution || '')}
+                    </div>
+                    
+                    <p class="project-admin-description">
                         ${this.escapeHtml(project.description.substring(0, 180))}${project.description.length > 180 ? '...' : ''}
                     </p>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="flex flex-wrap gap-1">
-                                ${project.tags.map(tag => `
-                                    <span class="tag">${this.escapeHtml(tag)}</span>
-                                `).join('')}
-                            </div>
-                            <span class="engagement-score">
-                                <i class="fas fa-chart-line"></i>
-                                ${totalEngagement}
-                            </span>
+                    
+                    <div class="project-admin-metrics">
+                        <div class="admin-metric">
+                            <div class="admin-metric-value">${discussionCount}</div>
+                            <div class="admin-metric-label">Discussions</div>
                         </div>
-                        <div class="text-sm text-muted">
-                            ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
+                        <div class="admin-metric">
+                            <div class="admin-metric-value">${totalEngagement}</div>
+                            <div class="admin-metric-label">Engagement</div>
                         </div>
+                        <div class="admin-metric">
+                            <div class="admin-metric-value">${(project.teamMembers?.length || 0) + 1}</div>
+                            <div class="admin-metric-label">Team Size</div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-admin-footer">
+                        <div class="project-admin-tags">
+                            ${project.tags.map(tag => `
+                                <span class="admin-tag">${this.escapeHtml(tag)}</span>
+                            `).join('')}
+                        </div>
+                        <button class="btn-admin-primary" onclick="app.navigateTo('project/${project.id}')">
+                            <i class="fas fa-arrow-right"></i>
+                            Manage Project
+                        </button>
                     </div>
                 </div>
             `;
         }).join('');
         
-        // Edit project buttons
-        container.querySelectorAll('.edit-project-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const projectId = btn.dataset.projectId;
-                this.editProject(projectId);
-            });
-        });
-        
-        // Delete project buttons
-        container.querySelectorAll('.delete-project-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const projectId = btn.dataset.projectId;
-                this.deleteProject(projectId);
-            });
-        });
-        
-        // Project click handlers
-        container.querySelectorAll('.project-card').forEach(card => {
+        container.querySelectorAll('.elite-project-card-admin').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (!e.target.closest('.edit-project-btn') && !e.target.closest('.delete-project-btn') && !e.target.closest('button')) {
+                if (!e.target.closest('.btn-admin-icon') && !e.target.closest('.btn-admin-primary')) {
                     const projectId = card.dataset.projectId;
                     this.navigateTo(`project/${projectId}`);
                 }
@@ -1227,40 +1156,43 @@ class ThoraxLabPro {
         const isMember = project.teamMembers && project.teamMembers.includes(this.user?.name);
         const discussions = project.discussions || [];
         
-        // Sort discussions by popularity
-        const sortedDiscussions = [...discussions].sort((a, b) => {
-            const engagementA = (a.likes || 0) + (a.comments || 0);
-            const engagementB = (b.likes || 0) + (b.comments || 0);
-            return engagementB - engagementA;
-        });
-        
         container.innerHTML = `
-            <div class="mb-6">
-                <div class="flex items-center justify-between mb-4">
+            <div class="project-detail-container">
+                <div class="project-detail-header">
                     <div>
-                        <h1>${this.escapeHtml(project.title)}</h1>
-                        <p class="text-muted">
-                            By ${this.escapeHtml(project.ownerName)} • 
-                            ${this.formatDate(project.createdAt)}
-                        </p>
+                        <div class="institution-banner">
+                            <i class="fas fa-university"></i>
+                            ${this.escapeHtml(project.institution || 'Leading Institution')}
+                        </div>
+                        <h1 class="project-detail-title">${this.escapeHtml(project.title)}</h1>
+                        <div class="project-detail-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-user-md"></i>
+                                <span>Led by ${this.escapeHtml(project.ownerName)}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Initiated ${this.formatDate(project.createdAt)}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex gap-2">
-                        <button class="btn btn-secondary" id="backToProjectsBtn">
+                    <div class="project-header-actions">
+                        <button class="btn-elite-secondary" id="backToProjectsBtn">
                             <i class="fas fa-arrow-left"></i>
                             Back
                         </button>
                         ${isOwner ? `
-                            <button class="btn btn-primary" id="addDiscussionBtn">
-                                <i class="fas fa-plus"></i>
+                            <button class="btn-elite-primary" id="addDiscussionBtn">
+                                <i class="fas fa-plus-circle"></i>
                                 New Discussion
                             </button>
                         ` : !this.isVisitor && !isMember ? `
-                            <button class="btn btn-primary" id="joinThisProjectBtn">
+                            <button class="btn-elite-join" id="joinThisProjectBtn">
                                 <i class="fas fa-user-plus"></i>
-                                Join Project
+                                Request to Join
                             </button>
                         ` : isMember && !isOwner ? `
-                            <button class="btn btn-error" id="leaveThisProjectBtn">
+                            <button class="btn-elite-leave" id="leaveThisProjectBtn">
                                 <i class="fas fa-sign-out-alt"></i>
                                 Leave Project
                             </button>
@@ -1268,149 +1200,162 @@ class ThoraxLabPro {
                     </div>
                 </div>
                 
-                <div class="card mb-6">
-                    <h3 class="mb-4">Project Description</h3>
-                    <p class="mb-4">${this.escapeHtml(project.description)}</p>
-                    
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        ${project.tags.map(tag => `
-                            <span class="tag">${this.escapeHtml(tag)}</span>
-                        `).join('')}
+                <div class="project-detail-content">
+                    <div class="project-main-card">
+                        <div class="card-header-elite">
+                            <h2><i class="fas fa-book-open"></i> Project Overview</h2>
+                        </div>
+                        <div class="project-description">
+                            ${this.escapeHtml(project.description)}
+                        </div>
+                        
+                        <div class="project-tags-section">
+                            <h3><i class="fas fa-tags"></i> Research Domains</h3>
+                            <div class="tags-container">
+                                ${project.tags.map(tag => `
+                                    <span class="elite-tag">${this.escapeHtml(tag)}</span>
+                                `).join('')}
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <h4 class="mb-2">Team Members</h4>
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="user-avatar">${project.ownerName.substring(0, 2).toUpperCase()}</div>
-                                    <div>
-                                        <div class="font-medium">${this.escapeHtml(project.ownerName)}</div>
-                                        <div class="text-sm text-muted">Project Lead</div>
+                    <div class="project-sidebar">
+                        <div class="sidebar-card">
+                            <h3><i class="fas fa-users"></i> Research Team</h3>
+                            <div class="team-list">
+                                <div class="team-member-elite lead-member">
+                                    <div class="member-avatar">${project.ownerName.substring(0, 2).toUpperCase()}</div>
+                                    <div class="member-info">
+                                        <div class="member-name">${this.escapeHtml(project.ownerName)}</div>
+                                        <div class="member-role">Project Lead</div>
                                     </div>
                                 </div>
                                 ${project.teamMembers.map(member => `
-                                    <div class="flex items-center gap-2">
-                                        <div class="user-avatar" style="background: var(--ui-mid);">
+                                    <div class="team-member-elite">
+                                        <div class="member-avatar" style="background: linear-gradient(135deg, #64748B, #475569);">
                                             ${member.substring(0, 2).toUpperCase()}
                                         </div>
-                                        <div class="font-medium">${this.escapeHtml(member)}</div>
+                                        <div class="member-info">
+                                            <div class="member-name">${this.escapeHtml(member)}</div>
+                                            <div class="member-role">Collaborator</div>
+                                        </div>
                                     </div>
                                 `).join('')}
                                 ${isOwner ? `
-                                    <button class="btn btn-sm btn-secondary mt-2" id="inviteTeamMemberBtn">
+                                    <button class="btn-elite-secondary btn-sm mt-3" id="inviteTeamMemberBtn">
                                         <i class="fas fa-user-plus"></i>
-                                        Invite Team Member
+                                        Invite Collaborator
                                     </button>
                                 ` : ''}
                             </div>
                         </div>
-                        <div>
-                            <h4 class="mb-2">Project Stats</h4>
-                            <div class="space-y-3">
-                                <div>
-                                    <div class="text-sm text-muted">Total Discussions</div>
-                                    <div class="text-2xl font-bold">${discussions.length}</div>
-                                </div>
-                                <div>
-                                    <div class="text-sm text-muted">Total Engagement</div>
-                                    <div class="text-2xl font-bold">
-                                        ${this.calculateProjectEngagement(project)}
+                        
+                        <div class="sidebar-card">
+                            <h3><i class="fas fa-chart-bar"></i> Project Metrics</h3>
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <div class="metric-value">${discussions.length}</div>
+                                        <div class="metric-label">Discussions</div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div class="text-sm text-muted">Last Activity</div>
-                                    <div class="font-medium">${this.formatDate(project.updatedAt)}</div>
+                                <div class="metric-card">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <div class="metric-value">${this.calculateProjectEngagement(project)}</div>
+                                        <div class="metric-label">Engagement</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <div class="metric-value">${discussions.reduce((sum, d) => sum + (d.views || 0), 0)}</div>
+                                        <div class="metric-label">Views</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2>Discussions (${discussions.length})</h2>
-                        ${isOwner || isMember ? `
-                            <button class="btn btn-primary btn-sm" id="startDiscussionBtn">
-                                <i class="fas fa-plus"></i>
+                <div class="project-discussions-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-comments"></i> Research Discussions</h2>
+                        ${(isOwner || isMember) && !this.isVisitor ? `
+                            <button class="btn-elite-primary" id="startDiscussionBtn">
+                                <i class="fas fa-plus-circle"></i>
                                 Start Discussion
                             </button>
                         ` : ''}
                     </div>
                     
                     <div id="projectDiscussions">
-                        ${sortedDiscussions.length > 0 ? sortedDiscussions.map(disc => {
+                        ${discussions.length > 0 ? discussions.map(disc => {
                             const engagementScore = (disc.likes || 0) + (disc.comments || 0);
-                            const engagementPercentage = Math.min(100, engagementScore * 5);
-                            const isPopular = engagementScore >= 10;
-                            const isDiscussionOwner = !this.isVisitor && disc.authorId === this.user.id;
-                            const canDelete = isDiscussionOwner || isOwner;
+                            const isElite = engagementScore >= 20;
                             
                             return `
-                                <div class="discussion-card mb-4" data-discussion-id="${disc.id}">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="flex items-center gap-2">
-                                            <span class="discussion-type type-${disc.type}">
-                                                ${this.getDiscussionIcon(disc.type)} ${disc.type}
-                                            </span>
-                                            ${isPopular ? `
-                                                <span class="popular-badge">
-                                                    <i class="fas fa-fire"></i>
-                                                    Popular
-                                                </span>
-                                            ` : ''}
+                                <div class="discussion-card-elite" data-discussion-id="${disc.id}">
+                                    <div class="discussion-card-header">
+                                        <div class="discussion-type-indicator type-${disc.type}">
+                                            <i class="${this.getDiscussionIcon(disc.type)}"></i>
+                                            <span>${disc.type}</span>
                                         </div>
-                                        <div class="flex items-center gap-2">
-                                            ${canDelete ? `
-                                                <button class="btn btn-xs btn-error delete-discussion-btn" 
-                                                        data-discussion-id="${disc.id}"
-                                                        style="padding: 2px 6px;">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            ` : ''}
-                                            <span class="text-sm text-muted">
-                                                ${this.formatDate(disc.createdAt)}
-                                            </span>
-                                        </div>
+                                        ${isElite ? `
+                                            <div class="elite-discussion-badge">
+                                                <i class="fas fa-crown"></i>
+                                                Elite Discussion
+                                            </div>
+                                        ` : ''}
                                     </div>
-                                    <h3 class="mb-2">${this.escapeHtml(disc.title)}</h3>
-                                    <p class="text-muted mb-3">
-                                        ${this.escapeHtml(disc.content.substring(0, 200))}${disc.content.length > 200 ? '...' : ''}
+                                    
+                                    <h3 class="discussion-card-title">${this.escapeHtml(disc.title)}</h3>
+                                    
+                                    <p class="discussion-card-excerpt">
+                                        ${this.escapeHtml(disc.content.substring(0, 160))}${disc.content.length > 160 ? '...' : ''}
                                     </p>
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-4">
-                                            <div class="flex items-center gap-2">
-                                                <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">
-                                                    ${disc.authorName.substring(0, 2).toUpperCase()}
-                                                </div>
-                                                <span class="text-sm">${this.escapeHtml(disc.authorName)}</span>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <button class="action-btn like-btn ${this.hasLikedDiscussion(disc.id) ? 'liked' : ''}" 
-                                                        data-discussion-id="${disc.id}">
-                                                    <i class="fas fa-heart"></i>
-                                                    <span>${disc.likes || 0}</span>
-                                                </button>
-                                                <button class="action-btn comment-btn" data-discussion-id="${disc.id}">
-                                                    <i class="fas fa-comment"></i>
-                                                    <span>${disc.comments || 0}</span>
-                                                </button>
+                                    
+                                    <div class="discussion-card-footer">
+                                        <div class="discussion-author">
+                                            <div class="author-avatar-small">${disc.authorName.substring(0, 2).toUpperCase()}</div>
+                                            <div>
+                                                <div class="author-name">${this.escapeHtml(disc.authorName)}</div>
+                                                <div class="author-institution">${disc.authorInstitution || ''}</div>
                                             </div>
                                         </div>
-                                        <span class="text-sm text-muted">
-                                            Click to view discussion
-                                        </span>
-                                    </div>
-                                    <div class="engagement-indicator">
-                                        <div class="engagement-fill" style="width: ${engagementPercentage}%"></div>
+                                        
+                                        <div class="discussion-engagement">
+                                            <div class="engagement-action ${this.hasLikedDiscussion(disc.id) ? 'active' : ''}" 
+                                                  data-discussion-id="${disc.id}">
+                                                <i class="fas fa-heart"></i>
+                                                <span>${disc.likes || 0}</span>
+                                            </div>
+                                            <div class="engagement-action">
+                                                <i class="fas fa-comment"></i>
+                                                <span>${disc.comments || 0}</span>
+                                            </div>
+                                            <div class="engagement-action">
+                                                <i class="fas fa-eye"></i>
+                                                <span>${disc.views || 0}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             `;
                         }).join('') : `
-                            <div class="empty-state">
-                                <div class="empty-icon">💬</div>
-                                <h3 class="mb-2">No discussions yet</h3>
-                                <p class="text-muted">Start the first discussion!</p>
+                            <div class="empty-state-section">
+                                <div class="empty-icon-section">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <h3>No Discussions Yet</h3>
+                                <p class="text-muted">Start the first research discussion for this project</p>
                             </div>
                         `}
                     </div>
@@ -1418,130 +1363,131 @@ class ThoraxLabPro {
             </div>
         `;
         
-        // Increment view count for project
-        this.incrementProjectViews(project.id);
-        
-        // Add event listeners
         this.setupProjectDetailListeners();
     }
     
     renderDiscussionDetail() {
         const container = document.getElementById('discussionDetailPage');
-        if (!this.currentDiscussion) return;
+        if (!container || !this.currentDiscussion) return;
         
         const discussion = this.currentDiscussion;
-        const isOwner = !this.isVisitor && discussion.authorId === this.user.id;
         const hasLiked = this.hasLikedDiscussion(discussion.id);
         
-        // Increment view count
-        this.incrementDiscussionViews(discussion.id);
-        
         container.innerHTML = `
-            <div class="mb-6">
-                <div class="flex items-center justify-between mb-4">
+            <div class="discussion-detail-container">
+                <div class="discussion-detail-header">
                     <div>
-                        <h1>${this.escapeHtml(discussion.title)}</h1>
-                        <p class="text-muted">
-                            In project: <a href="#project/${discussion.projectId}" class="text-thorax-blue">
-                                ${this.escapeHtml(discussion.projectTitle)}
+                        <div class="discussion-breadcrumb">
+                            <a href="#project/${discussion.projectId}" class="breadcrumb-link">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Project
                             </a>
-                        </p>
-                    </div>
-                    <div class="flex gap-2">
-                        ${isOwner ? `
-                            <button class="btn btn-error btn-sm" id="deleteDiscussionBtn">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        ` : ''}
-                        <button class="btn btn-secondary" id="backToProjectBtn">
-                            <i class="fas fa-arrow-left"></i>
-                            Back to Project
-                        </button>
-                        ${!this.isVisitor ? `
-                            <button class="btn btn-primary" id="addCommentBtn">
-                                <i class="fas fa-comment"></i>
-                                Add Comment
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-                
-                <div class="card mb-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="user-avatar">${discussion.authorName.substring(0, 2).toUpperCase()}</div>
-                            <div>
-                                <div class="font-medium">${this.escapeHtml(discussion.authorName)}</div>
-                                <div class="text-sm text-muted">
-                                    ${this.formatDate(discussion.createdAt)} • 
-                                    <span class="discussion-type type-${discussion.type}">
-                                        ${discussion.type}
-                                    </span>
+                            <span class="breadcrumb-separator">/</span>
+                            <span class="breadcrumb-current">Discussion</span>
+                        </div>
+                        <h1 class="discussion-detail-title">${this.escapeHtml(discussion.title)}</h1>
+                        <div class="discussion-detail-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-user-md"></i>
+                                <span>${this.escapeHtml(discussion.authorName)}</span>
+                                <span class="meta-institution">${discussion.authorInstitution || ''}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${this.formatDate(discussion.createdAt)}</span>
+                            </div>
+                            <div class="meta-item">
+                                <div class="discussion-type-badge type-${discussion.type}">
+                                    <i class="${this.getDiscussionIcon(discussion.type)}"></i>
+                                    ${discussion.type}
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button class="action-btn like-btn ${hasLiked ? 'liked' : ''}" 
-                                    data-discussion-id="${discussion.id}">
-                                <i class="fas fa-heart"></i>
-                                <span>${discussion.likes || 0}</span>
+                    </div>
+                    <div class="discussion-header-actions">
+                        <button class="engagement-btn ${hasLiked ? 'active' : ''}" 
+                                data-discussion-id="${discussion.id}">
+                            <i class="fas fa-heart"></i>
+                            <span>${discussion.likes || 0}</span>
+                        </button>
+                        ${!this.isVisitor ? `
+                            <button class="btn-elite-primary" id="addCommentBtn">
+                                <i class="fas fa-comment-medical"></i>
+                                Add Insight
                             </button>
-                            <span class="text-sm text-muted">
-                                ${discussion.views || 0} views
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <p>${this.escapeHtml(discussion.content)}</p>
-                    </div>
-                    
-                    <div class="engagement-indicator">
-                        <div class="engagement-fill" style="width: ${Math.min(100, ((discussion.likes || 0) + (discussion.comments || 0)) * 5)}%"></div>
+                        ` : ''}
                     </div>
                 </div>
                 
-                <div class="card">
-                    <h3 class="mb-4">Comments (${discussion.comments || 0})</h3>
-                    <div id="commentsSection">
-                        <!-- Comments loaded dynamically -->
+                <div class="discussion-detail-content">
+                    <div class="discussion-main-card">
+                        <div class="discussion-content">
+                            ${this.escapeHtml(discussion.content).replace(/\n/g, '<br>')}
+                        </div>
+                        
+                        <div class="discussion-engagement-bar">
+                            <div class="engagement-stats">
+                                <div class="engagement-stat">
+                                    <i class="fas fa-heart"></i>
+                                    <span>${discussion.likes || 0} Insights Appreciated</span>
+                                </div>
+                                <div class="engagement-stat">
+                                    <i class="fas fa-comment"></i>
+                                    <span>${discussion.comments || 0} Expert Contributions</span>
+                                </div>
+                                <div class="engagement-stat">
+                                    <i class="fas fa-eye"></i>
+                                    <span>${discussion.views || 0} Views</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    ${!this.isVisitor ? `
-                        <div class="mt-4">
-                            <button class="btn btn-primary w-full" id="addNewCommentBtn">
-                                <i class="fas fa-plus"></i>
-                                Add a Comment
-                            </button>
+                    
+                    <div class="comments-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-comments"></i> Expert Insights (${discussion.comments || 0})</h2>
                         </div>
-                    ` : `
-                        <div class="text-center py-4 text-muted">
-                            <i class="fas fa-info-circle"></i>
-                            Visitors can view but cannot comment
+                        
+                        <div id="commentsContainer">
+                            <!-- Comments loaded dynamically -->
                         </div>
-                    `}
+                        
+                        ${!this.isVisitor ? `
+                            <div class="add-comment-section">
+                                <button class="btn-elite-primary btn-lg" id="addNewCommentBtn">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Contribute Your Insight
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="visitor-notice">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Guest researchers can view insights but cannot contribute</span>
+                            </div>
+                        `}
+                    </div>
                 </div>
             </div>
         `;
         
-        // Load comments
         this.loadComments();
-        
-        // Add event listeners
         this.setupDiscussionDetailListeners();
     }
     
     loadComments() {
-        const container = document.getElementById('commentsSection');
+        const container = document.getElementById('commentsContainer');
         if (!container) return;
         
         const comments = this.currentDiscussion.commentsList || [];
         
         if (!comments.length) {
             container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">💭</div>
-                    <h3 class="mb-2">No comments yet</h3>
-                    <p class="text-muted">Be the first to share your thoughts!</p>
+                <div class="empty-comments">
+                    <div class="empty-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>No Insights Yet</h3>
+                    <p class="text-muted">Be the first to contribute expert insight to this discussion</p>
                 </div>
             `;
             return;
@@ -1549,33 +1495,31 @@ class ThoraxLabPro {
         
         container.innerHTML = comments.map(comment => {
             const hasLiked = this.hasLikedComment(comment.id);
-            const isCommentOwner = !this.isVisitor && comment.authorId === this.user.id;
             
             return `
-                <div class="comment">
+                <div class="expert-comment">
                     <div class="comment-header">
-                        <div class="user-avatar" style="width: 32px; height: 32px; font-size: 12px;">
-                            ${comment.authorName.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <div class="font-medium">${this.escapeHtml(comment.authorName)}</div>
-                                    <div class="text-sm text-muted">${this.formatDate(comment.createdAt)}</div>
+                        <div class="comment-author">
+                            <div class="author-avatar">${comment.authorName.substring(0, 2).toUpperCase()}</div>
+                            <div class="author-details">
+                                <div class="author-name">${this.escapeHtml(comment.authorName)}</div>
+                                <div class="author-credentials">
+                                    <span class="author-institution">${comment.authorInstitution || ''}</span>
+                                    <span class="author-role">${comment.authorRole ? comment.authorRole.charAt(0).toUpperCase() + comment.authorRole.slice(1) : ''}</span>
                                 </div>
-                                ${isCommentOwner ? `
-                                    <button class="btn btn-xs btn-error delete-comment-btn" 
-                                            data-comment-id="${comment.id}"
-                                            data-discussion-id="${this.currentDiscussion.id}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                ` : ''}
                             </div>
                         </div>
+                        <div class="comment-meta">
+                            <span class="comment-time">${this.formatDate(comment.createdAt)}</span>
+                        </div>
                     </div>
-                    <p class="mb-3">${this.escapeHtml(comment.content)}</p>
-                    <div class="engagement-actions" style="border: none; padding: 0;">
-                        <button class="action-btn comment-like-btn ${hasLiked ? 'liked' : ''}" 
+                    
+                    <div class="comment-content">
+                        ${this.escapeHtml(comment.content)}
+                    </div>
+                    
+                    <div class="comment-actions">
+                        <button class="comment-action-btn ${hasLiked ? 'active' : ''}" 
                                 data-comment-id="${comment.id}">
                             <i class="fas fa-heart"></i>
                             <span>${comment.likes || 0}</span>
@@ -1585,24 +1529,14 @@ class ThoraxLabPro {
             `;
         }).join('');
         
-        // Add like handlers for comments
-        container.querySelectorAll('.comment-like-btn').forEach(btn => {
+        container.querySelectorAll('.comment-action-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if (this.isVisitor) {
-                    this.showToast('Visitors cannot like comments', 'warning');
+                    this.showToast('Guests cannot appreciate insights', 'warning');
                     return;
                 }
                 const commentId = e.currentTarget.dataset.commentId;
                 this.toggleCommentLike(commentId);
-            });
-        });
-        
-        // Add delete handlers for comments
-        container.querySelectorAll('.delete-comment-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const commentId = e.currentTarget.dataset.commentId;
-                const discussionId = e.currentTarget.dataset.discussionId;
-                this.deleteComment(commentId, discussionId);
             });
         });
     }
@@ -1645,39 +1579,6 @@ class ThoraxLabPro {
             this.createProject();
         });
         
-        // Team member management
-        document.getElementById('addTeamMemberBtn')?.addEventListener('click', () => {
-            const input = document.getElementById('teamMemberInput');
-            const name = input.value.trim();
-            
-            if (name) {
-                this.addTeamMember(name);
-                input.value = '';
-            }
-        });
-        
-        // Character counters
-        const projectDesc = document.getElementById('projectDescription');
-        if (projectDesc) {
-            projectDesc.addEventListener('input', (e) => {
-                const counter = document.getElementById('descCounter');
-                if (counter) {
-                    const length = e.target.value.length;
-                    counter.textContent = `${length}/2000`;
-                    counter.classList.toggle('near-limit', length > 1800);
-                    counter.classList.toggle('over-limit', length > 2000);
-                }
-            });
-        }
-        
-        // Discussion type selection
-        document.querySelectorAll('.discussion-type-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.discussion-type-btn').forEach(b => b.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-            });
-        });
-        
         // Discussion form
         document.getElementById('discussionForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1691,17 +1592,9 @@ class ThoraxLabPro {
         });
         
         // Search
-        const projectSearch = document.getElementById('projectSearch');
-        if (projectSearch) {
-            projectSearch.addEventListener('input', (e) => {
-                this.searchQuery = e.target.value;
-                this.loadAllProjects();
-            });
-        }
-        
-        // Sort projects
-        document.getElementById('sortProjectsBtn')?.addEventListener('click', () => {
-            this.showProjectSortOptions();
+        document.getElementById('projectSearch')?.addEventListener('input', (e) => {
+            this.searchQuery = e.target.value;
+            this.loadAllProjects();
         });
         
         // Modal close buttons
@@ -1755,45 +1648,25 @@ class ThoraxLabPro {
             }
         });
         
-        document.getElementById('inviteTeamMemberBtn')?.addEventListener('click', () => {
-            this.showModal('inviteTeamModal');
-        });
-        
-        // Discussion like buttons
-        document.querySelectorAll('.like-btn').forEach(btn => {
+        // Engagement actions
+        document.querySelectorAll('.engagement-action').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (this.isVisitor) {
-                    this.showToast('Visitors cannot like discussions', 'warning');
-                    return;
+                if (btn.classList.contains('active') || btn.classList.contains('fa-heart')) {
+                    const discussionId = btn.dataset.discussionId;
+                    if (discussionId && !this.isVisitor) {
+                        this.toggleDiscussionLike(discussionId);
+                    } else if (this.isVisitor) {
+                        this.showToast('Guest researchers cannot appreciate insights', 'warning');
+                    }
                 }
-                const discussionId = e.currentTarget.dataset.discussionId;
-                this.toggleDiscussionLike(discussionId);
             });
         });
         
-        // Comment buttons
-        document.querySelectorAll('.comment-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const discussionId = e.currentTarget.dataset.discussionId;
-                this.navigateTo(`discussion/${discussionId}`);
-            });
-        });
-        
-        // Delete discussion buttons
-        document.querySelectorAll('.delete-discussion-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const discussionId = e.currentTarget.dataset.discussionId;
-                this.deleteDiscussion(discussionId);
-            });
-        });
-        
-        // Discussion click handlers
-        document.querySelectorAll('#projectDiscussions .discussion-card').forEach(card => {
+        // Discussion card clicks
+        document.querySelectorAll('.discussion-card-elite').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (!e.target.closest('.action-btn') && !e.target.closest('.delete-discussion-btn')) {
+                if (!e.target.closest('.engagement-action')) {
                     const discussionId = card.dataset.discussionId;
                     this.navigateTo(`discussion/${discussionId}`);
                 }
@@ -1802,10 +1675,6 @@ class ThoraxLabPro {
     }
     
     setupDiscussionDetailListeners() {
-        document.getElementById('backToProjectBtn')?.addEventListener('click', () => {
-            this.navigateTo(`project/${this.currentDiscussion.projectId}`);
-        });
-        
         document.getElementById('addCommentBtn')?.addEventListener('click', () => {
             document.getElementById('commentDiscussionId').value = this.currentDiscussion.id;
             this.showModal('commentModal');
@@ -1816,14 +1685,9 @@ class ThoraxLabPro {
             this.showModal('commentModal');
         });
         
-        document.getElementById('deleteDiscussionBtn')?.addEventListener('click', () => {
-            this.deleteDiscussion(this.currentDiscussion.id);
-        });
-        
-        // Discussion like button
-        document.querySelector('.like-btn')?.addEventListener('click', (e) => {
+        document.querySelector('.engagement-btn')?.addEventListener('click', (e) => {
             if (this.isVisitor) {
-                this.showToast('Visitors cannot like discussions', 'warning');
+                this.showToast('Guest researchers cannot appreciate insights', 'warning');
                 return;
             }
             const discussionId = e.currentTarget.dataset.discussionId;
@@ -1835,128 +1699,19 @@ class ThoraxLabPro {
     
     showModal(modalId) {
         const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('active');
-        }
+        if (modal) modal.classList.add('active');
     }
     
     hideModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.classList.remove('active');
-            
-            // Reset forms
             const form = modal.querySelector('form');
-            if (form) {
-                form.reset();
-                
-                // Reset character counters
-                const counter = modal.querySelector('.char-counter');
-                if (counter) {
-                    counter.textContent = '0/...';
-                    counter.className = 'char-counter';
-                }
-            }
-            
-            // Clear team members list
-            if (modalId === 'newProjectModal') {
-                const teamList = document.getElementById('teamMembersList');
-                if (teamList) teamList.innerHTML = '';
-                
-                const tagsContainer = document.getElementById('tagsContainer');
-                if (tagsContainer) tagsContainer.innerHTML = '';
-            }
+            if (form) form.reset();
         }
     }
     
-    addTeamMember(name) {
-        const container = document.getElementById('teamMembersList');
-        if (!container) return;
-        
-        const memberDiv = document.createElement('div');
-        memberDiv.className = 'flex items-center justify-between p-2 bg-ui-bg rounded team-member';
-        memberDiv.dataset.name = name;
-        memberDiv.innerHTML = `
-            <div class="flex items-center gap-2">
-                <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px; background: var(--ui-mid);">
-                    ${name.substring(0, 2).toUpperCase()}
-                </div>
-                <span>${this.escapeHtml(name)}</span>
-            </div>
-            <button type="button" class="text-sm text-error remove-member-btn">&times;</button>
-        `;
-        
-        // Add remove listener
-        memberDiv.querySelector('.remove-member-btn').addEventListener('click', () => {
-            memberDiv.remove();
-        });
-        
-        container.appendChild(memberDiv);
-    }
-    
-    showProjectSortOptions() {
-        // Create sort options menu
-        const menu = document.createElement('div');
-        menu.className = 'absolute bg-ui-card border border-ui-border rounded shadow-md p-2 mt-1 z-50';
-        menu.innerHTML = `
-            <div class="text-xs font-semibold text-muted mb-2 px-2">Sort by:</div>
-            <button class="block w-full text-left px-3 py-2 hover:bg-ui-hover rounded ${this.projectSort === 'recent' ? 'text-thorax-blue bg-thorax-blue-light' : ''}" 
-                    onclick="app.setProjectSort('recent')">
-                Most Recent
-            </button>
-            <button class="block w-full text-left px-3 py-2 hover:bg-ui-hover rounded ${this.projectSort === 'popular' ? 'text-thorax-blue bg-thorax-blue-light' : ''}" 
-                    onclick="app.setProjectSort('popular')">
-                Most Popular
-            </button>
-            <button class="block w-full text-left px-3 py-2 hover:bg-ui-hover rounded ${this.projectSort === 'alphabetical' ? 'text-thorax-blue bg-thorax-blue-light' : ''}" 
-                    onclick="app.setProjectSort('alphabetical')">
-                Alphabetical
-            </button>
-        `;
-        
-        // Remove existing menu
-        const existingMenu = document.querySelector('.sort-menu');
-        if (existingMenu) {
-            existingMenu.remove();
-        }
-        
-        menu.classList.add('sort-menu');
-        
-        const button = document.getElementById('sortProjectsBtn');
-        if (button) {
-            button.parentElement.style.position = 'relative';
-            button.parentElement.appendChild(menu);
-            
-            // Close menu when clicking outside
-            setTimeout(() => {
-                const closeMenu = (e) => {
-                    if (!button.contains(e.target) && !menu.contains(e.target)) {
-                        menu.remove();
-                        document.removeEventListener('click', closeMenu);
-                    }
-                };
-                document.addEventListener('click', closeMenu);
-            }, 100);
-        }
-    }
-    
-    setProjectSort(sortType) {
-        this.projectSort = sortType;
-        this.loadAllProjects();
-        
-        // Update button text
-        const button = document.getElementById('sortProjectsBtn');
-        if (button) {
-            const icons = {
-                'recent': 'fa-clock',
-                'popular': 'fa-fire',
-                'alphabetical': 'fa-sort-alpha-down'
-            };
-            button.innerHTML = `<i class="fas ${icons[sortType]}"></i> ${sortType.charAt(0).toUpperCase() + sortType.slice(1)}`;
-        }
-    }
-    
-    // ========== DATA STORAGE HELPERS ==========
+    // ========== DATA STORAGE ==========
     
     getProjects() {
         return JSON.parse(localStorage.getItem('thoraxlab_projects') || '[]');
@@ -1991,15 +1746,9 @@ class ThoraxLabPro {
     
     calculateProjectEngagement(project) {
         if (!project.discussions) return 0;
-        
         return project.discussions.reduce((sum, disc) => {
             return sum + (disc.likes || 0) + (disc.comments || 0);
         }, 0);
-    }
-    
-    incrementProjectViews(projectId) {
-        // Optional: Implement project view tracking
-        // This could be stored in localStorage
     }
     
     // ========== UI HELPER METHODS ==========
@@ -2009,7 +1758,7 @@ class ThoraxLabPro {
         if (!container) return;
         
         const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
+        toast.className = `toast-elite toast-${type}`;
         
         const icons = {
             success: 'fa-check-circle',
@@ -2019,18 +1768,16 @@ class ThoraxLabPro {
         };
         
         toast.innerHTML = `
-            <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
+            <i class="fas ${icons[type]}"></i>
             <span>${this.escapeHtml(message)}</span>
-            <button class="ml-auto text-sm" onclick="this.parentElement.remove()">&times;</button>
+            <button class="toast-close">&times;</button>
         `;
         
         container.appendChild(toast);
         
-        setTimeout(() => {
-            if (toast.parentElement) {
-                toast.remove();
-            }
-        }, 4000);
+        toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
+        
+        setTimeout(() => toast.remove(), 4000);
     }
     
     escapeHtml(text) {
@@ -2061,26 +1808,30 @@ class ThoraxLabPro {
             const weeks = Math.floor(diffDays / 7);
             return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
         } else {
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
         }
     }
     
     getDiscussionIcon(type) {
         const icons = {
-            'brainstorm': '💡',
-            'question': '❓',
-            'decision': '🤔',
-            'insight': '🔍'
+            'brainstorm': 'fas fa-lightbulb',
+            'question': 'fas fa-question-circle',
+            'decision': 'fas fa-gavel',
+            'insight': 'fas fa-eye'
         };
-        return icons[type] || '💬';
+        return icons[type] || 'fas fa-comments';
     }
 }
 
-// Initialize the application when DOM is loaded
+// Initialize application
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new ThoraxLabPro();
     
-    // Global helper functions
+    // Global helpers
     window.showModal = (modalId) => window.app.showModal(modalId);
     window.hideModal = (modalId) => window.app.hideModal(modalId);
     
@@ -2088,12 +1839,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
-            const search = document.getElementById('projectSearch');
-            if (search) {
-                search.focus();
-            }
+            document.getElementById('projectSearch')?.focus();
         }
-        
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal.active').forEach(modal => {
                 window.app.hideModal(modal.id);
