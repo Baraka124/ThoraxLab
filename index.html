@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thorax Lab Pro | Clinical Research & Innovation Platform</title>
+    <title>Thorax Lab Pro | Clinical Research Platform</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,87 +11,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ====== CLINICAL RESEARCH DESIGN SYSTEM ====== */
+        /* ====== CLEAN DESIGN SYSTEM ====== */
         :root {
-            /* Clinical Research Color Palette */
-            --research-navy: #0A2342;
-            --research-navy-light: #1A365D;
-            --research-navy-dark: #051326;
-            --accent-bronze: #B8860B;
-            --accent-bronze-light: #DAA520;
-            --accent-bronze-dark: #8B4513;
+            /* Clean Color Palette */
+            --navy: #0A2342;
+            --navy-light: #1A365D;
+            --navy-dark: #051326;
+            --bronze: #B8860B;
+            --bronze-light: #DAA520;
+            --bronze-dark: #8B4513;
             
-            /* Status Colors - Clinical Significance */
-            --status-success: #10B981;    /* Clinical improvement */
-            --status-warning: #F59E0B;    /* Requires attention */
-            --status-error: #DC2626;      /* Critical finding */
-            --status-info: #3B82F6;       /* Informational */
-            --status-neutral: #6B7280;    /* Baseline */
-            
-            /* Research Phase Colors */
-            --phase-planning: #3B82F6;    /* Protocol design */
-            --phase-data: #10B981;        /* Data collection */
-            --phase-analysis: #8B5CF6;    /* Statistical analysis */
-            --phase-publishing: #F59E0B;  /* Manuscript prep */
-            --phase-completed: #6B7280;   /* Study complete */
+            /* Status Colors */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #DC2626;
+            --info: #3B82F6;
             
             /* UI Colors */
-            --ui-bg: #F8FAFC;
-            --ui-card: #FFFFFF;
-            --ui-card-alt: #F1F5F9;
-            --ui-border: #E2E8F0;
-            --ui-border-light: #F1F5F9;
-            --ui-hover: #F8FAFC;
-            --ui-text: #1E293B;
-            --ui-text-light: #64748B;
-            --ui-text-muted: #94A3B8;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --card-alt: #F1F5F9;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --hover: #F8FAFC;
+            --text: #1E293B;
+            --text-light: #64748B;
+            --text-muted: #94A3B8;
             
-            /* Research Gradients */
-            --gradient-research: linear-gradient(135deg, var(--research-navy) 0%, var(--research-navy-light) 100%);
-            --gradient-accent: linear-gradient(135deg, var(--accent-bronze) 0%, var(--accent-bronze-light) 100%);
-            --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-            --gradient-phase: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--bronze) 0%, var(--bronze-light) 100%);
             
-            /* Shadows - Clinical Precision */
-            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
-            --shadow-prominent: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-            --shadow-focus: 0 20px 25px -5px rgba(10, 35, 66, 0.08);
-            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04);
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-focus: 0 20px 25px -5px rgba(10, 35, 66, 0.1);
             
-            /* Border Radius - Clinical Precision */
+            /* Border Radius */
             --radius-sm: 4px;
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
             --radius-full: 9999px;
             
-            /* Spacing - Systematic Layout */
+            /* Spacing */
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
             --space-md: 1rem;
             --space-lg: 1.5rem;
             --space-xl: 2rem;
             --space-2xl: 3rem;
-            --space-3xl: 4rem;
             
-            /* Transitions - Smooth Clinical Flow */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Typography - Clinical Readability */
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --font-serif: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
-            --font-mono: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
-            
-            /* Layout - Clinical Precision */
-            --header-height: 64px;
-            --sidebar-width: 280px;
-            --max-content: 1200px;
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Source Serif Pro', Georgia, serif;
         }
         
-        /* ====== BASE RESET & CLINICAL TYPOGRAPHY ====== */
+        /* ====== BASE STYLES ====== */
         * {
             margin: 0;
             padding: 0;
@@ -100,479 +77,163 @@
         
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: var(--header-height);
         }
         
         body {
             font-family: var(--font-sans);
-            background: var(--ui-bg);
-            color: var(--ui-text);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
             min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* ====== CLINICAL TYPOGRAPHY SYSTEM ====== */
+        /* ====== TYPOGRAPHY ====== */
         h1, h2, h3, h4, h5, h6 {
             font-family: var(--font-serif);
             font-weight: 600;
             line-height: 1.3;
-            color: var(--research-navy);
-            letter-spacing: -0.01em;
+            color: var(--navy);
         }
         
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        
-        h2 {
-            font-size: 2rem;
-            letter-spacing: -0.01em;
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-        }
-        
-        .text-display {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: var(--gradient-research);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.03em;
-        }
+        h1 { font-size: 2.25rem; }
+        h2 { font-size: 1.75rem; }
+        h3 { font-size: 1.25rem; }
         
         .text-lead {
             font-size: 1.125rem;
-            color: var(--ui-text-light);
-            line-height: 1.7;
+            color: var(--text-light);
         }
         
         .text-muted {
-            color: var(--ui-text-muted);
+            color: var(--text-muted);
             font-size: 0.875rem;
         }
         
-        .text-small {
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-        
-        .text-xsmall {
-            font-size: 0.75rem;
-            line-height: 1.4;
-        }
-        
-        .text-code {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            background: var(--ui-card-alt);
-            padding: 0.125rem 0.375rem;
-            border-radius: var(--radius-sm);
-            color: var(--status-error);
-        }
-        
-        /* ====== LAYOUT UTILITIES ====== */
-        .hidden {
-            display: none !important;
-        }
-        
-        .visible {
-            visibility: visible;
-        }
-        
-        .invisible {
-            visibility: hidden;
-        }
-        
-        .flex {
-            display: flex;
-        }
-        
-        .grid {
-            display: grid;
-        }
-        
-        .block {
-            display: block;
-        }
-        
-        .inline {
-            display: inline;
-        }
-        
-        .inline-block {
-            display: inline-block;
-        }
-        
-        .inline-flex {
-            display: inline-flex;
-        }
-        
-        .items-center {
-            align-items: center;
-        }
-        
-        .items-start {
-            align-items: flex-start;
-        }
-        
-        .items-end {
-            align-items: flex-end;
-        }
-        
-        .items-baseline {
-            align-items: baseline;
-        }
-        
-        .justify-center {
-            justify-content: center;
-        }
-        
-        .justify-between {
-            justify-content: space-between;
-        }
-        
-        .justify-around {
-            justify-content: space-around;
-        }
-        
-        .justify-end {
-            justify-content: flex-end;
-        }
-        
-        .justify-start {
-            justify-content: flex-start;
-        }
-        
-        .flex-col {
-            flex-direction: column;
-        }
-        
-        .flex-row {
-            flex-direction: row;
-        }
-        
-        .flex-wrap {
-            flex-wrap: wrap;
-        }
-        
-        .flex-nowrap {
-            flex-wrap: nowrap;
-        }
-        
-        .flex-1 {
-            flex: 1 1 0%;
-        }
-        
-        .flex-auto {
-            flex: 1 1 auto;
-        }
-        
-        .flex-none {
-            flex: none;
-        }
-        
-        .gap-1 { gap: 0.25rem; }
+        /* ====== UTILITIES ====== */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
         .gap-2 { gap: 0.5rem; }
         .gap-3 { gap: 0.75rem; }
         .gap-4 { gap: 1rem; }
-        .gap-5 { gap: 1.25rem; }
         .gap-6 { gap: 1.5rem; }
         .gap-8 { gap: 2rem; }
-        .gap-10 { gap: 2.5rem; }
-        .gap-12 { gap: 3rem; }
-        
-        .mt-1 { margin-top: 0.25rem; }
         .mt-2 { margin-top: 0.5rem; }
-        .mt-3 { margin-top: 0.75rem; }
         .mt-4 { margin-top: 1rem; }
         .mt-6 { margin-top: 1.5rem; }
         .mt-8 { margin-top: 2rem; }
-        .mt-10 { margin-top: 2.5rem; }
-        .mb-1 { margin-bottom: 0.25rem; }
         .mb-2 { margin-bottom: 0.5rem; }
-        .mb-3 { margin-bottom: 0.75rem; }
         .mb-4 { margin-bottom: 1rem; }
         .mb-6 { margin-bottom: 1.5rem; }
         .mb-8 { margin-bottom: 2rem; }
-        .mb-10 { margin-bottom: 2.5rem; }
-        .ml-auto { margin-left: auto; }
-        .mr-auto { margin-right: auto; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        
         .w-full { width: 100%; }
         .w-auto { width: auto; }
-        .w-min { width: min-content; }
-        .w-max { width: max-content; }
-        .h-full { height: 100%; }
-        .h-screen { height: 100vh; }
-        .h-auto { height: auto; }
-        .min-h-0 { min-height: 0; }
-        .min-h-full { min-height: 100%; }
-        .min-h-screen { min-height: 100vh; }
-        .max-w-full { max-width: 100%; }
-        .max-w-xs { max-width: 20rem; }
-        .max-w-sm { max-width: 24rem; }
-        .max-w-md { max-width: 28rem; }
-        .max-w-lg { max-width: 32rem; }
-        .max-w-xl { max-width: 36rem; }
-        .max-w-2xl { max-width: 42rem; }
-        .max-w-4xl { max-width: 56rem; }
-        .max-w-6xl { max-width: 72rem; }
-        .max-w-7xl { max-width: 80rem; }
-        
         .text-center { text-align: center; }
         .text-right { text-align: right; }
-        .text-left { text-align: left; }
-        .text-justify { text-align: justify; }
-        
-        .relative { position: relative; }
-        .absolute { position: absolute; }
-        .fixed { position: fixed; }
-        .sticky { position: sticky; }
-        .static { position: static; }
-        
-        .top-0 { top: 0; }
-        .right-0 { right: 0; }
-        .bottom-0 { bottom: 0; }
-        .left-0 { left: 0; }
-        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-        
-        .z-0 { z-index: 0; }
-        .z-10 { z-index: 10; }
-        .z-20 { z-index: 20; }
-        .z-30 { z-index: 30; }
-        .z-40 { z-index: 40; }
-        .z-50 { z-index: 50; }
-        
-        .overflow-hidden { overflow: hidden; }
-        .overflow-auto { overflow: auto; }
-        .overflow-x-auto { overflow-x: auto; }
-        .overflow-y-auto { overflow-y: auto; }
-        .overflow-x-hidden { overflow-x: hidden; }
-        .overflow-y-hidden { overflow-y: hidden; }
-        
         .rounded { border-radius: var(--radius-md); }
-        .rounded-sm { border-radius: var(--radius-sm); }
-        .rounded-md { border-radius: var(--radius-md); }
         .rounded-lg { border-radius: var(--radius-lg); }
         .rounded-xl { border-radius: var(--radius-xl); }
         .rounded-full { border-radius: var(--radius-full); }
+        .shadow { box-shadow: var(--shadow-md); }
+        .shadow-lg { box-shadow: var(--shadow-lg); }
         
-        .border { border: 1px solid var(--ui-border); }
-        .border-0 { border: none; }
-        .border-t { border-top: 1px solid var(--ui-border); }
-        .border-b { border-bottom: 1px solid var(--ui-border); }
-        .border-l { border-left: 1px solid var(--ui-border); }
-        .border-r { border-right: 1px solid var(--ui-border); }
-        
-        .shadow-sm { box-shadow: var(--shadow-subtle); }
-        .shadow { box-shadow: var(--shadow-gentle); }
-        .shadow-md { box-shadow: var(--shadow-prominent); }
-        .shadow-lg { box-shadow: var(--shadow-focus); }
-        .shadow-xl { box-shadow: var(--shadow-card); }
-        .shadow-none { box-shadow: none; }
-        
-        .pointer-events-none { pointer-events: none; }
-        .pointer-events-auto { pointer-events: auto; }
-        
-        .select-none { user-select: none; }
-        .select-text { user-select: text; }
-        
-        .cursor-pointer { cursor: pointer; }
-        .cursor-default { cursor: default; }
-        .cursor-not-allowed { cursor: not-allowed; }
-        
-        .opacity-0 { opacity: 0; }
-        .opacity-25 { opacity: 0.25; }
-        .opacity-50 { opacity: 0.5; }
-        .opacity-75 { opacity: 0.75; }
-        .opacity-100 { opacity: 1; }
-        
-        .transition { transition: var(--transition-normal); }
-        .transition-fast { transition: var(--transition-fast); }
-        .transition-slow { transition: var(--transition-slow); }
-        .transition-none { transition: none; }
-        
-        .transform { transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
-        .transform-gpu { transform: translate3d(var(--tw-translate-x), var(--tw-translate-y), 0) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
-        
-        /* ====== LAYOUT CONTAINERS ====== */
+        /* ====== LAYOUT ====== */
         .container {
             width: 100%;
-            max-width: var(--max-content);
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 1.5rem;
-        }
-        
-        .container-narrow {
-            max-width: 900px;
-        }
-        
-        .container-wide {
-            max-width: 1400px;
         }
         
         .section {
             padding: var(--space-2xl) 0;
         }
         
-        .section-sm {
-            padding: var(--space-xl) 0;
-        }
-        
-        .section-lg {
-            padding: var(--space-3xl) 0;
-        }
-        
-        /* ====== AUTHENTICATION SCREEN ====== */
+        /* ====== AUTH SCREEN ====== */
         .auth-screen {
             min-height: 100vh;
-            background: var(--gradient-research);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .auth-screen::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(180, 134, 11, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(10, 35, 66, 0.15) 0%, transparent 50%);
         }
         
         .auth-card {
-            background: var(--ui-card);
+            background: var(--card);
             border-radius: var(--radius-xl);
             width: 100%;
-            max-width: 480px;
+            max-width: 440px;
             overflow: hidden;
             box-shadow: var(--shadow-focus);
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
         }
         
         .auth-header {
-            background: var(--gradient-research);
+            background: var(--gradient-primary);
             color: white;
-            padding: 3rem 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .auth-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         }
         
         .brand-logo-auth {
             font-family: var(--font-serif);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: white;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-        
-        .brand-subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-            font-weight: 400;
         }
         
         .auth-body {
-            padding: 3rem 2rem;
+            padding: 2.5rem 2rem;
         }
         
         .auth-choice {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
         }
         
         .auth-choice-btn {
-            padding: 1.5rem 1rem;
-            border: 2px solid var(--ui-border);
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border);
             border-radius: var(--radius-lg);
-            background: var(--ui-card);
-            color: var(--ui-text);
-            font-family: var(--font-sans);
+            background: var(--card);
             font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all var(--transition-normal);
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
         
         .auth-choice-btn:hover {
-            border-color: var(--accent-bronze);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-prominent);
+            border-color: var(--bronze);
         }
         
         .auth-choice-btn.active {
-            border-color: var(--accent-bronze);
+            border-color: var(--bronze);
             background: rgba(180, 134, 11, 0.05);
         }
         
-        .auth-choice-icon {
-            font-size: 1.5rem;
-            color: var(--accent-bronze);
-        }
-        
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        /* ====== MAIN APP LAYOUT ====== */
+        /* ====== APP LAYOUT ====== */
         #mainApp {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
         
-        /* ====== ENHANCED HEADER ====== */
         .app-header {
-            background: var(--ui-card);
-            border-bottom: 1px solid var(--ui-border-light);
-            padding: 0.75rem 0;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.98);
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
         }
         
         .header-container {
@@ -580,23 +241,18 @@
             align-items: center;
             justify-content: space-between;
             gap: 2rem;
-            width: 100%;
         }
         
         .brand-main {
             font-family: var(--font-serif);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--research-navy);
+            color: var(--navy);
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
         }
         
         .brand-accent {
-            color: var(--accent-bronze);
+            color: var(--bronze);
         }
         
         .nav-main {
@@ -606,72 +262,45 @@
             margin: 0 auto;
         }
         
-        .nav-item {
-            position: relative;
-        }
-        
         .nav-link {
-            padding: 0.75rem 1rem;
-            color: var(--ui-text-light);
+            padding: 0.5rem 1rem;
+            color: var(--text-light);
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.875rem;
             border-radius: var(--radius-md);
-            transition: all var(--transition-normal);
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            white-space: nowrap;
         }
         
         .nav-link:hover {
-            color: var(--research-navy);
-            background: var(--ui-hover);
+            color: var(--navy);
+            background: var(--hover);
         }
         
         .nav-link.active {
-            color: var(--research-navy);
+            color: var(--navy);
             background: rgba(10, 35, 66, 0.05);
-            font-weight: 600;
-        }
-        
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -0.75rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24px;
-            height: 3px;
-            background: var(--accent-bronze);
-            border-radius: var(--radius-full);
         }
         
         .user-section {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-        }
-        
-        .quick-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            gap: 1rem;
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: var(--radius-full);
-            background: var(--gradient-research);
+            background: var(--gradient-primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             font-size: 0.875rem;
-            flex-shrink: 0;
-            border: 2px solid var(--ui-card);
         }
         
         .user-info {
@@ -682,58 +311,11 @@
         .user-name {
             font-weight: 600;
             font-size: 0.875rem;
-            color: var(--ui-text);
         }
         
         .user-role {
             font-size: 0.75rem;
-            color: var(--ui-text-muted);
-        }
-        
-        .guest-badge {
-            padding: 0.25rem 0.75rem;
-            background: var(--ui-hover);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--ui-text-light);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .breadcrumb-nav {
-            background: var(--ui-card-alt);
-            border-bottom: 1px solid var(--ui-border);
-            padding: 1rem 0;
-        }
-        
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--ui-text-light);
-        }
-        
-        .breadcrumb-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .breadcrumb-link {
-            color: var(--ui-text);
-            text-decoration: none;
-            transition: color var(--transition-fast);
-        }
-        
-        .breadcrumb-link:hover {
-            color: var(--accent-bronze);
-        }
-        
-        .breadcrumb-separator {
-            color: var(--ui-text-muted);
+            color: var(--text-muted);
         }
         
         /* ====== MAIN CONTENT ====== */
@@ -751,78 +333,40 @@
         }
         
         .page-subtitle {
-            color: var(--ui-text-light);
+            color: var(--text-light);
             font-size: 1.125rem;
-            max-width: 600px;
         }
         
-        .page-actions {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-        
-        /* ====== RESEARCH CARDS ====== */
-        .research-card {
-            background: var(--ui-card);
+        /* ====== CARDS ====== */
+        .card {
+            background: var(--card);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--ui-border);
-            padding: 1.75rem;
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-            height: 100%;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            transition: all 0.2s;
         }
         
-        .research-card:hover {
-            border-color: var(--accent-bronze);
-            box-shadow: var(--shadow-focus);
-            transform: translateY(-2px);
-        }
-        
-        .research-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-research);
-        }
-        
-        .research-card-alt {
-            background: var(--ui-card-alt);
+        .card:hover {
+            border-color: var(--bronze);
+            box-shadow: var(--shadow-lg);
         }
         
         .card-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
+            margin-bottom: 1rem;
         }
         
         .card-title {
             font-size: 1.25rem;
-            color: var(--research-navy);
+            color: var(--navy);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            line-height: 1.4;
         }
         
-        .card-icon {
-            color: var(--accent-bronze);
-            flex-shrink: 0;
-        }
-        
-        .card-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        
-        /* ====== DASHBOARD LAYOUT ====== */
+        /* ====== DASHBOARD GRID ====== */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
@@ -830,191 +374,149 @@
             margin-bottom: 2rem;
         }
         
-        .col-span-1 { grid-column: span 1; }
-        .col-span-2 { grid-column: span 2; }
-        .col-span-3 { grid-column: span 3; }
         .col-span-4 { grid-column: span 4; }
-        .col-span-5 { grid-column: span 5; }
         .col-span-6 { grid-column: span 6; }
-        .col-span-7 { grid-column: span 7; }
         .col-span-8 { grid-column: span 8; }
-        .col-span-9 { grid-column: span 9; }
-        .col-span-10 { grid-column: span 10; }
-        .col-span-11 { grid-column: span 11; }
         .col-span-12 { grid-column: span 12; }
-        
-        @media (max-width: 1280px) {
-            .col-span-3, .col-span-4 { grid-column: span 6; }
-        }
         
         @media (max-width: 1024px) {
             .col-span-4, .col-span-6, .col-span-8 { grid-column: span 12; }
         }
         
-        @media (max-width: 768px) {
-            .col-span-3, .col-span-4, .col-span-6, .col-span-8, .col-span-12 { grid-column: span 12; }
-        }
-        
-        /* ====== RESEARCH STATS ====== */
+        /* ====== STATS ====== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
         }
         
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
         .stat-card {
-            background: var(--ui-card);
+            background: var(--card);
             border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            border: 1px solid var(--ui-border);
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
         }
         
         .stat-card:hover {
-            border-color: var(--accent-bronze);
-            box-shadow: var(--shadow-prominent);
+            border-color: var(--bronze);
         }
         
         .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-lg);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
             background: rgba(10, 35, 66, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
-            color: var(--research-navy);
-            font-size: 1.25rem;
+            color: var(--navy);
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: var(--research-navy);
+            color: var(--navy);
             line-height: 1;
             margin-bottom: 0.25rem;
         }
         
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--ui-text-light);
-        }
-        
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.75rem;
-            margin-top: 0.5rem;
-        }
-        
-        .trend-up {
-            color: var(--status-success);
-        }
-        
-        .trend-down {
-            color: var(--status-error);
-        }
-        
-        /* ====== SMART ACTIVITY FEED ====== */
-        .activity-feed {
-            background: var(--ui-card);
+        /* ====== PROJECT CARDS ====== */
+        .project-card {
+            background: var(--card);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--ui-border);
-            padding: 1.75rem;
-        }
-        
-        .activity-filters {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .activity-filter {
-            padding: 0.375rem 0.75rem;
-            background: var(--ui-card);
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--ui-text-light);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .activity-filter:hover {
-            border-color: var(--accent-bronze);
-            color: var(--research-navy);
-        }
-        
-        .activity-filter.active {
-            background: var(--gradient-research);
-            border-color: var(--research-navy);
-            color: white;
-        }
-        
-        .activity-item {
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--ui-border);
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-full);
-            background: var(--ui-card-alt);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-bronze);
-            flex-shrink: 0;
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-text {
-            font-size: 0.875rem;
-            line-height: 1.5;
-            color: var(--ui-text);
-        }
-        
-        .activity-meta {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.25rem;
-            font-size: 0.75rem;
-            color: var(--ui-text-muted);
-        }
-        
-        /* ====== RESEARCH DISCUSSIONS ====== */
-        .discussion-card {
-            background: var(--ui-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
+            border: 1px solid var(--border);
             padding: 1.5rem;
-            transition: all var(--transition-normal);
+            transition: all 0.2s;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
             height: 100%;
         }
         
-        .discussion-card:hover {
-            border-color: var(--accent-bronze);
-            box-shadow: var(--shadow-prominent);
+        .project-card:hover {
+            border-color: var(--bronze);
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+        
+        .project-excerpt {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .project-tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(10, 35, 66, 0.08);
+            color: var(--navy);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .project-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* ====== DISCUSSION CARDS ====== */
+        .discussion-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .discussion-card:hover {
+            border-color: var(--bronze);
+            transform: translateY(-1px);
         }
         
         .discussion-card::before {
@@ -1024,14 +526,7 @@
             left: 0;
             bottom: 0;
             width: 4px;
-            background: var(--gradient-research);
-        }
-        
-        .discussion-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
+            background: var(--gradient-primary);
         }
         
         .discussion-type {
@@ -1044,296 +539,307 @@
             gap: 0.25rem;
         }
         
-        .type-brainstorm {
-            background: rgba(59, 130, 246, 0.1);
-            color: #1E40AF;
-        }
-        
-        .type-question {
-            background: rgba(245, 158, 11, 0.1);
-            color: #92400E;
-        }
-        
-        .type-decision {
-            background: rgba(16, 185, 129, 0.1);
-            color: #065F46;
-        }
-        
-        .type-insight {
-            background: rgba(139, 92, 246, 0.1);
-            color: #5B21B6;
-        }
-        
-        .priority-badge {
-            padding: 0.25rem 0.75rem;
-            background: var(--gradient-accent);
-            color: var(--research-navy);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
+        .type-brainstorm { background: rgba(59, 130, 246, 0.1); color: #1E40AF; }
+        .type-question { background: rgba(245, 158, 11, 0.1); color: #92400E; }
+        .type-decision { background: rgba(16, 185, 129, 0.1); color: #065F46; }
+        .type-insight { background: rgba(139, 92, 246, 0.1); color: #5B21B6; }
         
         .discussion-title {
             font-size: 1.125rem;
             font-weight: 600;
-            color: var(--research-navy);
-            margin-bottom: 0.75rem;
-            line-height: 1.4;
+            color: var(--navy);
+            margin: 0.75rem 0 0.5rem;
         }
         
-        .discussion-excerpt {
-            color: var(--ui-text-light);
+        /* ====== BUTTONS ====== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
             font-size: 0.875rem;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
         }
         
-        .discussion-meta {
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--navy);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--bronze);
+            color: var(--bronze);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        /* ====== FORMS ====== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--navy);
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            background: var(--card);
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--bronze);
+            box-shadow: 0 0 0 3px rgba(180, 134, 11, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* ====== MODALS ====== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 35, 66, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--card);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-focus);
+        }
+        
+        .modal-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-top: 1rem;
-            border-top: 1px solid var(--ui-border);
+            margin-bottom: 1.5rem;
         }
         
-        .author-info {
+        .modal-title {
+            font-size: 1.25rem;
+            color: var(--navy);
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
         
-        .author-avatar {
-            width: 32px;
-            height: 32px;
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
             border-radius: var(--radius-full);
-            background: var(--gradient-research);
-            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            flex-shrink: 0;
         }
         
-        .author-name {
-            font-weight: 600;
+        .modal-close:hover {
+            background: var(--hover);
+            color: var(--navy);
+        }
+        
+        /* ====== TOASTS ====== */
+        .toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .toast {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--card);
+            min-width: 300px;
+            border-left: 4px solid var(--navy);
+        }
+        
+        .toast-success { border-left-color: var(--success); }
+        .toast-error { border-left-color: var(--error); }
+        .toast-warning { border-left-color: var(--warning); }
+        .toast-info { border-left-color: var(--info); }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ====== SEARCH ====== */
+        .search-bar {
+            position: relative;
+            max-width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 2.5rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-full);
+            font-family: var(--font-sans);
             font-size: 0.875rem;
-            color: var(--ui-text);
+            background: var(--card);
         }
         
-        .author-institution {
-            font-size: 0.75rem;
-            color: var(--ui-text-muted);
+        .search-input:focus {
+            outline: none;
+            border-color: var(--bronze);
         }
         
-        .engagement-metrics {
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        /* ====== ACTIVITY FEED ====== */
+        .activity-feed {
+            margin-top: 1.5rem;
+        }
+        
+        .activity-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             gap: 1rem;
         }
         
-        .metric {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            color: var(--ui-text-muted);
-            font-size: 0.875rem;
+        .activity-item:last-child {
+            border-bottom: none;
         }
         
-        .metric i {
-            color: var(--accent-bronze);
-        }
-        
-        /* ====== RESEARCH PROJECTS ====== */
-        .project-card {
-            background: var(--ui-card);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--ui-border);
-            padding: 2rem;
-            transition: all var(--transition-normal);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-        }
-        
-        .project-card:hover {
-            border-color: var(--accent-bronze);
-            box-shadow: var(--shadow-focus);
-            transform: translateY(-4px);
-        }
-        
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-research);
-        }
-        
-        .project-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-        
-        .project-phase {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(10, 35, 66, 0.08);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--research-navy);
-        }
-        
-        .project-institution {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--ui-text-muted);
-            font-size: 0.875rem;
-        }
-        
-        .project-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--research-navy);
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-        
-        .project-excerpt {
-            color: var(--ui-text-light);
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-        }
-        
-        .project-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .project-tag {
-            padding: 0.375rem 0.875rem;
-            background: rgba(10, 35, 66, 0.08);
-            color: var(--research-navy);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .project-tag:hover {
-            background: rgba(180, 134, 11, 0.1);
-            color: var(--accent-bronze);
-        }
-        
-        .project-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--ui-border);
-        }
-        
-        .project-stats {
-            display: flex;
-            gap: 1.5rem;
-        }
-        
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--ui-text-muted);
-            font-size: 0.875rem;
-        }
-        
-        .stat i {
-            color: var(--accent-bronze);
-        }
-        
-        .project-author {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .author-avatar-small {
+        .activity-icon {
             width: 32px;
             height: 32px;
             border-radius: var(--radius-full);
-            background: var(--gradient-research);
-            color: white;
+            background: var(--hover);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
+            color: var(--bronze);
             flex-shrink: 0;
         }
         
-        /* ====== INTELLIGENT TAGS SYSTEM ====== */
-        .tags-cloud {
-            background: var(--ui-card);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--ui-border);
-            padding: 1.75rem;
+        .activity-content {
+            flex: 1;
         }
         
-        .tag-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
+        .activity-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+        
+        /* ====== TAGS ====== */
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .tag {
             padding: 0.5rem 0.875rem;
-            margin: 0.25rem;
-            background: var(--ui-card-alt);
-            border: 1px solid var(--ui-border);
+            background: var(--hover);
+            border: 1px solid var(--border);
             border-radius: var(--radius-full);
             font-size: 0.875rem;
             font-weight: 500;
-            color: var(--ui-text);
+            color: var(--text);
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: all 0.2s;
         }
         
-        .tag-item:hover {
+        .tag:hover {
             background: rgba(10, 35, 66, 0.08);
-            border-color: var(--accent-bronze);
-            color: var(--research-navy);
+            border-color: var(--bronze);
         }
         
-        .tag-item.active {
-            background: var(--gradient-research);
-            border-color: var(--research-navy);
+        .tag.active {
+            background: var(--gradient-primary);
+            border-color: var(--navy);
             color: white;
         }
         
-        .tag-frequency {
-            font-size: 0.75rem;
-            color: var(--ui-text-muted);
-            margin-left: 0.25rem;
-        }
-        
-        /* ====== COLLABORATION QUICK ACTIONS ====== */
-        .quick-actions-menu {
+        /* ====== QUICK ACTIONS ====== */
+        .quick-actions {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
@@ -1344,7 +850,7 @@
             width: 56px;
             height: 56px;
             border-radius: var(--radius-full);
-            background: var(--gradient-research);
+            background: var(--gradient-primary);
             color: white;
             border: none;
             cursor: pointer;
@@ -1353,27 +859,27 @@
             justify-content: center;
             font-size: 1.25rem;
             box-shadow: var(--shadow-focus);
-            transition: all var(--transition-normal);
+            transition: all 0.2s;
         }
         
         .quick-actions-btn:hover {
             transform: scale(1.1);
         }
         
-        .quick-actions-dropdown {
+        .quick-actions-menu {
             position: absolute;
             bottom: 70px;
             right: 0;
-            background: var(--ui-card);
+            background: var(--card);
             border-radius: var(--radius-lg);
-            border: 1px solid var(--ui-border);
+            border: 1px solid var(--border);
             box-shadow: var(--shadow-focus);
-            min-width: 240px;
+            min-width: 200px;
             padding: 0.5rem;
             display: none;
         }
         
-        .quick-actions-dropdown.active {
+        .quick-actions-menu.active {
             display: block;
             animation: slideUp 0.2s ease;
         }
@@ -1396,572 +902,33 @@
             padding: 0.75rem 1rem;
             border-radius: var(--radius-md);
             cursor: pointer;
-            transition: background var(--transition-fast);
+            transition: background 0.2s;
         }
         
         .quick-action-item:hover {
-            background: var(--ui-hover);
-        }
-        
-        /* ====== RESEARCH STAGE VISUALIZATIONS ====== */
-        .stage-timeline {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .stage-item {
-            flex: 1;
-            height: 8px;
-            border-radius: var(--radius-full);
-            background: var(--ui-border);
-            position: relative;
-        }
-        
-        .stage-item.active {
-            background: var(--phase-planning);
-        }
-        
-        .stage-item.completed {
-            background: var(--phase-completed);
-        }
-        
-        .stage-item.in-progress {
-            background: var(--phase-analysis);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .stage-label {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            color: var(--ui-text-muted);
-            white-space: nowrap;
-        }
-        
-        .stage-label.active {
-            color: var(--research-navy);
-            font-weight: 600;
+            background: var(--hover);
         }
         
         /* ====== EMPTY STATES ====== */
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem 1rem;
         }
         
         .empty-icon {
-            font-size: 3.5rem;
-            color: var(--ui-border);
-            margin-bottom: 1.5rem;
+            font-size: 3rem;
+            color: var(--border);
+            margin-bottom: 1rem;
             opacity: 0.5;
         }
         
         .empty-title {
-            font-size: 1.5rem;
-            color: var(--research-navy);
+            font-size: 1.25rem;
+            color: var(--navy);
             margin-bottom: 0.5rem;
         }
         
-        .empty-description {
-            color: var(--ui-text-light);
-            margin-bottom: 2rem;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        /* ====== BUTTONS ====== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
-            font-family: var(--font-sans);
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-        }
-        
-        .btn:hover::before {
-            opacity: 1;
-        }
-        
-        .btn-primary {
-            background: var(--gradient-research);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            box-shadow: var(--shadow-focus);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: var(--ui-card);
-            color: var(--research-navy);
-            border: 2px solid var(--research-navy);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--research-navy);
-            color: white;
-            box-shadow: var(--shadow-prominent);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            color: var(--research-navy);
-            border: 2px solid var(--ui-border);
-        }
-        
-        .btn-outline:hover {
-            border-color: var(--accent-bronze);
-            color: var(--accent-bronze);
-        }
-        
-        .btn-ghost {
-            background: transparent;
-            color: var(--ui-text);
-            border: 2px solid transparent;
-        }
-        
-        .btn-ghost:hover {
-            background: var(--ui-hover);
-        }
-        
-        .btn-accent {
-            background: var(--gradient-accent);
-            color: var(--research-navy);
-            font-weight: 700;
-        }
-        
-        .btn-accent:hover {
-            box-shadow: var(--shadow-prominent);
-            transform: translateY(-2px);
-        }
-        
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-        }
-        
-        .btn-lg {
-            padding: 1rem 2rem;
-            font-size: 1rem;
-        }
-        
-        .btn-icon {
-            padding: 0.5rem;
-            width: 40px;
-            height: 40px;
-        }
-        
-        .btn-loading {
-            pointer-events: none;
-            opacity: 0.7;
-        }
-        
-        .btn-loading::after {
-            content: '';
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: var(--radius-full);
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-            margin-left: 0.5rem;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* ====== FORMS ====== */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--research-navy);
-            font-size: 0.875rem;
-        }
-        
-        .form-help {
-            font-size: 0.75rem;
-            color: var(--ui-text-muted);
-            margin-top: 0.25rem;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            font-family: var(--font-sans);
-            font-size: 0.875rem;
-            background: var(--ui-card);
-            transition: all var(--transition-normal);
-            color: var(--ui-text);
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent-bronze);
-            box-shadow: 0 0 0 3px rgba(180, 134, 11, 0.1);
-        }
-        
-        .form-input.error {
-            border-color: var(--status-error);
-        }
-        
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.5;
-        }
-        
-        .form-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 16px;
-            padding-right: 2.5rem;
-        }
-        
-        .char-counter {
-            text-align: right;
-            font-size: 0.75rem;
-            color: var(--ui-text-muted);
-            margin-top: 0.25rem;
-        }
-        
-        .char-counter.near-limit {
-            color: var(--status-warning);
-        }
-        
-        .char-counter.over-limit {
-            color: var(--status-error);
-        }
-        
-        /* ====== SEARCH & FILTERS ====== */
-        .search-bar {
-            position: relative;
-            max-width: 400px;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
-            border: 2px solid var(--ui-border);
-            border-radius: var(--radius-full);
-            font-family: var(--font-sans);
-            font-size: 0.875rem;
-            background: var(--ui-card);
-            transition: all var(--transition-normal);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent-bronze);
-            box-shadow: 0 0 0 3px rgba(180, 134, 11, 0.1);
-        }
-        
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--ui-text-muted);
-        }
-        
-        .filters-bar {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-        }
-        
-        .filter-chip {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--ui-card);
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            color: var(--ui-text);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .filter-chip:hover {
-            border-color: var(--accent-bronze);
-            color: var(--accent-bronze);
-        }
-        
-        .filter-chip.active {
-            background: var(--gradient-research);
-            border-color: var(--research-navy);
-            color: white;
-        }
-        
-        /* ====== MODALS ====== */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 35, 66, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-            backdrop-filter: blur(4px);
-        }
-        
-        .modal.active {
-            display: flex;
-            animation: modalFadeIn 0.3s ease;
-        }
-        
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                backdrop-filter: blur(0);
-            }
-            to {
-                opacity: 1;
-                backdrop-filter: blur(4px);
-            }
-        }
-        
-        .modal-content {
-            background: var(--ui-card);
-            border-radius: var(--radius-xl);
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            border: 1px solid var(--ui-border-light);
-            box-shadow: var(--shadow-focus);
-        }
-        
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            color: var(--research-navy);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .modal-close {
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--ui-text-muted);
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-normal);
-        }
-        
-        .modal-close:hover {
-            background: var(--ui-hover);
-            color: var(--accent-bronze);
-        }
-        
-        /* ====== TOAST NOTIFICATIONS ====== */
-        .toast-container {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .toast {
-            padding: 1rem 1.25rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-focus);
-            animation: slideIn 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: var(--ui-card);
-            min-width: 300px;
-            border-left: 4px solid var(--research-navy);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .toast::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, var(--research-navy), transparent);
-        }
-        
-        .toast-success {
-            border-left-color: var(--status-success);
-        }
-        
-        .toast-error {
-            border-left-color: var(--status-error);
-        }
-        
-        .toast-warning {
-            border-left-color: var(--status-warning);
-        }
-        
-        .toast-info {
-            border-left-color: var(--status-info);
-        }
-        
-        .toast-icon {
-            font-size: 1.25rem;
-        }
-        
-        .toast-content {
-            flex: 1;
-        }
-        
-        .toast-title {
-            font-weight: 600;
-            font-size: 0.875rem;
-            margin-bottom: 0.125rem;
-        }
-        
-        .toast-message {
-            font-size: 0.875rem;
-            color: var(--ui-text-light);
-        }
-        
-        .toast-close {
-            background: transparent;
-            border: none;
-            color: var(--ui-text-muted);
-            cursor: pointer;
-            font-size: 1.25rem;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-full);
-            transition: all var(--transition-normal);
-        }
-        
-        .toast-close:hover {
-            background: var(--ui-hover);
-            color: var(--accent-bronze);
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        /* ====== PAGE TRANSITIONS ====== */
-        .page {
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* ====== RESPONSIVE DESIGN ====== */
-        @media (max-width: 1280px) {
-            .container {
-                padding: 0 2rem;
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .container {
-                padding: 0 1.5rem;
-            }
-            
-            .nav-main {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .dashboard-grid {
-                gap: 1rem;
-            }
-        }
-        
+        /* ====== RESPONSIVE ====== */
         @media (max-width: 768px) {
             .container {
                 padding: 0 1rem;
@@ -1972,123 +939,28 @@
                 gap: 1rem;
             }
             
-            .user-section {
-                order: 2;
-                margin-left: auto;
-            }
-            
-            .search-bar {
+            .nav-main {
                 order: 3;
                 width: 100%;
-                max-width: none;
-            }
-            
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .page-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .dashboard-grid {
-                gap: 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
+                justify-content: center;
+                margin-top: 1rem;
             }
             
             .auth-choice {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
             
             h1 {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
             
             h2 {
                 font-size: 1.5rem;
             }
             
-            .modal-content {
-                padding: 1.5rem;
-            }
-            
-            .project-card {
-                padding: 1.5rem;
-            }
-            
-            .quick-actions-menu {
+            .quick-actions {
                 bottom: 1rem;
                 right: 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .user-section {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-            
-            .nav-link {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.75rem;
-            }
-            
-            .discussion-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .engagement-metrics {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .project-footer {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .project-stats {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-        
-        /* ====== PRINT STYLES ====== */
-        @media print {
-            .app-header,
-            .breadcrumb-nav,
-            .quick-actions-menu,
-            .page-actions,
-            .btn {
-                display: none !important;
-            }
-            
-            .container {
-                max-width: none;
-                padding: 0;
-            }
-            
-            .research-card,
-            .project-card,
-            .discussion-card {
-                break-inside: avoid;
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-            
-            .page {
-                margin: 0;
-                padding: 0;
             }
         }
     </style>
@@ -2103,88 +975,62 @@
             <div class="auth-card">
                 <div class="auth-header">
                     <div class="brand-logo-auth">Thorax Lab Pro</div>
-                    <p class="brand-subtitle">Clinical Research & Innovation Platform</p>
+                    <p class="text-muted" style="color: rgba(255,255,255,0.9)">Clinical Research Platform</p>
                 </div>
                 
                 <div class="auth-body">
-                    <div class="text-center mb-8">
-                        <h2 class="mb-2">Welcome to Clinical Research Collaboration</h2>
-                        <p class="text-muted">Join as a research lead or explore as a guest</p>
+                    <div class="text-center mb-6">
+                        <h2 class="mb-2">Welcome</h2>
+                        <p class="text-muted">Join as a researcher or explore as a guest</p>
                     </div>
                     
                     <div class="auth-choice">
-                        <button id="creatorLoginBtn" class="auth-choice-btn active">
-                            <i class="auth-choice-icon fas fa-user-md"></i>
-                            <span>Clinical Researcher</span>
+                        <button id="researcherBtn" class="auth-choice-btn active">
+                            <i class="fas fa-user-md" style="color: var(--bronze); font-size: 1.25rem;"></i>
+                            <span>Researcher</span>
                         </button>
-                        <button id="visitorLoginBtn" class="auth-choice-btn">
-                            <i class="auth-choice-icon fas fa-eye"></i>
-                            <span>Guest Researcher</span>
+                        <button id="guestBtn" class="auth-choice-btn">
+                            <i class="fas fa-eye" style="color: var(--bronze); font-size: 1.25rem;"></i>
+                            <span>Guest</span>
                         </button>
                     </div>
                     
                     <!-- Researcher Form -->
-                    <form id="creatorForm" class="auth-form">
+                    <form id="researcherForm" class="mt-6">
                         <div class="form-group">
-                            <label for="creatorName" class="form-label">Full Name *</label>
-                            <input type="text" id="creatorName" class="form-input" 
-                                   placeholder="Dr. Alexander Chen" required>
+                            <label for="researcherName" class="form-label">Name *</label>
+                            <input type="text" id="researcherName" class="form-input" 
+                                   placeholder="Dr. Sarah Chen" required>
                         </div>
                         <div class="form-group">
-                            <label for="creatorRole" class="form-label">Primary Role *</label>
-                            <select id="creatorRole" class="form-input form-select" required>
-                                <option value="">Select your role</option>
-                                <option value="clinical-investigator">Clinical Investigator</option>
-                                <option value="principal-investigator">Principal Investigator</option>
-                                <option value="research-coordinator">Research Coordinator</option>
-                                <option value="data-scientist">Data Scientist</option>
-                                <option value="biostatistician">Biostatistician</option>
-                                <option value="clinical-fellow">Clinical Fellow</option>
-                                <option value="research-nurse">Research Nurse</option>
-                                <option value="other">Other Research Professional</option>
+                            <label for="researcherRole" class="form-label">Role *</label>
+                            <select id="researcherRole" class="form-input" required>
+                                <option value="">Select role</option>
+                                <option value="investigator">Clinical Investigator</option>
+                                <option value="principal">Principal Investigator</option>
+                                <option value="coordinator">Research Coordinator</option>
+                                <option value="analyst">Data Analyst</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="creatorInstitution" class="form-label">Institution / Organization</label>
-                            <input type="text" id="creatorInstitution" class="form-input" 
+                            <label for="researcherInstitution" class="form-label">Institution</label>
+                            <input type="text" id="researcherInstitution" class="form-input" 
                                    placeholder="e.g., Cambridge University Hospitals">
                         </div>
-                        <div class="form-group">
-                            <label for="creatorSpecialty" class="form-label">Clinical Specialty / Research Focus</label>
-                            <input type="text" id="creatorSpecialty" class="form-input" 
-                                   placeholder="e.g., Pulmonary Medicine, Oncology, Clinical Trials">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Enter Research Platform
+                        <button type="submit" class="btn btn-primary w-full">
+                            <i class="fas fa-arrow-right"></i>
+                            Enter Platform
                         </button>
                     </form>
                     
                     <!-- Guest Form -->
-                    <form id="visitorForm" class="auth-form hidden">
+                    <form id="guestForm" class="mt-6 hidden">
                         <div class="form-group">
-                            <label for="visitorName" class="form-label">Your Name (Optional)</label>
-                            <input type="text" id="visitorName" class="form-input" 
+                            <label for="guestName" class="form-label">Name (Optional)</label>
+                            <input type="text" id="guestName" class="form-input" 
                                    placeholder="Enter name or remain anonymous">
                         </div>
-                        <div class="form-group">
-                            <label for="visitorAffiliation" class="form-label">Affiliation (Optional)</label>
-                            <input type="text" id="visitorAffiliation" class="form-input" 
-                                   placeholder="University, Hospital, or Organization">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Research Interests</label>
-                            <div class="tags-cloud">
-                                <span class="tag-item" data-tag="oncology">Oncology</span>
-                                <span class="tag-item" data-tag="cardiology">Cardiology</span>
-                                <span class="tag-item" data-tag="pulmonary">Pulmonary</span>
-                                <span class="tag-item" data-tag="clinical-trials">Clinical Trials</span>
-                                <span class="tag-item" data-tag="genomics">Genomics</span>
-                                <span class="tag-item" data-tag="ai-ml">AI/ML</span>
-                                <span class="tag-item" data-tag="biomarkers">Biomarkers</span>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary w-full">
                             <i class="fas fa-search"></i>
                             Browse Research
                         </button>
@@ -2204,62 +1050,32 @@
                         </a>
                         
                         <nav class="nav-main">
-                            <div class="nav-item">
-                                <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                                    <i class="fas fa-chart-line"></i>
-                                    Dashboard
-                                </a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="#projects" class="nav-link" data-page="projects">
-                                    <i class="fas fa-project-diagram"></i>
-                                    Research Projects
-                                </a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="#myprojects" class="nav-link" data-page="myprojects">
-                                    <i class="fas fa-folder"></i>
-                                    My Projects
-                                </a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="#discussions" class="nav-link" data-page="discussions">
-                                    <i class="fas fa-comments"></i>
-                                    Discussions
-                                </a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="#analytics" class="nav-link" data-page="analytics">
-                                    <i class="fas fa-chart-bar"></i>
-                                    Analytics
-                                </a>
-                            </div>
+                            <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                                <i class="fas fa-home"></i>
+                                Dashboard
+                            </a>
+                            <a href="#projects" class="nav-link" data-page="projects">
+                                <i class="fas fa-project-diagram"></i>
+                                Projects
+                            </a>
+                            <a href="#myprojects" class="nav-link" data-page="myprojects">
+                                <i class="fas fa-folder"></i>
+                                My Projects
+                            </a>
                         </nav>
                         
-                        <div class="search-bar">
-                            <i class="search-icon fas fa-search"></i>
-                            <input type="text" id="globalSearch" class="search-input" 
-                                   placeholder="Search research projects, discussions, or members...">
-                        </div>
-                        
                         <div class="user-section">
-                            <div class="quick-actions">
-                                <button id="quickActionsBtn" class="btn btn-ghost btn-icon">
-                                    <i class="fas fa-bolt"></i>
-                                </button>
-                                <button id="notificationsBtn" class="btn btn-ghost btn-icon">
-                                    <i class="fas fa-bell"></i>
-                                    <span class="badge">3</span>
-                                </button>
-                            </div>
-                            
+                            <button id="newProjectBtn" class="btn btn-primary btn-sm hidden">
+                                <i class="fas fa-plus"></i>
+                                New Project
+                            </button>
                             <div class="flex items-center gap-3">
                                 <div id="userAvatar" class="user-avatar">??</div>
                                 <div class="user-info">
                                     <div id="userName" class="user-name">Loading...</div>
                                     <div id="userRole" class="user-role">Loading...</div>
                                 </div>
-                                <button id="logoutBtn" class="btn btn-ghost btn-icon">
+                                <button id="logoutBtn" class="btn btn-outline btn-sm">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </button>
                             </div>
@@ -2268,142 +1084,112 @@
                 </div>
             </header>
             
-            <!-- Breadcrumb Navigation -->
-            <div id="breadcrumbNav" class="breadcrumb-nav hidden">
-                <div class="container">
-                    <nav class="breadcrumb" id="breadcrumb">
-                        <!-- Dynamic breadcrumbs -->
-                    </nav>
-                </div>
-            </div>
-            
             <!-- Main Content -->
             <main class="main-content">
                 <div class="container">
                     <!-- Dashboard Page -->
                     <div id="dashboardPage" class="page">
                         <div class="page-header">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
-                                    <p class="page-subtitle">Monitor and contribute to clinical research & innovation</p>
-                                </div>
-                                <div class="page-actions">
-                                    <button id="newProjectBtn" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus"></i>
-                                        New Project
-                                    </button>
-                                </div>
-                            </div>
+                            <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
+                            <p class="page-subtitle">Track and contribute to clinical research projects</p>
                         </div>
                         
-                        <!-- Research Overview -->
+                        <!-- Stats -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-12">
-                                <div class="research-card">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
-                                            <i class="card-icon fas fa-chart-line"></i>
-                                            Research Overview
+                                            <i class="fas fa-chart-line" style="color: var(--bronze);"></i>
+                                            Overview
                                         </h2>
-                                        <div class="card-actions">
-                                            <button class="btn btn-outline btn-sm" id="exportStatsBtn">
-                                                <i class="fas fa-download"></i>
-                                                Export
-                                            </button>
-                                        </div>
+                                        <button class="btn btn-outline btn-sm" id="refreshStats">
+                                            <i class="fas fa-sync-alt"></i>
+                                            Refresh
+                                        </button>
                                     </div>
-                                    <div id="userStats">
-                                        <!-- Stats loaded dynamically -->
+                                    <div id="statsContent">
+                                        <!-- Stats will load here -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Smart Activity Feed -->
+                        <!-- Activity & Tags -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-8">
-                                <div class="activity-feed">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
-                                            <i class="card-icon fas fa-bolt"></i>
+                                            <i class="fas fa-bolt" style="color: var(--bronze);"></i>
                                             Recent Activity
                                         </h2>
-                                        <div class="activity-filters">
-                                            <button class="activity-filter active" data-filter="all">All</button>
-                                            <button class="activity-filter" data-filter="projects">Projects</button>
-                                            <button class="activity-filter" data-filter="discussions">Discussions</button>
-                                            <button class="activity-filter" data-filter="collaborations">Collaborations</button>
-                                            <button class="activity-filter" data-filter="updates">Updates</button>
-                                        </div>
+                                        <button class="btn btn-outline btn-sm" id="viewAllActivity">
+                                            View All
+                                        </button>
                                     </div>
-                                    <div id="activityFeed">
-                                        <!-- Activity items loaded dynamically -->
+                                    <div id="activityContent">
+                                        <!-- Activity will load here -->
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Intelligent Tags System -->
                             <div class="col-span-4">
-                                <div class="tags-cloud">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
-                                            <i class="card-icon fas fa-tags"></i>
-                                            Research Domains
+                                            <i class="fas fa-tags" style="color: var(--bronze);"></i>
+                                            Popular Topics
                                         </h2>
                                     </div>
-                                    <div id="tagsCloud">
-                                        <!-- Tags loaded dynamically -->
+                                    <div id="tagsContent">
+                                        <!-- Tags will load here -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Active Discussions -->
-                        <div class="dashboard-grid mb-8">
-                            <div class="col-span-12">
-                                <div class="research-card">
+                        <!-- Discussions & Projects -->
+                        <div class="dashboard-grid">
+                            <div class="col-span-6">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
-                                            <i class="card-icon fas fa-fire"></i>
+                                            <i class="fas fa-comments" style="color: var(--bronze);"></i>
                                             Active Discussions
                                         </h2>
                                         <div class="search-bar">
                                             <i class="search-icon fas fa-search"></i>
-                                            <input type="text" id="discussionSearch" class="search-input" 
+                                            <input type="text" id="searchDiscussions" class="search-input" 
                                                    placeholder="Search discussions...">
                                         </div>
                                     </div>
-                                    <div id="featuredDiscussions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <!-- Discussions loaded dynamically -->
+                                    <div id="discussionsContent">
+                                        <!-- Discussions will load here -->
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Recent Projects -->
-                        <div class="dashboard-grid">
-                            <div class="col-span-12">
-                                <div class="research-card">
+                            
+                            <div class="col-span-6">
+                                <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">
-                                            <i class="card-icon fas fa-project-diagram"></i>
-                                            Active Research Projects
+                                            <i class="fas fa-project-diagram" style="color: var(--bronze);"></i>
+                                            Recent Projects
                                         </h2>
-                                        <button id="viewAllProjectsBtn" class="btn btn-outline btn-sm">
+                                        <button class="btn btn-outline btn-sm" id="viewAllProjects">
                                             View All
-                                            <i class="fas fa-arrow-right"></i>
                                         </button>
                                     </div>
-                                    <div id="recentProjects" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                        <!-- Projects loaded dynamically -->
+                                    <div id="projectsContent">
+                                        <!-- Projects will load here -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- All Projects Page -->
+                    <!-- Projects Page -->
                     <div id="projectsPage" class="page hidden">
                         <div class="page-header">
                             <div class="flex items-center justify-between">
@@ -2414,28 +1200,15 @@
                                 <div class="flex items-center gap-4">
                                     <div class="search-bar">
                                         <i class="search-icon fas fa-search"></i>
-                                        <input type="text" id="projectSearch" class="search-input" 
+                                        <input type="text" id="searchProjects" class="search-input" 
                                                placeholder="Search projects...">
                                     </div>
-                                    <button id="filterProjectsBtn" class="btn btn-outline btn-sm">
-                                        <i class="fas fa-filter"></i>
-                                        Filter
-                                    </button>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="filters-bar">
-                            <button class="filter-chip active" data-filter="all">All Projects</button>
-                            <button class="filter-chip" data-filter="active">Active</button>
-                            <button class="filter-chip" data-filter="planning">Planning Phase</button>
-                            <button class="filter-chip" data-filter="recruiting">Recruiting</button>
-                            <button class="filter-chip" data-filter="analysis">Data Analysis</button>
-                            <button class="filter-chip" data-filter="publishing">Publishing</button>
-                        </div>
-                        
-                        <div id="allProjectsList" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Projects loaded dynamically -->
+                        <div id="allProjectsContent" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Projects will load here -->
                         </div>
                     </div>
                     
@@ -2444,86 +1217,42 @@
                         <div class="page-header">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h1 class="page-title">My Research Projects</h1>
-                                    <p class="page-subtitle">Manage your clinical research initiatives</p>
+                                    <h1 class="page-title">My Projects</h1>
+                                    <p class="page-subtitle">Manage your research initiatives</p>
                                 </div>
-                                <button id="createMyProjectBtn" class="btn btn-primary">
+                                <button id="createProjectBtn" class="btn btn-primary">
                                     <i class="fas fa-plus"></i>
                                     New Project
                                 </button>
                             </div>
                         </div>
                         
-                        <div id="myProjectsList" class="grid grid-cols-1 gap-6">
-                            <!-- My projects loaded dynamically -->
-                        </div>
-                    </div>
-                    
-                    <!-- Discussions Page -->
-                    <div id="discussionsPage" class="page hidden">
-                        <div class="page-header">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h1 class="page-title">Research Discussions</h1>
-                                    <p class="page-subtitle">Collaborate with researchers worldwide</p>
-                                </div>
-                                <button id="startDiscussionBtn" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i>
-                                    Start Discussion
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="allDiscussionsList" class="grid grid-cols-1 gap-4">
-                            <!-- All discussions loaded dynamically -->
-                        </div>
-                    </div>
-                    
-                    <!-- Analytics Page -->
-                    <div id="analyticsPage" class="page hidden">
-                        <div class="page-header">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h1 class="page-title">Research Analytics</h1>
-                                    <p class="page-subtitle">Data-driven insights for clinical research</p>
-                                </div>
-                                <div class="page-actions">
-                                    <select id="analyticsPeriod" class="form-input form-select">
-                                        <option value="7d">Last 7 days</option>
-                                        <option value="30d" selected>Last 30 days</option>
-                                        <option value="90d">Last 90 days</option>
-                                        <option value="1y">Last year</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="analyticsContent" class="grid grid-cols-1 gap-6">
-                            <!-- Analytics loaded dynamically -->
+                        <div id="myProjectsContent" class="grid grid-cols-1 gap-6">
+                            <!-- My projects will load here -->
                         </div>
                     </div>
                     
                     <!-- Project Detail Page -->
                     <div id="projectDetailPage" class="page hidden">
-                        <!-- Loaded dynamically -->
+                        <!-- Will load dynamically -->
                     </div>
                     
                     <!-- Discussion Detail Page -->
                     <div id="discussionDetailPage" class="page hidden">
-                        <!-- Loaded dynamically -->
+                        <!-- Will load dynamically -->
                     </div>
                 </div>
             </main>
             
-            <!-- Quick Actions Menu -->
-            <div class="quick-actions-menu">
-                <button class="quick-actions-btn" id="quickActionsMainBtn">
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-actions-btn" id="quickActionsBtn">
                     <i class="fas fa-plus"></i>
                 </button>
-                <div class="quick-actions-dropdown" id="quickActionsDropdown">
+                <div class="quick-actions-menu" id="quickActionsMenu">
                     <div class="quick-action-item" data-action="new-project">
                         <i class="fas fa-project-diagram"></i>
-                        <span>New Research Project</span>
+                        <span>New Project</span>
                     </div>
                     <div class="quick-action-item" data-action="new-discussion">
                         <i class="fas fa-comments"></i>
@@ -2531,165 +1260,76 @@
                     </div>
                     <div class="quick-action-item" data-action="request-review">
                         <i class="fas fa-stethoscope"></i>
-                        <span>Request Clinical Review</span>
-                    </div>
-                    <div class="quick-action-item" data-action="data-analysis">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Request Data Analysis</span>
-                    </div>
-                    <div class="quick-action-item" data-action="brainstorm-session">
-                        <i class="fas fa-lightbulb"></i>
-                        <span>Schedule Brainstorm</span>
+                        <span>Request Review</span>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Modals -->
-        
-        <!-- New Project Modal -->
         <div id="newProjectModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="fas fa-project-diagram"></i>
-                        Initiate Research Project
+                        New Research Project
                     </h2>
-                    <button class="modal-close" id="closeProjectModal">&times;</button>
+                    <button class="modal-close">&times;</button>
                 </div>
                 <form id="projectForm">
                     <div class="form-group">
                         <label for="projectTitle" class="form-label">Project Title *</label>
                         <input type="text" id="projectTitle" class="form-input" 
-                               placeholder="e.g., Genomic Biomarkers for Immunotherapy Response in NSCLC" required>
-                        <div class="form-help">Clear, descriptive title that reflects the research focus</div>
+                               placeholder="e.g., AI-Powered COPD Prediction" required>
                     </div>
                     <div class="form-group">
-                        <label for="projectDescription" class="form-label">Research Description *</label>
+                        <label for="projectDescription" class="form-label">Description *</label>
                         <textarea id="projectDescription" class="form-input form-textarea" 
-                                  placeholder="Describe the research questions, objectives, methodology, and clinical significance..."
-                                  rows="5" maxlength="3000" required></textarea>
-                        <div class="char-counter" id="descCounter">0/3000</div>
+                                  placeholder="Describe the research focus and objectives..."
+                                  rows="4" required></textarea>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label for="projectPhase" class="form-label">Research Phase</label>
-                            <select id="projectPhase" class="form-input form-select" required>
-                                <option value="planning">Protocol Planning</option>
-                                <option value="recruiting">Patient Recruitment</option>
-                                <option value="data-collection">Data Collection</option>
-                                <option value="analysis">Data Analysis</option>
-                                <option value="publishing">Manuscript Preparation</option>
-                                <option value="completed">Study Completed</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="projectInstitution" class="form-label">Lead Institution</label>
-                            <input type="text" id="projectInstitution" class="form-input" 
-                                   placeholder="e.g., Oxford University">
-                        </div>
-                    </div>
-                    
                     <div class="form-group">
-                        <label for="projectTags" class="form-label">Research Domains & Keywords</label>
+                        <label for="projectTags" class="form-label">Topics</label>
                         <input type="text" id="projectTags" class="form-input" 
-                               placeholder="e.g., genomics, oncology, immunotherapy, biomarkers, machine learning">
-                        <div class="form-help">Separate with commas. These will help others discover your project.</div>
+                               placeholder="e.g., AI, COPD, machine learning">
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Required Expertise</label>
-                        <div class="tags-cloud">
-                            <span class="tag-item" data-expertise="clinical-oncology">Clinical Oncology</span>
-                            <span class="tag-item" data-expertise="biostatistics">Biostatistics</span>
-                            <span class="tag-item" data-expertise="genomics">Genomics</span>
-                            <span class="tag-item" data-expertise="bioinformatics">Bioinformatics</span>
-                            <span class="tag-item" data-expertise="machine-learning">Machine Learning</span>
-                            <span class="tag-item" data-expertise="clinical-trials">Clinical Trials</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-outline" id="cancelProjectBtn">
+                    <div class="flex gap-3 justify-end mt-6">
+                        <button type="button" class="btn btn-outline" id="cancelProject">
                             Cancel
                         </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-flask"></i>
-                            Initiate Research Project
+                            Create Project
                         </button>
                     </div>
                 </form>
             </div>
         </div>
         
-        <!-- New Discussion Modal -->
         <div id="newDiscussionModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="fas fa-comments"></i>
-                        Start Research Discussion
+                        New Discussion
                     </h2>
-                    <button class="modal-close" id="closeDiscussionModal">&times;</button>
+                    <button class="modal-close">&times;</button>
                 </div>
                 <form id="discussionForm">
                     <input type="hidden" id="discussionProjectId">
-                    
                     <div class="form-group">
-                        <label class="form-label">Discussion Type</label>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn active" 
-                                    data-type="brainstorm">
-                                <i class="fas fa-lightbulb"></i>
-                                Brainstorm
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
-                                    data-type="question">
-                                <i class="fas fa-question-circle"></i>
-                                Research Question
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
-                                    data-type="decision">
-                                <i class="fas fa-gavel"></i>
-                                Protocol Decision
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
-                                    data-type="insight">
-                                <i class="fas fa-eye"></i>
-                                Clinical Insight
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
-                                    data-type="methodology">
-                                <i class="fas fa-cogs"></i>
-                                Methodology
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="discussionTitle" class="form-label">Discussion Topic *</label>
+                        <label for="discussionTitle" class="form-label">Topic *</label>
                         <input type="text" id="discussionTitle" class="form-input" 
-                               placeholder="What research challenge are we addressing?" required>
+                               placeholder="What research question are you addressing?" required>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="discussionContent" class="form-label">Research Context *</label>
+                        <label for="discussionContent" class="form-label">Context *</label>
                         <textarea id="discussionContent" class="form-input form-textarea" 
-                                  placeholder="Provide background, context, specific questions, and relevant literature references..."
-                                  rows="5" maxlength="5000" required></textarea>
-                        <div class="char-counter" id="discussionCounter">0/5000</div>
+                                  placeholder="Provide background and specific questions..."
+                                  rows="4" required></textarea>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="discussionTags" class="form-label">Related Topics</label>
-                        <input type="text" id="discussionTags" class="form-input" 
-                               placeholder="e.g., statistical analysis, patient selection, biomarker validation">
-                    </div>
-                    
-                    <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-outline" id="cancelDiscussionBtn">
+                    <div class="flex gap-3 justify-end mt-6">
+                        <button type="button" class="btn btn-outline" id="cancelDiscussion">
                             Cancel
                         </button>
                         <button type="submit" class="btn btn-primary">
@@ -2700,139 +1340,895 @@
                 </form>
             </div>
         </div>
-        
-        <!-- Add Comment Modal -->
-        <div id="commentModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">
-                        <i class="fas fa-comment-medical"></i>
-                        Contribute Expert Insight
-                    </h2>
-                    <button class="modal-close" id="closeCommentModal">&times;</button>
-                </div>
-                <form id="commentForm">
-                    <input type="hidden" id="commentDiscussionId">
-                    
-                    <div class="form-group">
-                        <label for="commentContent" class="form-label">Your Insight *</label>
-                        <textarea id="commentContent" class="form-input form-textarea" 
-                                  placeholder="Share your expert perspective, analysis, references, or recommendation..."
-                                  rows="4" maxlength="2000" required></textarea>
-                        <div class="char-counter" id="commentCounter">0/2000</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Insight Type</label>
-                        <div class="flex flex-wrap gap-2">
-                            <button type="button" class="btn btn-outline btn-sm insight-type-btn active" 
-                                    data-type="analysis">
-                                <i class="fas fa-chart-line"></i>
-                                Data Analysis
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm insight-type-btn" 
-                                    data-type="clinical">
-                                <i class="fas fa-stethoscope"></i>
-                                Clinical Perspective
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm insight-type-btn" 
-                                    data-type="reference">
-                                <i class="fas fa-book"></i>
-                                Literature Reference
-                            </button>
-                            <button type="button" class="btn btn-outline btn-sm insight-type-btn" 
-                                    data-type="recommendation">
-                                <i class="fas fa-check-circle"></i>
-                                Recommendation
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-outline" id="cancelCommentBtn">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-share"></i>
-                            Share Insight
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Invite Collaborator Modal -->
-        <div id="inviteTeamModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">
-                        <i class="fas fa-user-plus"></i>
-                        Invite Research Collaborator
-                    </h2>
-                    <button class="modal-close" id="closeInviteModal">&times;</button>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inviteEmail" class="form-label">Email Address *</label>
-                    <input type="email" id="inviteEmail" class="form-input" 
-                           placeholder="researcher@institution.edu" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inviteRole" class="form-label">Collaborator Role *</label>
-                    <select id="inviteRole" class="form-input form-select" required>
-                        <option value="">Select role</option>
-                        <option value="clinical-investigator">Clinical Investigator</option>
-                        <option value="co-investigator">Co-Investigator</option>
-                        <option value="data-analyst">Data Analyst</option>
-                        <option value="statistician">Statistician</option>
-                        <option value="clinical-reviewer">Clinical Reviewer</option>
-                        <option value="methodology-expert">Methodology Expert</option>
-                        <option value="research-assistant">Research Assistant</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inviteMessage" class="form-label">Personal Message (Optional)</label>
-                    <textarea id="inviteMessage" class="form-input form-textarea" 
-                              placeholder="Add a personal note about the collaboration opportunity..."
-                              rows="2"></textarea>
-                </div>
-                
-                <div class="flex gap-3 justify-end mt-8">
-                    <button type="button" class="btn btn-outline" id="cancelInviteBtn">
-                        Cancel
-                    </button>
-                    <button type="button" class="btn btn-primary" id="sendInviteBtn">
-                        <i class="fas fa-paper-plane"></i>
-                        Send Invitation
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Research Analytics Modal -->
-        <div id="analyticsModal" class="modal">
-            <div class="modal-content" style="max-width: 800px;">
-                <div class="modal-header">
-                    <h2 class="modal-title">
-                        <i class="fas fa-chart-bar"></i>
-                        Research Analytics Dashboard
-                    </h2>
-                    <button class="modal-close" id="closeAnalyticsModal">&times;</button>
-                </div>
-                <div id="analyticsModalContent">
-                    <!-- Analytics content loaded dynamically -->
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
-        // Comprehensive JavaScript will be loaded here
-        // This will include all the enhanced features and improvements
+        // ============================================
+        // Thorax Lab Pro - Clean Implementation
+        // ============================================
+
+        class ThoraxLabPro {
+            constructor() {
+                this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
+                this.isGuest = JSON.parse(localStorage.getItem('thoraxlab_guest') || 'false');
+                this.currentProject = null;
+                this.currentDiscussion = null;
+                this.selectedTags = new Set();
+                this.initialize();
+            }
+            
+            // ========== INITIALIZATION ==========
+            
+            initialize() {
+                this.setupEventListeners();
+                this.setupRouter();
+                this.checkAuth();
+                this.initDemoData();
+            }
+            
+            initDemoData() {
+                if (!localStorage.getItem('thoraxlab_projects')) {
+                    const demoProjects = [
+                        {
+                            id: 'proj_1',
+                            title: 'AI-Powered COPD Exacerbation Prediction',
+                            description: 'Developing machine learning models to predict COPD exacerbations 48 hours in advance using patient vitals and environmental factors.',
+                            tags: ['AI', 'COPD', 'machine learning', 'prediction'],
+                            ownerId: 'demo_user',
+                            ownerName: 'Dr. Sarah Chen',
+                            ownerRole: 'investigator',
+                            institution: 'Cambridge University Hospitals',
+                            teamMembers: ['Dr. Michael Johnson', 'Dr. Lisa Wang'],
+                            createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                            updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                            discussions: [
+                                {
+                                    id: 'disc_1',
+                                    title: 'Which clinical features are most predictive?',
+                                    content: 'We need to decide on the most important clinical features for our prediction model.',
+                                    type: 'brainstorm',
+                                    authorId: 'demo_user',
+                                    authorName: 'Dr. Sarah Chen',
+                                    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+                                    likes: 24,
+                                    comments: 12,
+                                    commentsList: []
+                                }
+                            ]
+                        }
+                    ];
+                    
+                    localStorage.setItem('thoraxlab_projects', JSON.stringify(demoProjects));
+                    localStorage.setItem('thoraxlab_activity', JSON.stringify([]));
+                }
+            }
+            
+            // ========== AUTHENTICATION ==========
+            
+            checkAuth() {
+                if (this.user) {
+                    this.showApp();
+                    this.updateUserDisplay();
+                    this.loadDashboard();
+                } else {
+                    this.showAuth();
+                }
+            }
+            
+            showAuth() {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+            
+            showApp() {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            }
+            
+            loginAsResearcher(e) {
+                if (e) e.preventDefault();
+                
+                const name = document.getElementById('researcherName').value.trim();
+                const role = document.getElementById('researcherRole').value;
+                const institution = document.getElementById('researcherInstitution').value.trim();
+                
+                if (!name || !role) {
+                    this.showToast('Name and role are required', 'error');
+                    return;
+                }
+                
+                const initials = name.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+                
+                this.user = {
+                    id: `user_${Date.now()}`,
+                    name: name,
+                    role: role,
+                    institution: institution || 'Not specified',
+                    avatar_initials: initials,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.isGuest = false;
+                
+                localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                localStorage.setItem('thoraxlab_guest', 'false');
+                
+                this.showApp();
+                this.updateUserDisplay();
+                this.showToast(`Welcome, ${name.split(' ')[0]}!`, 'success');
+            }
+            
+            loginAsGuest(e) {
+                if (e) e.preventDefault();
+                
+                const name = document.getElementById('guestName').value.trim();
+                
+                this.user = {
+                    id: `guest_${Date.now()}`,
+                    name: name || 'Guest Researcher',
+                    role: 'guest',
+                    institution: 'Viewing Only',
+                    avatar_initials: 'G',
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.isGuest = true;
+                
+                localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                localStorage.setItem('thoraxlab_guest', 'true');
+                
+                this.showApp();
+                this.updateUserDisplay();
+                this.showToast('You are browsing as a guest', 'info');
+            }
+            
+            logout() {
+                this.user = null;
+                this.isGuest = false;
+                localStorage.removeItem('thoraxlab_user');
+                localStorage.removeItem('thoraxlab_guest');
+                this.showAuth();
+            }
+            
+            updateUserDisplay() {
+                if (!this.user) return;
+                
+                const avatar = document.getElementById('userAvatar');
+                const name = document.getElementById('userName');
+                const role = document.getElementById('userRole');
+                const newProjectBtn = document.getElementById('newProjectBtn');
+                const createProjectBtn = document.getElementById('createProjectBtn');
+                const welcome = document.getElementById('welcomeMessage');
+                
+                if (avatar) avatar.textContent = this.user.avatar_initials || '??';
+                if (name) name.textContent = this.user.name;
+                
+                if (role) {
+                    const roleMap = {
+                        'investigator': 'Clinical Investigator',
+                        'principal': 'Principal Investigator',
+                        'coordinator': 'Research Coordinator',
+                        'analyst': 'Data Analyst',
+                        'guest': 'Guest Researcher'
+                    };
+                    role.textContent = roleMap[this.user.role] || 'Researcher';
+                }
+                
+                if (newProjectBtn) newProjectBtn.classList.toggle('hidden', this.isGuest);
+                if (createProjectBtn) createProjectBtn.classList.toggle('hidden', this.isGuest);
+                
+                if (welcome && !this.isGuest) {
+                    welcome.textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
+                }
+            }
+            
+            // ========== ROUTER ==========
+            
+            setupRouter() {
+                window.addEventListener('hashchange', () => this.handleRoute());
+                this.handleRoute();
+            }
+            
+            handleRoute() {
+                const hash = window.location.hash.substring(1) || 'dashboard';
+                const parts = hash.split('/');
+                
+                this.showPage(parts[0]);
+                
+                if (parts[0] === 'project' && parts[1]) {
+                    this.loadProject(parts[1]);
+                } else if (parts[0] === 'discussion' && parts[1]) {
+                    this.loadDiscussion(parts[1]);
+                }
+                
+                this.updateNavigation(parts[0]);
+            }
+            
+            showPage(page) {
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                const pageElement = document.getElementById(`${page}Page`);
+                if (pageElement) {
+                    pageElement.classList.remove('hidden');
+                    
+                    switch(page) {
+                        case 'dashboard':
+                            this.loadDashboard();
+                            break;
+                        case 'projects':
+                            this.loadAllProjects();
+                            break;
+                        case 'myprojects':
+                            this.loadMyProjects();
+                            break;
+                    }
+                }
+            }
+            
+            updateNavigation(page) {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    const linkPage = link.getAttribute('href').substring(1);
+                    if (linkPage.includes('/')) {
+                        const linkBase = linkPage.split('/')[0];
+                        link.classList.toggle('active', linkBase === page);
+                    } else {
+                        link.classList.toggle('active', linkPage === page);
+                    }
+                });
+            }
+            
+            navigateTo(page) {
+                window.location.hash = page;
+            }
+            
+            // ========== DASHBOARD ==========
+            
+            loadDashboard() {
+                this.loadStats();
+                this.loadActivity();
+                this.loadTags();
+                this.loadDiscussions();
+                this.loadProjects();
+            }
+            
+            loadStats() {
+                if (this.isGuest) return;
+                
+                const projects = this.getProjects();
+                const userProjects = projects.filter(p => p.ownerId === this.user.id);
+                const userDiscussions = projects.reduce((count, project) => {
+                    if (project.discussions) {
+                        return count + project.discussions.filter(d => d.authorId === this.user.id).length;
+                    }
+                    return count;
+                }, 0);
+                
+                const container = document.getElementById('statsContent');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">${userProjects.length}</div>
+                                    <div class="text-muted">Projects</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">${userDiscussions}</div>
+                                    <div class="text-muted">Discussions</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">${userProjects.reduce((sum, p) => sum + (p.teamMembers?.length || 0), 0)}</div>
+                                    <div class="text-muted">Collaborators</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">${this.calculateImpact(userProjects)}</div>
+                                    <div class="text-muted">Impact</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            loadActivity() {
+                const activities = JSON.parse(localStorage.getItem('thoraxlab_activity') || '[]');
+                const container = document.getElementById('activityContent');
+                
+                if (!activities.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <div class="empty-title">No recent activity</div>
+                            <p class="text-muted">Start a project to see activity here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = activities.slice(0, 5).map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">${activity.description}</div>
+                            <div class="activity-time">${this.formatTimeAgo(activity.timestamp)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            loadTags() {
+                const projects = this.getProjects();
+                const tagCounts = {};
+                
+                projects.forEach(project => {
+                    project.tags?.forEach(tag => {
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    });
+                });
+                
+                const sortedTags = Object.entries(tagCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10);
+                
+                const container = document.getElementById('tagsContent');
+                container.innerHTML = `
+                    <div class="tags-cloud">
+                        ${sortedTags.map(([tag, count]) => `
+                            <span class="tag ${this.selectedTags.has(tag) ? 'active' : ''}" 
+                                  data-tag="${tag}">
+                                ${tag}
+                            </span>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.querySelectorAll('.tag').forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const tagName = e.currentTarget.dataset.tag;
+                        this.toggleTag(tagName);
+                    });
+                });
+            }
+            
+            loadDiscussions() {
+                const projects = this.getProjects();
+                let allDiscussions = [];
+                
+                projects.forEach(project => {
+                    if (project.discussions) {
+                        project.discussions.forEach(disc => {
+                            allDiscussions.push({
+                                ...disc,
+                                projectId: project.id,
+                                projectTitle: project.title
+                            });
+                        });
+                    }
+                });
+                
+                allDiscussions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                const container = document.getElementById('discussionsContent');
+                if (!allDiscussions.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">💬</div>
+                            <div class="empty-title">No discussions yet</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = allDiscussions.slice(0, 4).map(disc => `
+                    <div class="discussion-card" data-discussion-id="${disc.id}">
+                        <div class="discussion-type type-${disc.type}">
+                            <i class="${this.getDiscussionIcon(disc.type)}"></i>
+                            ${disc.type}
+                        </div>
+                        <div class="discussion-title">${this.escapeHtml(disc.title)}</div>
+                        <div class="discussion-footer">
+                            <div class="text-muted">In ${this.escapeHtml(disc.projectTitle)}</div>
+                            <div class="text-muted">${this.formatTimeAgo(disc.createdAt)}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.querySelectorAll('.discussion-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const discussionId = card.dataset.discussionId;
+                        this.navigateTo(`discussion/${discussionId}`);
+                    });
+                });
+            }
+            
+            loadProjects() {
+                const projects = this.getProjects();
+                projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                const recent = projects.slice(0, 3);
+                
+                const container = document.getElementById('projectsContent');
+                if (!recent.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <div class="empty-title">No projects yet</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = recent.map(project => `
+                    <div class="project-card" data-project-id="${project.id}">
+                        <div class="project-title">${this.escapeHtml(project.title)}</div>
+                        <div class="project-excerpt">${this.escapeHtml(project.description.substring(0, 120))}...</div>
+                        <div class="project-tags">
+                            ${project.tags.slice(0, 3).map(tag => `
+                                <span class="project-tag">${this.escapeHtml(tag)}</span>
+                            `).join('')}
+                        </div>
+                        <div class="project-footer">
+                            <div class="text-muted">${this.formatTimeAgo(project.updatedAt)}</div>
+                            <div class="text-muted">${project.teamMembers?.length || 0} members</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.querySelectorAll('.project-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const projectId = card.dataset.projectId;
+                        this.navigateTo(`project/${projectId}`);
+                    });
+                });
+            }
+            
+            // ========== PROJECTS ==========
+            
+            loadAllProjects() {
+                let projects = this.getProjects();
+                
+                // Filter by tags if any selected
+                if (this.selectedTags.size > 0) {
+                    projects = projects.filter(project => 
+                        project.tags?.some(tag => this.selectedTags.has(tag))
+                    );
+                }
+                
+                // Search filter
+                const search = document.getElementById('searchProjects')?.value.toLowerCase() || '';
+                if (search) {
+                    projects = projects.filter(project => 
+                        project.title.toLowerCase().includes(search) ||
+                        project.description.toLowerCase().includes(search) ||
+                        project.tags?.some(tag => tag.toLowerCase().includes(search))
+                    );
+                }
+                
+                projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                
+                const container = document.getElementById('allProjectsContent');
+                if (!projects.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">🔍</div>
+                            <div class="empty-title">No projects found</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = projects.map(project => `
+                    <div class="project-card" data-project-id="${project.id}">
+                        <div class="project-title">${this.escapeHtml(project.title)}</div>
+                        <div class="project-excerpt">${this.escapeHtml(project.description.substring(0, 100))}...</div>
+                        <div class="project-tags">
+                            ${project.tags.slice(0, 4).map(tag => `
+                                <span class="project-tag">${this.escapeHtml(tag)}</span>
+                            `).join('')}
+                        </div>
+                        <div class="project-footer">
+                            <div>
+                                <div class="user-name">${this.escapeHtml(project.ownerName)}</div>
+                                <div class="text-muted">${this.escapeHtml(project.institution)}</div>
+                            </div>
+                            <div class="text-muted">${this.formatTimeAgo(project.updatedAt)}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.querySelectorAll('.project-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const projectId = card.dataset.projectId;
+                        this.navigateTo(`project/${projectId}`);
+                    });
+                });
+            }
+            
+            loadMyProjects() {
+                if (this.isGuest) {
+                    this.showToast('Guests cannot create projects', 'warning');
+                    this.navigateTo('dashboard');
+                    return;
+                }
+                
+                const projects = this.getProjects();
+                const myProjects = projects.filter(p => p.ownerId === this.user.id);
+                
+                const container = document.getElementById('myProjectsContent');
+                if (!myProjects.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <div class="empty-title">No projects yet</div>
+                            <p class="text-muted">Create your first research project</p>
+                            <button class="btn btn-primary mt-4" id="createFirstProject">
+                                <i class="fas fa-plus"></i>
+                                Create Project
+                            </button>
+                        </div>
+                    `;
+                    
+                    document.getElementById('createFirstProject')?.addEventListener('click', () => {
+                        this.showModal('newProjectModal');
+                    });
+                    
+                    return;
+                }
+                
+                container.innerHTML = myProjects.map(project => `
+                    <div class="project-card" data-project-id="${project.id}">
+                        <div class="project-title">${this.escapeHtml(project.title)}</div>
+                        <div class="project-excerpt">${this.escapeHtml(project.description.substring(0, 120))}...</div>
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `
+                                <span class="project-tag">${this.escapeHtml(tag)}</span>
+                            `).join('')}
+                        </div>
+                        <div class="project-footer">
+                            <div class="text-muted">${project.discussions?.length || 0} discussions</div>
+                            <div class="text-muted">${project.teamMembers?.length || 0} members</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.querySelectorAll('.project-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const projectId = card.dataset.projectId;
+                        this.navigateTo(`project/${projectId}`);
+                    });
+                });
+            }
+            
+            createProject() {
+                const title = document.getElementById('projectTitle').value.trim();
+                const description = document.getElementById('projectDescription').value.trim();
+                const tagsInput = document.getElementById('projectTags').value.trim();
+                
+                if (!title || !description) {
+                    this.showToast('Title and description are required', 'error');
+                    return;
+                }
+                
+                const tags = tagsInput ? 
+                    tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+                
+                const project = {
+                    id: `proj_${Date.now()}`,
+                    title: title,
+                    description: description,
+                    tags: tags,
+                    ownerId: this.user.id,
+                    ownerName: this.user.name,
+                    ownerRole: this.user.role,
+                    institution: this.user.institution,
+                    teamMembers: [],
+                    discussions: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                const projects = this.getProjects();
+                projects.push(project);
+                this.saveProjects(projects);
+                
+                // Add activity
+                this.addActivity(`${this.user.name} created project "${title}"`);
+                
+                this.showToast('Project created successfully!', 'success');
+                this.hideModal('newProjectModal');
+                this.navigateTo(`project/${project.id}`);
+            }
+            
+            // ========== UTILITIES ==========
+            
+            getProjects() {
+                return JSON.parse(localStorage.getItem('thoraxlab_projects') || '[]');
+            }
+            
+            saveProjects(projects) {
+                localStorage.setItem('thoraxlab_projects', JSON.stringify(projects));
+            }
+            
+            addActivity(description) {
+                const activities = JSON.parse(localStorage.getItem('thoraxlab_activity') || '[]');
+                activities.unshift({
+                    description: description,
+                    timestamp: new Date().toISOString()
+                });
+                
+                if (activities.length > 50) {
+                    activities.length = 50;
+                }
+                
+                localStorage.setItem('thoraxlab_activity', JSON.stringify(activities));
+            }
+            
+            calculateImpact(projects) {
+                let impact = 0;
+                projects.forEach(project => {
+                    impact += (project.discussions?.length || 0) * 10;
+                    impact += (project.teamMembers?.length || 0) * 5;
+                    // Add age factor (newer projects get more weight)
+                    const ageDays = (new Date() - new Date(project.createdAt)) / (1000 * 60 * 60 * 24);
+                    impact += Math.max(0, 100 - ageDays);
+                });
+                return Math.round(impact);
+            }
+            
+            formatTimeAgo(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) {
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    if (diffHours === 0) {
+                        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                        return diffMinutes <= 1 ? 'Just now' : `${diffMinutes}m ago`;
+                    }
+                    return diffHours === 1 ? '1 hour ago' : `${diffHours}h ago`;
+                } else if (diffDays === 1) {
+                    return 'Yesterday';
+                } else if (diffDays < 7) {
+                    return `${diffDays}d ago`;
+                } else {
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }
+            }
+            
+            getDiscussionIcon(type) {
+                const icons = {
+                    'brainstorm': 'fas fa-lightbulb',
+                    'question': 'fas fa-question-circle',
+                    'decision': 'fas fa-gavel',
+                    'insight': 'fas fa-eye'
+                };
+                return icons[type] || 'fas fa-comments';
+            }
+            
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            toggleTag(tag) {
+                if (this.selectedTags.has(tag)) {
+                    this.selectedTags.delete(tag);
+                } else {
+                    this.selectedTags.add(tag);
+                }
+                
+                // Update UI
+                document.querySelectorAll(`[data-tag="${tag}"]`).forEach(el => {
+                    el.classList.toggle('active', this.selectedTags.has(tag));
+                });
+                
+                // Reload projects if on projects page
+                if (window.location.hash.includes('projects')) {
+                    this.loadAllProjects();
+                }
+            }
+            
+            showModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.add('active');
+            }
+            
+            hideModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('active');
+                    const form = modal.querySelector('form');
+                    if (form) form.reset();
+                }
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    warning: 'fa-exclamation-triangle',
+                    info: 'fa-info-circle'
+                };
+                
+                toast.innerHTML = `
+                    <i class="fas ${icons[type]}"></i>
+                    <span>${this.escapeHtml(message)}</span>
+                    <button class="toast-close">&times;</button>
+                `;
+                
+                container.appendChild(toast);
+                
+                toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+            
+            // ========== EVENT LISTENERS ==========
+            
+            setupEventListeners() {
+                // Auth
+                document.getElementById('researcherBtn').addEventListener('click', () => {
+                    document.getElementById('researcherForm').classList.remove('hidden');
+                    document.getElementById('guestForm').classList.add('hidden');
+                    document.getElementById('researcherBtn').classList.add('active');
+                    document.getElementById('guestBtn').classList.remove('active');
+                });
+                
+                document.getElementById('guestBtn').addEventListener('click', () => {
+                    document.getElementById('guestForm').classList.remove('hidden');
+                    document.getElementById('researcherForm').classList.add('hidden');
+                    document.getElementById('guestBtn').classList.add('active');
+                    document.getElementById('researcherBtn').classList.remove('active');
+                });
+                
+                document.getElementById('researcherForm').addEventListener('submit', (e) => this.loginAsResearcher(e));
+                document.getElementById('guestForm').addEventListener('submit', (e) => this.loginAsGuest(e));
+                
+                // Navigation
+                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+                document.getElementById('newProjectBtn').addEventListener('click', () => this.showModal('newProjectModal'));
+                document.getElementById('createProjectBtn').addEventListener('click', () => this.showModal('newProjectModal'));
+                
+                // Forms
+                document.getElementById('projectForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createProject();
+                });
+                
+                // Buttons
+                document.getElementById('viewAllProjects').addEventListener('click', () => this.navigateTo('projects'));
+                document.getElementById('viewAllActivity').addEventListener('click', () => {
+                    // Could show activity modal
+                    this.showToast('Activity history feature coming soon', 'info');
+                });
+                
+                document.getElementById('refreshStats').addEventListener('click', () => {
+                    this.loadStats();
+                    this.showToast('Stats refreshed', 'success');
+                });
+                
+                // Search
+                document.getElementById('searchProjects')?.addEventListener('input', () => this.loadAllProjects());
+                document.getElementById('searchDiscussions')?.addEventListener('input', () => this.loadDiscussions());
+                
+                // Quick Actions
+                document.getElementById('quickActionsBtn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const menu = document.getElementById('quickActionsMenu');
+                    menu.classList.toggle('active');
+                });
+                
+                document.querySelectorAll('.quick-action-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const action = e.currentTarget.dataset.action;
+                        if (action === 'new-project') {
+                            this.showModal('newProjectModal');
+                        } else if (action === 'new-discussion') {
+                            this.showToast('Start discussion from a project page', 'info');
+                        } else if (action === 'request-review') {
+                            this.showToast('Review request feature coming soon', 'info');
+                        }
+                        document.getElementById('quickActionsMenu').classList.remove('active');
+                    });
+                });
+                
+                // Close quick actions when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.quick-actions')) {
+                        document.getElementById('quickActionsMenu').classList.remove('active');
+                    }
+                });
+                
+                // Modal close buttons
+                document.querySelectorAll('.modal-close, [id^="cancel"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const modal = e.target.closest('.modal');
+                        if (modal) {
+                            this.hideModal(modal.id);
+                        }
+                    });
+                });
+                
+                // Close modals on outside click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.hideModal(modal.id);
+                        }
+                    });
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        document.getElementById('searchProjects')?.focus();
+                    }
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal.active').forEach(modal => {
+                            this.hideModal(modal.id);
+                        });
+                        document.getElementById('quickActionsMenu').classList.remove('active');
+                    }
+                });
+            }
+        }
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new ThoraxLabPro();
+            
+            // Add slideOut animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideOut {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
     </script>
-    <script src="app.js"></script>
 </body>
 </html>
