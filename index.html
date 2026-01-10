@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[THØRAX][LAB] PRO | Elite Clinical Innovation Platform</title>
+    <title>Thorax Lab Pro | Clinical Research & Innovation Platform</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,78 +11,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ====== ELITE DESIGN SYSTEm ====== */
+        /* ====== CLINICAL RESEARCH DESIGN SYSTEM ====== */
         :root {
-            /* Primary Colors - Academic Blue & Gold */
-            --elite-blue: #0A2342;
-            --elite-blue-light: #1A365D;
-            --elite-blue-dark: #051326;
-            --elite-gold: #C5A572;
-            --elite-gold-light: #D4B483;
-            --elite-gold-dark: #B89650;
+            /* Clinical Research Color Palette */
+            --research-navy: #0A2342;
+            --research-navy-light: #1A365D;
+            --research-navy-dark: #051326;
+            --accent-bronze: #B8860B;
+            --accent-bronze-light: #DAA520;
+            --accent-bronze-dark: #8B4513;
             
-            /* Secondary Colors */
-            --academic-crimson: #8C1515;
-            --academic-oxford: #002147;
-            --academic-cambridge: #A51C30;
-            --academic-stanford: #8C1515;
-            --academic-harvard: #A51C30;
+            /* Status Colors - Clinical Significance */
+            --status-success: #10B981;    /* Clinical improvement */
+            --status-warning: #F59E0B;    /* Requires attention */
+            --status-error: #DC2626;      /* Critical finding */
+            --status-info: #3B82F6;       /* Informational */
+            --status-neutral: #6B7280;    /* Baseline */
+            
+            /* Research Phase Colors */
+            --phase-planning: #3B82F6;    /* Protocol design */
+            --phase-data: #10B981;        /* Data collection */
+            --phase-analysis: #8B5CF6;    /* Statistical analysis */
+            --phase-publishing: #F59E0B;  /* Manuscript prep */
+            --phase-completed: #6B7280;   /* Study complete */
             
             /* UI Colors */
-            --ui-bg: #F8F9FA;
+            --ui-bg: #F8FAFC;
             --ui-card: #FFFFFF;
-            --ui-card-dark: #0A2342;
-            --ui-border: #E1E8ED;
+            --ui-card-alt: #F1F5F9;
+            --ui-border: #E2E8F0;
             --ui-border-light: #F1F5F9;
             --ui-hover: #F8FAFC;
-            --ui-text: #1A202C;
+            --ui-text: #1E293B;
             --ui-text-light: #64748B;
             --ui-text-muted: #94A3B8;
             
-            /* Status Colors */
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
-            --info: #3B82F6;
-            
-            /* Gradients */
-            --gradient-elite: linear-gradient(135deg, var(--elite-blue) 0%, var(--elite-blue-light) 100%);
-            --gradient-gold: linear-gradient(135deg, var(--elite-gold) 0%, var(--elite-gold-light) 100%);
+            /* Research Gradients */
+            --gradient-research: linear-gradient(135deg, var(--research-navy) 0%, var(--research-navy-light) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent-bronze) 0%, var(--accent-bronze-light) 100%);
             --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+            --gradient-phase: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
             
-            /* Shadows */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-elite: 0 20px 25px -5px rgba(10, 35, 66, 0.1);
-            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.08);
+            /* Shadows - Clinical Precision */
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+            --shadow-prominent: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            --shadow-focus: 0 20px 25px -5px rgba(10, 35, 66, 0.08);
+            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04);
             
-            /* Border Radius */
+            /* Border Radius - Clinical Precision */
             --radius-sm: 4px;
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
             --radius-full: 9999px;
             
-            /* Spacing */
+            /* Spacing - Systematic Layout */
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
             --space-md: 1rem;
             --space-lg: 1.5rem;
             --space-xl: 2rem;
             --space-2xl: 3rem;
+            --space-3xl: 4rem;
             
-            /* Transitions */
-            --transition-fast: 150ms ease;
-            --transition-normal: 250ms ease;
-            --transition-slow: 350ms ease;
+            /* Transitions - Smooth Clinical Flow */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
             
-            /* Typography */
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-serif: 'Source Serif Pro', Georgia, serif;
+            /* Typography - Clinical Readability */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-serif: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+            --font-mono: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
+            
+            /* Layout - Clinical Precision */
+            --header-height: 64px;
+            --sidebar-width: 280px;
+            --max-content: 1200px;
         }
         
-        /* ====== BASE RESET ====== */
+        /* ====== BASE RESET & CLINICAL TYPOGRAPHY ====== */
         * {
             margin: 0;
             padding: 0;
@@ -91,6 +100,7 @@
         
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: var(--header-height);
         }
         
         body {
@@ -100,24 +110,28 @@
             line-height: 1.6;
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* ====== TYPOGRAPHY ====== */
+        /* ====== CLINICAL TYPOGRAPHY SYSTEM ====== */
         h1, h2, h3, h4, h5, h6 {
             font-family: var(--font-serif);
-            font-weight: 700;
-            line-height: 1.2;
-            color: var(--elite-blue);
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--research-navy);
+            letter-spacing: -0.01em;
         }
         
         h1 {
             font-size: 2.5rem;
-            letter-spacing: -0.5px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
         
         h2 {
             font-size: 2rem;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.01em;
         }
         
         h3 {
@@ -127,10 +141,11 @@
         .text-display {
             font-size: 3.5rem;
             font-weight: 800;
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.03em;
         }
         
         .text-lead {
@@ -146,15 +161,34 @@
         
         .text-small {
             font-size: 0.875rem;
+            line-height: 1.5;
         }
         
         .text-xsmall {
             font-size: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .text-code {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            background: var(--ui-card-alt);
+            padding: 0.125rem 0.375rem;
+            border-radius: var(--radius-sm);
+            color: var(--status-error);
         }
         
         /* ====== LAYOUT UTILITIES ====== */
         .hidden {
             display: none !important;
+        }
+        
+        .visible {
+            visibility: visible;
+        }
+        
+        .invisible {
+            visibility: hidden;
         }
         
         .flex {
@@ -167,6 +201,14 @@
         
         .block {
             display: block;
+        }
+        
+        .inline {
+            display: inline;
+        }
+        
+        .inline-block {
+            display: inline-block;
         }
         
         .inline-flex {
@@ -185,6 +227,10 @@
             align-items: flex-end;
         }
         
+        .items-baseline {
+            align-items: baseline;
+        }
+        
         .justify-center {
             justify-content: center;
         }
@@ -193,77 +239,185 @@
             justify-content: space-between;
         }
         
+        .justify-around {
+            justify-content: space-around;
+        }
+        
         .justify-end {
             justify-content: flex-end;
+        }
+        
+        .justify-start {
+            justify-content: flex-start;
         }
         
         .flex-col {
             flex-direction: column;
         }
         
+        .flex-row {
+            flex-direction: row;
+        }
+        
         .flex-wrap {
             flex-wrap: wrap;
         }
         
-        .flex-1 {
-            flex: 1;
+        .flex-nowrap {
+            flex-wrap: nowrap;
         }
         
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .flex-auto {
+            flex: 1 1 auto;
+        }
+        
+        .flex-none {
+            flex: none;
+        }
+        
+        .gap-1 { gap: 0.25rem; }
         .gap-2 { gap: 0.5rem; }
         .gap-3 { gap: 0.75rem; }
         .gap-4 { gap: 1rem; }
+        .gap-5 { gap: 1.25rem; }
         .gap-6 { gap: 1.5rem; }
         .gap-8 { gap: 2rem; }
+        .gap-10 { gap: 2.5rem; }
+        .gap-12 { gap: 3rem; }
         
+        .mt-1 { margin-top: 0.25rem; }
         .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
         .mt-4 { margin-top: 1rem; }
         .mt-6 { margin-top: 1.5rem; }
         .mt-8 { margin-top: 2rem; }
+        .mt-10 { margin-top: 2.5rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
         .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
         .mb-4 { margin-bottom: 1rem; }
         .mb-6 { margin-bottom: 1.5rem; }
         .mb-8 { margin-bottom: 2rem; }
+        .mb-10 { margin-bottom: 2.5rem; }
+        .ml-auto { margin-left: auto; }
+        .mr-auto { margin-right: auto; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
         
         .w-full { width: 100%; }
         .w-auto { width: auto; }
+        .w-min { width: min-content; }
+        .w-max { width: max-content; }
         .h-full { height: 100%; }
+        .h-screen { height: 100vh; }
+        .h-auto { height: auto; }
+        .min-h-0 { min-height: 0; }
+        .min-h-full { min-height: 100%; }
+        .min-h-screen { min-height: 100vh; }
+        .max-w-full { max-width: 100%; }
+        .max-w-xs { max-width: 20rem; }
+        .max-w-sm { max-width: 24rem; }
+        .max-w-md { max-width: 28rem; }
+        .max-w-lg { max-width: 32rem; }
+        .max-w-xl { max-width: 36rem; }
+        .max-w-2xl { max-width: 42rem; }
+        .max-w-4xl { max-width: 56rem; }
+        .max-w-6xl { max-width: 72rem; }
+        .max-w-7xl { max-width: 80rem; }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; }
+        .text-justify { text-align: justify; }
         
         .relative { position: relative; }
         .absolute { position: absolute; }
+        .fixed { position: fixed; }
         .sticky { position: sticky; }
+        .static { position: static; }
         
+        .top-0 { top: 0; }
+        .right-0 { right: 0; }
+        .bottom-0 { bottom: 0; }
+        .left-0 { left: 0; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        
+        .z-0 { z-index: 0; }
         .z-10 { z-index: 10; }
         .z-20 { z-index: 20; }
         .z-30 { z-index: 30; }
+        .z-40 { z-index: 40; }
+        .z-50 { z-index: 50; }
         
         .overflow-hidden { overflow: hidden; }
         .overflow-auto { overflow: auto; }
+        .overflow-x-auto { overflow-x: auto; }
+        .overflow-y-auto { overflow-y: auto; }
+        .overflow-x-hidden { overflow-x: hidden; }
+        .overflow-y-hidden { overflow-y: hidden; }
         
+        .rounded { border-radius: var(--radius-md); }
         .rounded-sm { border-radius: var(--radius-sm); }
         .rounded-md { border-radius: var(--radius-md); }
         .rounded-lg { border-radius: var(--radius-lg); }
         .rounded-xl { border-radius: var(--radius-xl); }
         .rounded-full { border-radius: var(--radius-full); }
         
-        .shadow-sm { box-shadow: var(--shadow-sm); }
-        .shadow-md { box-shadow: var(--shadow-md); }
-        .shadow-lg { box-shadow: var(--shadow-lg); }
-        .shadow-elite { box-shadow: var(--shadow-elite); }
+        .border { border: 1px solid var(--ui-border); }
+        .border-0 { border: none; }
+        .border-t { border-top: 1px solid var(--ui-border); }
+        .border-b { border-bottom: 1px solid var(--ui-border); }
+        .border-l { border-left: 1px solid var(--ui-border); }
+        .border-r { border-right: 1px solid var(--ui-border); }
+        
+        .shadow-sm { box-shadow: var(--shadow-subtle); }
+        .shadow { box-shadow: var(--shadow-gentle); }
+        .shadow-md { box-shadow: var(--shadow-prominent); }
+        .shadow-lg { box-shadow: var(--shadow-focus); }
+        .shadow-xl { box-shadow: var(--shadow-card); }
+        .shadow-none { box-shadow: none; }
+        
+        .pointer-events-none { pointer-events: none; }
+        .pointer-events-auto { pointer-events: auto; }
+        
+        .select-none { user-select: none; }
+        .select-text { user-select: text; }
+        
+        .cursor-pointer { cursor: pointer; }
+        .cursor-default { cursor: default; }
+        .cursor-not-allowed { cursor: not-allowed; }
+        
+        .opacity-0 { opacity: 0; }
+        .opacity-25 { opacity: 0.25; }
+        .opacity-50 { opacity: 0.5; }
+        .opacity-75 { opacity: 0.75; }
+        .opacity-100 { opacity: 1; }
+        
+        .transition { transition: var(--transition-normal); }
+        .transition-fast { transition: var(--transition-fast); }
+        .transition-slow { transition: var(--transition-slow); }
+        .transition-none { transition: none; }
+        
+        .transform { transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
+        .transform-gpu { transform: translate3d(var(--tw-translate-x), var(--tw-translate-y), 0) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
         
         /* ====== LAYOUT CONTAINERS ====== */
         .container {
             width: 100%;
-            max-width: 1280px;
+            max-width: var(--max-content);
             margin: 0 auto;
             padding: 0 1.5rem;
         }
         
         .container-narrow {
-            max-width: 1000px;
+            max-width: 900px;
+        }
+        
+        .container-wide {
+            max-width: 1400px;
         }
         
         .section {
@@ -274,10 +428,14 @@
             padding: var(--space-xl) 0;
         }
         
-        /* ====== AUTH SCREEN - ELITE DESIGN ====== */
+        .section-lg {
+            padding: var(--space-3xl) 0;
+        }
+        
+        /* ====== AUTHENTICATION SCREEN ====== */
         .auth-screen {
             min-height: 100vh;
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -294,7 +452,7 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(197, 165, 114, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(180, 134, 11, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(10, 35, 66, 0.15) 0%, transparent 50%);
         }
         
@@ -304,7 +462,7 @@
             width: 100%;
             max-width: 480px;
             overflow: hidden;
-            box-shadow: var(--shadow-elite);
+            box-shadow: var(--shadow-focus);
             position: relative;
             z-index: 1;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -312,7 +470,7 @@
         }
         
         .auth-header {
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
             color: white;
             padding: 3rem 2rem;
             text-align: center;
@@ -333,7 +491,7 @@
         .brand-logo-auth {
             font-family: var(--font-serif);
             font-size: 2.5rem;
-            font-weight: 800;
+            font-weight: 700;
             color: white;
             margin-bottom: 0.5rem;
             letter-spacing: -0.5px;
@@ -374,19 +532,19 @@
         }
         
         .auth-choice-btn:hover {
-            border-color: var(--elite-blue);
+            border-color: var(--accent-bronze);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-prominent);
         }
         
         .auth-choice-btn.active {
-            border-color: var(--elite-blue);
-            background: rgba(10, 35, 66, 0.05);
+            border-color: var(--accent-bronze);
+            background: rgba(180, 134, 11, 0.05);
         }
         
         .auth-choice-icon {
             font-size: 1.5rem;
-            color: var(--elite-blue);
+            color: var(--accent-bronze);
         }
         
         .auth-form {
@@ -402,16 +560,19 @@
             flex-direction: column;
         }
         
-        /* ====== ELITE HEADER ====== */
+        /* ====== ENHANCED HEADER ====== */
         .app-header {
             background: var(--ui-card);
             border-bottom: 1px solid var(--ui-border-light);
-            padding: 1rem 0;
+            padding: 0.75rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
         }
         
         .header-container {
@@ -419,27 +580,30 @@
             align-items: center;
             justify-content: space-between;
             gap: 2rem;
+            width: 100%;
         }
         
         .brand-main {
             font-family: var(--font-serif);
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: var(--elite-blue);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--research-navy);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
         
         .brand-accent {
-            color: var(--elite-gold);
+            color: var(--accent-bronze);
         }
         
         .nav-main {
             display: flex;
-            gap: 0.25rem;
+            gap: 0.5rem;
             align-items: center;
+            margin: 0 auto;
         }
         
         .nav-item {
@@ -447,51 +611,59 @@
         }
         
         .nav-link {
-            padding: 0.75rem 1.25rem;
+            padding: 0.75rem 1rem;
             color: var(--ui-text-light);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 0.875rem;
             border-radius: var(--radius-md);
             transition: all var(--transition-normal);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
         
         .nav-link:hover {
-            color: var(--elite-blue);
+            color: var(--research-navy);
             background: var(--ui-hover);
         }
         
         .nav-link.active {
-            color: var(--elite-blue);
-            background: rgba(10, 35, 66, 0.08);
+            color: var(--research-navy);
+            background: rgba(10, 35, 66, 0.05);
+            font-weight: 600;
         }
         
         .nav-link.active::after {
             content: '';
             position: absolute;
-            bottom: -1rem;
+            bottom: -0.75rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            background: var(--elite-blue);
+            width: 24px;
+            height: 3px;
+            background: var(--accent-bronze);
             border-radius: var(--radius-full);
         }
         
         .user-section {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
+        }
+        
+        .quick-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: var(--radius-full);
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
             color: white;
             display: flex;
             align-items: center;
@@ -499,6 +671,7 @@
             font-weight: 600;
             font-size: 0.875rem;
             flex-shrink: 0;
+            border: 2px solid var(--ui-card);
         }
         
         .user-info {
@@ -517,7 +690,7 @@
             color: var(--ui-text-muted);
         }
         
-        .visitor-badge {
+        .guest-badge {
             padding: 0.25rem 0.75rem;
             background: var(--ui-hover);
             border-radius: var(--radius-full);
@@ -527,6 +700,40 @@
             display: flex;
             align-items: center;
             gap: 0.25rem;
+        }
+        
+        .breadcrumb-nav {
+            background: var(--ui-card-alt);
+            border-bottom: 1px solid var(--ui-border);
+            padding: 1rem 0;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--ui-text-light);
+        }
+        
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .breadcrumb-link {
+            color: var(--ui-text);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .breadcrumb-link:hover {
+            color: var(--accent-bronze);
+        }
+        
+        .breadcrumb-separator {
+            color: var(--ui-text-muted);
         }
         
         /* ====== MAIN CONTENT ====== */
@@ -546,55 +753,76 @@
         .page-subtitle {
             color: var(--ui-text-light);
             font-size: 1.125rem;
+            max-width: 600px;
         }
         
-        /* ====== ELITE CARDS ====== */
-        .elite-card {
+        .page-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        /* ====== RESEARCH CARDS ====== */
+        .research-card {
             background: var(--ui-card);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--ui-border-light);
+            border: 1px solid var(--ui-border);
             padding: 1.75rem;
             transition: all var(--transition-normal);
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
         
-        .elite-card:hover {
-            border-color: var(--elite-blue);
-            box-shadow: var(--shadow-elite);
+        .research-card:hover {
+            border-color: var(--accent-bronze);
+            box-shadow: var(--shadow-focus);
             transform: translateY(-2px);
         }
         
-        .elite-card::before {
+        .research-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 4px;
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
+        }
+        
+        .research-card-alt {
+            background: var(--ui-card-alt);
         }
         
         .card-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             margin-bottom: 1.5rem;
+            gap: 1rem;
         }
         
         .card-title {
             font-size: 1.25rem;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            line-height: 1.4;
         }
         
         .card-icon {
-            color: var(--elite-gold);
+            color: var(--accent-bronze);
+            flex-shrink: 0;
         }
         
-        /* ====== DASHBOARD SPECIFIC ====== */
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        /* ====== DASHBOARD LAYOUT ====== */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
@@ -602,18 +830,35 @@
             margin-bottom: 2rem;
         }
         
+        .col-span-1 { grid-column: span 1; }
+        .col-span-2 { grid-column: span 2; }
+        .col-span-3 { grid-column: span 3; }
         .col-span-4 { grid-column: span 4; }
+        .col-span-5 { grid-column: span 5; }
         .col-span-6 { grid-column: span 6; }
+        .col-span-7 { grid-column: span 7; }
         .col-span-8 { grid-column: span 8; }
+        .col-span-9 { grid-column: span 9; }
+        .col-span-10 { grid-column: span 10; }
+        .col-span-11 { grid-column: span 11; }
         .col-span-12 { grid-column: span 12; }
+        
+        @media (max-width: 1280px) {
+            .col-span-3, .col-span-4 { grid-column: span 6; }
+        }
         
         @media (max-width: 1024px) {
             .col-span-4, .col-span-6, .col-span-8 { grid-column: span 12; }
         }
         
+        @media (max-width: 768px) {
+            .col-span-3, .col-span-4, .col-span-6, .col-span-8, .col-span-12 { grid-column: span 12; }
+        }
+        
+        /* ====== RESEARCH STATS ====== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 1rem;
         }
         
@@ -623,11 +868,13 @@
             padding: 1.5rem;
             border: 1px solid var(--ui-border);
             transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
         }
         
         .stat-card:hover {
-            border-color: var(--elite-blue);
-            box-shadow: var(--shadow-md);
+            border-color: var(--accent-bronze);
+            box-shadow: var(--shadow-prominent);
         }
         
         .stat-icon {
@@ -639,14 +886,14 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             font-size: 1.25rem;
         }
         
         .stat-number {
             font-size: 2rem;
             font-weight: 700;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             line-height: 1;
             margin-bottom: 0.25rem;
         }
@@ -656,7 +903,102 @@
             color: var(--ui-text-light);
         }
         
-        /* ====== FEATURED DISCUSSIONS ====== */
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        
+        .trend-up {
+            color: var(--status-success);
+        }
+        
+        .trend-down {
+            color: var(--status-error);
+        }
+        
+        /* ====== SMART ACTIVITY FEED ====== */
+        .activity-feed {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--ui-border);
+            padding: 1.75rem;
+        }
+        
+        .activity-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .activity-filter {
+            padding: 0.375rem 0.75rem;
+            background: var(--ui-card);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--ui-text-light);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .activity-filter:hover {
+            border-color: var(--accent-bronze);
+            color: var(--research-navy);
+        }
+        
+        .activity-filter.active {
+            background: var(--gradient-research);
+            border-color: var(--research-navy);
+            color: white;
+        }
+        
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--ui-border);
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: var(--ui-card-alt);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-bronze);
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--ui-text);
+        }
+        
+        .activity-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--ui-text-muted);
+        }
+        
+        /* ====== RESEARCH DISCUSSIONS ====== */
         .discussion-card {
             background: var(--ui-card);
             border-radius: var(--radius-lg);
@@ -666,11 +1008,12 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
         
         .discussion-card:hover {
-            border-color: var(--elite-blue);
-            box-shadow: var(--shadow-md);
+            border-color: var(--accent-bronze);
+            box-shadow: var(--shadow-prominent);
             transform: translateY(-2px);
         }
         
@@ -681,7 +1024,7 @@
             left: 0;
             bottom: 0;
             width: 4px;
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
         }
         
         .discussion-header {
@@ -721,10 +1064,10 @@
             color: #5B21B6;
         }
         
-        .elite-badge {
+        .priority-badge {
             padding: 0.25rem 0.75rem;
-            background: var(--gradient-gold);
-            color: var(--elite-blue);
+            background: var(--gradient-accent);
+            color: var(--research-navy);
             border-radius: var(--radius-full);
             font-size: 0.75rem;
             font-weight: 600;
@@ -736,7 +1079,7 @@
         .discussion-title {
             font-size: 1.125rem;
             font-weight: 600;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             margin-bottom: 0.75rem;
             line-height: 1.4;
         }
@@ -770,7 +1113,7 @@
             width: 32px;
             height: 32px;
             border-radius: var(--radius-full);
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
             color: white;
             display: flex;
             align-items: center;
@@ -805,10 +1148,10 @@
         }
         
         .metric i {
-            color: var(--elite-gold);
+            color: var(--accent-bronze);
         }
         
-        /* ====== PROJECT CARDS ====== */
+        /* ====== RESEARCH PROJECTS ====== */
         .project-card {
             background: var(--ui-card);
             border-radius: var(--radius-xl);
@@ -818,11 +1161,12 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
         
         .project-card:hover {
-            border-color: var(--elite-blue);
-            box-shadow: var(--shadow-elite);
+            border-color: var(--accent-bronze);
+            box-shadow: var(--shadow-focus);
             transform: translateY(-4px);
         }
         
@@ -833,7 +1177,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
         }
         
         .project-header {
@@ -843,7 +1187,7 @@
             margin-bottom: 1.5rem;
         }
         
-        .project-type {
+        .project-phase {
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -852,7 +1196,7 @@
             border-radius: var(--radius-full);
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--elite-blue);
+            color: var(--research-navy);
         }
         
         .project-institution {
@@ -866,7 +1210,7 @@
         .project-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             margin-bottom: 1rem;
             line-height: 1.3;
         }
@@ -888,10 +1232,17 @@
         .project-tag {
             padding: 0.375rem 0.875rem;
             background: rgba(10, 35, 66, 0.08);
-            color: var(--elite-blue);
+            color: var(--research-navy);
             border-radius: var(--radius-full);
             font-size: 0.75rem;
             font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .project-tag:hover {
+            background: rgba(180, 134, 11, 0.1);
+            color: var(--accent-bronze);
         }
         
         .project-footer {
@@ -916,7 +1267,7 @@
         }
         
         .stat i {
-            color: var(--elite-gold);
+            color: var(--accent-bronze);
         }
         
         .project-author {
@@ -929,7 +1280,7 @@
             width: 32px;
             height: 32px;
             border-radius: var(--radius-full);
-            background: var(--gradient-elite);
+            background: var(--gradient-research);
             color: white;
             display: flex;
             align-items: center;
@@ -937,6 +1288,168 @@
             font-size: 0.75rem;
             font-weight: 600;
             flex-shrink: 0;
+        }
+        
+        /* ====== INTELLIGENT TAGS SYSTEM ====== */
+        .tags-cloud {
+            background: var(--ui-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--ui-border);
+            padding: 1.75rem;
+        }
+        
+        .tag-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            margin: 0.25rem;
+            background: var(--ui-card-alt);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--ui-text);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .tag-item:hover {
+            background: rgba(10, 35, 66, 0.08);
+            border-color: var(--accent-bronze);
+            color: var(--research-navy);
+        }
+        
+        .tag-item.active {
+            background: var(--gradient-research);
+            border-color: var(--research-navy);
+            color: white;
+        }
+        
+        .tag-frequency {
+            font-size: 0.75rem;
+            color: var(--ui-text-muted);
+            margin-left: 0.25rem;
+        }
+        
+        /* ====== COLLABORATION QUICK ACTIONS ====== */
+        .quick-actions-menu {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 50;
+        }
+        
+        .quick-actions-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-research);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-focus);
+            transition: all var(--transition-normal);
+        }
+        
+        .quick-actions-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .quick-actions-dropdown {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: var(--ui-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--ui-border);
+            box-shadow: var(--shadow-focus);
+            min-width: 240px;
+            padding: 0.5rem;
+            display: none;
+        }
+        
+        .quick-actions-dropdown.active {
+            display: block;
+            animation: slideUp 0.2s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .quick-action-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        
+        .quick-action-item:hover {
+            background: var(--ui-hover);
+        }
+        
+        /* ====== RESEARCH STAGE VISUALIZATIONS ====== */
+        .stage-timeline {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .stage-item {
+            flex: 1;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--ui-border);
+            position: relative;
+        }
+        
+        .stage-item.active {
+            background: var(--phase-planning);
+        }
+        
+        .stage-item.completed {
+            background: var(--phase-completed);
+        }
+        
+        .stage-item.in-progress {
+            background: var(--phase-analysis);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .stage-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--ui-text-muted);
+            white-space: nowrap;
+        }
+        
+        .stage-label.active {
+            color: var(--research-navy);
+            font-weight: 600;
         }
         
         /* ====== EMPTY STATES ====== */
@@ -949,11 +1462,12 @@
             font-size: 3.5rem;
             color: var(--ui-border);
             margin-bottom: 1.5rem;
+            opacity: 0.5;
         }
         
         .empty-title {
             font-size: 1.5rem;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             margin-bottom: 0.5rem;
         }
         
@@ -965,7 +1479,7 @@
             margin-right: auto;
         }
         
-        /* ====== ELITE BUTTONS ====== */
+        /* ====== BUTTONS ====== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -982,6 +1496,7 @@
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
         
         .btn::before {
@@ -1000,47 +1515,58 @@
             opacity: 1;
         }
         
-        .btn-elite-primary {
-            background: var(--gradient-elite);
+        .btn-primary {
+            background: var(--gradient-research);
             color: white;
         }
         
-        .btn-elite-primary:hover {
-            box-shadow: var(--shadow-lg);
+        .btn-primary:hover {
+            box-shadow: var(--shadow-focus);
             transform: translateY(-2px);
         }
         
-        .btn-elite-secondary {
+        .btn-secondary {
             background: var(--ui-card);
-            color: var(--elite-blue);
-            border: 2px solid var(--elite-blue);
+            color: var(--research-navy);
+            border: 2px solid var(--research-navy);
         }
         
-        .btn-elite-secondary:hover {
-            background: var(--elite-blue);
+        .btn-secondary:hover {
+            background: var(--research-navy);
             color: white;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-prominent);
         }
         
-        .btn-elite-outline {
+        .btn-outline {
             background: transparent;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             border: 2px solid var(--ui-border);
         }
         
-        .btn-elite-outline:hover {
-            border-color: var(--elite-blue);
-            box-shadow: var(--shadow-sm);
+        .btn-outline:hover {
+            border-color: var(--accent-bronze);
+            color: var(--accent-bronze);
         }
         
-        .btn-elite-ghost {
+        .btn-ghost {
             background: transparent;
             color: var(--ui-text);
             border: 2px solid transparent;
         }
         
-        .btn-elite-ghost:hover {
+        .btn-ghost:hover {
             background: var(--ui-hover);
+        }
+        
+        .btn-accent {
+            background: var(--gradient-accent);
+            color: var(--research-navy);
+            font-weight: 700;
+        }
+        
+        .btn-accent:hover {
+            box-shadow: var(--shadow-prominent);
+            transform: translateY(-2px);
         }
         
         .btn-sm {
@@ -1059,6 +1585,26 @@
             height: 40px;
         }
         
+        .btn-loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--radius-full);
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         /* ====== FORMS ====== */
         .form-group {
             margin-bottom: 1.5rem;
@@ -1068,8 +1614,14 @@
             display: block;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             font-size: 0.875rem;
+        }
+        
+        .form-help {
+            font-size: 0.75rem;
+            color: var(--ui-text-muted);
+            margin-top: 0.25rem;
         }
         
         .form-input {
@@ -1081,17 +1633,32 @@
             font-size: 0.875rem;
             background: var(--ui-card);
             transition: all var(--transition-normal);
+            color: var(--ui-text);
         }
         
         .form-input:focus {
             outline: none;
-            border-color: var(--elite-blue);
-            box-shadow: 0 0 0 3px rgba(10, 35, 66, 0.1);
+            border-color: var(--accent-bronze);
+            box-shadow: 0 0 0 3px rgba(180, 134, 11, 0.1);
+        }
+        
+        .form-input.error {
+            border-color: var(--status-error);
         }
         
         .form-textarea {
             min-height: 120px;
             resize: vertical;
+            line-height: 1.5;
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px;
+            padding-right: 2.5rem;
         }
         
         .char-counter {
@@ -1102,11 +1669,74 @@
         }
         
         .char-counter.near-limit {
-            color: var(--warning);
+            color: var(--status-warning);
         }
         
         .char-counter.over-limit {
-            color: var(--error);
+            color: var(--status-error);
+        }
+        
+        /* ====== SEARCH & FILTERS ====== */
+        .search-bar {
+            position: relative;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-full);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            background: var(--ui-card);
+            transition: all var(--transition-normal);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-bronze);
+            box-shadow: 0 0 0 3px rgba(180, 134, 11, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ui-text-muted);
+        }
+        
+        .filters-bar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--ui-card);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            color: var(--ui-text);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .filter-chip:hover {
+            border-color: var(--accent-bronze);
+            color: var(--accent-bronze);
+        }
+        
+        .filter-chip.active {
+            background: var(--gradient-research);
+            border-color: var(--research-navy);
+            color: white;
         }
         
         /* ====== MODALS ====== */
@@ -1151,7 +1781,7 @@
             overflow-y: auto;
             position: relative;
             border: 1px solid var(--ui-border-light);
-            box-shadow: var(--shadow-elite);
+            box-shadow: var(--shadow-focus);
         }
         
         .modal-header {
@@ -1163,7 +1793,7 @@
         
         .modal-title {
             font-size: 1.5rem;
-            color: var(--elite-blue);
+            color: var(--research-navy);
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -1186,7 +1816,7 @@
         
         .modal-close:hover {
             background: var(--ui-hover);
-            color: var(--elite-blue);
+            color: var(--accent-bronze);
         }
         
         /* ====== TOAST NOTIFICATIONS ====== */
@@ -1203,14 +1833,14 @@
         .toast {
             padding: 1rem 1.25rem;
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-focus);
             animation: slideIn 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.75rem;
             background: var(--ui-card);
             min-width: 300px;
-            border-left: 4px solid var(--elite-blue);
+            border-left: 4px solid var(--research-navy);
             position: relative;
             overflow: hidden;
         }
@@ -1222,23 +1852,23 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, var(--elite-blue), transparent);
+            background: linear-gradient(90deg, var(--research-navy), transparent);
         }
         
         .toast-success {
-            border-left-color: var(--success);
+            border-left-color: var(--status-success);
         }
         
         .toast-error {
-            border-left-color: var(--error);
+            border-left-color: var(--status-error);
         }
         
         .toast-warning {
-            border-left-color: var(--warning);
+            border-left-color: var(--status-warning);
         }
         
         .toast-info {
-            border-left-color: var(--info);
+            border-left-color: var(--status-info);
         }
         
         .toast-icon {
@@ -1247,6 +1877,17 @@
         
         .toast-content {
             flex: 1;
+        }
+        
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.125rem;
+        }
+        
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--ui-text-light);
         }
         
         .toast-close {
@@ -1266,7 +1907,7 @@
         
         .toast-close:hover {
             background: var(--ui-hover);
-            color: var(--elite-blue);
+            color: var(--accent-bronze);
         }
         
         @keyframes slideIn {
@@ -1278,37 +1919,6 @@
                 transform: translateX(0);
                 opacity: 1;
             }
-        }
-        
-        /* ====== SEARCH BAR ====== */
-        .search-bar {
-            position: relative;
-            max-width: 400px;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
-            border: 2px solid var(--ui-border);
-            border-radius: var(--radius-full);
-            font-family: var(--font-sans);
-            font-size: 0.875rem;
-            background: var(--ui-card);
-            transition: all var(--transition-normal);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--elite-blue);
-            box-shadow: 0 0 0 3px rgba(10, 35, 66, 0.1);
-        }
-        
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--ui-text-muted);
         }
         
         /* ====== PAGE TRANSITIONS ====== */
@@ -1328,6 +1938,30 @@
         }
         
         /* ====== RESPONSIVE DESIGN ====== */
+        @media (max-width: 1280px) {
+            .container {
+                padding: 0 2rem;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+            
+            .nav-main {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .dashboard-grid {
+                gap: 1rem;
+            }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 0 1rem;
@@ -1338,11 +1972,26 @@
                 gap: 1rem;
             }
             
-            .nav-main {
+            .user-section {
+                order: 2;
+                margin-left: auto;
+            }
+            
+            .search-bar {
                 order: 3;
                 width: 100%;
-                justify-content: center;
-                margin-top: 1rem;
+                max-width: none;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .page-actions {
+                width: 100%;
+                justify-content: flex-start;
             }
             
             .dashboard-grid {
@@ -1372,6 +2021,11 @@
             .project-card {
                 padding: 1.5rem;
             }
+            
+            .quick-actions-menu {
+                bottom: 1rem;
+                right: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1396,6 +2050,46 @@
                 width: 100%;
                 justify-content: space-between;
             }
+            
+            .project-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .project-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        /* ====== PRINT STYLES ====== */
+        @media print {
+            .app-header,
+            .breadcrumb-nav,
+            .quick-actions-menu,
+            .page-actions,
+            .btn {
+                display: none !important;
+            }
+            
+            .container {
+                max-width: none;
+                padding: 0;
+            }
+            
+            .research-card,
+            .project-card,
+            .discussion-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .page {
+                margin: 0;
+                padding: 0;
+            }
         }
     </style>
 </head>
@@ -1408,20 +2102,20 @@
         <div id="authScreen" class="auth-screen">
             <div class="auth-card">
                 <div class="auth-header">
-                    <div class="brand-logo-auth">[THØRAX][LAB] PRO</div>
-                    <p class="brand-subtitle">Elite Clinical Innovation Platform</p>
+                    <div class="brand-logo-auth">Thorax Lab Pro</div>
+                    <p class="brand-subtitle">Clinical Research & Innovation Platform</p>
                 </div>
                 
                 <div class="auth-body">
                     <div class="text-center mb-8">
-                        <h2 class="mb-2">Welcome to the Platform</h2>
+                        <h2 class="mb-2">Welcome to Clinical Research Collaboration</h2>
                         <p class="text-muted">Join as a research lead or explore as a guest</p>
                     </div>
                     
                     <div class="auth-choice">
                         <button id="creatorLoginBtn" class="auth-choice-btn active">
-                            <i class="auth-choice-icon fas fa-user-tie"></i>
-                            <span>Research Lead</span>
+                            <i class="auth-choice-icon fas fa-user-md"></i>
+                            <span>Clinical Researcher</span>
                         </button>
                         <button id="visitorLoginBtn" class="auth-choice-btn">
                             <i class="auth-choice-icon fas fa-eye"></i>
@@ -1429,7 +2123,7 @@
                         </button>
                     </div>
                     
-                    <!-- Creator Form -->
+                    <!-- Researcher Form -->
                     <form id="creatorForm" class="auth-form">
                         <div class="form-group">
                             <label for="creatorName" class="form-label">Full Name *</label>
@@ -1438,34 +2132,60 @@
                         </div>
                         <div class="form-group">
                             <label for="creatorRole" class="form-label">Primary Role *</label>
-                            <select id="creatorRole" class="form-input" required>
+                            <select id="creatorRole" class="form-input form-select" required>
                                 <option value="">Select your role</option>
-                                <option value="clinical">Clinical Researcher</option>
-                                <option value="technical">Technical Lead</option>
-                                <option value="both">Clinical & Technical</option>
-                                <option value="principal">Principal Investigator</option>
+                                <option value="clinical-investigator">Clinical Investigator</option>
+                                <option value="principal-investigator">Principal Investigator</option>
+                                <option value="research-coordinator">Research Coordinator</option>
+                                <option value="data-scientist">Data Scientist</option>
+                                <option value="biostatistician">Biostatistician</option>
+                                <option value="clinical-fellow">Clinical Fellow</option>
+                                <option value="research-nurse">Research Nurse</option>
+                                <option value="other">Other Research Professional</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="creatorInstitution" class="form-label">Institution</label>
+                            <label for="creatorInstitution" class="form-label">Institution / Organization</label>
                             <input type="text" id="creatorInstitution" class="form-input" 
-                                   placeholder="Cambridge University Hospitals">
+                                   placeholder="e.g., Cambridge University Hospitals">
                         </div>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-arrow-right"></i>
-                            Enter Platform
+                        <div class="form-group">
+                            <label for="creatorSpecialty" class="form-label">Clinical Specialty / Research Focus</label>
+                            <input type="text" id="creatorSpecialty" class="form-input" 
+                                   placeholder="e.g., Pulmonary Medicine, Oncology, Clinical Trials">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Enter Research Platform
                         </button>
                     </form>
                     
-                    <!-- Visitor Form -->
+                    <!-- Guest Form -->
                     <form id="visitorForm" class="auth-form hidden">
                         <div class="form-group">
                             <label for="visitorName" class="form-label">Your Name (Optional)</label>
                             <input type="text" id="visitorName" class="form-input" 
                                    placeholder="Enter name or remain anonymous">
                         </div>
-                        <button type="submit" class="btn btn-elite-primary">
-                            <i class="fas fa-eye"></i>
+                        <div class="form-group">
+                            <label for="visitorAffiliation" class="form-label">Affiliation (Optional)</label>
+                            <input type="text" id="visitorAffiliation" class="form-input" 
+                                   placeholder="University, Hospital, or Organization">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Research Interests</label>
+                            <div class="tags-cloud">
+                                <span class="tag-item" data-tag="oncology">Oncology</span>
+                                <span class="tag-item" data-tag="cardiology">Cardiology</span>
+                                <span class="tag-item" data-tag="pulmonary">Pulmonary</span>
+                                <span class="tag-item" data-tag="clinical-trials">Clinical Trials</span>
+                                <span class="tag-item" data-tag="genomics">Genomics</span>
+                                <span class="tag-item" data-tag="ai-ml">AI/ML</span>
+                                <span class="tag-item" data-tag="biomarkers">Biomarkers</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
                             Browse Research
                         </button>
                     </form>
@@ -1475,24 +2195,24 @@
         
         <!-- Main App -->
         <div id="mainApp" class="hidden">
-            <!-- Elite Header -->
+            <!-- Header -->
             <header class="app-header">
                 <div class="container">
                     <div class="header-container">
                         <a href="#dashboard" class="brand-main">
-                            [THØRAX]<span class="brand-accent">[LAB]</span> PRO
+                            Thorax<span class="brand-accent">Lab</span> Pro
                         </a>
                         
                         <nav class="nav-main">
                             <div class="nav-item">
                                 <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                                    <i class="fas fa-home"></i>
+                                    <i class="fas fa-chart-line"></i>
                                     Dashboard
                                 </a>
                             </div>
                             <div class="nav-item">
                                 <a href="#projects" class="nav-link" data-page="projects">
-                                    <i class="fas fa-flask"></i>
+                                    <i class="fas fa-project-diagram"></i>
                                     Research Projects
                                 </a>
                             </div>
@@ -1502,17 +2222,34 @@
                                     My Projects
                                 </a>
                             </div>
+                            <div class="nav-item">
+                                <a href="#discussions" class="nav-link" data-page="discussions">
+                                    <i class="fas fa-comments"></i>
+                                    Discussions
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="#analytics" class="nav-link" data-page="analytics">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Analytics
+                                </a>
+                            </div>
                         </nav>
                         
+                        <div class="search-bar">
+                            <i class="search-icon fas fa-search"></i>
+                            <input type="text" id="globalSearch" class="search-input" 
+                                   placeholder="Search research projects, discussions, or members...">
+                        </div>
+                        
                         <div class="user-section">
-                            <div class="flex items-center gap-4">
-                                <span class="visitor-badge hidden" id="visitorBadge">
-                                    <i class="fas fa-eye"></i>
-                                    Guest
-                                </span>
-                                <button id="newProjectBtn" class="btn btn-elite-primary btn-sm hidden">
-                                    <i class="fas fa-plus"></i>
-                                    New Project
+                            <div class="quick-actions">
+                                <button id="quickActionsBtn" class="btn btn-ghost btn-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </button>
+                                <button id="notificationsBtn" class="btn btn-ghost btn-icon">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="badge">3</span>
                                 </button>
                             </div>
                             
@@ -1522,7 +2259,7 @@
                                     <div id="userName" class="user-name">Loading...</div>
                                     <div id="userRole" class="user-role">Loading...</div>
                                 </div>
-                                <button id="logoutBtn" class="btn btn-elite-ghost btn-icon">
+                                <button id="logoutBtn" class="btn btn-ghost btn-icon">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </button>
                             </div>
@@ -1531,25 +2268,50 @@
                 </div>
             </header>
             
+            <!-- Breadcrumb Navigation -->
+            <div id="breadcrumbNav" class="breadcrumb-nav hidden">
+                <div class="container">
+                    <nav class="breadcrumb" id="breadcrumb">
+                        <!-- Dynamic breadcrumbs -->
+                    </nav>
+                </div>
+            </div>
+            
             <!-- Main Content -->
             <main class="main-content">
                 <div class="container">
                     <!-- Dashboard Page -->
                     <div id="dashboardPage" class="page">
                         <div class="page-header">
-                            <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
-                            <p class="page-subtitle">Monitor and contribute to elite clinical innovation projects</p>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
+                                    <p class="page-subtitle">Monitor and contribute to clinical research & innovation</p>
+                                </div>
+                                <div class="page-actions">
+                                    <button id="newProjectBtn" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus"></i>
+                                        New Project
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         
-                        <!-- User Stats -->
+                        <!-- Research Overview -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-12">
-                                <div class="elite-card">
+                                <div class="research-card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-chart-line"></i>
                                             Research Overview
                                         </h2>
+                                        <div class="card-actions">
+                                            <button class="btn btn-outline btn-sm" id="exportStatsBtn">
+                                                <i class="fas fa-download"></i>
+                                                Export
+                                            </button>
+                                        </div>
                                     </div>
                                     <div id="userStats">
                                         <!-- Stats loaded dynamically -->
@@ -1558,14 +2320,53 @@
                             </div>
                         </div>
                         
-                        <!-- Featured Discussions -->
+                        <!-- Smart Activity Feed -->
+                        <div class="dashboard-grid mb-8">
+                            <div class="col-span-8">
+                                <div class="activity-feed">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-bolt"></i>
+                                            Recent Activity
+                                        </h2>
+                                        <div class="activity-filters">
+                                            <button class="activity-filter active" data-filter="all">All</button>
+                                            <button class="activity-filter" data-filter="projects">Projects</button>
+                                            <button class="activity-filter" data-filter="discussions">Discussions</button>
+                                            <button class="activity-filter" data-filter="collaborations">Collaborations</button>
+                                            <button class="activity-filter" data-filter="updates">Updates</button>
+                                        </div>
+                                    </div>
+                                    <div id="activityFeed">
+                                        <!-- Activity items loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Intelligent Tags System -->
+                            <div class="col-span-4">
+                                <div class="tags-cloud">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-tags"></i>
+                                            Research Domains
+                                        </h2>
+                                    </div>
+                                    <div id="tagsCloud">
+                                        <!-- Tags loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Discussions -->
                         <div class="dashboard-grid mb-8">
                             <div class="col-span-12">
-                                <div class="elite-card">
+                                <div class="research-card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-fire"></i>
-                                            Elite Discussions
+                                            Active Discussions
                                         </h2>
                                         <div class="search-bar">
                                             <i class="search-icon fas fa-search"></i>
@@ -1583,13 +2384,13 @@
                         <!-- Recent Projects -->
                         <div class="dashboard-grid">
                             <div class="col-span-12">
-                                <div class="elite-card">
+                                <div class="research-card">
                                     <div class="card-header">
                                         <h2 class="card-title">
                                             <i class="card-icon fas fa-project-diagram"></i>
                                             Active Research Projects
                                         </h2>
-                                        <button id="viewAllProjectsBtn" class="btn btn-elite-outline btn-sm">
+                                        <button id="viewAllProjectsBtn" class="btn btn-outline btn-sm">
                                             View All
                                             <i class="fas fa-arrow-right"></i>
                                         </button>
@@ -1608,7 +2409,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h1 class="page-title">Research Projects</h1>
-                                    <p class="page-subtitle">Explore elite clinical innovation collaborations</p>
+                                    <p class="page-subtitle">Explore clinical research collaborations</p>
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <div class="search-bar">
@@ -1616,12 +2417,21 @@
                                         <input type="text" id="projectSearch" class="search-input" 
                                                placeholder="Search projects...">
                                     </div>
-                                    <button id="sortProjectsBtn" class="btn btn-elite-outline btn-sm">
-                                        <i class="fas fa-sort"></i>
-                                        Sort
+                                    <button id="filterProjectsBtn" class="btn btn-outline btn-sm">
+                                        <i class="fas fa-filter"></i>
+                                        Filter
                                     </button>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <div class="filters-bar">
+                            <button class="filter-chip active" data-filter="all">All Projects</button>
+                            <button class="filter-chip" data-filter="active">Active</button>
+                            <button class="filter-chip" data-filter="planning">Planning Phase</button>
+                            <button class="filter-chip" data-filter="recruiting">Recruiting</button>
+                            <button class="filter-chip" data-filter="analysis">Data Analysis</button>
+                            <button class="filter-chip" data-filter="publishing">Publishing</button>
                         </div>
                         
                         <div id="allProjectsList" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1635,9 +2445,9 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h1 class="page-title">My Research Projects</h1>
-                                    <p class="page-subtitle">Manage your clinical innovation initiatives</p>
+                                    <p class="page-subtitle">Manage your clinical research initiatives</p>
                                 </div>
-                                <button id="createMyProjectBtn" class="btn btn-elite-primary">
+                                <button id="createMyProjectBtn" class="btn btn-primary">
                                     <i class="fas fa-plus"></i>
                                     New Project
                                 </button>
@@ -1646,6 +2456,50 @@
                         
                         <div id="myProjectsList" class="grid grid-cols-1 gap-6">
                             <!-- My projects loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Discussions Page -->
+                    <div id="discussionsPage" class="page hidden">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">Research Discussions</h1>
+                                    <p class="page-subtitle">Collaborate with researchers worldwide</p>
+                                </div>
+                                <button id="startDiscussionBtn" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Start Discussion
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="allDiscussionsList" class="grid grid-cols-1 gap-4">
+                            <!-- All discussions loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics Page -->
+                    <div id="analyticsPage" class="page hidden">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">Research Analytics</h1>
+                                    <p class="page-subtitle">Data-driven insights for clinical research</p>
+                                </div>
+                                <div class="page-actions">
+                                    <select id="analyticsPeriod" class="form-input form-select">
+                                        <option value="7d">Last 7 days</option>
+                                        <option value="30d" selected>Last 30 days</option>
+                                        <option value="90d">Last 90 days</option>
+                                        <option value="1y">Last year</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="analyticsContent" class="grid grid-cols-1 gap-6">
+                            <!-- Analytics loaded dynamically -->
                         </div>
                     </div>
                     
@@ -1660,6 +2514,35 @@
                     </div>
                 </div>
             </main>
+            
+            <!-- Quick Actions Menu -->
+            <div class="quick-actions-menu">
+                <button class="quick-actions-btn" id="quickActionsMainBtn">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <div class="quick-actions-dropdown" id="quickActionsDropdown">
+                    <div class="quick-action-item" data-action="new-project">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>New Research Project</span>
+                    </div>
+                    <div class="quick-action-item" data-action="new-discussion">
+                        <i class="fas fa-comments"></i>
+                        <span>Start Discussion</span>
+                    </div>
+                    <div class="quick-action-item" data-action="request-review">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Request Clinical Review</span>
+                    </div>
+                    <div class="quick-action-item" data-action="data-analysis">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Request Data Analysis</span>
+                    </div>
+                    <div class="quick-action-item" data-action="brainstorm-session">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Schedule Brainstorm</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Modals -->
@@ -1669,7 +2552,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">
-                        <i class="fas fa-plus-circle"></i>
+                        <i class="fas fa-project-diagram"></i>
                         Initiate Research Project
                     </h2>
                     <button class="modal-close" id="closeProjectModal">&times;</button>
@@ -1678,33 +2561,63 @@
                     <div class="form-group">
                         <label for="projectTitle" class="form-label">Project Title *</label>
                         <input type="text" id="projectTitle" class="form-input" 
-                               placeholder="e.g., Genomic Biomarkers for Immunotherapy Response" required>
+                               placeholder="e.g., Genomic Biomarkers for Immunotherapy Response in NSCLC" required>
+                        <div class="form-help">Clear, descriptive title that reflects the research focus</div>
                     </div>
                     <div class="form-group">
                         <label for="projectDescription" class="form-label">Research Description *</label>
                         <textarea id="projectDescription" class="form-input form-textarea" 
-                                  placeholder="Describe the clinical innovation focus, research questions, and objectives..."
-                                  rows="4" maxlength="2000" required></textarea>
-                        <div class="char-counter" id="descCounter">0/2000</div>
+                                  placeholder="Describe the research questions, objectives, methodology, and clinical significance..."
+                                  rows="5" maxlength="3000" required></textarea>
+                        <div class="char-counter" id="descCounter">0/3000</div>
                     </div>
-                    <div class="form-group">
-                        <label for="projectInstitution" class="form-label">Lead Institution</label>
-                        <input type="text" id="projectInstitution" class="form-input" 
-                               placeholder="e.g., Oxford University">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="projectPhase" class="form-label">Research Phase</label>
+                            <select id="projectPhase" class="form-input form-select" required>
+                                <option value="planning">Protocol Planning</option>
+                                <option value="recruiting">Patient Recruitment</option>
+                                <option value="data-collection">Data Collection</option>
+                                <option value="analysis">Data Analysis</option>
+                                <option value="publishing">Manuscript Preparation</option>
+                                <option value="completed">Study Completed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="projectInstitution" class="form-label">Lead Institution</label>
+                            <input type="text" id="projectInstitution" class="form-input" 
+                                   placeholder="e.g., Oxford University">
+                        </div>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="projectTags" class="form-label">Research Domains</label>
+                        <label for="projectTags" class="form-label">Research Domains & Keywords</label>
                         <input type="text" id="projectTags" class="form-input" 
-                               placeholder="e.g., genomics, oncology, machine learning">
-                        <p class="text-muted mt-1">Separate domains with commas</p>
+                               placeholder="e.g., genomics, oncology, immunotherapy, biomarkers, machine learning">
+                        <div class="form-help">Separate with commas. These will help others discover your project.</div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Required Expertise</label>
+                        <div class="tags-cloud">
+                            <span class="tag-item" data-expertise="clinical-oncology">Clinical Oncology</span>
+                            <span class="tag-item" data-expertise="biostatistics">Biostatistics</span>
+                            <span class="tag-item" data-expertise="genomics">Genomics</span>
+                            <span class="tag-item" data-expertise="bioinformatics">Bioinformatics</span>
+                            <span class="tag-item" data-expertise="machine-learning">Machine Learning</span>
+                            <span class="tag-item" data-expertise="clinical-trials">Clinical Trials</span>
+                        </div>
+                    </div>
+                    
                     <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-elite-outline" id="cancelProjectBtn">
+                        <button type="button" class="btn btn-outline" id="cancelProjectBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-elite-primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-flask"></i>
-                            Initiate Project
+                            Initiate Research Project
                         </button>
                     </div>
                 </form>
@@ -1717,56 +2630,71 @@
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="fas fa-comments"></i>
-                        Initiate Discussion
+                        Start Research Discussion
                     </h2>
                     <button class="modal-close" id="closeDiscussionModal">&times;</button>
                 </div>
                 <form id="discussionForm">
                     <input type="hidden" id="discussionProjectId">
+                    
                     <div class="form-group">
                         <label class="form-label">Discussion Type</label>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn active" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn active" 
                                     data-type="brainstorm">
                                 <i class="fas fa-lightbulb"></i>
                                 Brainstorm
                             </button>
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
                                     data-type="question">
                                 <i class="fas fa-question-circle"></i>
-                                Question
+                                Research Question
                             </button>
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
                                     data-type="decision">
                                 <i class="fas fa-gavel"></i>
-                                Decision
+                                Protocol Decision
                             </button>
-                            <button type="button" class="btn btn-elite-outline btn-sm discussion-type-btn" 
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
                                     data-type="insight">
                                 <i class="fas fa-eye"></i>
-                                Insight
+                                Clinical Insight
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
+                                    data-type="methodology">
+                                <i class="fas fa-cogs"></i>
+                                Methodology
                             </button>
                         </div>
                     </div>
+                    
                     <div class="form-group">
                         <label for="discussionTitle" class="form-label">Discussion Topic *</label>
                         <input type="text" id="discussionTitle" class="form-input" 
                                placeholder="What research challenge are we addressing?" required>
                     </div>
+                    
                     <div class="form-group">
                         <label for="discussionContent" class="form-label">Research Context *</label>
                         <textarea id="discussionContent" class="form-input form-textarea" 
-                                  placeholder="Provide background, context, and specific questions for discussion..."
-                                  rows="4" maxlength="5000" required></textarea>
+                                  placeholder="Provide background, context, specific questions, and relevant literature references..."
+                                  rows="5" maxlength="5000" required></textarea>
                         <div class="char-counter" id="discussionCounter">0/5000</div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="discussionTags" class="form-label">Related Topics</label>
+                        <input type="text" id="discussionTags" class="form-input" 
+                               placeholder="e.g., statistical analysis, patient selection, biomarker validation">
+                    </div>
+                    
                     <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-elite-outline" id="cancelDiscussionBtn">
+                        <button type="button" class="btn btn-outline" id="cancelDiscussionBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-elite-primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i>
-                            Initiate Discussion
+                            Start Discussion
                         </button>
                     </div>
                 </form>
@@ -1779,26 +2707,54 @@
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="fas fa-comment-medical"></i>
-                        Contribute Insight
+                        Contribute Expert Insight
                     </h2>
                     <button class="modal-close" id="closeCommentModal">&times;</button>
                 </div>
                 <form id="commentForm">
                     <input type="hidden" id="commentDiscussionId">
+                    
                     <div class="form-group">
-                        <label for="commentContent" class="form-label">Expert Insight *</label>
+                        <label for="commentContent" class="form-label">Your Insight *</label>
                         <textarea id="commentContent" class="form-input form-textarea" 
-                                  placeholder="Share your expert perspective, analysis, or recommendation..."
-                                  rows="3" maxlength="1000" required></textarea>
-                        <div class="char-counter" id="commentCounter">0/1000</div>
+                                  placeholder="Share your expert perspective, analysis, references, or recommendation..."
+                                  rows="4" maxlength="2000" required></textarea>
+                        <div class="char-counter" id="commentCounter">0/2000</div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Insight Type</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" class="btn btn-outline btn-sm insight-type-btn active" 
+                                    data-type="analysis">
+                                <i class="fas fa-chart-line"></i>
+                                Data Analysis
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm insight-type-btn" 
+                                    data-type="clinical">
+                                <i class="fas fa-stethoscope"></i>
+                                Clinical Perspective
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm insight-type-btn" 
+                                    data-type="reference">
+                                <i class="fas fa-book"></i>
+                                Literature Reference
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm insight-type-btn" 
+                                    data-type="recommendation">
+                                <i class="fas fa-check-circle"></i>
+                                Recommendation
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div class="flex gap-3 justify-end mt-8">
-                        <button type="button" class="btn btn-elite-outline" id="cancelCommentBtn">
+                        <button type="button" class="btn btn-outline" id="cancelCommentBtn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-elite-primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-share"></i>
-                            Contribute
+                            Share Insight
                         </button>
                     </div>
                 </form>
@@ -1811,32 +2767,62 @@
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="fas fa-user-plus"></i>
-                        Invite Collaborator
+                        Invite Research Collaborator
                     </h2>
                     <button class="modal-close" id="closeInviteModal">&times;</button>
                 </div>
+                
                 <div class="form-group">
-                    <label for="inviteEmail" class="form-label">Email Address</label>
+                    <label for="inviteEmail" class="form-label">Email Address *</label>
                     <input type="email" id="inviteEmail" class="form-input" 
-                           placeholder="researcher@institution.edu">
+                           placeholder="researcher@institution.edu" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="inviteRole" class="form-label">Role</label>
-                    <select id="inviteRole" class="form-input">
-                        <option value="clinical">Clinical Expert</option>
-                        <option value="technical">Technical Expert</option>
-                        <option value="both">Clinical & Technical</option>
-                        <option value="reviewer">Reviewer</option>
+                    <label for="inviteRole" class="form-label">Collaborator Role *</label>
+                    <select id="inviteRole" class="form-input form-select" required>
+                        <option value="">Select role</option>
+                        <option value="clinical-investigator">Clinical Investigator</option>
+                        <option value="co-investigator">Co-Investigator</option>
+                        <option value="data-analyst">Data Analyst</option>
+                        <option value="statistician">Statistician</option>
+                        <option value="clinical-reviewer">Clinical Reviewer</option>
+                        <option value="methodology-expert">Methodology Expert</option>
+                        <option value="research-assistant">Research Assistant</option>
                     </select>
                 </div>
+                
+                <div class="form-group">
+                    <label for="inviteMessage" class="form-label">Personal Message (Optional)</label>
+                    <textarea id="inviteMessage" class="form-input form-textarea" 
+                              placeholder="Add a personal note about the collaboration opportunity..."
+                              rows="2"></textarea>
+                </div>
+                
                 <div class="flex gap-3 justify-end mt-8">
-                    <button type="button" class="btn btn-elite-outline" id="cancelInviteBtn">
+                    <button type="button" class="btn btn-outline" id="cancelInviteBtn">
                         Cancel
                     </button>
-                    <button type="button" class="btn btn-elite-primary" id="sendInviteBtn">
+                    <button type="button" class="btn btn-primary" id="sendInviteBtn">
                         <i class="fas fa-paper-plane"></i>
                         Send Invitation
                     </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Research Analytics Modal -->
+        <div id="analyticsModal" class="modal">
+            <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Research Analytics Dashboard
+                    </h2>
+                    <button class="modal-close" id="closeAnalyticsModal">&times;</button>
+                </div>
+                <div id="analyticsModalContent">
+                    <!-- Analytics content loaded dynamically -->
                 </div>
             </div>
         </div>
@@ -1844,7 +2830,8 @@
 
     <!-- JavaScript -->
     <script>
-        // JavaScript will be loaded separately in app.js
+        // Comprehensive JavaScript will be loaded here
+        // This will include all the enhanced features and improvements
     </script>
     <script src="app.js"></script>
 </body>
