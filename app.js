@@ -1,11 +1,11 @@
 // ============================================
 // Thorax Lab Pro - Elite Clinical Innovation Platform
-// Enhanced with JSON-structured data
+// Complete Working Implementation
 // ============================================
 
 class ThoraxLabPro {
     constructor() {
-        // User data in JSON format
+        // User data
         this.user = this.loadJSON('thoraxlab_user') || null;
         this.isVisitor = this.loadJSON('thoraxlab_visitor') || false;
         
@@ -14,7 +14,7 @@ class ThoraxLabPro {
         this.currentDiscussion = null;
         this.selectedTags = new Set();
         this.activityFilter = 'all';
-        this.sortBy = 'recent';
+        this.projectSort = 'recent';
         
         // Initialize
         this.initialize();
@@ -27,13 +27,15 @@ class ThoraxLabPro {
         this.setupEventListeners();
         this.setupRouter();
         this.checkAuth();
+        this.setupQuickActions();
     }
     
     // ========== JSON DATA MANAGEMENT ==========
     
     loadJSON(key) {
         try {
-            return JSON.parse(localStorage.getItem(key));
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
         } catch (error) {
             console.error(`Error loading ${key}:`, error);
             return null;
@@ -41,186 +43,154 @@ class ThoraxLabPro {
     }
     
     saveJSON(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
+        try {
+            localStorage.setItem(key, JSON.stringify(data));
+        } catch (error) {
+            console.error(`Error saving ${key}:`, error);
+        }
     }
     
-    // ========== DEMO DATA (JSON STRUCTURE) ==========
+    // ========== DEMO DATA ==========
     
     initializeDemoData() {
+        // Initialize projects if not exists
         if (!this.loadJSON('thoraxlab_projects')) {
             const demoProjects = [
                 {
-                    "id": "proj_1",
-                    "title": "AI-Powered COPD Exacerbation Prediction",
-                    "description": "Developing machine learning models to predict COPD exacerbations 48 hours in advance using patient vitals, spirometry data, and environmental factors.",
-                    "tags": ["AI", "COPD", "machine learning", "prediction", "pulmonary"],
-                    "ownerId": "demo_user_1",
-                    "ownerName": "Dr. Sarah Chen",
-                    "ownerType": "clinical",
-                    "ownerPosition": "Principal Investigator",
-                    "institution": "Cambridge University Hospitals",
-                    "teamMembers": [
-                        {
-                            "id": "member_1",
-                            "name": "Dr. Michael Johnson",
-                            "type": "clinical",
-                            "position": "Co-Investigator"
-                        },
-                        {
-                            "id": "member_2",
-                            "name": "Dr. Lisa Wang",
-                            "type": "academic",
-                            "position": "Data Scientist"
-                        }
+                    id: 'proj_1',
+                    title: 'AI-Powered COPD Exacerbation Prediction',
+                    description: 'Developing machine learning models to predict COPD exacerbations 48 hours in advance using patient vitals, spirometry data, and environmental factors. This innovation aims to reduce hospital readmissions by enabling early intervention.',
+                    tags: ['AI', 'COPD', 'prediction', 'machine learning', 'pulmonary'],
+                    ownerId: 'demo_user_1',
+                    ownerName: 'Dr. Sarah Chen',
+                    ownerType: 'clinical',
+                    ownerPosition: 'Principal Investigator',
+                    institution: 'Cambridge University Hospitals',
+                    teamMembers: [
+                        { id: 'member_1', name: 'Dr. Michael Johnson', type: 'clinical', position: 'Co-Investigator' },
+                        { id: 'member_2', name: 'Dr. Lisa Wang', type: 'academic', position: 'Data Scientist' }
                     ],
-                    "createdAt": "2024-01-15T10:30:00Z",
-                    "updatedAt": "2024-01-20T14:45:00Z",
-                    "discussions": [
+                    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                    discussions: [
                         {
-                            "id": "disc_1",
-                            "title": "Which clinical features are most predictive?",
-                            "content": "We need to decide on the most important clinical features for our prediction model. Should we prioritize spirometry data, patient-reported symptoms, or environmental factors?",
-                            "type": "brainstorm",
-                            "tags": ["clinical features", "spirometry", "patient-reported outcomes"],
-                            "authorId": "demo_user_1",
-                            "authorName": "Dr. Sarah Chen",
-                            "authorType": "clinical",
-                            "createdAt": "2024-01-16T09:15:00Z",
-                            "likes": 24,
-                            "comments": 12,
-                            "views": 156,
-                            "commentsList": [
+                            id: 'disc_1',
+                            title: 'Which clinical features are most predictive?',
+                            content: 'We need to decide on the most important clinical features for our prediction model. Should we prioritize spirometry data, patient-reported symptoms, or environmental factors? Clinical relevance and statistical significance both need consideration.',
+                            type: 'brainstorm',
+                            tags: ['clinical features', 'spirometry', 'patient-reported outcomes'],
+                            authorId: 'demo_user_1',
+                            authorName: 'Dr. Sarah Chen',
+                            authorType: 'clinical',
+                            createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+                            likes: 24,
+                            comments: 12,
+                            views: 156,
+                            commentsList: [
                                 {
-                                    "id": "comment_1",
-                                    "content": "Based on our preliminary analysis, spirometry data shows the highest correlation with exacerbation events.",
-                                    "authorName": "Dr. Michael Johnson",
-                                    "authorType": "clinical",
-                                    "createdAt": "2024-01-16T14:20:00Z",
-                                    "likes": 8
+                                    id: 'comment_1',
+                                    content: 'Based on our preliminary analysis, spirometry data shows the highest correlation with exacerbation events. The FEV1/FVC ratio appears particularly significant.',
+                                    type: 'analysis',
+                                    authorName: 'Dr. Michael Johnson',
+                                    authorType: 'clinical',
+                                    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                                    likes: 8
                                 }
                             ]
                         }
                     ]
                 },
                 {
-                    "id": "proj_2",
-                    "title": "Genomic Biomarkers for Immunotherapy Response",
-                    "description": "Identifying genomic signatures that predict response to immune checkpoint inhibitors in non-small cell lung cancer.",
-                    "tags": ["genomics", "oncology", "immunotherapy", "biomarkers", "NSCLC"],
-                    "ownerId": "demo_user_2",
-                    "ownerName": "Prof. Robert Kim",
-                    "ownerType": "academic",
-                    "ownerPosition": "Principal Investigator",
-                    "institution": "Oxford University",
-                    "teamMembers": [
-                        {
-                            "id": "member_3",
-                            "name": "Dr. Emma Davis",
-                            "type": "industry",
-                            "position": "Genomics Specialist"
-                        }
+                    id: 'proj_2',
+                    title: 'Genomic Biomarkers for Immunotherapy Response in NSCLC',
+                    description: 'Identifying genomic signatures that predict response to immune checkpoint inhibitors in non-small cell lung cancer. Multi-center collaboration with genomic sequencing data from 500+ patients across 12 institutions.',
+                    tags: ['genomics', 'oncology', 'immunotherapy', 'biomarkers', 'NSCLC'],
+                    ownerId: 'demo_user_2',
+                    ownerName: 'Prof. Robert Kim',
+                    ownerType: 'academic',
+                    ownerPosition: 'Principal Investigator',
+                    institution: 'Oxford University',
+                    teamMembers: [
+                        { id: 'member_3', name: 'Dr. Emma Davis', type: 'industry', position: 'Genomics Specialist' }
                     ],
-                    "createdAt": "2024-01-10T08:45:00Z",
-                    "updatedAt": "2024-01-18T11:30:00Z",
-                    "discussions": [
+                    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                    updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+                    discussions: [
                         {
-                            "id": "disc_2",
-                            "title": "Tumor Mutational Burden vs PD-L1 Expression",
-                            "content": "Which biomarker shows stronger predictive value for immunotherapy response in our cohort?",
-                            "type": "question",
-                            "tags": ["biomarkers", "immunotherapy", "predictive value"],
-                            "authorId": "demo_user_2",
-                            "authorName": "Prof. Robert Kim",
-                            "authorType": "academic",
-                            "createdAt": "2024-01-12T13:45:00Z",
-                            "likes": 18,
-                            "comments": 9,
-                            "views": 89,
-                            "commentsList": []
+                            id: 'disc_2',
+                            title: 'Tumor Mutational Burden vs PD-L1 Expression',
+                            content: 'We need to determine which biomarker shows stronger predictive value for immunotherapy response in our cohort. Both TMB and PD-L1 have shown promise, but their relative importance needs clarification.',
+                            type: 'question',
+                            tags: ['biomarkers', 'immunotherapy', 'predictive analytics'],
+                            authorId: 'demo_user_2',
+                            authorName: 'Prof. Robert Kim',
+                            authorType: 'academic',
+                            createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                            likes: 18,
+                            comments: 9,
+                            views: 89,
+                            commentsList: []
                         }
                     ]
-                },
-                {
-                    "id": "proj_3",
-                    "title": "Digital Health Platform for Remote Patient Monitoring",
-                    "description": "Developing a comprehensive digital health platform for remote monitoring of chronic respiratory diseases.",
-                    "tags": ["digital health", "remote monitoring", "wearables", "telemedicine"],
-                    "ownerId": "demo_user_3",
-                    "ownerName": "Dr. Alex Rodriguez",
-                    "ownerType": "industry",
-                    "ownerPosition": "Technical Lead",
-                    "institution": "HealthTech Innovations",
-                    "teamMembers": [],
-                    "createdAt": "2024-01-05T16:20:00Z",
-                    "updatedAt": "2024-01-19T10:15:00Z",
-                    "discussions": []
                 }
             ];
             
             this.saveJSON('thoraxlab_projects', demoProjects);
         }
         
+        // Initialize activity if not exists
         if (!this.loadJSON('thoraxlab_activity')) {
             const demoActivity = [
                 {
-                    "id": "act_1",
-                    "type": "project_created",
-                    "title": "New Project Created",
-                    "description": "Dr. Sarah Chen initiated 'AI-Powered COPD Exacerbation Prediction'",
-                    "timestamp": "2024-01-15T10:30:00Z",
-                    "userId": "demo_user_1",
-                    "projectId": "proj_1"
+                    id: 'act_1',
+                    type: 'project_created',
+                    title: 'New Project Created',
+                    description: 'Dr. Sarah Chen initiated "AI-Powered COPD Exacerbation Prediction"',
+                    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    userId: 'demo_user_1',
+                    projectId: 'proj_1'
                 },
                 {
-                    "id": "act_2",
-                    "type": "discussion_started",
-                    "title": "Discussion Started",
-                    "description": "Dr. Sarah Chen asked 'Which clinical features are most predictive?'",
-                    "timestamp": "2024-01-16T09:15:00Z",
-                    "userId": "demo_user_1",
-                    "discussionId": "disc_1"
+                    id: 'act_2',
+                    type: 'discussion_started',
+                    title: 'Discussion Started',
+                    description: 'Dr. Sarah Chen asked "Which clinical features are most predictive?"',
+                    timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+                    userId: 'demo_user_1',
+                    discussionId: 'disc_1'
                 },
                 {
-                    "id": "act_3",
-                    "type": "comment_added",
-                    "title": "Expert Insight Added",
-                    "description": "Dr. Michael Johnson contributed to the COPD prediction discussion",
-                    "timestamp": "2024-01-16T14:20:00Z",
-                    "userId": "demo_user_1",
-                    "discussionId": "disc_1"
-                },
-                {
-                    "id": "act_4",
-                    "type": "project_created",
-                    "title": "New Project Created",
-                    "description": "Prof. Robert Kim started 'Genomic Biomarkers for Immunotherapy Response'",
-                    "timestamp": "2024-01-10T08:45:00Z",
-                    "userId": "demo_user_2",
-                    "projectId": "proj_2"
+                    id: 'act_3',
+                    type: 'comment_added',
+                    title: 'Expert Insight Added',
+                    description: 'Dr. Michael Johnson contributed to the COPD prediction discussion',
+                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                    userId: 'demo_user_1',
+                    discussionId: 'disc_1'
                 }
             ];
             
             this.saveJSON('thoraxlab_activity', demoActivity);
         }
         
+        // Initialize tags if not exists
         if (!this.loadJSON('thoraxlab_tags')) {
             const demoTags = {
-                "AI": { count: 15, frequency: "high" },
-                "COPD": { count: 8, frequency: "medium" },
-                "machine learning": { count: 12, frequency: "high" },
-                "genomics": { count: 10, frequency: "high" },
-                "oncology": { count: 9, frequency: "medium" },
-                "immunotherapy": { count: 7, frequency: "medium" },
-                "digital health": { count: 6, frequency: "medium" },
-                "remote monitoring": { count: 5, frequency: "low" },
-                "biomarkers": { count: 8, frequency: "medium" },
-                "pulmonary": { count: 6, frequency: "low" }
+                'AI': { count: 15, frequency: 'high' },
+                'COPD': { count: 8, frequency: 'medium' },
+                'machine learning': { count: 12, frequency: 'high' },
+                'genomics': { count: 10, frequency: 'high' },
+                'oncology': { count: 9, frequency: 'medium' },
+                'immunotherapy': { count: 7, frequency: 'medium' },
+                'digital health': { count: 6, frequency: 'medium' },
+                'biomarkers': { count: 8, frequency: 'medium' },
+                'pulmonary': { count: 6, frequency: 'low' }
             };
             
             this.saveJSON('thoraxlab_tags', demoTags);
         }
         
-        // Initialize like tracking
+        // Initialize likes if not exists
         if (!this.loadJSON('thoraxlab_likes')) {
             this.saveJSON('thoraxlab_likes', {});
         }
@@ -229,9 +199,10 @@ class ThoraxLabPro {
     // ========== AUTHENTICATION ==========
     
     checkAuth() {
-        if (this.user || this.isVisitor) {
+        if (this.user) {
             this.showApp();
             this.updateUserDisplay();
+            this.loadDashboard();
         } else {
             this.showAuth();
         }
@@ -324,6 +295,7 @@ class ThoraxLabPro {
         const role = document.getElementById('userRole');
         const visitorBadge = document.getElementById('visitorBadge');
         const newProjectBtn = document.getElementById('newProjectBtn');
+        const createMyProjectBtn = document.getElementById('createMyProjectBtn');
         const welcome = document.getElementById('welcomeMessage');
         
         if (avatar) {
@@ -354,6 +326,10 @@ class ThoraxLabPro {
             newProjectBtn.classList.toggle('hidden', this.isVisitor);
         }
         
+        if (createMyProjectBtn) {
+            createMyProjectBtn.classList.toggle('hidden', this.isVisitor);
+        }
+        
         if (welcome && !this.isVisitor) {
             const firstName = this.user.name.split(' ')[0];
             const time = new Date().getHours();
@@ -378,24 +354,28 @@ class ThoraxLabPro {
         const hash = window.location.hash.substring(1) || 'dashboard';
         const parts = hash.split('/');
         
-        this.showPage(parts[0]);
+        const page = parts[0];
+        this.showPage(page);
         
-        if (parts[0] === 'project' && parts[1]) {
+        if (page === 'project' && parts[1]) {
             this.loadProjectDetail(parts[1]);
-        } else if (parts[0] === 'discussion' && parts[1]) {
+        } else if (page === 'discussion' && parts[1]) {
             this.loadDiscussionDetail(parts[1]);
         }
         
-        this.updateNavigation(parts[0]);
+        this.updateNavigation(page);
     }
     
     showPage(page) {
+        // Hide all pages
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         
+        // Show requested page
         const pageElement = document.getElementById(`${page}Page`);
         if (pageElement) {
             pageElement.classList.remove('hidden');
             
+            // Load page-specific content
             switch(page) {
                 case 'dashboard':
                     this.loadDashboard();
@@ -437,7 +417,25 @@ class ThoraxLabPro {
     }
     
     loadUserStats() {
-        if (this.isVisitor) return;
+        if (this.isVisitor) {
+            const container = document.getElementById('userStats');
+            if (container) {
+                container.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">Guest</div>
+                                <div class="stat-label">Viewing Mode</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            return;
+        }
         
         const projects = this.getProjects();
         const userProjects = projects.filter(p => p.ownerId === this.user.id);
@@ -596,12 +594,14 @@ class ThoraxLabPro {
     loadAllProjects() {
         let projects = this.getProjects();
         
+        // Apply tag filters
         if (this.selectedTags.size > 0) {
             projects = projects.filter(project => 
                 project.tags.some(tag => this.selectedTags.has(tag))
             );
         }
         
+        // Apply search filter
         const searchQuery = document.getElementById('projectSearch')?.value.toLowerCase() || '';
         if (searchQuery) {
             projects = projects.filter(project => 
@@ -612,7 +612,8 @@ class ThoraxLabPro {
             );
         }
         
-        switch(this.sortBy) {
+        // Apply sorting
+        switch(this.projectSort) {
             case 'recent':
                 projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
                 break;
@@ -683,57 +684,7 @@ class ThoraxLabPro {
         this.navigateTo('dashboard');
     }
     
-    // ========== PROJECT MANAGEMENT ==========
-    
-    createProject() {
-        const title = document.getElementById('projectTitle').value.trim();
-        const description = document.getElementById('projectDescription').value.trim();
-        const tagsInput = document.getElementById('projectTags').value.trim();
-        const institution = document.getElementById('projectInstitution').value.trim();
-        const position = document.getElementById('projectPosition').value;
-        
-        if (!title || !description || !position) {
-            this.showToast('Title, description, and position are required', 'error');
-            return;
-        }
-        
-        if (description.length > 2000) {
-            this.showToast('Description must be 2000 characters or less', 'error');
-            return;
-        }
-        
-        const tags = tagsInput ? 
-            tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
-        
-        const project = {
-            id: `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            title: title,
-            description: description,
-            tags: tags,
-            institution: institution || this.user.institution,
-            ownerId: this.user.id,
-            ownerName: this.user.name,
-            ownerType: this.user.type,
-            ownerPosition: position,
-            teamMembers: [],
-            discussions: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        };
-        
-        const projects = this.getProjects();
-        projects.push(project);
-        this.saveJSON('thoraxlab_projects', projects);
-        
-        this.addActivity('project_created', `${this.user.name} started "${title}"`, project.id);
-        this.updateTagsCount(tags);
-        
-        this.showToast('Project created successfully!', 'success');
-        this.hideModal('newProjectModal');
-        this.navigateTo(`project/${project.id}`);
-    }
-    
-    // ========== RENDERING ==========
+    // ========== RENDERING METHODS ==========
     
     renderProjects(projects, containerId) {
         const container = document.getElementById(containerId);
@@ -884,6 +835,8 @@ class ThoraxLabPro {
         
         const project = this.currentProject;
         const isOwner = !this.isVisitor && project.ownerId === this.user.id;
+        const discussionCount = project.discussions ? project.discussions.length : 0;
+        const teamCount = project.teamMembers ? project.teamMembers.length : 0;
         
         container.innerHTML = `
             <div class="page-header">
@@ -904,7 +857,7 @@ class ThoraxLabPro {
                                 Project Overview
                             </h2>
                             ${isOwner ? `
-                                <button class="btn btn-elite-primary btn-sm" onclick="app.showModal('newDiscussionModal')">
+                                <button class="btn btn-elite-primary btn-sm" onclick="app.showNewDiscussionModal('${project.id}')">
                                     <i class="fas fa-plus"></i>
                                     New Discussion
                                 </button>
@@ -913,7 +866,7 @@ class ThoraxLabPro {
                         
                         <div class="mb-6">
                             <h3 class="mb-2">Description</h3>
-                            <p>${this.escapeHtml(project.description)}</p>
+                            <p class="text-lead">${this.escapeHtml(project.description)}</p>
                         </div>
                         
                         <div class="mb-6">
@@ -935,7 +888,7 @@ class ThoraxLabPro {
                                         <div class="text-muted">${project.ownerPosition} • Project Lead</div>
                                     </div>
                                 </div>
-                                ${project.teamMembers.map(member => `
+                                ${(project.teamMembers || []).map(member => `
                                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                         <div class="author-avatar-small">${member.name.substring(0, 2).toUpperCase()}</div>
                                         <div>
@@ -969,20 +922,20 @@ class ThoraxLabPro {
                             </div>
                             <div>
                                 <div class="text-muted">Discussions</div>
-                                <div class="font-semibold">${project.discussions?.length || 0}</div>
+                                <div class="font-semibold">${discussionCount}</div>
                             </div>
                             <div>
                                 <div class="text-muted">Team Members</div>
-                                <div class="font-semibold">${project.teamMembers?.length || 0}</div>
+                                <div class="font-semibold">${teamCount + 1}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            ${project.discussions?.length ? `
+            ${discussionCount > 0 ? `
                 <div class="mt-8">
-                    <h2 class="mb-4">Discussions (${project.discussions.length})</h2>
+                    <h2 class="mb-4">Discussions (${discussionCount})</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         ${project.discussions.map(disc => `
                             <div class="discussion-card" data-discussion-id="${disc.id}">
@@ -1012,7 +965,19 @@ class ThoraxLabPro {
                         `).join('')}
                     </div>
                 </div>
-            ` : ''}
+            ` : `
+                <div class="mt-8 text-center">
+                    <div class="empty-icon">💬</div>
+                    <h3 class="mb-2">No discussions yet</h3>
+                    <p class="text-muted mb-4">Be the first to start a discussion in this project</p>
+                    ${!this.isVisitor ? `
+                        <button class="btn btn-elite-primary" onclick="app.showNewDiscussionModal('${project.id}')">
+                            <i class="fas fa-plus"></i>
+                            Start First Discussion
+                        </button>
+                    ` : ''}
+                </div>
+            `}
         `;
         
         container.querySelectorAll('.discussion-card').forEach(card => {
@@ -1023,7 +988,333 @@ class ThoraxLabPro {
         });
     }
     
-    // ========== UTILITY METHODS ==========
+    renderDiscussionDetail() {
+        const container = document.getElementById('discussionDetailPage');
+        if (!container || !this.currentDiscussion) return;
+        
+        const discussion = this.currentDiscussion;
+        const isAuthor = !this.isVisitor && discussion.authorId === this.user.id;
+        const canComment = !this.isVisitor;
+        
+        container.innerHTML = `
+            <div class="page-header">
+                <button class="btn btn-elite-secondary mb-4" onclick="app.navigateTo('project/${discussion.projectId}')">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Project
+                </button>
+                <h1 class="page-title">${this.escapeHtml(discussion.title)}</h1>
+                <p class="page-subtitle">${this.escapeHtml(discussion.projectTitle)} • ${this.formatDate(discussion.createdAt)}</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="col-span-8">
+                    <div class="elite-card">
+                        <div class="discussion-header">
+                            <div class="discussion-type type-${discussion.type}">
+                                <i class="${this.getDiscussionIcon(discussion.type)}"></i>
+                                <span>${discussion.type}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-muted">
+                                    <i class="fas fa-eye"></i> ${discussion.views || 0} views
+                                </span>
+                                <button class="btn btn-elite-ghost btn-sm" onclick="app.toggleDiscussionLike('${discussion.id}')">
+                                    <i class="fas fa-heart"></i> ${discussion.likes || 0}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="author-info mb-4">
+                                <div class="author-avatar">${discussion.authorName.substring(0, 2).toUpperCase()}</div>
+                                <div>
+                                    <div class="author-name">${this.escapeHtml(discussion.authorName)}</div>
+                                    <div class="author-institution">${this.escapeHtml(discussion.authorInstitution || '')}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="prose max-w-none">
+                                ${this.escapeHtml(discussion.content).replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                        
+                        <div class="discussion-meta">
+                            <div class="text-muted">
+                                Started ${this.formatTimeAgo(discussion.createdAt)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h2 class="mb-4">Comments (${discussion.comments || 0})</h2>
+                        
+                        ${(discussion.commentsList && discussion.commentsList.length > 0) ? `
+                            <div class="space-y-4">
+                                ${discussion.commentsList.map(comment => `
+                                    <div class="elite-card">
+                                        <div class="author-info mb-3">
+                                            <div class="author-avatar">${comment.authorName.substring(0, 2).toUpperCase()}</div>
+                                            <div>
+                                                <div class="author-name">${this.escapeHtml(comment.authorName)}</div>
+                                                <div class="author-institution">${this.escapeHtml(comment.authorInstitution || '')}</div>
+                                            </div>
+                                        </div>
+                                        <p>${this.escapeHtml(comment.content)}</p>
+                                        <div class="discussion-meta mt-3">
+                                            <div class="text-muted">
+                                                ${this.formatTimeAgo(comment.createdAt)}
+                                            </div>
+                                            <button class="btn btn-elite-ghost btn-sm" onclick="app.toggleCommentLike('${comment.id}')">
+                                                <i class="fas fa-heart"></i> ${comment.likes || 0}
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="text-center py-8">
+                                <div class="empty-icon">💬</div>
+                                <h3 class="mb-2">No comments yet</h3>
+                                <p class="text-muted">Be the first to contribute to this discussion</p>
+                            </div>
+                        `}
+                        
+                        ${canComment ? `
+                            <div class="mt-6">
+                                <button class="btn btn-elite-primary w-full" onclick="app.showCommentModal('${discussion.id}')">
+                                    <i class="fas fa-comment-medical"></i>
+                                    Add Your Insight
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
+                                <i class="fas fa-info-circle text-yellow-500 mr-2"></i>
+                                <span class="text-yellow-700">Guest researchers can view but cannot contribute to discussions</span>
+                            </div>
+                        `}
+                    </div>
+                </div>
+                
+                <div class="col-span-4">
+                    <div class="elite-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="card-icon fas fa-info-circle"></i>
+                                Discussion Info
+                            </h2>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-muted">Project</div>
+                                <div class="font-semibold">${this.escapeHtml(discussion.projectTitle)}</div>
+                            </div>
+                            <div>
+                                <div class="text-muted">Type</div>
+                                <div class="discussion-type type-${discussion.type} inline-flex">
+                                    <i class="${this.getDiscussionIcon(discussion.type)}"></i>
+                                    <span>${discussion.type}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-muted">Started</div>
+                                <div class="font-semibold">${this.formatDate(discussion.createdAt)}</div>
+                            </div>
+                            <div>
+                                <div class="text-muted">Engagement</div>
+                                <div class="flex items-center gap-4">
+                                    <span><i class="fas fa-heart text-red-500"></i> ${discussion.likes || 0}</span>
+                                    <span><i class="fas fa-comment text-blue-500"></i> ${discussion.comments || 0}</span>
+                                    <span><i class="fas fa-eye text-gray-500"></i> ${discussion.views || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ========== PROJECT MANAGEMENT ==========
+    
+    createProject() {
+        const title = document.getElementById('projectTitle').value.trim();
+        const description = document.getElementById('projectDescription').value.trim();
+        const tagsInput = document.getElementById('projectTags').value.trim();
+        const institution = document.getElementById('projectInstitution').value.trim();
+        const position = document.getElementById('projectPosition').value;
+        
+        if (!title || !description || !position) {
+            this.showToast('Title, description, and position are required', 'error');
+            return;
+        }
+        
+        if (description.length > 2000) {
+            this.showToast('Description must be 2000 characters or less', 'error');
+            return;
+        }
+        
+        const tags = tagsInput ? 
+            tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+        
+        const project = {
+            id: `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            title: title,
+            description: description,
+            tags: tags,
+            institution: institution || this.user.institution,
+            ownerId: this.user.id,
+            ownerName: this.user.name,
+            ownerType: this.user.type,
+            ownerPosition: position,
+            teamMembers: [],
+            discussions: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        
+        const projects = this.getProjects();
+        projects.push(project);
+        this.saveJSON('thoraxlab_projects', projects);
+        
+        // Add activity
+        this.addActivity({
+            type: 'project_created',
+            description: `${this.user.name} started "${title}"`,
+            projectId: project.id
+        });
+        
+        // Update tags
+        this.updateTagsCount(tags);
+        
+        this.showToast('Project created successfully!', 'success');
+        this.hideModal('newProjectModal');
+        this.navigateTo(`project/${project.id}`);
+    }
+    
+    createDiscussion() {
+        const projectId = document.getElementById('discussionProjectId').value;
+        const title = document.getElementById('discussionTitle').value.trim();
+        const content = document.getElementById('discussionContent').value.trim();
+        const type = document.querySelector('.discussion-type-btn.active').dataset.type;
+        
+        if (!title || !content) {
+            this.showToast('Topic and description are required', 'error');
+            return;
+        }
+        
+        if (content.length > 5000) {
+            this.showToast('Description must be 5000 characters or less', 'error');
+            return;
+        }
+        
+        const discussion = {
+            id: `disc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            title: title,
+            content: content,
+            type: type,
+            authorId: this.user.id,
+            authorName: this.user.name,
+            authorType: this.user.type,
+            createdAt: new Date().toISOString(),
+            likes: 0,
+            comments: 0,
+            views: 0,
+            commentsList: []
+        };
+        
+        const projects = this.getProjects();
+        const projectIndex = projects.findIndex(p => p.id === projectId);
+        
+        if (projectIndex === -1) {
+            this.showToast('Project not found', 'error');
+            return;
+        }
+        
+        if (!projects[projectIndex].discussions) {
+            projects[projectIndex].discussions = [];
+        }
+        
+        projects[projectIndex].discussions.push(discussion);
+        projects[projectIndex].updatedAt = new Date().toISOString();
+        this.saveJSON('thoraxlab_projects', projects);
+        
+        // Add activity
+        this.addActivity({
+            type: 'discussion_started',
+            description: `${this.user.name} started discussion "${title}"`,
+            projectId: projectId,
+            discussionId: discussion.id
+        });
+        
+        this.showToast('Discussion started successfully!', 'success');
+        this.hideModal('newDiscussionModal');
+        this.navigateTo(`discussion/${discussion.id}`);
+    }
+    
+    addComment() {
+        const discussionId = document.getElementById('commentDiscussionId').value;
+        const content = document.getElementById('commentContent').value.trim();
+        
+        if (!content) {
+            this.showToast('Comment content is required', 'error');
+            return;
+        }
+        
+        if (content.length > 1000) {
+            this.showToast('Comment must be 1000 characters or less', 'error');
+            return;
+        }
+        
+        const comment = {
+            id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            content: content,
+            authorId: this.user.id,
+            authorName: this.user.name,
+            authorType: this.user.type,
+            createdAt: new Date().toISOString(),
+            likes: 0
+        };
+        
+        const projects = this.getProjects();
+        let discussionUpdated = false;
+        
+        for (const project of projects) {
+            if (project.discussions) {
+                const discussionIndex = project.discussions.findIndex(d => d.id === discussionId);
+                if (discussionIndex !== -1) {
+                    if (!project.discussions[discussionIndex].commentsList) {
+                        project.discussions[discussionIndex].commentsList = [];
+                    }
+                    project.discussions[discussionIndex].commentsList.push(comment);
+                    project.discussions[discussionIndex].comments = (project.discussions[discussionIndex].comments || 0) + 1;
+                    project.discussions[discussionIndex].updatedAt = new Date().toISOString();
+                    project.updatedAt = new Date().toISOString();
+                    discussionUpdated = true;
+                    break;
+                }
+            }
+        }
+        
+        if (discussionUpdated) {
+            this.saveJSON('thoraxlab_projects', projects);
+            
+            // Add activity
+            this.addActivity({
+                type: 'comment_added',
+                description: `${this.user.name} added insight to a discussion`,
+                discussionId: discussionId
+            });
+            
+            this.showToast('Insight added successfully!', 'success');
+            this.hideModal('commentModal');
+            this.loadDiscussionDetail(discussionId);
+        } else {
+            this.showToast('Discussion not found', 'error');
+        }
+    }
+    
+    // ========== DATA MANAGEMENT ==========
     
     getProjects() {
         return this.loadJSON('thoraxlab_projects') || [];
@@ -1037,17 +1328,13 @@ class ThoraxLabPro {
         return this.loadJSON('thoraxlab_tags') || {};
     }
     
-    addActivity(type, description, projectId = null, discussionId = null) {
+    addActivity(activity) {
         const activities = this.getActivities();
         activities.unshift({
             id: `act_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            type: type,
-            title: type.replace('_', ' ').toUpperCase(),
-            description: description,
+            ...activity,
             timestamp: new Date().toISOString(),
-            userId: this.user?.id,
-            projectId: projectId,
-            discussionId: discussionId
+            userId: this.user?.id
         });
         
         if (activities.length > 100) {
@@ -1093,6 +1380,8 @@ class ThoraxLabPro {
             return sum + (disc.likes || 0) + (disc.comments || 0);
         }, 0);
     }
+    
+    // ========== UTILITY METHODS ==========
     
     getActivityIcon(type) {
         const icons = {
@@ -1176,6 +1465,16 @@ class ThoraxLabPro {
         }
     }
     
+    showNewDiscussionModal(projectId) {
+        document.getElementById('discussionProjectId').value = projectId;
+        this.showModal('newDiscussionModal');
+    }
+    
+    showCommentModal(discussionId) {
+        document.getElementById('commentDiscussionId').value = discussionId;
+        this.showModal('commentModal');
+    }
+    
     showToast(message, type = 'info') {
         const container = document.getElementById('toastContainer');
         if (!container) return;
@@ -1208,22 +1507,72 @@ class ThoraxLabPro {
         }, 4000);
     }
     
+    // ========== QUICK ACTIONS ==========
+    
+    setupQuickActions() {
+        const quickActionsBtn = document.getElementById('quickActionsMainBtn');
+        const quickActionsDropdown = document.getElementById('quickActionsDropdown');
+        
+        if (quickActionsBtn && quickActionsDropdown) {
+            quickActionsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                quickActionsDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!quickActionsBtn.contains(e.target) && !quickActionsDropdown.contains(e.target)) {
+                    quickActionsDropdown.classList.remove('active');
+                }
+            });
+            
+            // Setup action items
+            document.querySelectorAll('.quick-action-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const action = e.currentTarget.dataset.action;
+                    this.handleQuickAction(action);
+                    quickActionsDropdown.classList.remove('active');
+                });
+            });
+        }
+    }
+    
+    handleQuickAction(action) {
+        switch(action) {
+            case 'new-project':
+                this.showModal('newProjectModal');
+                break;
+            case 'new-discussion':
+                if (this.isVisitor) {
+                    this.showToast('Guests cannot start discussions', 'warning');
+                } else {
+                    this.showToast('Start a discussion from a project page', 'info');
+                }
+                break;
+            case 'request-review':
+                this.showToast('Expert review request feature coming soon', 'info');
+                break;
+        }
+    }
+    
     // ========== EVENT LISTENERS ==========
     
     setupEventListeners() {
         // Auth buttons
-        document.getElementById('professionalLoginBtn')?.addEventListener('click', () => {
+        document.getElementById('professionalLoginBtn')?.addEventListener('click', (e) => {
+            e.preventDefault();
             document.getElementById('professionalForm').classList.remove('hidden');
             document.getElementById('visitorForm').classList.add('hidden');
             document.querySelectorAll('.auth-choice-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            e.currentTarget.classList.add('active');
         });
         
-        document.getElementById('visitorLoginBtn')?.addEventListener('click', () => {
+        document.getElementById('visitorLoginBtn')?.addEventListener('click', (e) => {
+            e.preventDefault();
             document.getElementById('visitorForm').classList.remove('hidden');
             document.getElementById('professionalForm').classList.add('hidden');
             document.querySelectorAll('.auth-choice-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            e.currentTarget.classList.add('active');
         });
         
         document.getElementById('professionalForm')?.addEventListener('submit', (e) => this.loginAsProfessional(e));
@@ -1236,10 +1585,20 @@ class ThoraxLabPro {
         document.getElementById('newProjectBtn')?.addEventListener('click', () => this.showModal('newProjectModal'));
         document.getElementById('createMyProjectBtn')?.addEventListener('click', () => this.showModal('newProjectModal'));
         
-        // Project form
+        // Forms
         document.getElementById('projectForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
             this.createProject();
+        });
+        
+        document.getElementById('discussionForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.createDiscussion();
+        });
+        
+        document.getElementById('commentForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.addComment();
         });
         
         // Search and filters
@@ -1258,34 +1617,6 @@ class ThoraxLabPro {
         
         // View all buttons
         document.getElementById('viewAllProjectsBtn')?.addEventListener('click', () => this.navigateTo('projects'));
-        
-        // Quick actions
-        document.getElementById('quickActionsMainBtn')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const menu = document.getElementById('quickActionsDropdown');
-            menu.classList.toggle('active');
-        });
-        
-        document.querySelectorAll('.quick-action-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const action = e.currentTarget.dataset.action;
-                if (action === 'new-project') {
-                    this.showModal('newProjectModal');
-                } else if (action === 'new-discussion') {
-                    this.showToast('Start discussion from a project page', 'info');
-                } else if (action === 'request-review') {
-                    this.showToast('Expert review request feature coming soon', 'info');
-                }
-                document.getElementById('quickActionsDropdown').classList.remove('active');
-            });
-        });
-        
-        // Close quick actions when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.quick-actions-menu')) {
-                document.getElementById('quickActionsDropdown').classList.remove('active');
-            }
-        });
         
         // Modal close buttons
         document.querySelectorAll('.modal-close, [id^="cancel"]').forEach(btn => {
@@ -1309,9 +1640,37 @@ class ThoraxLabPro {
         // Character counters
         document.getElementById('projectDescription')?.addEventListener('input', (e) => {
             const counter = document.getElementById('descCounter');
-            counter.textContent = `${e.target.value.length}/2000`;
-            counter.classList.toggle('near-limit', e.target.value.length > 1800);
-            counter.classList.toggle('over-limit', e.target.value.length > 2000);
+            if (counter) {
+                counter.textContent = `${e.target.value.length}/2000`;
+                counter.classList.toggle('near-limit', e.target.value.length > 1800);
+                counter.classList.toggle('over-limit', e.target.value.length > 2000);
+            }
+        });
+        
+        document.getElementById('discussionContent')?.addEventListener('input', (e) => {
+            const counter = document.getElementById('discussionCounter');
+            if (counter) {
+                counter.textContent = `${e.target.value.length}/5000`;
+                counter.classList.toggle('near-limit', e.target.value.length > 4500);
+                counter.classList.toggle('over-limit', e.target.value.length > 5000);
+            }
+        });
+        
+        document.getElementById('commentContent')?.addEventListener('input', (e) => {
+            const counter = document.getElementById('commentCounter');
+            if (counter) {
+                counter.textContent = `${e.target.value.length}/1000`;
+                counter.classList.toggle('near-limit', e.target.value.length > 900);
+                counter.classList.toggle('over-limit', e.target.value.length > 1000);
+            }
+        });
+        
+        // Discussion type buttons
+        document.querySelectorAll('.discussion-type-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.discussion-type-btn').forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+            });
         });
         
         // Keyboard shortcuts
@@ -1327,6 +1686,24 @@ class ThoraxLabPro {
                 document.getElementById('quickActionsDropdown').classList.remove('active');
             }
         });
+    }
+    
+    // ========== INTERACTION METHODS (for inline onclick) ==========
+    
+    toggleDiscussionLike(discussionId) {
+        if (this.isVisitor) {
+            this.showToast('Guests cannot like discussions', 'warning');
+            return;
+        }
+        this.showToast('Like functionality coming soon', 'info');
+    }
+    
+    toggleCommentLike(commentId) {
+        if (this.isVisitor) {
+            this.showToast('Guests cannot like comments', 'warning');
+            return;
+        }
+        this.showToast('Like functionality coming soon', 'info');
     }
 }
 
