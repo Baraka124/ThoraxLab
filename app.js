@@ -1,6 +1,6 @@
 // ============================================
-// Thorax Lab Pro - Elite Clinical Innovation Platform
-// Complete Working Implementation
+// ThoraxLab Pro - Clinical Innovation Platform
+// Enhanced Professional Design with Modern UX
 // ============================================
 
 class ThoraxLabPro {
@@ -209,13 +209,13 @@ class ThoraxLabPro {
     }
     
     showAuth() {
-        document.getElementById('authScreen').classList.remove('hidden');
-        document.getElementById('mainApp').classList.add('hidden');
+        document.getElementById('authScreen')?.classList.remove('hidden');
+        document.getElementById('mainApp')?.classList.add('hidden');
     }
     
     showApp() {
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('authScreen')?.classList.add('hidden');
+        document.getElementById('mainApp')?.classList.remove('hidden');
     }
     
     loginAsProfessional(e) {
@@ -253,6 +253,7 @@ class ThoraxLabPro {
         this.showApp();
         this.updateUserDisplay();
         this.showToast(`Welcome to Thorax Lab Pro, ${name.split(' ')[0]}!`, 'success');
+        this.loadDashboard();
     }
     
     loginAsVisitor(e) {
@@ -277,6 +278,7 @@ class ThoraxLabPro {
         this.showApp();
         this.updateUserDisplay();
         this.showToast('You are browsing as a guest researcher', 'info');
+        this.loadDashboard();
     }
     
     logout() {
@@ -417,6 +419,8 @@ class ThoraxLabPro {
     }
     
     loadUserStats() {
+        if (!this.user) return;
+        
         if (this.isVisitor) {
             const container = document.getElementById('userStats');
             if (container) {
@@ -438,10 +442,10 @@ class ThoraxLabPro {
         }
         
         const projects = this.getProjects();
-        const userProjects = projects.filter(p => p.ownerId === this.user.id);
+        const userProjects = projects.filter(p => p.ownerId === this.user?.id);
         const userDiscussions = projects.reduce((count, project) => {
             if (project.discussions) {
-                return count + project.discussions.filter(d => d.authorId === this.user.id).length;
+                return count + project.discussions.filter(d => d.authorId === this.user?.id).length;
             }
             return count;
         }, 0);
@@ -487,7 +491,7 @@ class ThoraxLabPro {
         let filteredActivities = activities;
         
         if (this.activityFilter !== 'all') {
-            filteredActivities = activities.filter(act => act.type.includes(this.activityFilter));
+            filteredActivities = activities.filter(act => act.type && act.type.includes(this.activityFilter));
         }
         
         filteredActivities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -566,7 +570,7 @@ class ThoraxLabPro {
                         projectId: project.id,
                         projectTitle: project.title,
                         projectTags: project.tags,
-                        projectInstitution: project.institution
+                        institution: project.institution
                     });
                 });
             }
@@ -597,7 +601,7 @@ class ThoraxLabPro {
         // Apply tag filters
         if (this.selectedTags.size > 0) {
             projects = projects.filter(project => 
-                project.tags.some(tag => this.selectedTags.has(tag))
+                project.tags && project.tags.some(tag => this.selectedTags.has(tag))
             );
         }
         
@@ -607,7 +611,7 @@ class ThoraxLabPro {
             projects = projects.filter(project => 
                 project.title.toLowerCase().includes(searchQuery) ||
                 project.description.toLowerCase().includes(searchQuery) ||
-                project.tags.some(tag => tag.toLowerCase().includes(searchQuery)) ||
+                (project.tags && project.tags.some(tag => tag.toLowerCase().includes(searchQuery))) ||
                 project.institution.toLowerCase().includes(searchQuery)
             );
         }
@@ -640,7 +644,7 @@ class ThoraxLabPro {
         }
         
         const projects = this.getProjects();
-        const myProjects = projects.filter(p => p.ownerId === this.user.id);
+        const myProjects = projects.filter(p => p.ownerId === this.user?.id);
         this.renderProjects(myProjects, 'myProjectsList');
     }
     
@@ -671,7 +675,7 @@ class ThoraxLabPro {
                         projectId: project.id,
                         projectTitle: project.title,
                         projectOwnerId: project.ownerId,
-                        projectInstitution: project.institution
+                        institution: project.institution
                     };
                     this.renderDiscussionDetail();
                     this.showPage('discussionDetail');
@@ -696,6 +700,12 @@ class ThoraxLabPro {
                     <div class="empty-icon">📁</div>
                     <div class="empty-title">No projects found</div>
                     <p class="text-muted">${containerId === 'myProjectsList' ? 'Create your first research project' : 'Be the first to create a project'}</p>
+                    ${containerId === 'myProjectsList' && !this.isVisitor ? `
+                        <button class="btn btn-primary mt-4" onclick="app.showModal('newProjectModal')">
+                            <i class="fas fa-plus"></i>
+                            Create First Project
+                        </button>
+                    ` : ''}
                 </div>
             `;
             return;
@@ -725,7 +735,7 @@ class ThoraxLabPro {
                     </p>
                     
                     <div class="project-tags">
-                        ${project.tags.slice(0, 3).map(tag => `
+                        ${(project.tags || []).slice(0, 3).map(tag => `
                             <span class="project-tag">${this.escapeHtml(tag)}</span>
                         `).join('')}
                     </div>
@@ -775,7 +785,7 @@ class ThoraxLabPro {
         
         container.innerHTML = discussions.map(disc => {
             const engagementScore = (disc.likes || 0) + (disc.comments || 0);
-            const isElite = engagementScore >= 20;
+            const isFeatured = engagementScore >= 15;
             
             return `
                 <div class="discussion-card" data-discussion-id="${disc.id}" data-project-id="${disc.projectId}">
@@ -784,10 +794,10 @@ class ThoraxLabPro {
                             <i class="${this.getDiscussionIcon(disc.type)}"></i>
                             <span>${disc.type}</span>
                         </div>
-                        ${isElite ? `
-                            <div class="elite-badge">
-                                <i class="fas fa-crown"></i>
-                                Elite Discussion
+                        ${isFeatured ? `
+                            <div class="featured-badge">
+                                <i class="fas fa-star"></i>
+                                Featured
                             </div>
                         ` : ''}
                     </div>
@@ -803,7 +813,7 @@ class ThoraxLabPro {
                             <div class="author-avatar">${disc.authorName.substring(0, 2).toUpperCase()}</div>
                             <div>
                                 <div class="author-name">${this.escapeHtml(disc.authorName)}</div>
-                                <div class="author-institution">${this.escapeHtml(disc.projectInstitution || '')}</div>
+                                <div class="author-institution">${this.escapeHtml(disc.institution || '')}</div>
                             </div>
                         </div>
                         <div class="engagement-metrics">
@@ -834,30 +844,48 @@ class ThoraxLabPro {
         if (!container || !this.currentProject) return;
         
         const project = this.currentProject;
-        const isOwner = !this.isVisitor && project.ownerId === this.user.id;
+        const isOwner = !this.isVisitor && project.ownerId === this.user?.id;
         const discussionCount = project.discussions ? project.discussions.length : 0;
         const teamCount = project.teamMembers ? project.teamMembers.length : 0;
+        const isTeamMember = project.teamMembers?.some(member => member.id === this.user?.id) || isOwner;
+        const canStartDiscussion = !this.isVisitor && (isOwner || isTeamMember);
         
         container.innerHTML = `
             <div class="page-header">
-                <button class="btn btn-elite-secondary mb-4" onclick="app.navigateTo('projects')">
+                <button class="btn btn-secondary mb-4" onclick="app.navigateTo('projects')">
                     <i class="fas fa-arrow-left"></i>
                     Back to Projects
                 </button>
-                <h1 class="page-title">${this.escapeHtml(project.title)}</h1>
-                <p class="page-subtitle">${this.escapeHtml(project.institution || '')} • Led by ${this.escapeHtml(project.ownerName)}</p>
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h1 class="page-title">${this.escapeHtml(project.title)}</h1>
+                        <p class="page-subtitle">${this.escapeHtml(project.institution || '')} • Led by ${this.escapeHtml(project.ownerName)}</p>
+                    </div>
+                    ${isOwner ? `
+                        <div class="flex gap-2">
+                            <button class="btn btn-outline" onclick="app.showEditProjectModal('${project.id}')">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                            <button class="btn btn-outline" onclick="app.showAddTeamMemberModal('${project.id}')">
+                                <i class="fas fa-user-plus"></i>
+                                Add Member
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
             
             <div class="dashboard-grid">
                 <div class="col-span-8">
-                    <div class="elite-card">
+                    <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">
                                 <i class="card-icon fas fa-book-open"></i>
                                 Project Overview
                             </h2>
-                            ${isOwner ? `
-                                <button class="btn btn-elite-primary btn-sm" onclick="app.showNewDiscussionModal('${project.id}')">
+                            ${canStartDiscussion ? `
+                                <button class="btn btn-primary btn-sm" onclick="app.showNewDiscussionModal('${project.id}')">
                                     <i class="fas fa-plus"></i>
                                     New Discussion
                                 </button>
@@ -872,7 +900,7 @@ class ThoraxLabPro {
                         <div class="mb-6">
                             <h3 class="mb-2">Research Domains</h3>
                             <div class="project-tags">
-                                ${project.tags.map(tag => `
+                                ${(project.tags || []).map(tag => `
                                     <span class="project-tag">${this.escapeHtml(tag)}</span>
                                 `).join('')}
                             </div>
@@ -881,7 +909,7 @@ class ThoraxLabPro {
                         <div>
                             <h3 class="mb-2">Project Team</h3>
                             <div class="space-y-3">
-                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3 p-3 bg-surface rounded-lg">
                                     <div class="author-avatar-small">${project.ownerName.substring(0, 2).toUpperCase()}</div>
                                     <div>
                                         <div class="author-name">${this.escapeHtml(project.ownerName)}</div>
@@ -889,12 +917,17 @@ class ThoraxLabPro {
                                     </div>
                                 </div>
                                 ${(project.teamMembers || []).map(member => `
-                                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center gap-3 p-3 bg-surface rounded-lg">
                                         <div class="author-avatar-small">${member.name.substring(0, 2).toUpperCase()}</div>
                                         <div>
                                             <div class="author-name">${this.escapeHtml(member.name)}</div>
                                             <div class="text-muted">${member.position}</div>
                                         </div>
+                                        ${isOwner ? `
+                                            <button class="ml-auto text-muted hover:text-error" onclick="app.removeTeamMember('${project.id}', '${member.id}')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        ` : ''}
                                     </div>
                                 `).join('')}
                             </div>
@@ -903,7 +936,7 @@ class ThoraxLabPro {
                 </div>
                 
                 <div class="col-span-4">
-                    <div class="elite-card">
+                    <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">
                                 <i class="card-icon fas fa-chart-bar"></i>
@@ -930,6 +963,17 @@ class ThoraxLabPro {
                             </div>
                         </div>
                     </div>
+                    
+                    ${!isOwner && !isTeamMember && !this.isVisitor ? `
+                        <div class="card mt-4">
+                            <h3 class="mb-3">Join this Project</h3>
+                            <p class="text-sm text-muted mb-3">Request to join as a collaborator</p>
+                            <button class="btn btn-outline w-full" onclick="app.requestToJoinProject('${project.id}')">
+                                <i class="fas fa-user-plus"></i>
+                                Request to Join
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
             
@@ -970,8 +1014,8 @@ class ThoraxLabPro {
                     <div class="empty-icon">💬</div>
                     <h3 class="mb-2">No discussions yet</h3>
                     <p class="text-muted mb-4">Be the first to start a discussion in this project</p>
-                    ${!this.isVisitor ? `
-                        <button class="btn btn-elite-primary" onclick="app.showNewDiscussionModal('${project.id}')">
+                    ${canStartDiscussion ? `
+                        <button class="btn btn-primary" onclick="app.showNewDiscussionModal('${project.id}')">
                             <i class="fas fa-plus"></i>
                             Start First Discussion
                         </button>
@@ -993,12 +1037,13 @@ class ThoraxLabPro {
         if (!container || !this.currentDiscussion) return;
         
         const discussion = this.currentDiscussion;
-        const isAuthor = !this.isVisitor && discussion.authorId === this.user.id;
+        const isAuthor = !this.isVisitor && discussion.authorId === this.user?.id;
         const canComment = !this.isVisitor;
+        const liked = this.hasLikedDiscussion(discussion.id);
         
         container.innerHTML = `
             <div class="page-header">
-                <button class="btn btn-elite-secondary mb-4" onclick="app.navigateTo('project/${discussion.projectId}')">
+                <button class="btn btn-secondary mb-4" onclick="app.navigateTo('project/${discussion.projectId}')">
                     <i class="fas fa-arrow-left"></i>
                     Back to Project
                 </button>
@@ -1008,7 +1053,7 @@ class ThoraxLabPro {
             
             <div class="dashboard-grid">
                 <div class="col-span-8">
-                    <div class="elite-card">
+                    <div class="card">
                         <div class="discussion-header">
                             <div class="discussion-type type-${discussion.type}">
                                 <i class="${this.getDiscussionIcon(discussion.type)}"></i>
@@ -1018,8 +1063,9 @@ class ThoraxLabPro {
                                 <span class="text-muted">
                                     <i class="fas fa-eye"></i> ${discussion.views || 0} views
                                 </span>
-                                <button class="btn btn-elite-ghost btn-sm" onclick="app.toggleDiscussionLike('${discussion.id}')">
-                                    <i class="fas fa-heart"></i> ${discussion.likes || 0}
+                                <button class="btn btn-ghost btn-sm ${liked ? 'text-red-500' : ''}" 
+                                        onclick="app.toggleDiscussionLike('${discussion.id}')">
+                                    <i class="fas fa-heart ${liked ? 'fas' : 'far'}"></i> ${discussion.likes || 0}
                                 </button>
                             </div>
                         </div>
@@ -1029,7 +1075,7 @@ class ThoraxLabPro {
                                 <div class="author-avatar">${discussion.authorName.substring(0, 2).toUpperCase()}</div>
                                 <div>
                                     <div class="author-name">${this.escapeHtml(discussion.authorName)}</div>
-                                    <div class="author-institution">${this.escapeHtml(discussion.authorInstitution || '')}</div>
+                                    <div class="author-institution">${this.escapeHtml(discussion.institution || '')}</div>
                                 </div>
                             </div>
                             
@@ -1042,6 +1088,18 @@ class ThoraxLabPro {
                             <div class="text-muted">
                                 Started ${this.formatTimeAgo(discussion.createdAt)}
                             </div>
+                            ${isAuthor ? `
+                                <div class="flex gap-2">
+                                    <button class="btn btn-outline btn-sm" onclick="app.showEditDiscussionModal('${discussion.id}')">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-outline btn-sm text-error" onclick="app.deleteDiscussion('${discussion.id}')">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                     
@@ -1050,26 +1108,30 @@ class ThoraxLabPro {
                         
                         ${(discussion.commentsList && discussion.commentsList.length > 0) ? `
                             <div class="space-y-4">
-                                ${discussion.commentsList.map(comment => `
-                                    <div class="elite-card">
-                                        <div class="author-info mb-3">
-                                            <div class="author-avatar">${comment.authorName.substring(0, 2).toUpperCase()}</div>
-                                            <div>
-                                                <div class="author-name">${this.escapeHtml(comment.authorName)}</div>
-                                                <div class="author-institution">${this.escapeHtml(comment.authorInstitution || '')}</div>
+                                ${discussion.commentsList.map(comment => {
+                                    const commentLiked = this.hasLikedComment(comment.id);
+                                    return `
+                                        <div class="card">
+                                            <div class="author-info mb-3">
+                                                <div class="author-avatar">${comment.authorName.substring(0, 2).toUpperCase()}</div>
+                                                <div>
+                                                    <div class="author-name">${this.escapeHtml(comment.authorName)}</div>
+                                                    <div class="author-institution">${this.escapeHtml(comment.authorInstitution || '')}</div>
+                                                </div>
+                                            </div>
+                                            <p>${this.escapeHtml(comment.content)}</p>
+                                            <div class="discussion-meta mt-3">
+                                                <div class="text-muted">
+                                                    ${this.formatTimeAgo(comment.createdAt)}
+                                                </div>
+                                                <button class="btn btn-ghost btn-sm ${commentLiked ? 'text-red-500' : ''}" 
+                                                        onclick="app.toggleCommentLike('${comment.id}')">
+                                                    <i class="fas fa-heart ${commentLiked ? 'fas' : 'far'}"></i> ${comment.likes || 0}
+                                                </button>
                                             </div>
                                         </div>
-                                        <p>${this.escapeHtml(comment.content)}</p>
-                                        <div class="discussion-meta mt-3">
-                                            <div class="text-muted">
-                                                ${this.formatTimeAgo(comment.createdAt)}
-                                            </div>
-                                            <button class="btn btn-elite-ghost btn-sm" onclick="app.toggleCommentLike('${comment.id}')">
-                                                <i class="fas fa-heart"></i> ${comment.likes || 0}
-                                            </button>
-                                        </div>
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         ` : `
                             <div class="text-center py-8">
@@ -1081,22 +1143,31 @@ class ThoraxLabPro {
                         
                         ${canComment ? `
                             <div class="mt-6">
-                                <button class="btn btn-elite-primary w-full" onclick="app.showCommentModal('${discussion.id}')">
-                                    <i class="fas fa-comment-medical"></i>
-                                    Add Your Insight
-                                </button>
+                                <div class="card">
+                                    <h3 class="mb-3">Add Your Insight</h3>
+                                    <div class="form-group">
+                                        <textarea id="quickComment" class="form-input form-textarea" 
+                                                  placeholder="Share your expert perspective, analysis, or recommendation..."
+                                                  rows="3" maxlength="1000"></textarea>
+                                        <div class="char-counter" id="quickCommentCounter">0/1000</div>
+                                    </div>
+                                    <button class="btn btn-primary mt-2" onclick="app.addQuickComment('${discussion.id}')">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Post Comment
+                                    </button>
+                                </div>
                             </div>
                         ` : `
-                            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
-                                <i class="fas fa-info-circle text-yellow-500 mr-2"></i>
-                                <span class="text-yellow-700">Guest researchers can view but cannot contribute to discussions</span>
+                            <div class="mt-6 p-4 bg-warning-50 border border-warning-200 rounded-lg text-center">
+                                <i class="fas fa-info-circle text-warning-500 mr-2"></i>
+                                <span class="text-warning-700">Guest researchers can view but cannot contribute to discussions</span>
                             </div>
                         `}
                     </div>
                 </div>
                 
                 <div class="col-span-4">
-                    <div class="elite-card">
+                    <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">
                                 <i class="card-icon fas fa-info-circle"></i>
@@ -1124,8 +1195,8 @@ class ThoraxLabPro {
                                 <div class="text-muted">Engagement</div>
                                 <div class="flex items-center gap-4">
                                     <span><i class="fas fa-heart text-red-500"></i> ${discussion.likes || 0}</span>
-                                    <span><i class="fas fa-comment text-blue-500"></i> ${discussion.comments || 0}</span>
-                                    <span><i class="fas fa-eye text-gray-500"></i> ${discussion.views || 0}</span>
+                                    <span><i class="fas fa-comment text-primary"></i> ${discussion.comments || 0}</span>
+                                    <span><i class="fas fa-eye text-muted"></i> ${discussion.views || 0}</span>
                                 </div>
                             </div>
                         </div>
@@ -1133,6 +1204,9 @@ class ThoraxLabPro {
                 </div>
             </div>
         `;
+        
+        // Update view count
+        this.incrementDiscussionViews(discussion.id);
     }
     
     // ========== PROJECT MANAGEMENT ==========
@@ -1196,7 +1270,7 @@ class ThoraxLabPro {
         const projectId = document.getElementById('discussionProjectId').value;
         const title = document.getElementById('discussionTitle').value.trim();
         const content = document.getElementById('discussionContent').value.trim();
-        const type = document.querySelector('.discussion-type-btn.active').dataset.type;
+        const type = document.querySelector('.discussion-type-btn.active')?.dataset.type || 'brainstorm';
         
         if (!title || !content) {
             this.showToast('Topic and description are required', 'error');
@@ -1261,17 +1335,35 @@ class ThoraxLabPro {
             return;
         }
         
+        this.addCommentToDiscussion(discussionId, content);
+    }
+    
+    addQuickComment(discussionId) {
+        const content = document.getElementById('quickComment').value.trim();
+        
+        if (!content) {
+            this.showToast('Comment content is required', 'error');
+            return;
+        }
+        
         if (content.length > 1000) {
             this.showToast('Comment must be 1000 characters or less', 'error');
             return;
         }
         
+        this.addCommentToDiscussion(discussionId, content);
+        document.getElementById('quickComment').value = '';
+        document.getElementById('quickCommentCounter').textContent = '0/1000';
+    }
+    
+    addCommentToDiscussion(discussionId, content) {
         const comment = {
             id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             content: content,
             authorId: this.user.id,
             authorName: this.user.name,
             authorType: this.user.type,
+            authorInstitution: this.user.institution,
             createdAt: new Date().toISOString(),
             likes: 0
         };
@@ -1312,6 +1404,93 @@ class ThoraxLabPro {
         } else {
             this.showToast('Discussion not found', 'error');
         }
+    }
+    
+    // ========== INTERACTION METHODS ==========
+    
+    toggleDiscussionLike(discussionId) {
+        if (this.isVisitor) {
+            this.showToast('Guests cannot like discussions', 'warning');
+            return;
+        }
+        
+        const liked = this.toggleLike('discussion', discussionId);
+        const projects = this.getProjects();
+        
+        for (const project of projects) {
+            if (project.discussions) {
+                const discussionIndex = project.discussions.findIndex(d => d.id === discussionId);
+                if (discussionIndex !== -1) {
+                    if (liked) {
+                        project.discussions[discussionIndex].likes = (project.discussions[discussionIndex].likes || 0) + 1;
+                    } else {
+                        project.discussions[discussionIndex].likes = Math.max(0, (project.discussions[discussionIndex].likes || 0) - 1);
+                    }
+                    project.updatedAt = new Date().toISOString();
+                    break;
+                }
+            }
+        }
+        
+        this.saveJSON('thoraxlab_projects', projects);
+        this.loadDiscussionDetail(discussionId);
+    }
+    
+    toggleCommentLike(commentId) {
+        if (this.isVisitor) {
+            this.showToast('Guests cannot like comments', 'warning');
+            return;
+        }
+        
+        this.toggleLike('comment', commentId);
+        this.loadDiscussionDetail(this.currentDiscussion.id);
+    }
+    
+    toggleLike(type, id) {
+        const likes = this.loadJSON('thoraxlab_likes') || {};
+        const key = `${type}_${id}`;
+        
+        if (!likes[this.user.id]) {
+            likes[this.user.id] = {};
+        }
+        
+        const hasLiked = likes[this.user.id][key];
+        
+        if (hasLiked) {
+            delete likes[this.user.id][key];
+        } else {
+            likes[this.user.id][key] = true;
+        }
+        
+        this.saveJSON('thoraxlab_likes', likes);
+        return !hasLiked;
+    }
+    
+    hasLikedDiscussion(discussionId) {
+        const likes = this.loadJSON('thoraxlab_likes') || {};
+        return likes[this.user?.id]?.[`discussion_${discussionId}`] || false;
+    }
+    
+    hasLikedComment(commentId) {
+        const likes = this.loadJSON('thoraxlab_likes') || {};
+        return likes[this.user?.id]?.[`comment_${commentId}`] || false;
+    }
+    
+    incrementDiscussionViews(discussionId) {
+        const projects = this.getProjects();
+        
+        for (const project of projects) {
+            if (project.discussions) {
+                const discussionIndex = project.discussions.findIndex(d => d.id === discussionId);
+                if (discussionIndex !== -1) {
+                    project.discussions[discussionIndex].views = (project.discussions[discussionIndex].views || 0) + 1;
+                    project.updatedAt = new Date().toISOString();
+                    break;
+                }
+            }
+        }
+        
+        this.saveJSON('thoraxlab_projects', projects);
     }
     
     // ========== DATA MANAGEMENT ==========
@@ -1507,6 +1686,40 @@ class ThoraxLabPro {
         }, 4000);
     }
     
+    // ========== TEAM MANAGEMENT ==========
+    
+    removeTeamMember(projectId, memberId) {
+        if (!confirm('Are you sure you want to remove this team member?')) return;
+        
+        const projects = this.getProjects();
+        const projectIndex = projects.findIndex(p => p.id === projectId);
+        
+        if (projectIndex !== -1 && projects[projectIndex].teamMembers) {
+            projects[projectIndex].teamMembers = projects[projectIndex].teamMembers.filter(m => m.id !== memberId);
+            projects[projectIndex].updatedAt = new Date().toISOString();
+            this.saveJSON('thoraxlab_projects', projects);
+            
+            this.showToast('Team member removed', 'success');
+            this.loadProjectDetail(projectId);
+        }
+    }
+    
+    requestToJoinProject(projectId) {
+        const projects = this.getProjects();
+        const project = projects.find(p => p.id === projectId);
+        
+        if (project) {
+            this.showToast(`Join request sent to ${project.ownerName}`, 'info');
+            
+            // In a real app, this would send a notification to the project owner
+            this.addActivity({
+                type: 'join_request',
+                description: `${this.user.name} requested to join "${project.title}"`,
+                projectId: projectId
+            });
+        }
+    }
+    
     // ========== QUICK ACTIONS ==========
     
     setupQuickActions() {
@@ -1540,13 +1753,17 @@ class ThoraxLabPro {
     handleQuickAction(action) {
         switch(action) {
             case 'new-project':
-                this.showModal('newProjectModal');
+                if (this.isVisitor) {
+                    this.showToast('Guests cannot create projects', 'warning');
+                } else {
+                    this.showModal('newProjectModal');
+                }
                 break;
             case 'new-discussion':
                 if (this.isVisitor) {
                     this.showToast('Guests cannot start discussions', 'warning');
                 } else {
-                    this.showToast('Start a discussion from a project page', 'info');
+                    this.showToast('Navigate to a project to start a discussion', 'info');
                 }
                 break;
             case 'request-review':
@@ -1638,32 +1855,10 @@ class ThoraxLabPro {
         });
         
         // Character counters
-        document.getElementById('projectDescription')?.addEventListener('input', (e) => {
-            const counter = document.getElementById('descCounter');
-            if (counter) {
-                counter.textContent = `${e.target.value.length}/2000`;
-                counter.classList.toggle('near-limit', e.target.value.length > 1800);
-                counter.classList.toggle('over-limit', e.target.value.length > 2000);
-            }
-        });
-        
-        document.getElementById('discussionContent')?.addEventListener('input', (e) => {
-            const counter = document.getElementById('discussionCounter');
-            if (counter) {
-                counter.textContent = `${e.target.value.length}/5000`;
-                counter.classList.toggle('near-limit', e.target.value.length > 4500);
-                counter.classList.toggle('over-limit', e.target.value.length > 5000);
-            }
-        });
-        
-        document.getElementById('commentContent')?.addEventListener('input', (e) => {
-            const counter = document.getElementById('commentCounter');
-            if (counter) {
-                counter.textContent = `${e.target.value.length}/1000`;
-                counter.classList.toggle('near-limit', e.target.value.length > 900);
-                counter.classList.toggle('over-limit', e.target.value.length > 1000);
-            }
-        });
+        this.setupCharacterCounter('projectDescription', 'descCounter', 2000);
+        this.setupCharacterCounter('discussionContent', 'discussionCounter', 5000);
+        this.setupCharacterCounter('commentContent', 'commentCounter', 1000);
+        this.setupCharacterCounter('quickComment', 'quickCommentCounter', 1000);
         
         // Discussion type buttons
         document.querySelectorAll('.discussion-type-btn').forEach(btn => {
@@ -1683,27 +1878,22 @@ class ThoraxLabPro {
                 document.querySelectorAll('.modal.active').forEach(modal => {
                     this.hideModal(modal.id);
                 });
-                document.getElementById('quickActionsDropdown').classList.remove('active');
+                document.getElementById('quickActionsDropdown')?.classList.remove('active');
             }
         });
     }
     
-    // ========== INTERACTION METHODS (for inline onclick) ==========
-    
-    toggleDiscussionLike(discussionId) {
-        if (this.isVisitor) {
-            this.showToast('Guests cannot like discussions', 'warning');
-            return;
+    setupCharacterCounter(inputId, counterId, maxLength) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        
+        if (input && counter) {
+            input.addEventListener('input', (e) => {
+                counter.textContent = `${e.target.value.length}/${maxLength}`;
+                counter.classList.toggle('near-limit', e.target.value.length > maxLength * 0.9);
+                counter.classList.toggle('over-limit', e.target.value.length > maxLength);
+            });
         }
-        this.showToast('Like functionality coming soon', 'info');
-    }
-    
-    toggleCommentLike(commentId) {
-        if (this.isVisitor) {
-            this.showToast('Guests cannot like comments', 'warning');
-            return;
-        }
-        this.showToast('Like functionality coming soon', 'info');
     }
 }
 
