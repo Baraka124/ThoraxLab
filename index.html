@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[THØRAX][LAB] PRO | Clinical-Technical Collaboration</title>
+    <title>[THØRAX][LAB] PRO | Clinical Innovation Collaboration</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -80,7 +79,7 @@
         #app { min-height: 100vh; display: flex; flex-direction: column; }
         .container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
@@ -94,7 +93,6 @@
         h1 { font-size: 2rem; }
         h2 { font-size: 1.5rem; }
         h3 { font-size: 1.25rem; }
-        .font-mono { font-family: 'SF Mono', monospace; }
         
         /* ====== COMPONENTS ====== */
         
@@ -106,20 +104,24 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
         
         .brand-logo {
-            font-family: 'SF Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--thorax-blue);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         /* Navigation */
         .nav-main {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             align-items: center;
         }
         
@@ -130,6 +132,9 @@
             text-decoration: none;
             font-weight: 500;
             transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .nav-link:hover {
@@ -154,6 +159,23 @@
             justify-content: center;
             font-weight: 600;
             font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        
+        /* Engagement Score */
+        .engagement-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(135deg, 
+                rgba(16, 185, 129, 0.1),
+                rgba(26, 95, 122, 0.1)
+            );
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--thorax-green);
         }
         
         /* Buttons */
@@ -240,8 +262,29 @@
             .col-span-4, .col-span-6, .col-span-8 { grid-column: span 12; }
         }
         
-        /* Thread Types */
-        .thread-type-badge {
+        /* Engagement Indicators */
+        .engagement-indicator {
+            display: inline-block;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--ui-border);
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .engagement-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                #D1FAE5,
+                #10B981,
+                #065F46
+            );
+            transition: width 0.5s ease;
+        }
+        
+        /* Discussion Types */
+        .discussion-type {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
@@ -252,36 +295,10 @@
             background: var(--ui-hover);
         }
         
-        .thread-type-discussion { background: #DBEAFE; color: #1E40AF; }
-        .thread-type-hypothesis { background: #FEF3C7; color: #92400E; }
-        .thread-type-question { background: #E0E7FF; color: #3730A3; }
-        .thread-type-decision { background: #D1FAE5; color: #065F46; }
-        .thread-type-insight { background: #F3E8FF; color: #5B21B6; }
-        .thread-type-progress { background: #FCE7F3; color: #9D174D; }
-        
-        /* Evidence Types */
-        .evidence-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .evidence-paper { background: #DBEAFE; color: #1E40AF; }
-        .evidence-dataset { background: #D1FAE5; color: #065F46; }
-        .evidence-protocol { background: #FEF3C7; color: #92400E; }
-        .evidence-regulation { background: #FCE7F3; color: #9D174D; }
-        .evidence-result { background: #F0F9FF; color: #0C4A6E; }
-        .evidence-internal { background: #F5F3FF; color: #5B21B6; }
-        
-        /* Bridge Translation */
-        .bridge-card {
-            border-left: 4px solid var(--thorax-teal);
-            background: rgba(13, 139, 112, 0.05);
-        }
+        .type-brainstorm { background: #DBEAFE; color: #1E40AF; }
+        .type-question { background: #FEF3C7; color: #92400E; }
+        .type-decision { background: #D1FAE5; color: #065F46; }
+        .type-insight { background: #E0E7FF; color: #3730A3; }
         
         /* Forms */
         .form-group { margin-bottom: 1.5rem; }
@@ -319,6 +336,29 @@
             background-repeat: no-repeat;
             background-size: 1.5em 1.5em;
             padding-right: 2.5rem;
+        }
+        
+        /* Tag Input */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--ui-hover);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            padding-left: 0.25rem;
         }
         
         /* Modals */
@@ -403,15 +443,83 @@
             opacity: 0.5;
         }
         
-        /* Search Results */
-        .search-result-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--ui-border);
+        /* Discussion Card */
+        .discussion-card {
+            padding: 1.25rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            transition: all var(--transition);
             cursor: pointer;
         }
         
-        .search-result-item:hover {
+        .discussion-card:hover {
+            border-color: var(--thorax-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Engagement Actions */
+        .engagement-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--ui-border);
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--ui-mid);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+        }
+        
+        .action-btn:hover {
             background: var(--ui-hover);
+            color: var(--ui-dark);
+        }
+        
+        .action-btn.liked {
+            color: var(--thorax-green);
+        }
+        
+        /* Comment Section */
+        .comment-section {
+            margin-top: 1.5rem;
+        }
+        
+        .comment {
+            padding: 1rem;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            background: var(--ui-bg);
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Visitor Badge */
+        .visitor-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--ui-hover);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
         
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -462,49 +570,19 @@
         .auth-body { padding: 2.5rem 2rem; }
         .auth-form { display: flex; flex-direction: column; gap: 1.5rem; }
         
-        /* Thread Card */
-        .thread-card {
-            padding: 1.25rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
+        /* Project Card */
+        .project-card {
+            padding: 1.5rem;
+            border: 2px solid var(--ui-border);
+            border-radius: var(--radius-lg);
             margin-bottom: 1rem;
             transition: all var(--transition);
-            cursor: pointer;
         }
-        .thread-card:hover {
+        
+        .project-card:hover {
             border-color: var(--thorax-blue);
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
-        }
-        
-        /* Evidence Card */
-        .evidence-card {
-            padding: 1rem;
-            border: 1px solid var(--ui-border);
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-        }
-        
-        /* Timeline */
-        .timeline-item {
-            padding: 1rem;
-            border-left: 3px solid var(--thorax-blue);
-            margin-bottom: 1rem;
-            background: var(--ui-card);
-        }
-        
-        /* Milestone Card */
-        .milestone-card {
-            padding: 1rem;
-            border-left: 4px solid var(--thorax-green);
-            background: var(--ui-card);
-            margin-bottom: 1rem;
-            border-radius: var(--radius-md);
-        }
-        
-        .milestone-completed {
-            border-left-color: var(--success);
-            opacity: 0.8;
         }
         
         /* Responsive */
@@ -516,92 +594,43 @@
             .card { padding: 1rem; }
             .nav-main { gap: 0.5rem; }
             .nav-link { padding: 0.5rem 0.75rem; }
+            .app-header .flex { flex-wrap: wrap; gap: 1rem; }
         }
         
-        /* Badge */
-        .badge {
-            display: inline-block;
+        /* Character Counter */
+        .char-counter {
+            text-align: right;
+            font-size: 0.75rem;
+            color: var(--ui-mid);
+            margin-top: 0.25rem;
+        }
+        
+        .char-counter.near-limit {
+            color: var(--warning);
+        }
+        
+        .char-counter.over-limit {
+            color: var(--error);
+        }
+        
+        /* Popular Badge */
+        .popular-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
+            background: linear-gradient(135deg, #D1FAE5, #10B981);
+            color: var(--green-dark);
+            animation: pulse 2s infinite;
         }
         
-        .badge-clinical { background: #DBEAFE; color: #1E40AF; }
-        .badge-technical { background: #D1FAE5; color: #065F46; }
-        .badge-bridge { background: #F3E8FF; color: #5B21B6; }
-        
-        /* Bridge Term */
-        .bridge-term-card {
-            border: 2px solid var(--thorax-teal);
-            background: rgba(13, 139, 112, 0.05);
-            padding: 1rem;
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-        }
-        
-        .confidence-indicator {
-            display: inline-block;
-            width: 60px;
-            height: 6px;
-            background: var(--ui-border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-left: 0.5rem;
-        }
-        
-        .confidence-fill {
-            height: 100%;
-            background: var(--thorax-green);
-            border-radius: 3px;
-        }
-        
-        /* Search Filters */
-        .search-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .filter-chip {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            background: var(--ui-hover);
-            border: 1px solid var(--ui-border);
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-        
-        .filter-chip.active {
-            background: var(--thorax-blue);
-            color: white;
-            border-color: var(--thorax-blue);
-        }
-        
-        /* File Upload */
-        .file-upload-area {
-            border: 2px dashed var(--ui-border);
-            border-radius: var(--radius-md);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-        
-        .file-upload-area:hover {
-            border-color: var(--thorax-blue);
-            background: var(--ui-hover);
-        }
-        
-        .file-preview {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: var(--ui-hover);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
@@ -614,38 +643,74 @@
         <div id="authScreen" class="auth-screen">
             <div class="auth-card">
                 <div class="auth-header">
-                    <div class="brand-logo" style="color: white; font-size: 2rem;" class="flex items-center justify-center">
+                    <div class="brand-logo" style="color: white; font-size: 2rem;">
                         [THØRAX][LAB] PRO
                     </div>
-                    <p style="opacity: 0.9; margin-top: 0.5rem;">Clinical-Technical Collaboration Platform</p>
+                    <p style="opacity: 0.9; margin-top: 0.5rem;">Clinical Innovation Collaboration Platform</p>
                 </div>
                 <div class="auth-body">
-                    <form id="authForm" class="auth-form">
+                    <div class="text-center mb-6">
+                        <h2 class="mb-2">Enter Platform</h2>
+                        <p class="text-muted">Join as creator or visitor</p>
+                    </div>
+                    
+                    <div class="flex gap-4 mb-6">
+                        <button id="creatorLoginBtn" class="btn btn-primary flex-1">
+                            <i class="fas fa-user-plus"></i>
+                            Join as Creator
+                        </button>
+                        <button id="visitorLoginBtn" class="btn btn-secondary flex-1">
+                            <i class="fas fa-eye"></i>
+                            Browse as Visitor
+                        </button>
+                    </div>
+                    
+                    <!-- Creator Form -->
+                    <form id="creatorForm" class="auth-form hidden">
                         <div class="form-group">
-                            <label for="userName" class="form-label">Full Name</label>
-                            <input type="text" id="userName" class="form-input" placeholder="Dr. Alex Chen" required>
+                            <label for="creatorName" class="form-label">Your Name *</label>
+                            <input type="text" id="creatorName" class="form-input" placeholder="Dr. Alex Chen" required>
                         </div>
                         <div class="form-group">
-                            <label for="userEmail" class="form-label">Email Address</label>
-                            <input type="email" id="userEmail" class="form-input" placeholder="alex.chen@hospital.org" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="userRole" class="form-label">Primary Perspective</label>
-                            <select id="userRole" class="form-input" required>
-                                <option value="">Select your perspective</option>
+                            <label for="creatorRole" class="form-label">Your Role *</label>
+                            <select id="creatorRole" class="form-input" required>
+                                <option value="">Select your role</option>
                                 <option value="clinical">Clinical Professional</option>
                                 <option value="technical">Technical Professional</option>
                                 <option value="both">Both Clinical & Technical</option>
+                                <option value="researcher">Researcher</option>
+                                <option value="student">Student</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="userExpertise" class="form-label">Expertise Tags (comma separated)</label>
-                            <input type="text" id="userExpertise" class="form-input" placeholder="cardiology, machine learning, clinical trials">
+                            <label for="teamMembers" class="form-label">Team Members (Optional)</label>
+                            <input type="text" id="teamMembers" class="form-input" placeholder="Comma separated names: John, Sarah, Mike">
+                            <p class="text-xs text-muted mt-1">You can add more team members later</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">
-                            <span id="authSubmitText">Enter Collaboration Platform</span>
-                            <i id="authSpinner" class="fas fa-spinner fa-spin hidden"></i>
-                        </button>
+                        <div class="flex gap-2">
+                            <button type="button" class="btn btn-secondary" id="backToChoiceBtn">
+                                Back
+                            </button>
+                            <button type="submit" class="btn btn-primary flex-1">
+                                Enter Platform
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Visitor Form -->
+                    <form id="visitorForm" class="auth-form hidden">
+                        <div class="form-group">
+                            <label for="visitorName" class="form-label">Your Name (Optional)</label>
+                            <input type="text" id="visitorName" class="form-input" placeholder="Enter your name or remain anonymous">
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="btn btn-secondary" id="backToChoiceBtn2">
+                                Back
+                            </button>
+                            <button type="submit" class="btn btn-primary flex-1">
+                                Browse Projects
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -662,24 +727,38 @@
                         </a>
                         <nav class="nav-main">
                             <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                                <i class="fas fa-tachometer-alt"></i>
+                                <i class="fas fa-home"></i>
                                 Dashboard
                             </a>
                             <a href="#projects" class="nav-link" data-page="projects">
                                 <i class="fas fa-project-diagram"></i>
-                                Projects
+                                All Projects
                             </a>
-                            <a href="#search" class="nav-link" data-page="search">
-                                <i class="fas fa-search"></i>
-                                Search
+                            <a href="#myprojects" class="nav-link" data-page="myprojects">
+                                <i class="fas fa-folder"></i>
+                                My Projects
                             </a>
+                            <span class="visitor-badge hidden" id="visitorBadge">
+                                <i class="fas fa-eye"></i>
+                                Visitor
+                            </span>
                         </nav>
                         <div class="flex items-center gap-4">
-                            <button id="newProjectBtn" class="btn btn-primary btn-sm">
+                            <div id="userInfo" class="flex items-center gap-3">
+                                <div id="userAvatar" class="user-avatar">??</div>
+                                <div>
+                                    <div id="userName" class="text-sm font-semibold"></div>
+                                    <div id="userRole" class="text-xs text-muted"></div>
+                                </div>
+                            </div>
+                            <button id="newProjectBtn" class="btn btn-primary btn-sm hidden">
                                 <i class="fas fa-plus"></i>
                                 New Project
                             </button>
-                            <div id="userAvatar" class="user-avatar">AC</div>
+                            <button id="logoutBtn" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -691,77 +770,79 @@
                     <!-- Dashboard Page -->
                     <div id="dashboardPage" class="page">
                         <div class="mb-6">
-                            <h1 id="welcomeMessage">Collaboration Dashboard</h1>
-                            <p class="text-muted">Bridge clinical insights with technical implementation</p>
+                            <h1 id="welcomeMessage">Innovation Dashboard</h1>
+                            <p class="text-muted">Explore and contribute to clinical innovation projects</p>
                         </div>
                         
-                        <!-- Project Dashboard (Loaded dynamically) -->
-                        <div id="projectDashboard">
-                            <div class="loading">
-                                <div class="spinner"></div>
-                                <p>Loading project dashboard...</p>
+                        <!-- Featured Discussions -->
+                        <div class="card mb-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2>Featured Discussions</h2>
+                                <div class="engagement-score">
+                                    <i class="fas fa-fire"></i>
+                                    <span>Trending Ideas</span>
+                                </div>
+                            </div>
+                            <div id="featuredDiscussions">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Projects -->
+                        <div class="card">
+                            <h2 class="mb-6">Recent Projects</h2>
+                            <div id="recentProjects">
+                                <!-- Loaded dynamically -->
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Projects Page -->
+                    <!-- All Projects Page -->
                     <div id="projectsPage" class="page hidden">
                         <div class="flex items-center justify-between mb-6">
                             <div>
-                                <h1>Projects</h1>
-                                <p class="text-muted">Manage your clinical-technical collaborations</p>
+                                <h1>All Projects</h1>
+                                <p class="text-muted">Browse all clinical innovation collaborations</p>
                             </div>
-                            <button id="createProjectBtn" class="btn btn-primary">
+                            <div class="flex gap-2">
+                                <button id="sortProjectsBtn" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-sort"></i>
+                                    Sort
+                                </button>
+                                <input type="text" id="projectSearch" class="form-input" placeholder="Search projects..." style="width: 200px;">
+                            </div>
+                        </div>
+                        
+                        <div id="allProjectsList">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- My Projects Page -->
+                    <div id="myProjectsPage" class="page hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h1>My Projects</h1>
+                                <p class="text-muted">Manage your clinical innovation projects</p>
+                            </div>
+                            <button id="createMyProjectBtn" class="btn btn-primary">
                                 <i class="fas fa-plus"></i>
                                 New Project
                             </button>
                         </div>
                         
-                        <div id="projectsList">
-                            <div class="loading">
-                                <div class="spinner"></div>
-                                <p>Loading projects...</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Search Page -->
-                    <div id="searchPage" class="page hidden">
-                        <div class="mb-6">
-                            <h1>Search & Discover</h1>
-                            <p class="text-muted">Find threads, evidence, and bridge terms across projects</p>
-                        </div>
-                        
-                        <div class="card mb-6">
-                            <div class="form-group">
-                                <div class="flex gap-2">
-                                    <input type="text" id="searchInput" class="form-input" placeholder="Search for terms, threads, evidence...">
-                                    <button id="searchButton" class="btn btn-primary">
-                                        <i class="fas fa-search"></i>
-                                        Search
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="search-filters">
-                                <span class="filter-chip active" data-type="all">All</span>
-                                <span class="filter-chip" data-type="threads">Threads</span>
-                                <span class="filter-chip" data-type="evidence">Evidence</span>
-                                <span class="filter-chip" data-type="bridge_terms">Bridge Terms</span>
-                                <span class="filter-chip" data-type="projects">Projects</span>
-                            </div>
-                        </div>
-                        
-                        <div id="searchResults">
-                            <div class="empty-state">
-                                <div class="empty-icon">🔍</div>
-                                <h3 class="mb-2">Search Across Projects</h3>
-                                <p class="text-muted mb-4">Enter a search term to find discussions, evidence, and bridge translations</p>
-                            </div>
+                        <div id="myProjectsList">
+                            <!-- Loaded dynamically -->
                         </div>
                     </div>
                     
                     <!-- Project Detail Page -->
                     <div id="projectDetailPage" class="page hidden">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    
+                    <!-- Discussion Detail Page -->
+                    <div id="discussionDetailPage" class="page hidden">
                         <!-- Loaded dynamically -->
                     </div>
                 </div>
@@ -779,20 +860,29 @@
                 </div>
                 <form id="projectForm">
                     <div class="form-group">
-                        <label for="projectTitle" class="form-label">Project Title</label>
-                        <input type="text" id="projectTitle" class="form-input" placeholder="e.g., COPD Exacerbation Prediction" required>
+                        <label for="projectTitle" class="form-label">Project Title *</label>
+                        <input type="text" id="projectTitle" class="form-input" placeholder="e.g., AI-Powered COPD Diagnosis Tool" required>
                     </div>
                     <div class="form-group">
-                        <label for="projectDescription" class="form-label">Description</label>
-                        <textarea id="projectDescription" class="form-input form-textarea" placeholder="Describe the collaboration goals..." rows="4"></textarea>
+                        <label for="projectDescription" class="form-label">Description * (Max 200 words)</label>
+                        <textarea id="projectDescription" class="form-input form-textarea" 
+                                  placeholder="Describe your clinical innovation project..." 
+                                  rows="4" maxlength="2000" required></textarea>
+                        <div class="char-counter" id="descCounter">0/2000</div>
                     </div>
                     <div class="form-group">
-                        <label for="clinicalContext" class="form-label">Clinical Context</label>
-                        <textarea id="clinicalContext" class="form-input form-textarea" placeholder="Clinical problem or opportunity..." rows="3"></textarea>
+                        <label for="projectTags" class="form-label">Tags (Optional)</label>
+                        <input type="text" id="projectTags" class="form-input" placeholder="e.g., AI, cardiology, machine learning">
+                        <p class="text-xs text-muted mt-1">Separate tags with commas</p>
+                        <div class="tag-container" id="tagsContainer"></div>
                     </div>
                     <div class="form-group">
-                        <label for="technicalChallenge" class="form-label">Technical Challenge</label>
-                        <textarea id="technicalChallenge" class="form-input form-textarea" placeholder="Technical implementation challenges..." rows="3"></textarea>
+                        <label class="form-label">Add Team Members</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="teamMemberInput" class="form-input" placeholder="Enter team member name">
+                            <button type="button" class="btn btn-secondary btn-sm" id="addTeamMemberBtn">Add</button>
+                        </div>
+                        <div id="teamMembersList" class="space-y-2"></div>
                     </div>
                     <div class="flex gap-2 justify-end mt-6">
                         <button type="button" class="btn btn-secondary" id="cancelProjectBtn">Cancel</button>
@@ -802,235 +892,116 @@
             </div>
         </div>
         
-        <!-- New Thread Modal -->
-        <div id="newThreadModal" class="modal">
+        <!-- New Discussion Modal -->
+        <div id="newDiscussionModal" class="modal">
             <div class="modal-content">
                 <div class="flex items-center justify-between mb-6">
                     <h2>Start Discussion</h2>
-                    <button class="btn btn-icon" id="closeThreadModal">&times;</button>
+                    <button class="btn btn-icon" id="closeDiscussionModal">&times;</button>
                 </div>
-                <form id="threadForm">
-                    <input type="hidden" id="threadProjectId">
+                <form id="discussionForm">
+                    <input type="hidden" id="discussionProjectId">
                     <div class="form-group">
-                        <label class="form-label">Thread Type</label>
+                        <label class="form-label">Discussion Type</label>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn active" data-type="discussion">💬 Discussion</button>
-                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="hypothesis">🔍 Hypothesis</button>
-                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="question">❓ Question</button>
-                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="decision">🤔 Decision</button>
-                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="insight">💡 Insight</button>
-                            <button type="button" class="btn btn-secondary btn-sm thread-type-btn" data-type="progress">🔄 Progress</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="threadTitle" class="form-label">Title</label>
-                        <input type="text" id="threadTitle" class="form-input" placeholder="Enter thread title..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="threadClinical" class="form-label">Clinical Perspective</label>
-                        <textarea id="threadClinical" class="form-input form-textarea" placeholder="Clinical context or observation..." rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="threadTechnical" class="form-label">Technical Perspective</label>
-                        <textarea id="threadTechnical" class="form-input form-textarea" placeholder="Technical implementation or challenge..." rows="3"></textarea>
-                    </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelThreadBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Start Thread</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Add Evidence Modal -->
-        <div id="evidenceModal" class="modal">
-            <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Add Evidence</h2>
-                    <button class="btn btn-icon" id="closeEvidenceModal">&times;</button>
-                </div>
-                <form id="evidenceForm">
-                    <input type="hidden" id="evidenceProjectId">
-                    <div class="form-group">
-                        <label class="form-label">Evidence Type</label>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn active" data-type="paper">📄 Paper</button>
-                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="dataset">📊 Dataset</button>
-                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="protocol">📋 Protocol</button>
-                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="regulation">⚖️ Regulation</button>
-                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="result">📈 Result</button>
-                            <button type="button" class="btn btn-secondary btn-sm evidence-type-btn" data-type="internal">🏢 Internal</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="evidenceTitle" class="form-label">Title</label>
-                        <input type="text" id="evidenceTitle" class="form-input" placeholder="Enter evidence title..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="evidenceSource" class="form-label">Source</label>
-                        <input type="text" id="evidenceSource" class="form-input" placeholder="PMID, DOI, URL, or internal reference...">
-                    </div>
-                    <div class="form-group">
-                        <label for="clinicalRelevance" class="form-label">Clinical Relevance</label>
-                        <textarea id="clinicalRelevance" class="form-input form-textarea" placeholder="How this impacts patient care..." rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="technicalUtility" class="form-label">Technical Utility</label>
-                        <textarea id="technicalUtility" class="form-input form-textarea" placeholder="How this informs algorithms or systems..." rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Upload File (Optional)</label>
-                        <div class="file-upload-area" id="fileUploadArea">
-                            <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--ui-mid);"></i>
-                            <p class="text-sm text-muted">Drag & drop or click to upload</p>
-                            <p class="text-xs text-muted mt-1">Max file size: 10MB</p>
-                        </div>
-                        <input type="file" id="fileUpload" class="hidden" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.png,.jpg,.jpeg">
-                        <div id="filePreview" class="hidden">
-                            <div class="file-preview">
-                                <i class="fas fa-file"></i>
-                                <span id="fileName"></span>
-                                <button type="button" class="ml-auto text-sm text-error" id="removeFile">&times;</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelEvidenceBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Evidence</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Add Milestone Modal -->
-        <div id="milestoneModal" class="modal">
-            <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Add Milestone</h2>
-                    <button class="btn btn-icon" id="closeMilestoneModal">&times;</button>
-                </div>
-                <form id="milestoneForm">
-                    <input type="hidden" id="milestoneProjectId">
-                    <div class="form-group">
-                        <label for="milestoneTitle" class="form-label">Title</label>
-                        <input type="text" id="milestoneTitle" class="form-input" placeholder="e.g., Complete Data Collection Phase" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="milestoneType" class="form-label">Type</label>
-                        <select id="milestoneType" class="form-input">
-                            <option value="deliverable">Deliverable</option>
-                            <option value="clinical">Clinical</option>
-                            <option value="technical">Technical</option>
-                            <option value="regulatory">Regulatory</option>
-                            <option value="collaboration">Collaboration</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="milestoneDescription" class="form-label">Description</label>
-                        <textarea id="milestoneDescription" class="form-input form-textarea" placeholder="Describe the milestone..." rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="milestoneDueDate" class="form-label">Due Date</label>
-                        <input type="date" id="milestoneDueDate" class="form-input">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="clinicalOwner" class="form-label">Clinical Owner (Optional)</label>
-                            <input type="text" id="clinicalOwner" class="form-input" placeholder="Name or role">
-                        </div>
-                        <div class="form-group">
-                            <label for="technicalOwner" class="form-label">Technical Owner (Optional)</label>
-                            <input type="text" id="technicalOwner" class="form-input" placeholder="Name or role">
-                        </div>
-                    </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelMilestoneBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Milestone</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Bridge Translation Modal -->
-        <div id="bridgeModal" class="modal">
-            <div class="modal-content">
-                <div class="flex items-center justify-between mb-6">
-                    <h2>Bridge Translation</h2>
-                    <button class="btn btn-icon" id="closeBridgeModal">&times;</button>
-                </div>
-                <form id="bridgeForm">
-                    <input type="hidden" id="bridgeProjectId">
-                    <div class="form-group">
-                        <label for="bridgeTerm" class="form-label">Term to Bridge</label>
-                        <input type="text" id="bridgeTerm" class="form-input" placeholder="Enter clinical or technical term..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="bridgeContext" class="form-label">Context (optional)</label>
-                        <textarea id="bridgeContext" class="form-input form-textarea" placeholder="Provide context for better translation..." rows="2"></textarea>
-                    </div>
-                    <div class="flex gap-2 justify-end mt-6">
-                        <button type="button" class="btn btn-secondary" id="cancelBridgeBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Translate</button>
-                    </div>
-                </form>
-                <div id="bridgeResult" class="mt-6 hidden">
-                    <div class="bridge-term-card">
-                        <h4 class="mb-4">Translation Result</h4>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="text-sm font-semibold text-muted mb-1">Clinical Definition</div>
-                                <p id="clinicalDefinition"></p>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-muted mb-1">Technical Definition</div>
-                                <p id="technicalDefinition"></p>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-muted mb-1">Analogy</div>
-                                <p id="bridgeAnalogy"></p>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-muted mb-1">Confidence</div>
-                                <div class="flex items-center">
-                                    <span id="confidenceScore"></span>
-                                    <div class="confidence-indicator">
-                                        <div id="confidenceFill" class="confidence-fill"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-ui-border">
-                            <button id="saveBridgeTermBtn" class="btn btn-success w-full">
-                                <i class="fas fa-save"></i>
-                                Save to Project Glossary
+                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn active" data-type="brainstorm">
+                                💡 Brainstorm
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn" data-type="question">
+                                ❓ Question
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn" data-type="decision">
+                                🤔 Decision
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm discussion-type-btn" data-type="insight">
+                                🔍 Insight
                             </button>
                         </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="discussionTitle" class="form-label">Topic *</label>
+                        <input type="text" id="discussionTitle" class="form-input" placeholder="What clinical challenge are we solving?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="discussionContent" class="form-label">Description * (Max 500 words)</label>
+                        <textarea id="discussionContent" class="form-input form-textarea" 
+                                  placeholder="Describe the topic for discussion..." 
+                                  rows="4" maxlength="5000" required></textarea>
+                        <div class="char-counter" id="discussionCounter">0/5000</div>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelDiscussionBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Start Discussion</button>
+                    </div>
+                </form>
             </div>
         </div>
         
-        <!-- Thread Detail Modal -->
-        <div id="threadModal" class="modal">
-            <div class="modal-content" style="max-width: 800px;">
-                <!-- Loaded dynamically -->
+        <!-- Add Comment Modal -->
+        <div id="commentModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Add Comment</h2>
+                    <button class="btn btn-icon" id="closeCommentModal">&times;</button>
+                </div>
+                <form id="commentForm">
+                    <input type="hidden" id="commentDiscussionId">
+                    <div class="form-group">
+                        <label for="commentContent" class="form-label">Your Comment *</label>
+                        <textarea id="commentContent" class="form-input form-textarea" 
+                                  placeholder="Share your thoughts..." 
+                                  rows="3" maxlength="1000" required></textarea>
+                        <div class="char-counter" id="commentCounter">0/1000</div>
+                    </div>
+                    <div class="flex gap-2 justify-end mt-6">
+                        <button type="button" class="btn btn-secondary" id="cancelCommentBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Invite Team Modal -->
+        <div id="inviteTeamModal" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center justify-between mb-6">
+                    <h2>Invite Team Members</h2>
+                    <button class="btn btn-icon" id="closeInviteModal">&times;</button>
+                </div>
+                <div class="form-group">
+                    <label for="inviteEmail" class="form-label">Email Address</label>
+                    <input type="email" id="inviteEmail" class="form-input" placeholder="team.member@hospital.org">
+                </div>
+                <div class="form-group">
+                    <label for="inviteRole" class="form-label">Role</label>
+                    <select id="inviteRole" class="form-input">
+                        <option value="clinical">Clinical Expert</option>
+                        <option value="technical">Technical Expert</option>
+                        <option value="both">Both</option>
+                        <option value="reviewer">Reviewer</option>
+                    </select>
+                </div>
+                <div class="flex gap-2 justify-end mt-6">
+                    <button type="button" class="btn btn-secondary" id="cancelInviteBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="sendInviteBtn">Send Invite</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // THORAXLAB PRO - COLLABORATION PLATFORM
+        // [THØRAX][LAB] PRO - Frontend Only Platform
         // ============================================
         
         class ThoraxLabPro {
             constructor() {
-                this.token = localStorage.getItem('thoraxlab_token');
                 this.user = JSON.parse(localStorage.getItem('thoraxlab_user') || 'null');
+                this.isVisitor = JSON.parse(localStorage.getItem('thoraxlab_visitor') || 'false');
                 this.currentProject = null;
-                this.currentThread = null;
-                this.currentBridgeTerm = null;
-                this.ws = null;
+                this.currentDiscussion = null;
+                this.discussionSort = 'popular';
+                this.projectSort = 'recent';
                 this.initialize();
             }
             
@@ -1038,11 +1009,92 @@
                 this.setupEventListeners();
                 this.setupRouter();
                 this.checkAuth();
+                this.initializeDemoData();
+            }
+            
+            // ========== INITIALIZE DEMO DATA ==========
+            initializeDemoData() {
+                // Only create demo data if none exists
+                if (!localStorage.getItem('thoraxlab_projects')) {
+                    const demoProjects = [
+                        {
+                            id: 'proj_1',
+                            title: 'AI-Powered COPD Exacerbation Prediction',
+                            description: 'Developing machine learning models to predict COPD exacerbations 48 hours in advance using patient vitals, spirometry data, and environmental factors. This innovation aims to reduce hospital readmissions by enabling early intervention.',
+                            tags: ['AI', 'COPD', 'prediction', 'machine learning'],
+                            ownerId: 'demo_user',
+                            ownerName: 'Dr. Sarah Chen',
+                            ownerRole: 'clinical',
+                            teamMembers: ['Dr. Mike Johnson', 'Dr. Lisa Wang', 'Prof. James Wilson'],
+                            createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                            updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                            discussions: [
+                                {
+                                    id: 'disc_1',
+                                    title: 'Which clinical features are most predictive?',
+                                    content: 'We need to decide on the most important clinical features for our prediction model. Should we prioritize spirometry data, patient-reported symptoms, or environmental factors?',
+                                    type: 'brainstorm',
+                                    authorId: 'demo_user',
+                                    authorName: 'Dr. Sarah Chen',
+                                    authorRole: 'clinical',
+                                    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+                                    likes: 15,
+                                    comments: 8,
+                                    views: 42
+                                },
+                                {
+                                    id: 'disc_2',
+                                    title: 'Data privacy considerations',
+                                    content: 'How do we ensure patient data privacy while training our models? Should we use federated learning or differential privacy techniques?',
+                                    type: 'question',
+                                    authorId: 'demo_user',
+                                    authorName: 'Dr. Mike Johnson',
+                                    authorRole: 'technical',
+                                    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                                    likes: 12,
+                                    comments: 6,
+                                    views: 38
+                                }
+                            ]
+                        },
+                        {
+                            id: 'proj_2',
+                            title: 'Tele-Rehabilitation for Cardiac Patients',
+                            description: 'Creating a remote monitoring platform for cardiac rehabilitation patients using wearable sensors and mobile apps. Focus on improving adherence and outcomes through personalized exercise programs.',
+                            tags: ['telemedicine', 'cardiology', 'wearables', 'rehabilitation'],
+                            ownerId: 'demo_user_2',
+                            ownerName: 'Dr. Robert Kim',
+                            ownerRole: 'both',
+                            teamMembers: ['Dr. Emma Davis', 'Prof. Alex Thompson'],
+                            createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                            updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+                            discussions: [
+                                {
+                                    id: 'disc_3',
+                                    title: 'Best sensors for heart rate monitoring',
+                                    content: 'We need to select the most accurate and comfortable wearable sensors for continuous heart rate monitoring during rehabilitation exercises.',
+                                    type: 'decision',
+                                    authorId: 'demo_user_2',
+                                    authorName: 'Dr. Robert Kim',
+                                    authorRole: 'both',
+                                    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                                    likes: 18,
+                                    comments: 10,
+                                    views: 56
+                                }
+                            ]
+                        }
+                    ];
+                    
+                    localStorage.setItem('thoraxlab_projects', JSON.stringify(demoProjects));
+                    localStorage.setItem('thoraxlab_discussion_likes', JSON.stringify({}));
+                    localStorage.setItem('thoraxlab_comment_likes', JSON.stringify({}));
+                }
             }
             
             // ========== AUTHENTICATION ==========
             checkAuth() {
-                if (this.token && this.user) {
+                if (this.user || this.isVisitor) {
                     this.showApp();
                     this.updateUserDisplay();
                 } else {
@@ -1060,76 +1112,113 @@
                 document.getElementById('mainApp').classList.remove('hidden');
             }
             
-            async handleLogin(e) {
-                e.preventDefault();
+            loginAsCreator(e) {
+                if (e) e.preventDefault();
                 
-                const submitBtn = document.querySelector('#authForm button[type="submit"]');
-                const submitText = document.querySelector('#authSubmitText');
-                const spinner = document.querySelector('#authSpinner');
+                const name = document.getElementById('creatorName').value.trim();
+                const role = document.getElementById('creatorRole').value;
+                const teamMembersInput = document.getElementById('teamMembers').value.trim();
                 
-                submitBtn.disabled = true;
-                submitText.textContent = 'Entering...';
-                spinner.classList.remove('hidden');
-                
-                try {
-                    const userData = {
-                        name: document.getElementById('userName').value.trim(),
-                        email: document.getElementById('userEmail').value.trim(),
-                        primary_role: document.getElementById('userRole').value,
-                        expertise: document.getElementById('userExpertise').value.trim()
-                    };
-                    
-                    if (!userData.email || !userData.name || !userData.primary_role) {
-                        throw new Error('Please fill all required fields');
-                    }
-                    
-                    const response = await fetch('/api/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(userData)
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (!response.ok) {
-                        throw new Error(data.error || 'Login failed');
-                    }
-                    
-                    if (data.success) {
-                        this.token = data.token;
-                        this.user = data.user;
-                        
-                        localStorage.setItem('thoraxlab_token', data.token);
-                        localStorage.setItem('thoraxlab_user', JSON.stringify(data.user));
-                        
-                        this.showApp();
-                        this.updateUserDisplay();
-                        this.showToast(`Welcome to ThoraxLab Pro, ${data.user.name.split(' ')[0]}!`, 'success');
-                    }
-                } catch (error) {
-                    console.error('Login error:', error);
-                    this.showToast(error.message, 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitText.textContent = 'Enter Collaboration Platform';
-                    spinner.classList.add('hidden');
+                if (!name || !role) {
+                    this.showToast('Name and role are required', 'error');
+                    return;
                 }
+                
+                // Generate avatar initials
+                const initials = name.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+                
+                // Parse team members
+                const teamMembers = teamMembersInput ? 
+                    teamMembersInput.split(',').map(m => m.trim()).filter(m => m) : [];
+                
+                this.user = {
+                    id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    name: name,
+                    role: role,
+                    avatar_initials: initials,
+                    teamMembers: teamMembers,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.isVisitor = false;
+                
+                localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                localStorage.setItem('thoraxlab_visitor', 'false');
+                
+                this.showApp();
+                this.updateUserDisplay();
+                this.showToast(`Welcome to [THØRAX][LAB] PRO, ${name.split(' ')[0]}!`, 'success');
+            }
+            
+            loginAsVisitor(e) {
+                if (e) e.preventDefault();
+                
+                const name = document.getElementById('visitorName').value.trim();
+                
+                this.user = {
+                    id: `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    name: name || 'Anonymous Visitor',
+                    role: 'visitor',
+                    avatar_initials: 'V',
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.isVisitor = true;
+                
+                localStorage.setItem('thoraxlab_user', JSON.stringify(this.user));
+                localStorage.setItem('thoraxlab_visitor', 'true');
+                
+                this.showApp();
+                this.updateUserDisplay();
+                this.showToast('You are browsing as a visitor', 'info');
+            }
+            
+            logout() {
+                this.user = null;
+                this.isVisitor = false;
+                localStorage.removeItem('thoraxlab_user');
+                localStorage.removeItem('thoraxlab_visitor');
+                this.showAuth();
             }
             
             updateUserDisplay() {
                 if (!this.user) return;
                 
                 const avatar = document.getElementById('userAvatar');
+                const name = document.getElementById('userName');
+                const role = document.getElementById('userRole');
+                const visitorBadge = document.getElementById('visitorBadge');
+                const newProjectBtn = document.getElementById('newProjectBtn');
+                
                 if (avatar) {
-                    avatar.textContent = this.user.name.split(' ')
-                        .map(n => n[0])
-                        .join('')
-                        .toUpperCase()
-                        .substring(0, 2);
+                    avatar.textContent = this.user.avatar_initials || '??';
+                }
+                
+                if (name) {
+                    name.textContent = this.user.name;
+                }
+                
+                if (role) {
+                    role.textContent = this.isVisitor ? 'Visitor' : 
+                        this.user.role === 'clinical' ? 'Clinical Professional' :
+                        this.user.role === 'technical' ? 'Technical Professional' :
+                        this.user.role === 'both' ? 'Clinical & Technical' : this.user.role;
+                }
+                
+                if (visitorBadge) {
+                    visitorBadge.classList.toggle('hidden', !this.isVisitor);
+                }
+                
+                if (newProjectBtn) {
+                    newProjectBtn.classList.toggle('hidden', this.isVisitor);
                 }
                 
                 const welcome = document.getElementById('welcomeMessage');
-                if (welcome) {
+                if (welcome && !this.isVisitor) {
                     welcome.textContent = `Welcome back, ${this.user.name.split(' ')[0]}`;
                 }
             }
@@ -1148,12 +1237,19 @@
                 
                 if (parts[0] === 'project' && parts[1]) {
                     this.loadProject(parts[1]);
+                } else if (parts[0] === 'discussion' && parts[1]) {
+                    this.loadDiscussion(parts[1]);
                 }
                 
                 // Update active nav
                 document.querySelectorAll('.nav-link').forEach(link => {
                     const linkPage = link.getAttribute('href').substring(1);
-                    link.classList.toggle('active', linkPage === parts[0]);
+                    if (linkPage.includes('/')) {
+                        const linkBase = linkPage.split('/')[0];
+                        link.classList.toggle('active', linkBase === parts[0]);
+                    } else {
+                        link.classList.toggle('active', linkPage === parts[0]);
+                    }
                 });
             }
             
@@ -1169,10 +1265,10 @@
                             this.loadDashboard();
                             break;
                         case 'projects':
-                            this.loadProjects();
+                            this.loadAllProjects();
                             break;
-                        case 'search':
-                            this.setupSearch();
+                        case 'myprojects':
+                            this.loadMyProjects();
                             break;
                     }
                 }
@@ -1183,184 +1279,362 @@
             }
             
             // ========== DATA LOADING ==========
-            async loadDashboard() {
-                try {
-                    // Load user's projects for dashboard
-                    await this.loadProjects();
-                } catch (error) {
-                    console.error('Dashboard load error:', error);
-                }
+            loadDashboard() {
+                this.loadFeaturedDiscussions();
+                this.loadRecentProjects();
             }
             
-            async loadProjects() {
-                try {
-                    const response = await this.apiRequest('/api/projects');
-                    
-                    if (response.success) {
-                        this.renderProjects(response.projects || []);
-                    }
-                } catch (error) {
-                    console.error('Projects load error:', error);
-                    this.renderProjects([]);
-                }
-            }
-            
-            async loadProject(projectId) {
-                try {
-                    const response = await this.apiRequest(`/api/projects/${projectId}/dashboard`);
-                    
-                    if (response.success) {
-                        this.currentProject = response.dashboard;
-                        this.renderProjectDashboard();
-                        this.showPage('projectDetail');
-                    }
-                } catch (error) {
-                    console.error('Project load error:', error);
-                    this.navigateTo('projects');
-                }
-            }
-            
-            // ========== SEARCH ==========
-            setupSearch() {
-                const searchInput = document.getElementById('searchInput');
-                const searchButton = document.getElementById('searchButton');
-                const filters = document.querySelectorAll('.filter-chip');
+            loadFeaturedDiscussions() {
+                const projects = this.getProjects();
+                let allDiscussions = [];
                 
-                searchButton.addEventListener('click', () => this.performSearch());
-                searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.performSearch();
+                projects.forEach(project => {
+                    if (project.discussions) {
+                        project.discussions.forEach(disc => {
+                            allDiscussions.push({
+                                ...disc,
+                                projectId: project.id,
+                                projectTitle: project.title,
+                                projectTags: project.tags
+                            });
+                        });
+                    }
                 });
                 
-                filters.forEach(filter => {
-                    filter.addEventListener('click', (e) => {
-                        filters.forEach(f => f.classList.remove('active'));
-                        e.target.classList.add('active');
-                        if (searchInput.value.trim()) {
-                            this.performSearch();
-                        }
-                    });
+                // Sort by engagement (likes + comments)
+                allDiscussions.sort((a, b) => {
+                    const engagementA = (a.likes || 0) + (a.comments || 0);
+                    const engagementB = (b.likes || 0) + (b.comments || 0);
+                    return engagementB - engagementA;
                 });
+                
+                // Take top 3
+                const featured = allDiscussions.slice(0, 3);
+                this.renderFeaturedDiscussions(featured);
             }
             
-            async performSearch() {
-                const query = document.getElementById('searchInput').value.trim();
-                const activeFilter = document.querySelector('.filter-chip.active').dataset.type;
+            loadRecentProjects() {
+                const projects = this.getProjects();
                 
-                if (!query) {
-                    this.showToast('Please enter a search term', 'warning');
+                // Sort by recent activity
+                projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                
+                // Take recent 4
+                const recent = projects.slice(0, 4);
+                this.renderRecentProjects(recent);
+            }
+            
+            loadAllProjects() {
+                const projects = this.getProjects();
+                
+                // Apply sorting
+                let sortedProjects = [...projects];
+                switch(this.projectSort) {
+                    case 'recent':
+                        sortedProjects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                        break;
+                    case 'popular':
+                        sortedProjects.sort((a, b) => {
+                            const engagementA = (a.discussions || []).reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0);
+                            const engagementB = (b.discussions || []).reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0);
+                            return engagementB - engagementA;
+                        });
+                        break;
+                    case 'alphabetical':
+                        sortedProjects.sort((a, b) => a.title.localeCompare(b.title));
+                        break;
+                }
+                
+                this.renderAllProjects(sortedProjects);
+            }
+            
+            loadMyProjects() {
+                if (this.isVisitor) {
+                    this.showToast('Visitors cannot create projects', 'warning');
+                    this.navigateTo('dashboard');
                     return;
                 }
                 
-                try {
-                    const response = await this.apiRequest('/api/search', 'POST', {
-                        query,
-                        filter: activeFilter
-                    });
-                    
-                    if (response.success) {
-                        this.renderSearchResults(response.results);
-                    }
-                } catch (error) {
-                    console.error('Search error:', error);
-                    this.showToast('Search failed', 'error');
-                }
+                const projects = this.getProjects();
+                const myProjects = projects.filter(p => p.ownerId === this.user.id);
+                this.renderMyProjects(myProjects);
             }
             
-            renderSearchResults(results) {
-                const container = document.getElementById('searchResults');
+            loadProject(projectId) {
+                const projects = this.getProjects();
+                const project = projects.find(p => p.id === projectId);
                 
-                if (!results || results.length === 0) {
+                if (!project) {
+                    this.showToast('Project not found', 'error');
+                    this.navigateTo('projects');
+                    return;
+                }
+                
+                this.currentProject = project;
+                this.renderProjectDetail();
+                this.showPage('projectDetail');
+            }
+            
+            loadDiscussion(discussionId) {
+                const projects = this.getProjects();
+                
+                for (const project of projects) {
+                    if (project.discussions) {
+                        const discussion = project.discussions.find(d => d.id === discussionId);
+                        if (discussion) {
+                            this.currentDiscussion = {
+                                ...discussion,
+                                projectId: project.id,
+                                projectTitle: project.title,
+                                projectOwnerId: project.ownerId
+                            };
+                            this.renderDiscussionDetail();
+                            this.showPage('discussionDetail');
+                            return;
+                        }
+                    }
+                }
+                
+                this.showToast('Discussion not found', 'error');
+                this.navigateTo('dashboard');
+            }
+            
+            // ========== RENDERING ==========
+            renderFeaturedDiscussions(discussions) {
+                const container = document.getElementById('featuredDiscussions');
+                
+                if (!discussions.length) {
                     container.innerHTML = `
                         <div class="empty-state">
-                            <div class="empty-icon">🔍</div>
-                            <h3 class="mb-2">No Results Found</h3>
-                            <p class="text-muted mb-4">Try different search terms or filters</p>
+                            <div class="empty-icon">💬</div>
+                            <h3 class="mb-2">No discussions yet</h3>
+                            <p class="text-muted">Start the first discussion in a project!</p>
                         </div>
                     `;
                     return;
                 }
                 
-                container.innerHTML = results.map(result => {
-                    if (result.type === 'thread') {
-                        return `
-                            <div class="search-result-item" data-thread-id="${result.id}" data-project-id="${result.project_id}">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="thread-type-badge thread-type-${result.thread_type}">
-                                        ${this.getThreadIcon(result.thread_type)} ${result.thread_type}
+                container.innerHTML = discussions.map(disc => {
+                    const engagementScore = (disc.likes || 0) + (disc.comments || 0);
+                    const engagementPercentage = Math.min(100, engagementScore * 5);
+                    const isPopular = engagementScore >= 10;
+                    
+                    return `
+                        <div class="discussion-card" data-discussion-id="${disc.id}" data-project-id="${disc.projectId}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="discussion-type type-${disc.type}">
+                                        ${this.getDiscussionIcon(disc.type)} ${disc.type}
                                     </span>
-                                    <span class="text-sm text-muted">Project: ${result.project_title}</span>
+                                    ${isPopular ? `
+                                        <span class="popular-badge">
+                                            <i class="fas fa-fire"></i>
+                                            Popular
+                                        </span>
+                                    ` : ''}
                                 </div>
-                                <h4 class="mb-2">${this.escapeHtml(result.title)}</h4>
-                                <p class="text-sm text-muted">${this.escapeHtml(result.content?.substring(0, 150) || '')}${result.content?.length > 150 ? '...' : ''}</p>
+                                <span class="text-sm text-muted">
+                                    ${this.formatDate(disc.createdAt)}
+                                </span>
                             </div>
-                        `;
-                    } else if (result.type === 'evidence') {
-                        return `
-                            <div class="search-result-item" data-evidence-id="${result.id}">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="evidence-badge evidence-${result.evidence_type}">
-                                        ${this.getEvidenceIcon(result.evidence_type)} ${result.evidence_type}
+                            <h3 class="mb-2">${this.escapeHtml(disc.title)}</h3>
+                            <p class="text-muted mb-3">
+                                ${this.escapeHtml(disc.content.substring(0, 150))}${disc.content.length > 150 ? '...' : ''}
+                            </p>
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center gap-4">
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-user-md"></i>
+                                        ${this.escapeHtml(disc.authorName)}
                                     </span>
-                                    <span class="text-sm text-muted">Project: ${result.project_title}</span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-folder"></i>
+                                        ${this.escapeHtml(disc.projectTitle)}
+                                    </span>
                                 </div>
-                                <h4 class="mb-2">${this.escapeHtml(result.title)}</h4>
-                                <p class="text-sm text-muted">${this.escapeHtml(result.clinical_relevance?.substring(0, 150) || '')}${result.clinical_relevance?.length > 150 ? '...' : ''}</p>
-                            </div>
-                        `;
-                    } else if (result.type === 'bridge_term') {
-                        return `
-                            <div class="search-result-item" data-term="${result.term}" data-project-id="${result.project_id}">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="badge badge-bridge">🌉 Bridge Term</span>
-                                    <span class="text-sm text-muted">Project: ${result.project_title}</span>
-                                </div>
-                                <h4 class="mb-2">${this.escapeHtml(result.term)}</h4>
-                                <div class="text-sm">
-                                    <div class="font-semibold">Clinical:</div>
-                                    <p class="text-muted">${this.escapeHtml(result.clinical_definition?.substring(0, 100) || '')}${result.clinical_definition?.length > 100 ? '...' : ''}</p>
+                                <div class="flex items-center gap-3">
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-heart"></i>
+                                        ${disc.likes || 0}
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-comment"></i>
+                                        ${disc.comments || 0}
+                                    </span>
                                 </div>
                             </div>
-                        `;
-                    } else if (result.type === 'project') {
-                        return `
-                            <div class="search-result-item" data-project-id="${result.id}">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="badge">📁 Project</span>
-                                    <span class="text-sm text-muted">${result.phase} • ${result.status}</span>
-                                </div>
-                                <h4 class="mb-2">${this.escapeHtml(result.title)}</h4>
-                                <p class="text-sm text-muted">${this.escapeHtml(result.description?.substring(0, 150) || '')}${result.description?.length > 150 ? '...' : ''}</p>
+                            <div class="engagement-indicator">
+                                <div class="engagement-fill" style="width: ${engagementPercentage}%"></div>
                             </div>
-                        `;
-                    }
+                        </div>
+                    `;
                 }).join('');
                 
                 // Add click handlers
-                container.querySelectorAll('.search-result-item').forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        if (item.dataset.projectId) {
-                            this.navigateTo(`project/${item.dataset.projectId}`);
+                container.querySelectorAll('.discussion-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.action-btn')) {
+                            const discussionId = e.currentTarget.dataset.discussionId;
+                            this.navigateTo(`discussion/${discussionId}`);
                         }
                     });
                 });
             }
             
-            // ========== RENDERING ==========
-            renderProjects(projects) {
-                const container = document.getElementById('projectsList');
-                if (!container) return;
+            renderRecentProjects(projects) {
+                const container = document.getElementById('recentProjects');
                 
-                if (projects.length === 0) {
+                if (!projects.length) {
                     container.innerHTML = `
-                        <div class="card">
-                            <div class="empty-state">
-                                <div class="empty-icon">📂</div>
-                                <h3 class="mb-2">No Projects Yet</h3>
-                                <p class="text-muted mb-4">Start your first clinical-technical collaboration.</p>
-                                <button class="btn btn-primary" id="createFirstProjectBtn">
-                                    Create First Project
-                                </button>
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <h3 class="mb-2">No projects yet</h3>
+                            <p class="text-muted">Create the first clinical innovation project!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = projects.map(project => {
+                    const discussionCount = project.discussions ? project.discussions.length : 0;
+                    const totalEngagement = project.discussions ? 
+                        project.discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0) : 0;
+                    
+                    return `
+                        <div class="project-card" data-project-id="${project.id}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
+                                    <p class="text-sm text-muted">
+                                        By ${this.escapeHtml(project.ownerName)} • 
+                                        ${this.formatDate(project.createdAt)}
+                                    </p>
+                                </div>
+                                <span class="engagement-score">
+                                    <i class="fas fa-chart-line"></i>
+                                    ${totalEngagement}
+                                </span>
                             </div>
+                            <p class="text-muted mb-4">
+                                ${this.escapeHtml(project.description.substring(0, 180))}${project.description.length > 180 ? '...' : ''}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-wrap gap-1">
+                                    ${project.tags.map(tag => `
+                                        <span class="tag">${this.escapeHtml(tag)}</span>
+                                    `).join('')}
+                                </div>
+                                <div class="text-sm text-muted">
+                                    ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add click handlers
+                container.querySelectorAll('.project-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const projectId = card.dataset.projectId;
+                        this.navigateTo(`project/${projectId}`);
+                    });
+                });
+            }
+            
+            renderAllProjects(projects) {
+                const container = document.getElementById('allProjectsList');
+                
+                if (!projects.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <h3 class="mb-2">No projects yet</h3>
+                            <p class="text-muted">Be the first to create a clinical innovation project!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = projects.map(project => {
+                    const discussionCount = project.discussions ? project.discussions.length : 0;
+                    const totalEngagement = project.discussions ? 
+                        project.discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0) : 0;
+                    const isOwner = !this.isVisitor && project.ownerId === this.user.id;
+                    
+                    return `
+                        <div class="project-card" data-project-id="${project.id}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
+                                    <p class="text-sm text-muted">
+                                        By ${this.escapeHtml(project.ownerName)} • 
+                                        ${this.formatDate(project.createdAt)}
+                                        ${isOwner ? ' • <span class="text-thorax-blue">(Your Project)</span>' : ''}
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="engagement-score">
+                                        <i class="fas fa-chart-line"></i>
+                                        ${totalEngagement}
+                                    </span>
+                                    ${!this.isVisitor && !isOwner ? `
+                                        <button class="btn btn-sm btn-secondary join-project-btn" data-project-id="${project.id}">
+                                            <i class="fas fa-plus"></i>
+                                            Join
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <p class="text-muted mb-4">
+                                ${this.escapeHtml(project.description.substring(0, 200))}${project.description.length > 200 ? '...' : ''}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-wrap gap-1">
+                                    ${project.tags.slice(0, 3).map(tag => `
+                                        <span class="tag">${this.escapeHtml(tag)}</span>
+                                    `).join('')}
+                                    ${project.tags.length > 3 ? `<span class="tag">+${project.tags.length - 3}</span>` : ''}
+                                </div>
+                                <div class="text-sm text-muted">
+                                    ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add click handlers
+                container.querySelectorAll('.project-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.join-project-btn')) {
+                            const projectId = card.dataset.projectId;
+                            this.navigateTo(`project/${projectId}`);
+                        }
+                    });
+                });
+                
+                // Join project buttons
+                container.querySelectorAll('.join-project-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const projectId = btn.dataset.projectId;
+                        this.joinProject(projectId);
+                    });
+                });
+            }
+            
+            renderMyProjects(projects) {
+                const container = document.getElementById('myProjectsList');
+                
+                if (!projects.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <h3 class="mb-2">No projects yet</h3>
+                            <p class="text-muted">Create your first clinical innovation project!</p>
+                            <button class="btn btn-primary mt-4" id="createFirstProjectBtn">
+                                Create First Project
+                            </button>
                         </div>
                     `;
                     
@@ -1371,691 +1645,798 @@
                     return;
                 }
                 
-                container.innerHTML = projects.map(project => `
-                    <div class="card mb-4">
-                        <div class="flex items-start justify-between mb-4">
-                            <div>
-                                <h3 class="mb-2">${this.escapeHtml(project.title)}</h3>
-                                <p class="text-sm text-muted">${project.phase} • ${project.status}</p>
+                container.innerHTML = projects.map(project => {
+                    const discussionCount = project.discussions ? project.discussions.length : 0;
+                    const totalEngagement = project.discussions ? 
+                        project.discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0) : 0;
+                    
+                    return `
+                        <div class="project-card" data-project-id="${project.id}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <h3 class="mb-1">${this.escapeHtml(project.title)}</h3>
+                                    <p class="text-sm text-muted">
+                                        Created ${this.formatDate(project.createdAt)} • 
+                                        Last updated ${this.formatDate(project.updatedAt)}
+                                    </p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-sm btn-secondary edit-project-btn" data-project-id="${project.id}">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" onclick="app.navigateTo('project/${project.id}')">
+                                        Open
+                                    </button>
+                                </div>
                             </div>
-                            <div class="flex gap-2">
-                                <button class="btn btn-secondary btn-sm" onclick="app.exportProject('${project.id}')">
-                                    <i class="fas fa-download"></i>
-                                    Export
-                                </button>
-                                <a href="#project/${project.id}" class="btn btn-primary btn-sm">
-                                    Open Project
-                                </a>
+                            <p class="text-muted mb-4">
+                                ${this.escapeHtml(project.description.substring(0, 180))}${project.description.length > 180 ? '...' : ''}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        ${project.tags.map(tag => `
+                                            <span class="tag">${this.escapeHtml(tag)}</span>
+                                        `).join('')}
+                                    </div>
+                                    <span class="engagement-score">
+                                        <i class="fas fa-chart-line"></i>
+                                        ${totalEngagement}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-muted">
+                                    ${discussionCount} discussion${discussionCount !== 1 ? 's' : ''}
+                                </div>
                             </div>
                         </div>
-                        <p class="text-muted mb-4">${this.escapeHtml(project.description?.substring(0, 200) || '')}${project.description?.length > 200 ? '...' : ''}</p>
-                        <div class="flex items-center justify-between text-sm text-muted">
-                            <span>Created: ${new Date(project.created_at).toLocaleDateString()}</span>
-                            <span>Last updated: ${new Date(project.updated_at).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
+                
+                // Edit project buttons
+                container.querySelectorAll('.edit-project-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const projectId = btn.dataset.projectId;
+                        this.editProject(projectId);
+                    });
+                });
+                
+                // Project click handlers
+                container.querySelectorAll('.project-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.edit-project-btn') && !e.target.closest('button')) {
+                            const projectId = card.dataset.projectId;
+                            this.navigateTo(`project/${projectId}`);
+                        }
+                    });
+                });
             }
             
-            renderProjectDashboard() {
+            renderProjectDetail() {
                 const container = document.getElementById('projectDetailPage');
-                if (!container || !this.currentProject) return;
+                if (!this.currentProject) return;
                 
-                const { project, threads, evidence, decisions, milestones, bridgeTerms, team, engagement } = this.currentProject;
+                const project = this.currentProject;
+                const isOwner = !this.isVisitor && project.ownerId === this.user.id;
+                const discussions = project.discussions || [];
+                
+                // Sort discussions by popularity
+                const sortedDiscussions = [...discussions].sort((a, b) => {
+                    const engagementA = (a.likes || 0) + (a.comments || 0);
+                    const engagementB = (b.likes || 0) + (b.comments || 0);
+                    return engagementB - engagementA;
+                });
                 
                 container.innerHTML = `
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <h1>${this.escapeHtml(project.title)}</h1>
-                                <p class="text-muted">${project.phase} • ${project.status}</p>
+                                <p class="text-muted">
+                                    By ${this.escapeHtml(project.ownerName)} • 
+                                    ${this.formatDate(project.createdAt)}
+                                </p>
                             </div>
                             <div class="flex gap-2">
                                 <button class="btn btn-secondary" id="backToProjectsBtn">
                                     <i class="fas fa-arrow-left"></i>
                                     Back
                                 </button>
-                                <button class="btn btn-primary" id="addThreadBtn">
-                                    <i class="fas fa-plus"></i>
-                                    New Thread
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="dashboard-grid mb-6">
-                            <!-- Engagement Metrics -->
-                            <div class="card col-span-4">
-                                <h3 class="mb-4">Engagement</h3>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="text-center">
-                                        <div class="text-2xl font-bold">${engagement?.active_threads || 0}</div>
-                                        <div class="text-sm text-muted">Active Threads</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-2xl font-bold">${engagement?.evidence_count || 0}</div>
-                                        <div class="text-sm text-muted">Evidence</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-2xl font-bold">${engagement?.bridge_terms_count || 0}</div>
-                                        <div class="text-sm text-muted">Bridge Terms</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-2xl font-bold">${engagement?.milestones_count || 0}</div>
-                                        <div class="text-sm text-muted">Milestones</div>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <button class="btn btn-secondary w-full" onclick="app.exportProject('${project.id}')">
-                                        <i class="fas fa-download"></i>
-                                        Export Project Data
+                                ${isOwner ? `
+                                    <button class="btn btn-primary" id="addDiscussionBtn">
+                                        <i class="fas fa-plus"></i>
+                                        New Discussion
                                     </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Quick Actions -->
-                            <div class="card col-span-4">
-                                <h3 class="mb-4">Quick Actions</h3>
-                                <div class="space-y-2">
-                                    <button class="btn btn-secondary w-full justify-start" id="addEvidenceBtn">
-                                        <i class="fas fa-file-medical"></i>
-                                        Add Evidence
-                                    </button>
-                                    <button class="btn btn-secondary w-full justify-start" id="bridgeTermBtn">
-                                        <i class="fas fa-bridge"></i>
-                                        Bridge a Term
-                                    </button>
-                                    <button class="btn btn-secondary w-full justify-start" id="addMilestoneBtn">
-                                        <i class="fas fa-flag"></i>
-                                        Add Milestone
-                                    </button>
-                                    <button class="btn btn-secondary w-full justify-start" id="inviteTeamBtn">
+                                ` : !this.isVisitor ? `
+                                    <button class="btn btn-primary" id="joinThisProjectBtn">
                                         <i class="fas fa-user-plus"></i>
-                                        Invite Team Member
+                                        Join Project
                                     </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Team -->
-                            <div class="card col-span-4">
-                                <h3 class="mb-4">Team</h3>
-                                <div class="space-y-3">
-                                    ${team && team.length > 0 ? team.map(member => `
-                                        <div class="flex items-center gap-3">
-                                            <div class="user-avatar">${member.avatar_initials || '??'}</div>
-                                            <div class="flex-1">
-                                                <div class="font-medium">${this.escapeHtml(member.name)}</div>
-                                                <div class="text-sm text-muted">${member.primary_role || 'contributor'}</div>
-                                            </div>
-                                            <span class="text-xs px-2 py-1 rounded ${member.role === 'lead' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}">
-                                                ${member.role}
-                                            </span>
-                                        </div>
-                                    `).join('') : '<p class="text-muted">No team members</p>'}
-                                </div>
+                                ` : ''}
                             </div>
                         </div>
                         
-                        <!-- Threads -->
                         <div class="card mb-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3>Recent Discussions</h3>
-                                <button class="btn btn-sm btn-secondary" id="viewAllThreadsBtn">
-                                    View All
-                                </button>
+                            <h3 class="mb-4">Project Description</h3>
+                            <p class="mb-4">${this.escapeHtml(project.description)}</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                ${project.tags.map(tag => `
+                                    <span class="tag">${this.escapeHtml(tag)}</span>
+                                `).join('')}
                             </div>
-                            <div id="threadsList">
-                                ${threads && threads.length > 0 ? threads.map(thread => `
-                                    <div class="thread-card" data-thread-id="${thread.id}">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center gap-2">
-                                                <span class="thread-type-badge thread-type-${thread.type}">
-                                                    ${this.getThreadIcon(thread.type)} ${thread.type}
-                                                </span>
-                                                <span class="text-sm text-muted">${new Date(thread.created_at).toLocaleDateString()}</span>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-sm">${thread.author_name}</span>
-                                                <div class="user-avatar" style="width:24px;height:24px;font-size:10px;">${thread.avatar_initials || '??'}</div>
+                            
+                            <div class="grid grid-cols-2 gap-4 mt-6">
+                                <div>
+                                    <h4 class="mb-2">Team Members</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="user-avatar">${project.ownerName.substring(0, 2).toUpperCase()}</div>
+                                            <div>
+                                                <div class="font-medium">${this.escapeHtml(project.ownerName)}</div>
+                                                <div class="text-sm text-muted">Project Lead</div>
                                             </div>
                                         </div>
-                                        <h4 class="mb-2">${this.escapeHtml(thread.title)}</h4>
-                                        ${thread.clinical_context ? `
-                                            <div class="text-sm mb-2">
-                                                <span class="font-semibold">Clinical:</span> 
-                                                ${this.escapeHtml(thread.clinical_context.substring(0, 100))}${thread.clinical_context.length > 100 ? '...' : ''}
+                                        ${project.teamMembers.map(member => `
+                                            <div class="flex items-center gap-2">
+                                                <div class="user-avatar" style="background: var(--ui-mid);">
+                                                    ${member.substring(0, 2).toUpperCase()}
+                                                </div>
+                                                <div class="font-medium">${this.escapeHtml(member)}</div>
                                             </div>
+                                        `).join('')}
+                                        ${isOwner ? `
+                                            <button class="btn btn-sm btn-secondary mt-2" id="inviteTeamMemberBtn">
+                                                <i class="fas fa-user-plus"></i>
+                                                Invite Team Member
+                                            </button>
                                         ` : ''}
-                                        ${thread.technical_context ? `
-                                            <div class="text-sm mb-2">
-                                                <span class="font-semibold">Technical:</span> 
-                                                ${this.escapeHtml(thread.technical_context.substring(0, 100))}${thread.technical_context.length > 100 ? '...' : ''}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="mb-2">Project Stats</h4>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <div class="text-sm text-muted">Total Discussions</div>
+                                            <div class="text-2xl font-bold">${discussions.length}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-muted">Total Engagement</div>
+                                            <div class="text-2xl font-bold">
+                                                ${discussions.reduce((sum, d) => sum + (d.likes || 0) + (d.comments || 0), 0)}
                                             </div>
-                                        ` : ''}
-                                        <div class="flex items-center justify-between mt-2 text-sm text-muted">
-                                            <span>${thread.status === 'active' ? '🟢 Active' : '⚪ Closed'}</span>
-                                            <span>Click to view discussion</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-muted">Last Activity</div>
+                                            <div class="font-medium">${this.formatDate(project.updatedAt)}</div>
                                         </div>
                                     </div>
-                                `).join('') : '<p class="text-muted text-center py-4">No discussions yet</p>'}
-                            </div>
-                        </div>
-                        
-                        <!-- Evidence & Decisions Grid -->
-                        <div class="dashboard-grid mb-6">
-                            <!-- Evidence -->
-                            <div class="card col-span-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3>Recent Evidence</h3>
-                                    <button class="btn btn-sm btn-secondary" id="viewAllEvidenceBtn">
-                                        View All
-                                    </button>
-                                </div>
-                                <div id="evidenceList">
-                                    ${evidence && evidence.length > 0 ? evidence.map(item => `
-                                        <div class="evidence-card" data-evidence-id="${item.id}">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <span class="evidence-badge evidence-${item.type}">
-                                                    ${this.getEvidenceIcon(item.type)} ${item.type}
-                                                </span>
-                                                <span class="text-sm text-muted">${new Date(item.created_at).toLocaleDateString()}</span>
-                                            </div>
-                                            <h4 class="mb-2">${this.escapeHtml(item.title)}</h4>
-                                            ${item.source_id ? `
-                                                <div class="text-sm text-muted mb-2">
-                                                    Source: ${this.escapeHtml(item.source_id.substring(0, 50))}${item.source_id.length > 50 ? '...' : ''}
-                                                </div>
-                                            ` : ''}
-                                            <div class="text-sm text-muted">By ${item.author_name}</div>
-                                        </div>
-                                    `).join('') : '<p class="text-muted">No evidence yet</p>'}
-                                </div>
-                            </div>
-                            
-                            <!-- Decisions -->
-                            <div class="card col-span-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3>Recent Decisions</h3>
-                                    <button class="btn btn-sm btn-secondary" id="viewAllDecisionsBtn">
-                                        View All
-                                    </button>
-                                </div>
-                                <div id="decisionsList">
-                                    ${decisions && decisions.length > 0 ? decisions.map(decision => `
-                                        <div class="border-b border-ui-border py-3 last:border-b-0">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <h4 class="mb-1">${this.escapeHtml(decision.title)}</h4>
-                                                <span class="text-xs px-2 py-1 rounded ${decision.chosen_option ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
-                                                    ${decision.chosen_option ? 'Decided' : 'Pending'}
-                                                </span>
-                                            </div>
-                                            <div class="text-sm text-muted mb-2">Decided: ${new Date(decision.made_at).toLocaleDateString()}</div>
-                                            ${decision.chosen_option ? `
-                                                <div class="text-sm mb-2">
-                                                    <span class="font-semibold">Chosen:</span> ${this.escapeHtml(decision.chosen_option)}
-                                                </div>
-                                            ` : ''}
-                                            ${decision.rationale ? `
-                                                <div class="text-sm">
-                                                    <span class="font-semibold">Rationale:</span> ${this.escapeHtml(decision.rationale.substring(0, 100))}${decision.rationale.length > 100 ? '...' : ''}
-                                                </div>
-                                            ` : ''}
-                                        </div>
-                                    `).join('') : '<p class="text-muted">No decisions yet</p>'}
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Milestones & Bridge Terms Grid -->
-                        <div class="dashboard-grid">
-                            <!-- Milestones -->
-                            <div class="card col-span-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3>Milestones</h3>
-                                    <button class="btn btn-sm btn-secondary" id="viewAllMilestonesBtn">
-                                        View All
+                        <div class="card">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2>Discussions (${discussions.length})</h2>
+                                ${isOwner ? `
+                                    <button class="btn btn-primary btn-sm" id="startDiscussionBtn">
+                                        <i class="fas fa-plus"></i>
+                                        Start Discussion
                                     </button>
-                                </div>
-                                <div id="milestonesList">
-                                    ${milestones && milestones.length > 0 ? milestones.map(milestone => `
-                                        <div class="milestone-card ${milestone.status === 'completed' ? 'milestone-completed' : ''}">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <h4 class="mb-1">${this.escapeHtml(milestone.title)}</h4>
-                                                <span class="text-xs px-2 py-1 rounded ${milestone.status === 'completed' ? 'bg-green-100 text-green-800' : milestone.status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}">
-                                                    ${milestone.status || 'planned'}
-                                                </span>
-                                            </div>
-                                            ${milestone.description ? `
-                                                <p class="text-sm text-muted mb-2">${this.escapeHtml(milestone.description.substring(0, 100))}${milestone.description.length > 100 ? '...' : ''}</p>
-                                            ` : ''}
-                                            <div class="flex items-center justify-between text-sm text-muted">
-                                                ${milestone.due_date ? `
-                                                    <span>Due: ${new Date(milestone.due_date).toLocaleDateString()}</span>
-                                                ` : '<span>No due date</span>'}
-                                                <span>${milestone.type}</span>
-                                            </div>
-                                        </div>
-                                    `).join('') : '<p class="text-muted">No milestones yet</p>'}
-                                </div>
+                                ` : ''}
                             </div>
                             
-                            <!-- Bridge Terms -->
-                            <div class="card col-span-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3>Bridge Terms</h3>
-                                    <button class="btn btn-sm btn-secondary" id="viewAllBridgeTermsBtn">
-                                        View All
-                                    </button>
-                                </div>
-                                <div id="bridgeTermsList">
-                                    ${bridgeTerms && bridgeTerms.length > 0 ? bridgeTerms.map(term => `
-                                        <div class="bridge-term-card" data-term="${term.term}">
-                                            <h4 class="mb-2">${this.escapeHtml(term.term)}</h4>
-                                            <div class="text-sm mb-2">
-                                                <div class="font-semibold">Clinical:</div>
-                                                <p class="text-muted">${this.escapeHtml(term.clinical_definition?.substring(0, 100) || '')}${term.clinical_definition?.length > 100 ? '...' : ''}</p>
+                            <div id="projectDiscussions">
+                                ${sortedDiscussions.length > 0 ? sortedDiscussions.map(disc => {
+                                    const engagementScore = (disc.likes || 0) + (disc.comments || 0);
+                                    const engagementPercentage = Math.min(100, engagementScore * 5);
+                                    const isPopular = engagementScore >= 10;
+                                    
+                                    return `
+                                        <div class="discussion-card mb-4" data-discussion-id="${disc.id}">
+                                            <div class="flex items-start justify-between mb-3">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="discussion-type type-${disc.type}">
+                                                        ${this.getDiscussionIcon(disc.type)} ${disc.type}
+                                                    </span>
+                                                    ${isPopular ? `
+                                                        <span class="popular-badge">
+                                                            <i class="fas fa-fire"></i>
+                                                            Popular
+                                                        </span>
+                                                    ` : ''}
+                                                </div>
+                                                <span class="text-sm text-muted">
+                                                    ${this.formatDate(disc.createdAt)}
+                                                </span>
                                             </div>
-                                            <div class="flex items-center justify-between text-sm text-muted">
-                                                <span>By ${term.author_name}</span>
-                                                <div class="flex items-center">
-                                                    <span>Confidence:</span>
-                                                    <div class="confidence-indicator ml-1">
-                                                        <div class="confidence-fill" style="width: ${(term.confidence_score || 1) * 20}%"></div>
+                                            <h3 class="mb-2">${this.escapeHtml(disc.title)}</h3>
+                                            <p class="text-muted mb-3">
+                                                ${this.escapeHtml(disc.content.substring(0, 200))}${disc.content.length > 200 ? '...' : ''}
+                                            </p>
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="flex items-center gap-2">
+                                                        <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">
+                                                            ${disc.authorName.substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <span class="text-sm">${this.escapeHtml(disc.authorName)}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-3">
+                                                        <button class="action-btn like-btn ${this.hasLikedDiscussion(disc.id) ? 'liked' : ''}" 
+                                                                data-discussion-id="${disc.id}">
+                                                            <i class="fas fa-heart"></i>
+                                                            <span>${disc.likes || 0}</span>
+                                                        </button>
+                                                        <button class="action-btn comment-btn" data-discussion-id="${disc.id}">
+                                                            <i class="fas fa-comment"></i>
+                                                            <span>${disc.comments || 0}</span>
+                                                        </button>
                                                     </div>
                                                 </div>
+                                                <span class="text-sm text-muted">
+                                                    Click to view discussion
+                                                </span>
+                                            </div>
+                                            <div class="engagement-indicator">
+                                                <div class="engagement-fill" style="width: ${engagementPercentage}%"></div>
                                             </div>
                                         </div>
-                                    `).join('') : '<p class="text-muted">No bridge terms yet</p>'}
-                                </div>
+                                    `;
+                                }).join('') : `
+                                    <div class="empty-state">
+                                        <div class="empty-icon">💬</div>
+                                        <h3 class="mb-2">No discussions yet</h3>
+                                        <p class="text-muted">Start the first discussion!</p>
+                                    </div>
+                                `}
                             </div>
                         </div>
                     </div>
                 `;
                 
                 // Add event listeners
-                this.setupProjectEventListeners();
-                
-                // Thread click handlers
-                container.querySelectorAll('.thread-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        const threadId = e.currentTarget.dataset.threadId;
-                        this.openThread(threadId);
-                    });
-                });
+                this.setupProjectDetailListeners();
             }
             
-            setupProjectEventListeners() {
-                document.getElementById('backToProjectsBtn')?.addEventListener('click', () => {
-                    this.navigateTo('projects');
-                });
+            renderDiscussionDetail() {
+                const container = document.getElementById('discussionDetailPage');
+                if (!this.currentDiscussion) return;
                 
-                document.getElementById('addThreadBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        document.getElementById('threadProjectId').value = this.currentProject.project.id;
-                        this.showModal('newThreadModal');
-                    }
-                });
+                const discussion = this.currentDiscussion;
+                const projects = this.getProjects();
+                const project = projects.find(p => p.id === discussion.projectId);
+                const isOwner = !this.isVisitor && project.ownerId === this.user.id;
+                const hasLiked = this.hasLikedDiscussion(discussion.id);
                 
-                document.getElementById('addEvidenceBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        document.getElementById('evidenceProjectId').value = this.currentProject.project.id;
-                        this.showModal('evidenceModal');
-                    }
-                });
+                container.innerHTML = `
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h1>${this.escapeHtml(discussion.title)}</h1>
+                                <p class="text-muted">
+                                    In project: <a href="#project/${discussion.projectId}" class="text-thorax-blue">
+                                        ${this.escapeHtml(discussion.projectTitle)}
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="btn btn-secondary" id="backToProjectBtn">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back to Project
+                                </button>
+                                ${!this.isVisitor ? `
+                                    <button class="btn btn-primary" id="addCommentBtn">
+                                        <i class="fas fa-comment"></i>
+                                        Add Comment
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="user-avatar">${discussion.authorName.substring(0, 2).toUpperCase()}</div>
+                                    <div>
+                                        <div class="font-medium">${this.escapeHtml(discussion.authorName)}</div>
+                                        <div class="text-sm text-muted">
+                                            ${this.formatDate(discussion.createdAt)} • 
+                                            <span class="discussion-type type-${discussion.type}">
+                                                ${discussion.type}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="action-btn like-btn ${hasLiked ? 'liked' : ''}" 
+                                            data-discussion-id="${discussion.id}">
+                                        <i class="fas fa-heart"></i>
+                                        <span>${discussion.likes || 0}</span>
+                                    </button>
+                                    <span class="text-sm text-muted">
+                                        ${discussion.views || 0} views
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <p>${this.escapeHtml(discussion.content)}</p>
+                            </div>
+                            
+                            <div class="engagement-indicator">
+                                <div class="engagement-fill" style="width: ${Math.min(100, ((discussion.likes || 0) + (discussion.comments || 0)) * 5)}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="mb-4">Comments</h3>
+                            <div id="commentsSection">
+                                <!-- Comments loaded dynamically -->
+                            </div>
+                            ${!this.isVisitor ? `
+                                <div class="mt-4">
+                                    <button class="btn btn-primary w-full" id="addNewCommentBtn">
+                                        <i class="fas fa-plus"></i>
+                                        Add a Comment
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle"></i>
+                                    Visitors can view but cannot comment
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
                 
-                document.getElementById('addMilestoneBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        document.getElementById('milestoneProjectId').value = this.currentProject.project.id;
-                        this.showModal('milestoneModal');
-                    }
-                });
+                // Load comments
+                this.loadComments();
                 
-                document.getElementById('bridgeTermBtn')?.addEventListener('click', () => {
-                    if (this.currentProject) {
-                        document.getElementById('bridgeProjectId').value = this.currentProject.project.id;
-                        this.showModal('bridgeModal');
-                    }
-                });
+                // Add event listeners
+                this.setupDiscussionDetailListeners();
+            }
+            
+            loadComments() {
+                const container = document.getElementById('commentsSection');
+                if (!container) return;
                 
-                document.getElementById('inviteTeamBtn')?.addEventListener('click', () => {
-                    this.showToast('Team invitation feature coming soon!', 'info');
+                const comments = this.currentDiscussion.comments || [];
+                
+                if (!comments.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">💭</div>
+                            <h3 class="mb-2">No comments yet</h3>
+                            <p class="text-muted">Be the first to share your thoughts!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = comments.map(comment => {
+                    const hasLiked = this.hasLikedComment(comment.id);
+                    
+                    return `
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="user-avatar" style="width: 32px; height: 32px; font-size: 12px;">
+                                    ${comment.authorName.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="font-medium">${this.escapeHtml(comment.authorName)}</div>
+                                    <div class="text-sm text-muted">${this.formatDate(comment.createdAt)}</div>
+                                </div>
+                            </div>
+                            <p class="mb-3">${this.escapeHtml(comment.content)}</p>
+                            <div class="engagement-actions" style="border: none; padding: 0;">
+                                <button class="action-btn comment-like-btn ${hasLiked ? 'liked' : ''}" 
+                                        data-comment-id="${comment.id}">
+                                    <i class="fas fa-heart"></i>
+                                    <span>${comment.likes || 0}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add like handlers for comments
+                container.querySelectorAll('.comment-like-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        if (this.isVisitor) {
+                            this.showToast('Visitors cannot like comments', 'warning');
+                            return;
+                        }
+                        const commentId = e.currentTarget.dataset.commentId;
+                        this.toggleCommentLike(commentId);
+                    });
                 });
             }
             
             // ========== PROJECT MANAGEMENT ==========
-            async createProject() {
-                try {
-                    const projectData = {
-                        title: document.getElementById('projectTitle').value.trim(),
-                        description: document.getElementById('projectDescription').value.trim(),
-                        clinical_context: document.getElementById('clinicalContext').value.trim(),
-                        technical_challenge: document.getElementById('technicalChallenge').value.trim(),
-                        status: 'planning',
-                        phase: 'discovery'
-                    };
-                    
-                    if (!projectData.title) {
-                        this.showToast('Project title is required', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest('/api/projects', 'POST', projectData);
-                    
-                    if (response.success) {
-                        this.showToast('Project created successfully', 'success');
-                        this.hideModal('newProjectModal');
-                        await this.loadProjects();
-                        this.navigateTo(`project/${response.project.id}`);
-                    }
-                } catch (error) {
-                    console.error('Create project error:', error);
-                    this.showToast(error.message || 'Failed to create project', 'error');
+            createProject() {
+                const title = document.getElementById('projectTitle').value.trim();
+                const description = document.getElementById('projectDescription').value.trim();
+                const tagsInput = document.getElementById('projectTags').value.trim();
+                
+                if (!title || !description) {
+                    this.showToast('Title and description are required', 'error');
+                    return;
                 }
+                
+                if (description.length > 2000) {
+                    this.showToast('Description must be 2000 characters or less', 'error');
+                    return;
+                }
+                
+                const tags = tagsInput ? 
+                    tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+                
+                // Get team members from UI
+                const teamMembers = [];
+                document.querySelectorAll('#teamMembersList .team-member').forEach(item => {
+                    const name = item.dataset.name;
+                    if (name) teamMembers.push(name);
+                });
+                
+                const project = {
+                    id: `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    title: title,
+                    description: description,
+                    tags: tags,
+                    ownerId: this.user.id,
+                    ownerName: this.user.name,
+                    ownerRole: this.user.role,
+                    teamMembers: teamMembers,
+                    discussions: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Save to localStorage
+                const projects = this.getProjects();
+                projects.push(project);
+                this.saveProjects(projects);
+                
+                this.showToast('Project created successfully!', 'success');
+                this.hideModal('newProjectModal');
+                this.navigateTo(`project/${project.id}`);
             }
             
-            async createThread() {
-                try {
-                    const projectId = document.getElementById('threadProjectId').value;
-                    if (!projectId) {
-                        this.showToast('No project selected', 'error');
-                        return;
-                    }
-                    
-                    const threadData = {
-                        title: document.getElementById('threadTitle').value.trim(),
-                        type: document.querySelector('.thread-type-btn.active').dataset.type,
-                        clinical_context: document.getElementById('threadClinical').value.trim(),
-                        technical_context: document.getElementById('threadTechnical').value.trim()
-                    };
-                    
-                    if (!threadData.title || !threadData.type) {
-                        this.showToast('Title and type are required', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest(`/api/projects/${projectId}/threads`, 'POST', threadData);
-                    
-                    if (response.success) {
-                        this.showToast('Thread started successfully', 'success');
-                        this.hideModal('newThreadModal');
-                        await this.loadProject(projectId);
-                    }
-                } catch (error) {
-                    console.error('Create thread error:', error);
-                    this.showToast(error.message || 'Failed to create thread', 'error');
-                }
+            editProject(projectId) {
+                this.showToast('Edit feature coming soon!', 'info');
             }
             
-            async addEvidence() {
-                try {
-                    const projectId = document.getElementById('evidenceProjectId').value;
-                    if (!projectId) {
-                        this.showToast('No project selected', 'error');
-                        return;
-                    }
-                    
-                    const evidenceData = {
-                        title: document.getElementById('evidenceTitle').value.trim(),
-                        type: document.querySelector('.evidence-type-btn.active').dataset.type,
-                        source_id: document.getElementById('evidenceSource').value.trim(),
-                        clinical_relevance: document.getElementById('clinicalRelevance').value.trim(),
-                        technical_utility: document.getElementById('technicalUtility').value.trim()
-                    };
-                    
-                    if (!evidenceData.title || !evidenceData.type) {
-                        this.showToast('Title and type are required', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest(`/api/projects/${projectId}/evidence`, 'POST', evidenceData);
-                    
-                    if (response.success) {
-                        this.showToast('Evidence added successfully', 'success');
-                        this.hideModal('evidenceModal');
-                        await this.loadProject(projectId);
-                    }
-                } catch (error) {
-                    console.error('Add evidence error:', error);
-                    this.showToast(error.message || 'Failed to add evidence', 'error');
+            joinProject(projectId) {
+                const projects = this.getProjects();
+                const project = projects.find(p => p.id === projectId);
+                
+                if (!project) {
+                    this.showToast('Project not found', 'error');
+                    return;
                 }
+                
+                // Check if already in team
+                if (project.teamMembers.includes(this.user.name)) {
+                    this.showToast('You are already in this project team', 'info');
+                    return;
+                }
+                
+                // Add to team
+                project.teamMembers.push(this.user.name);
+                project.updatedAt = new Date().toISOString();
+                this.saveProjects(projects);
+                
+                this.showToast(`Joined project: ${project.title}`, 'success');
+                this.loadAllProjects();
             }
             
-            async addMilestone() {
-                try {
-                    const projectId = document.getElementById('milestoneProjectId').value;
-                    if (!projectId) {
-                        this.showToast('No project selected', 'error');
-                        return;
-                    }
-                    
-                    const milestoneData = {
-                        title: document.getElementById('milestoneTitle').value.trim(),
-                        type: document.getElementById('milestoneType').value,
-                        description: document.getElementById('milestoneDescription').value.trim(),
-                        due_date: document.getElementById('milestoneDueDate').value,
-                        clinical_owner: document.getElementById('clinicalOwner').value.trim(),
-                        technical_owner: document.getElementById('technicalOwner').value.trim()
-                    };
-                    
-                    if (!milestoneData.title) {
-                        this.showToast('Title is required', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest(`/api/projects/${projectId}/milestones`, 'POST', milestoneData);
-                    
-                    if (response.success) {
-                        this.showToast('Milestone added successfully', 'success');
-                        this.hideModal('milestoneModal');
-                        await this.loadProject(projectId);
-                    }
-                } catch (error) {
-                    console.error('Add milestone error:', error);
-                    this.showToast(error.message || 'Failed to add milestone', 'error');
+            // ========== DISCUSSION MANAGEMENT ==========
+            createDiscussion() {
+                const projectId = document.getElementById('discussionProjectId').value;
+                const title = document.getElementById('discussionTitle').value.trim();
+                const content = document.getElementById('discussionContent').value.trim();
+                const type = document.querySelector('.discussion-type-btn.active').dataset.type;
+                
+                if (!title || !content) {
+                    this.showToast('Topic and description are required', 'error');
+                    return;
                 }
+                
+                if (content.length > 5000) {
+                    this.showToast('Description must be 5000 characters or less', 'error');
+                    return;
+                }
+                
+                const discussion = {
+                    id: `disc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    title: title,
+                    content: content,
+                    type: type,
+                    authorId: this.user.id,
+                    authorName: this.user.name,
+                    authorRole: this.user.role,
+                    createdAt: new Date().toISOString(),
+                    likes: 0,
+                    comments: 0,
+                    views: 0
+                };
+                
+                // Save to project
+                const projects = this.getProjects();
+                const projectIndex = projects.findIndex(p => p.id === projectId);
+                
+                if (projectIndex === -1) {
+                    this.showToast('Project not found', 'error');
+                    return;
+                }
+                
+                if (!projects[projectIndex].discussions) {
+                    projects[projectIndex].discussions = [];
+                }
+                
+                projects[projectIndex].discussions.push(discussion);
+                projects[projectIndex].updatedAt = new Date().toISOString();
+                this.saveProjects(projects);
+                
+                this.showToast('Discussion started successfully!', 'success');
+                this.hideModal('newDiscussionModal');
+                this.navigateTo(`discussion/${discussion.id}`);
             }
             
-            async translateTerm() {
-                try {
-                    const term = document.getElementById('bridgeTerm').value.trim();
-                    const context = document.getElementById('bridgeContext').value.trim();
-                    const projectId = document.getElementById('bridgeProjectId').value;
-                    
-                    if (!term) {
-                        this.showToast('Please enter a term to translate', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest('/api/bridge/translate', 'POST', {
-                        term,
-                        context,
-                        project_id: projectId
-                    });
-                    
-                    if (response.success) {
-                        this.currentBridgeTerm = response.translation;
-                        this.currentBridgeTerm.project_id = projectId;
-                        this.currentBridgeTerm.term = term;
-                        
-                        const result = document.getElementById('bridgeResult');
-                        const clinicalDef = document.getElementById('clinicalDefinition');
-                        const technicalDef = document.getElementById('technicalDefinition');
-                        const analogy = document.getElementById('bridgeAnalogy');
-                        const confidenceScore = document.getElementById('confidenceScore');
-                        const confidenceFill = document.getElementById('confidenceFill');
-                        
-                        clinicalDef.textContent = response.translation.clinical_definition || 'No clinical definition available';
-                        technicalDef.textContent = response.translation.technical_definition || 'No technical definition available';
-                        analogy.textContent = response.translation.analogy || 'No analogy available';
-                        
-                        const confidence = response.translation.confidence || 1;
-                        confidenceScore.textContent = `${confidence}/5`;
-                        confidenceFill.style.width = `${confidence * 20}%`;
-                        
-                        result.classList.remove('hidden');
-                        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                } catch (error) {
-                    console.error('Translation error:', error);
-                    this.showToast(error.message, 'error');
+            addComment() {
+                const discussionId = document.getElementById('commentDiscussionId').value;
+                const content = document.getElementById('commentContent').value.trim();
+                
+                if (!content) {
+                    this.showToast('Comment content is required', 'error');
+                    return;
                 }
-            }
-            
-            async saveBridgeTerm() {
-                try {
-                    if (!this.currentBridgeTerm) {
-                        this.showToast('No translation to save', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest('/api/bridge/terms', 'POST', this.currentBridgeTerm);
-                    
-                    if (response.success) {
-                        this.showToast('Bridge term saved to project glossary', 'success');
-                        this.hideModal('bridgeModal');
-                        if (this.currentProject) {
-                            await this.loadProject(this.currentProject.project.id);
+                
+                if (content.length > 1000) {
+                    this.showToast('Comment must be 1000 characters or less', 'error');
+                    return;
+                }
+                
+                const comment = {
+                    id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    content: content,
+                    authorId: this.user.id,
+                    authorName: this.user.name,
+                    authorRole: this.user.role,
+                    createdAt: new Date().toISOString(),
+                    likes: 0
+                };
+                
+                // Find and update discussion
+                const projects = this.getProjects();
+                let discussionUpdated = false;
+                
+                for (const project of projects) {
+                    if (project.discussions) {
+                        const discussionIndex = project.discussions.findIndex(d => d.id === discussionId);
+                        if (discussionIndex !== -1) {
+                            if (!project.discussions[discussionIndex].comments) {
+                                project.discussions[discussionIndex].comments = [];
+                            }
+                            project.discussions[discussionIndex].comments.push(comment);
+                            project.discussions[discussionIndex].comments++;
+                            project.discussions[discussionIndex].updatedAt = new Date().toISOString();
+                            project.updatedAt = new Date().toISOString();
+                            discussionUpdated = true;
+                            break;
                         }
                     }
-                } catch (error) {
-                    console.error('Save bridge term error:', error);
-                    this.showToast(error.message || 'Failed to save term', 'error');
+                }
+                
+                if (discussionUpdated) {
+                    this.saveProjects(projects);
+                    this.showToast('Comment added successfully!', 'success');
+                    this.hideModal('commentModal');
+                    this.loadDiscussion(discussionId);
+                } else {
+                    this.showToast('Discussion not found', 'error');
                 }
             }
             
-            async exportProject(projectId) {
-                try {
-                    const response = await this.apiRequest(`/api/projects/${projectId}/export`);
-                    
-                    if (response.success && response.data) {
-                        // Create and download JSON file
-                        const dataStr = JSON.stringify(response.data, null, 2);
-                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                        const url = URL.createObjectURL(dataBlob);
-                        
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = `thoraxlab-project-${projectId}-${new Date().toISOString().split('T')[0]}.json`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(url);
-                        
-                        this.showToast('Project exported successfully', 'success');
+            // ========== ENGAGEMENT FEATURES ==========
+            toggleDiscussionLike(discussionId) {
+                const likedDiscussions = JSON.parse(localStorage.getItem('thoraxlab_discussion_likes') || '{}');
+                
+                if (likedDiscussions[discussionId]) {
+                    // Unlike
+                    delete likedDiscussions[discussionId];
+                    this.updateDiscussionLikes(discussionId, -1);
+                } else {
+                    // Like
+                    likedDiscussions[discussionId] = true;
+                    this.updateDiscussionLikes(discussionId, 1);
+                }
+                
+                localStorage.setItem('thoraxlab_discussion_likes', JSON.stringify(likedDiscussions));
+                this.loadDashboard(); // Refresh featured discussions
+            }
+            
+            toggleCommentLike(commentId) {
+                const likedComments = JSON.parse(localStorage.getItem('thoraxlab_comment_likes') || '{}');
+                
+                if (likedComments[commentId]) {
+                    // Unlike
+                    delete likedComments[commentId];
+                    this.updateCommentLikes(commentId, -1);
+                } else {
+                    // Like
+                    likedComments[commentId] = true;
+                    this.updateCommentLikes(commentId, 1);
+                }
+                
+                localStorage.setItem('thoraxlab_comment_likes', JSON.stringify(likedComments));
+            }
+            
+            updateDiscussionLikes(discussionId, delta) {
+                const projects = this.getProjects();
+                
+                for (const project of projects) {
+                    if (project.discussions) {
+                        const discussion = project.discussions.find(d => d.id === discussionId);
+                        if (discussion) {
+                            discussion.likes = (discussion.likes || 0) + delta;
+                            project.updatedAt = new Date().toISOString();
+                            break;
+                        }
                     }
-                } catch (error) {
-                    console.error('Export error:', error);
-                    this.showToast('Export failed', 'error');
+                }
+                
+                this.saveProjects(projects);
+                
+                // Update UI if on discussion detail page
+                if (this.currentDiscussion && this.currentDiscussion.id === discussionId) {
+                    this.currentDiscussion.likes = (this.currentDiscussion.likes || 0) + delta;
+                    this.renderDiscussionDetail();
                 }
             }
             
-            // ========== EVENT HANDLERS ==========
+            updateCommentLikes(commentId, delta) {
+                const projects = this.getProjects();
+                
+                for (const project of projects) {
+                    if (project.discussions) {
+                        for (const discussion of project.discussions) {
+                            if (discussion.comments) {
+                                const comment = discussion.comments.find(c => c.id === commentId);
+                                if (comment) {
+                                    comment.likes = (comment.likes || 0) + delta;
+                                    project.updatedAt = new Date().toISOString();
+                                    this.saveProjects(projects);
+                                    
+                                    // Update current discussion if needed
+                                    if (this.currentDiscussion && this.currentDiscussion.id === discussion.id) {
+                                        this.loadDiscussion(discussion.id);
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            hasLikedDiscussion(discussionId) {
+                const likedDiscussions = JSON.parse(localStorage.getItem('thoraxlab_discussion_likes') || '{}');
+                return !!likedDiscussions[discussionId];
+            }
+            
+            hasLikedComment(commentId) {
+                const likedComments = JSON.parse(localStorage.getItem('thoraxlab_comment_likes') || '{}');
+                return !!likedComments[commentId];
+            }
+            
+            // ========== EVENT LISTENERS SETUP ==========
             setupEventListeners() {
-                // Authentication
-                document.getElementById('authForm').addEventListener('submit', (e) => this.handleLogin(e));
-                
-                // Project creation
-                document.getElementById('newProjectBtn').addEventListener('click', () => {
-                    this.showModal('newProjectModal');
+                // Auth buttons
+                document.getElementById('creatorLoginBtn').addEventListener('click', () => {
+                    document.getElementById('creatorForm').classList.remove('hidden');
+                    document.getElementById('visitorForm').classList.add('hidden');
                 });
                 
-                document.getElementById('createProjectBtn').addEventListener('click', () => {
-                    this.showModal('newProjectModal');
+                document.getElementById('visitorLoginBtn').addEventListener('click', () => {
+                    document.getElementById('visitorForm').classList.remove('hidden');
+                    document.getElementById('creatorForm').classList.add('hidden');
                 });
                 
+                document.getElementById('backToChoiceBtn').addEventListener('click', () => {
+                    document.getElementById('creatorForm').classList.add('hidden');
+                });
+                
+                document.getElementById('backToChoiceBtn2').addEventListener('click', () => {
+                    document.getElementById('visitorForm').classList.add('hidden');
+                });
+                
+                document.getElementById('creatorForm').addEventListener('submit', (e) => this.loginAsCreator(e));
+                document.getElementById('visitorForm').addEventListener('submit', (e) => this.loginAsVisitor(e));
+                
+                // Logout
+                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+                
+                // New project
+                document.getElementById('newProjectBtn').addEventListener('click', () => this.showModal('newProjectModal'));
+                document.getElementById('createMyProjectBtn').addEventListener('click', () => this.showModal('newProjectModal'));
+                
+                // Project form
                 document.getElementById('projectForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.createProject();
                 });
                 
-                // Thread creation
-                document.querySelectorAll('.thread-type-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.thread-type-btn').forEach(b => b.classList.remove('active'));
-                        e.currentTarget.classList.add('active');
-                    });
-                });
-                
-                document.getElementById('threadForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.createThread();
-                });
-                
-                // Evidence creation
-                document.querySelectorAll('.evidence-type-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.evidence-type-btn').forEach(b => b.classList.remove('active'));
-                        e.currentTarget.classList.add('active');
-                    });
-                });
-                
-                // File upload
-                const fileUploadArea = document.getElementById('fileUploadArea');
-                const fileUpload = document.getElementById('fileUpload');
-                const filePreview = document.getElementById('filePreview');
-                const fileName = document.getElementById('fileName');
-                const removeFile = document.getElementById('removeFile');
-                
-                if (fileUploadArea && fileUpload) {
-                    fileUploadArea.addEventListener('click', () => fileUpload.click());
-                    fileUploadArea.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        fileUploadArea.style.borderColor = 'var(--thorax-blue)';
-                    });
-                    fileUploadArea.addEventListener('dragleave', () => {
-                        fileUploadArea.style.borderColor = 'var(--ui-border)';
-                    });
-                    fileUploadArea.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        fileUploadArea.style.borderColor = 'var(--ui-border)';
-                        if (e.dataTransfer.files.length) {
-                            fileUpload.files = e.dataTransfer.files;
-                            this.handleFileSelect(e.dataTransfer.files[0]);
-                        }
-                    });
+                // Team member management
+                document.getElementById('addTeamMemberBtn').addEventListener('click', () => {
+                    const input = document.getElementById('teamMemberInput');
+                    const name = input.value.trim();
                     
-                    fileUpload.addEventListener('change', (e) => {
-                        if (e.target.files.length) {
-                            this.handleFileSelect(e.target.files[0]);
-                        }
+                    if (name) {
+                        this.addTeamMember(name);
+                        input.value = '';
+                    }
+                });
+                
+                // Character counters
+                document.getElementById('projectDescription').addEventListener('input', (e) => {
+                    const counter = document.getElementById('descCounter');
+                    const length = e.target.value.length;
+                    counter.textContent = `${length}/2000`;
+                    counter.classList.toggle('near-limit', length > 1800);
+                    counter.classList.toggle('over-limit', length > 2000);
+                });
+                
+                document.getElementById('discussionContent').addEventListener('input', (e) => {
+                    const counter = document.getElementById('discussionCounter');
+                    const length = e.target.value.length;
+                    counter.textContent = `${length}/5000`;
+                    counter.classList.toggle('near-limit', length > 4500);
+                    counter.classList.toggle('over-limit', length > 5000);
+                });
+                
+                document.getElementById('commentContent').addEventListener('input', (e) => {
+                    const counter = document.getElementById('commentCounter');
+                    const length = e.target.value.length;
+                    counter.textContent = `${length}/1000`;
+                    counter.classList.toggle('near-limit', length > 900);
+                    counter.classList.toggle('over-limit', length > 1000);
+                });
+                
+                // Discussion type selection
+                document.querySelectorAll('.discussion-type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.discussion-type-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
                     });
-                }
-                
-                if (removeFile) {
-                    removeFile.addEventListener('click', () => {
-                        fileUpload.value = '';
-                        filePreview.classList.add('hidden');
-                    });
-                }
-                
-                document.getElementById('evidenceForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.addEvidence();
                 });
                 
-                // Milestone creation
-                document.getElementById('milestoneForm').addEventListener('submit', (e) => {
+                // Discussion form
+                document.getElementById('discussionForm').addEventListener('submit', (e) => {
                     e.preventDefault();
-                    this.addMilestone();
+                    this.createDiscussion();
                 });
                 
-                // Bridge translation
-                document.getElementById('bridgeForm').addEventListener('submit', (e) => {
+                // Comment form
+                document.getElementById('commentForm').addEventListener('submit', (e) => {
                     e.preventDefault();
-                    this.translateTerm();
+                    this.addComment();
                 });
                 
-                document.getElementById('saveBridgeTermBtn')?.addEventListener('click', () => {
-                    this.saveBridgeTerm();
+                // Search
+                document.getElementById('projectSearch').addEventListener('input', (e) => {
+                    this.searchProjects(e.target.value);
                 });
                 
                 // Modal close buttons
-                document.querySelectorAll('.btn-icon, .modal .btn-secondary').forEach(btn => {
+                document.querySelectorAll('.modal .btn-icon, .modal .btn-secondary').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        if (e.currentTarget.id.includes('close') || e.currentTarget.id.includes('cancel')) {
-                            const modal = e.currentTarget.closest('.modal');
-                            if (modal) {
-                                this.hideModal(modal.id);
-                            }
+                        const modal = e.currentTarget.closest('.modal');
+                        if (modal) {
+                            this.hideModal(modal.id);
                         }
                     });
                 });
@@ -2070,17 +2451,92 @@
                 });
             }
             
-            handleFileSelect(file) {
-                const filePreview = document.getElementById('filePreview');
-                const fileName = document.getElementById('fileName');
+            setupProjectDetailListeners() {
+                document.getElementById('backToProjectsBtn')?.addEventListener('click', () => {
+                    this.navigateTo('projects');
+                });
                 
-                if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                    this.showToast('File size exceeds 10MB limit', 'error');
-                    return;
-                }
+                document.getElementById('addDiscussionBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        document.getElementById('discussionProjectId').value = this.currentProject.id;
+                        this.showModal('newDiscussionModal');
+                    }
+                });
                 
-                fileName.textContent = file.name;
-                filePreview.classList.remove('hidden');
+                document.getElementById('startDiscussionBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        document.getElementById('discussionProjectId').value = this.currentProject.id;
+                        this.showModal('newDiscussionModal');
+                    }
+                });
+                
+                document.getElementById('joinThisProjectBtn')?.addEventListener('click', () => {
+                    if (this.currentProject) {
+                        this.joinProject(this.currentProject.id);
+                    }
+                });
+                
+                document.getElementById('inviteTeamMemberBtn')?.addEventListener('click', () => {
+                    this.showModal('inviteTeamModal');
+                });
+                
+                // Discussion like buttons
+                document.querySelectorAll('.like-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (this.isVisitor) {
+                            this.showToast('Visitors cannot like discussions', 'warning');
+                            return;
+                        }
+                        const discussionId = e.currentTarget.dataset.discussionId;
+                        this.toggleDiscussionLike(discussionId);
+                    });
+                });
+                
+                // Comment buttons
+                document.querySelectorAll('.comment-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const discussionId = e.currentTarget.dataset.discussionId;
+                        this.navigateTo(`discussion/${discussionId}`);
+                    });
+                });
+                
+                // Discussion click handlers
+                document.querySelectorAll('#projectDiscussions .discussion-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.action-btn')) {
+                            const discussionId = card.dataset.discussionId;
+                            this.navigateTo(`discussion/${discussionId}`);
+                        }
+                    });
+                });
+            }
+            
+            setupDiscussionDetailListeners() {
+                document.getElementById('backToProjectBtn')?.addEventListener('click', () => {
+                    this.navigateTo(`project/${this.currentDiscussion.projectId}`);
+                });
+                
+                document.getElementById('addCommentBtn')?.addEventListener('click', () => {
+                    document.getElementById('commentDiscussionId').value = this.currentDiscussion.id;
+                    this.showModal('commentModal');
+                });
+                
+                document.getElementById('addNewCommentBtn')?.addEventListener('click', () => {
+                    document.getElementById('commentDiscussionId').value = this.currentDiscussion.id;
+                    this.showModal('commentModal');
+                });
+                
+                // Discussion like button
+                document.querySelector('.like-btn')?.addEventListener('click', (e) => {
+                    if (this.isVisitor) {
+                        this.showToast('Visitors cannot like discussions', 'warning');
+                        return;
+                    }
+                    const discussionId = e.currentTarget.dataset.discussionId;
+                    this.toggleDiscussionLike(discussionId);
+                });
             }
             
             // ========== UTILITY METHODS ==========
@@ -2095,55 +2551,70 @@
                     
                     // Reset forms
                     const form = modal.querySelector('form');
-                    if (form) form.reset();
+                    if (form) {
+                        form.reset();
+                        
+                        // Reset character counters
+                        const counter = modal.querySelector('.char-counter');
+                        if (counter) {
+                            counter.textContent = '0/...';
+                            counter.className = 'char-counter';
+                        }
+                    }
                     
-                    // Hide bridge result
-                    const result = modal.querySelector('#bridgeResult');
-                    if (result) result.classList.add('hidden');
-                    
-                    // Hide file preview
-                    const filePreview = modal.querySelector('#filePreview');
-                    if (filePreview) filePreview.classList.add('hidden');
-                    
-                    this.currentBridgeTerm = null;
+                    // Clear team members list
+                    if (modalId === 'newProjectModal') {
+                        document.getElementById('teamMembersList').innerHTML = '';
+                        document.getElementById('tagsContainer').innerHTML = '';
+                    }
                 }
             }
             
-            async apiRequest(url, method = 'GET', data = null) {
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': this.token ? `Bearer ${this.token}` : ''
-                };
+            addTeamMember(name) {
+                const container = document.getElementById('teamMembersList');
+                const memberId = `member_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
                 
-                const options = {
-                    method,
-                    headers
-                };
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'flex items-center justify-between p-2 bg-ui-bg rounded team-member';
+                memberDiv.dataset.name = name;
+                memberDiv.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px; background: var(--ui-mid);">
+                            ${name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <span>${this.escapeHtml(name)}</span>
+                    </div>
+                    <button type="button" class="text-sm text-error remove-member-btn">&times;</button>
+                `;
                 
-                if (data) {
-                    options.body = JSON.stringify(data);
-                }
+                // Add remove listener
+                memberDiv.querySelector('.remove-member-btn').addEventListener('click', () => {
+                    memberDiv.remove();
+                });
                 
-                const response = await fetch(url, options);
-                
-                // Handle 401 - session expired
-                if (response.status === 401) {
-                    this.token = null;
-                    this.user = null;
-                    localStorage.removeItem('thoraxlab_token');
-                    localStorage.removeItem('thoraxlab_user');
-                    this.showAuth();
-                    throw new Error('Session expired. Please login again.');
-                }
-                
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error || `HTTP ${response.status}`);
-                }
-                
-                return await response.json();
+                container.appendChild(memberDiv);
             }
             
+            searchProjects(query) {
+                const projects = this.getProjects();
+                const filtered = projects.filter(project => 
+                    project.title.toLowerCase().includes(query.toLowerCase()) ||
+                    project.description.toLowerCase().includes(query.toLowerCase()) ||
+                    project.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+                );
+                this.renderAllProjects(filtered);
+            }
+            
+            // ========== DATA STORAGE ==========
+            getProjects() {
+                return JSON.parse(localStorage.getItem('thoraxlab_projects') || '[]');
+            }
+            
+            saveProjects(projects) {
+                localStorage.setItem('thoraxlab_projects', JSON.stringify(projects));
+            }
+            
+            // ========== UI HELPERS ==========
             showToast(message, type = 'info') {
                 const container = document.getElementById('toastContainer');
                 if (!container) return;
@@ -2180,183 +2651,34 @@
                 return div.innerHTML;
             }
             
-            getThreadIcon(type) {
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) {
+                    return 'Today';
+                } else if (diffDays === 1) {
+                    return 'Yesterday';
+                } else if (diffDays < 7) {
+                    return `${diffDays} days ago`;
+                } else if (diffDays < 30) {
+                    const weeks = Math.floor(diffDays / 7);
+                    return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
+                } else {
+                    return date.toLocaleDateString();
+                }
+            }
+            
+            getDiscussionIcon(type) {
                 const icons = {
-                    'discussion': '💬',
-                    'hypothesis': '🔍',
+                    'brainstorm': '💡',
                     'question': '❓',
                     'decision': '🤔',
-                    'insight': '💡',
-                    'progress': '🔄'
+                    'insight': '🔍'
                 };
                 return icons[type] || '💬';
-            }
-            
-            getEvidenceIcon(type) {
-                const icons = {
-                    'paper': '📄',
-                    'dataset': '📊',
-                    'protocol': '📋',
-                    'regulation': '⚖️',
-                    'result': '📈',
-                    'internal': '🏢'
-                };
-                return icons[type] || '📄';
-            }
-            
-            async openThread(threadId) {
-                try {
-                    const response = await this.apiRequest(`/api/threads/${threadId}`);
-                    
-                    if (response.success) {
-                        this.currentThread = response;
-                        this.showThreadModal();
-                    }
-                } catch (error) {
-                    console.error('Open thread error:', error);
-                    this.showToast('Failed to load thread', 'error');
-                }
-            }
-            
-            showThreadModal() {
-                const modal = document.getElementById('threadModal');
-                const content = modal.querySelector('.modal-content');
-                
-                if (!this.currentThread) return;
-                
-                const { thread, posts } = this.currentThread;
-                
-                content.innerHTML = `
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <h2>${this.escapeHtml(thread.title)}</h2>
-                            <p class="text-muted">${thread.project_title} • ${thread.type}</p>
-                        </div>
-                        <button class="btn btn-icon" onclick="app.hideModal('threadModal')">&times;</button>
-                    </div>
-                    
-                    <div class="card mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3">
-                                <div class="user-avatar">${thread.avatar_initials || '??'}</div>
-                                <div>
-                                    <div class="font-medium">${thread.author_name}</div>
-                                    <div class="text-sm text-muted">${new Date(thread.created_at).toLocaleDateString()}</div>
-                                </div>
-                            </div>
-                            <span class="thread-type-badge thread-type-${thread.type}">
-                                ${this.getThreadIcon(thread.type)} ${thread.type}
-                            </span>
-                        </div>
-                        
-                        ${thread.clinical_context ? `
-                            <div class="mb-4">
-                                <div class="text-sm font-semibold text-muted mb-1">Clinical Context</div>
-                                <p>${this.escapeHtml(thread.clinical_context)}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${thread.technical_context ? `
-                            <div class="mb-4">
-                                <div class="text-sm font-semibold text-muted mb-1">Technical Context</div>
-                                <p>${this.escapeHtml(thread.technical_context)}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${thread.bridge_insights ? `
-                            <div class="mb-4 p-3 bg-blue-50 rounded">
-                                <div class="text-sm font-semibold text-blue-700 mb-1">Bridge Insights</div>
-                                <p class="text-blue-800">${this.escapeHtml(thread.bridge_insights)}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h3 class="mb-4">Discussion (${posts.length})</h3>
-                        <div id="postsContainer">
-                            ${posts && posts.length > 0 ? posts.map(post => `
-                                <div class="border-b border-ui-border py-4 last:border-b-0">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="user-avatar">${post.avatar_initials || '??'}</div>
-                                            <div>
-                                                <div class="font-medium">${post.author_name}</div>
-                                                <div class="text-sm text-muted">${new Date(post.created_at).toLocaleDateString()}</div>
-                                            </div>
-                                        </div>
-                                        ${post.perspective ? `
-                                            <span class="badge badge-${post.perspective}">
-                                                ${post.perspective} perspective
-                                            </span>
-                                        ` : ''}
-                                    </div>
-                                    <p class="mb-3">${this.escapeHtml(post.content)}</p>
-                                    ${post.evidence_refs && post.evidence_refs.length > 0 ? `
-                                        <div class="text-sm text-muted">
-                                            <i class="fas fa-paperclip"></i>
-                                            References: ${post.evidence_refs.length} evidence items
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            `).join('') : '<p class="text-muted text-center py-4">No posts yet</p>'}
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h4 class="mb-4">Add to Discussion</h4>
-                        <form id="postForm">
-                            <div class="form-group">
-                                <textarea id="postContent" class="form-input form-textarea" placeholder="Share your perspective..." rows="3" required></textarea>
-                            </div>
-                            <div class="flex gap-2">
-                                <select id="postPerspective" class="form-input flex-1">
-                                    <option value="">Select perspective</option>
-                                    <option value="clinical">Clinical</option>
-                                    <option value="technical">Technical</option>
-                                    <option value="bridge">Bridge</option>
-                                </select>
-                                <button type="submit" class="btn btn-primary">Post</button>
-                            </div>
-                        </form>
-                    </div>
-                `;
-                
-                // Add post form handler
-                const postForm = content.querySelector('#postForm');
-                if (postForm) {
-                    postForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        await this.addPostToThread();
-                    });
-                }
-                
-                this.showModal('threadModal');
-            }
-            
-            async addPostToThread() {
-                try {
-                    if (!this.currentThread) return;
-                    
-                    const postData = {
-                        content: document.getElementById('postContent').value.trim(),
-                        perspective: document.getElementById('postPerspective').value
-                    };
-                    
-                    if (!postData.content) {
-                        this.showToast('Post content is required', 'warning');
-                        return;
-                    }
-                    
-                    const response = await this.apiRequest(`/api/threads/${this.currentThread.thread.id}/posts`, 'POST', postData);
-                    
-                    if (response.success) {
-                        this.showToast('Posted successfully', 'success');
-                        await this.openThread(this.currentThread.thread.id);
-                    }
-                } catch (error) {
-                    console.error('Add post error:', error);
-                    this.showToast(error.message || 'Failed to post', 'error');
-                }
             }
         }
         
@@ -2369,11 +2691,9 @@
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
-                if (window.app.user) {
-                    window.app.showModal('newProjectModal');
-                }
+                document.getElementById('projectSearch')?.focus();
             }
             
             if (e.key === 'Escape') {
