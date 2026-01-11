@@ -3,2053 +3,796 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIRWAYSCOPE PRO v2.0 | Clinical Pathway System</title>
+    <title>ThoraxLab | Clinical Research Collaboration Platform</title>
     
-    <!-- Dependencies -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        /* ====== MEDICAL CLINICAL THEME ====== */
-        :root {
-            --clinical-primary: #1a73e8;
-            --clinical-secondary: #0d47a1;
-            --clinical-success: #0f9d58;
-            --clinical-warning: #ff9800;
-            --clinical-danger: #ea4335;
-            --clinical-info: #00bcd4;
-            
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #f1f5f9;
-            --bg-panel: #ffffff;
-            
-            --text-primary: #1a202c;
-            --text-secondary: #4a5568;
-            --text-tertiary: #718096;
-            
-            --border-light: #e2e8f0;
-            --border-medium: #cbd5e1;
-            
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--text-primary);
-        }
-        
-        .app-container {
-            max-width: 1800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 95vh;
-        }
-        
-        /* ====== HEADER ====== */
-        .app-header {
-            background: linear-gradient(to right, var(--clinical-primary), var(--clinical-secondary));
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .header-icon {
-            font-size: 28px;
-            background: rgba(255,255,255,0.2);
-            width: 50px; height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .header-title { 
-            font-size: 22px; 
-            font-weight: 800; 
-            letter-spacing: -0.5px; 
-        }
-        
-        .header-subtitle { 
-            font-size: 13px; 
-            opacity: 0.9; 
-            font-weight: 500; 
-        }
-        
-        .status-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        
-        .connected { background: var(--clinical-success); }
-        .disconnected { background: var(--clinical-danger); }
-        
-        /* ====== MAIN LAYOUT ====== */
-        .main-layout {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        
-        /* ====== SIDEBAR ====== */
-        .sidebar {
-            width: 350px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-light);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: width 0.3s ease;
-        }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-light);
-            background: white;
-        }
-        
-        .sidebar-tabs {
-            display: flex;
-            background: white;
-            border-bottom: 1px solid var(--border-light);
-        }
-        
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            transition: all 0.2s;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        
-        .tab-btn:hover { background: var(--bg-tertiary); }
-        .tab-btn.active {
-            color: var(--clinical-primary);
-            border-bottom-color: var(--clinical-primary);
-        }
-        
-        .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        
-        /* ====== CANVAS AREA ====== */
-        .canvas-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: var(--bg-tertiary);
-        }
-        
-        .canvas-toolbar {
-            padding: 15px 20px;
-            background: white;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .toolbar-section {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border-radius: var(--radius-lg);
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            transition: all 0.2s;
-            background: white;
-            border: 1px solid var(--border-light);
-            color: var(--text-primary);
-        }
-        
-        .btn:hover {
-            border-color: var(--clinical-primary);
-            background: var(--bg-tertiary);
-        }
-        
-        .btn-primary {
-            background: var(--clinical-primary);
-            color: white;
-            border: none;
-        }
-        
-        .btn-primary:hover {
-            background: var(--clinical-secondary);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-success { background: var(--clinical-success); color: white; border: none; }
-        .btn-warning { background: var(--clinical-warning); color: white; border: none; }
-        .btn-danger { background: var(--clinical-danger); color: white; border: none; }
-        
-        /* ====== NETWORK CANVAS ====== */
-        #networkCanvas {
-            flex: 1;
-            position: relative;
-            overflow: auto;
-            background: 
-                linear-gradient(90deg, var(--border-light) 1px, transparent 1px) 0 0 / 40px 40px,
-                linear-gradient(var(--border-light) 1px, transparent 1px) 0 0 / 40px 40px;
-        }
-        
-        .connections-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .connection {
-            position: absolute;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .connection-line {
-            stroke-width: 2;
-            fill: none;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
-        }
-        
-        .connection-label {
-            position: absolute;
-            background: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--clinical-primary);
-            border: 1px solid var(--clinical-primary);
-            pointer-events: none;
-            z-index: 2;
-            box-shadow: var(--shadow-sm);
-            transform: translate(-50%, -50%);
-            white-space: nowrap;
-        }
-        
-        /* ====== TRAIT NODES ====== */
-        .trait-node {
-            position: absolute;
-            width: 240px;
-            background: white;
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-md);
-            cursor: move;
-            border-left: 4px solid;
-            z-index: 10;
-            transition: all 0.2s;
-            user-select: none;
-        }
-        
-        .trait-node:hover {
-            box-shadow: var(--shadow-lg);
-            z-index: 100;
-        }
-        
-        .trait-node.selected {
-            box-shadow: 0 0 0 2px var(--clinical-primary), var(--shadow-md);
-            z-index: 1000;
-        }
-        
-        .node-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        
-        .node-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-        
-        .node-category {
-            font-size: 10px;
-            padding: 4px 8px;
-            border-radius: 12px;
-            background: var(--clinical-primary);
-            color: white;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .node-content {
-            padding: 12px 16px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-        
-        .node-footer {
-            padding: 12px 16px;
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-tertiary);
-        }
-        
-        /* ====== PATIENT CONTEXT PANEL ====== */
-        .context-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 280px;
-            background: white;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            z-index: 50;
-            display: none;
-        }
-        
-        .context-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .context-title {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-        
-        .context-content {
-            padding: 16px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        /* ====== TOASTS ====== */
-        .toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 400px;
-        }
-        
-        .toast {
-            background: white;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 12px 16px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            box-shadow: var(--shadow-xl);
-            animation: slideInRight 0.3s ease;
-            transform: translateX(0);
-            opacity: 1;
-        }
-        
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .toast-exit {
-            animation: slideOutRight 0.3s ease;
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        
-        /* ====== MODALS ====== */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal.active { display: flex; }
-        
-        .modal-content {
-            background: white;
-            border-radius: var(--radius-xl);
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .modal-body { padding: 20px; }
-        
-        /* ====== FORM ELEMENTS ====== */
-        .form-group { margin-bottom: 16px; }
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            font-size: 14px;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--clinical-primary);
-            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
-        }
-        
-        /* ====== UTILITIES ====== */
-        .hidden { display: none !important; }
-        .text-truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .scrollbar-thin {
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-light) var(--bg-secondary);
-        }
-        
-        .scrollbar-thin::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .scrollbar-thin::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-            border-radius: 3px;
-        }
-        
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-            background: var(--border-light);
-            border-radius: 3px;
-        }
-    </style>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔬</text></svg>">
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- HEADER -->
-        <header class="app-header">
-            <div class="header-left">
-                <div class="header-icon">
-                    <i class="fas fa-wind"></i>
-                </div>
-                <div>
-                    <div class="header-title">AIRWAYSCOPE PRO v2.0</div>
-                    <div class="header-subtitle">Clinical Pathway Mapping with Persistent State</div>
-                </div>
-            </div>
-            <div class="status-badge">
-                <div class="status-dot connected"></div>
-                <span id="connectionStatus">Connected</span>
-            </div>
-        </header>
+    <div id="app">
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
         
-        <!-- MAIN LAYOUT -->
-        <div class="main-layout">
-            <!-- SIDEBAR -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h3 style="margin-bottom: 8px; font-size: 16px; color: var(--text-primary);">
-                        <i class="fas fa-project-diagram"></i> Clinical Networks
-                    </h3>
-                    <p style="font-size: 12px; color: var(--text-tertiary);">
-                        Map treatable traits and clinical pathways
-                    </p>
+        <!-- Authentication Screen -->
+        <div id="authScreen" class="auth-screen">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="brand-logo-auth">
+                        <i class="fas fa-flask mr-2"></i>
+                        <span>Thorax</span>Lab
+                    </div>
+                    <p class="brand-subtitle">Clinical Research Collaboration Platform</p>
                 </div>
                 
-                <div class="sidebar-tabs">
-                    <button class="tab-btn active" data-tab="diseases">
-                        <i class="fas fa-disease"></i>
-                        <span>Diseases</span>
-                    </button>
-                    <button class="tab-btn" data-tab="patients">
-                        <i class="fas fa-user-injured"></i>
-                        <span>Patients</span>
-                    </button>
-                    <button class="tab-btn" data-tab="history">
-                        <i class="fas fa-history"></i>
-                        <span>History</span>
-                    </button>
-                </div>
-                
-                <div class="tab-content scrollbar-thin">
-                    <!-- DISEASES TAB -->
-                    <div class="tab-pane active" id="diseases-tab">
-                        <div class="disease-list" id="diseaseList">
-                            <!-- Will be populated by JS -->
-                        </div>
+                <div class="auth-body">
+                    <div class="text-center mb-8">
+                        <h2 class="mb-2">Welcome to Clinical Research Collaboration</h2>
+                        <p class="text-muted">Join as a professional or explore as a guest</p>
                     </div>
                     
-                    <!-- PATIENTS TAB -->
-                    <div class="tab-pane" id="patients-tab">
+                    <div class="auth-choice">
+                        <button id="professionalLoginBtn" class="auth-choice-btn active">
+                            <i class="auth-choice-icon fas fa-user-md"></i>
+                            <span>Research Professional</span>
+                        </button>
+                        <button id="visitorLoginBtn" class="auth-choice-btn">
+                            <i class="auth-choice-icon fas fa-eye"></i>
+                            <span>Guest Researcher</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Professional Form -->
+                    <form id="professionalForm" class="auth-form">
                         <div class="form-group">
-                            <select class="form-control" id="patientSelect">
-                                <option value="">Select patient...</option>
+                            <label for="professionalName" class="form-label">Full Name *</label>
+                            <input type="text" id="professionalName" class="form-input" 
+                                   placeholder="Dr. Alexander Chen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="professionalType" class="form-label">Professional Type *</label>
+                            <select id="professionalType" class="form-input" required>
+                                <option value="">Select your professional type</option>
+                                <option value="clinical">Clinical Professional</option>
+                                <option value="academic">Academic Professional</option>
+                                <option value="industry">Industry Professional</option>
+                                <option value="other">Other Research Professional</option>
                             </select>
                         </div>
-                        <div id="patientDetails" style="display: none;">
-                            <!-- Patient details will appear here -->
+                        <div class="form-group">
+                            <label for="professionalInstitution" class="form-label">Institution / Organization</label>
+                            <input type="text" id="professionalInstitution" class="form-input" 
+                                   placeholder="e.g., Cambridge University Hospitals, PharmaCorp, etc.">
                         </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            Enter Platform
+                        </button>
+                    </form>
                     
-                    <!-- HISTORY TAB -->
-                    <div class="tab-pane" id="history-tab">
-                        <div class="history-list" id="historyList">
-                            <!-- Undo/Redo history will appear here -->
+                    <!-- Visitor Form -->
+                    <form id="visitorForm" class="auth-form hidden">
+                        <div class="form-group">
+                            <label for="visitorName" class="form-label">Your Name (Optional)</label>
+                            <input type="text" id="visitorName" class="form-input" 
+                                   placeholder="Enter name or remain anonymous">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-eye mr-2"></i>
+                            Browse Research
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Application -->
+        <div id="mainApp" class="hidden">
+            <!-- Modern Header -->
+            <header class="app-header">
+                <div class="container">
+                    <div class="header-container">
+                        <a href="#dashboard" class="brand-main">
+                            <i class="fas fa-flask mr-2"></i>
+                            <span>Thorax</span>Lab
+                        </a>
+                        
+                        <nav class="nav-main">
+                            <div class="nav-item">
+                                <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                                    <i class="fas fa-chart-line mr-2"></i>
+                                    Dashboard
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="#projects" class="nav-link" data-page="projects">
+                                    <i class="fas fa-flask mr-2"></i>
+                                    Research Projects
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="#myprojects" class="nav-link" data-page="myprojects">
+                                    <i class="fas fa-folder mr-2"></i>
+                                    My Projects
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="#collaborations" class="nav-link" data-page="collaborations">
+                                    <i class="fas fa-users mr-2"></i>
+                                    Collaborations
+                                </a>
+                            </div>
+                        </nav>
+                        
+                        <div class="user-section">
+                            <div class="flex items-center gap-4">
+                                <span class="visitor-badge hidden" id="visitorBadge">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    Guest
+                                </span>
+                                <button id="newProjectBtn" class="btn btn-primary btn-sm hidden">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    New Project
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <div id="userAvatar" class="user-avatar">??</div>
+                                <div class="user-info">
+                                    <div id="userName" class="user-name">Loading...</div>
+                                    <div id="userRole" class="user-role">Loading...</div>
+                                </div>
+                                <button id="logoutBtn" class="btn btn-ghost btn-icon">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div style="padding: 16px; border-top: 1px solid var(--border-light);">
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-danger btn-sm" onclick="StateManager.clearAll()" style="flex: 1;">
-                            <i class="fas fa-trash"></i> Clear All
-                        </button>
-                        <button class="btn btn-success btn-sm" onclick="ExportManager.exportToPDF()" style="flex: 1;">
-                            <i class="fas fa-file-pdf"></i> Export PDF
-                        </button>
-                    </div>
-                </div>
-            </aside>
+            </header>
             
-            <!-- MAIN CANVAS -->
-            <main class="canvas-area">
-                <div class="canvas-toolbar">
-                    <div class="toolbar-section">
-                        <button class="btn" id="btnAddTrait">
-                            <i class="fas fa-plus"></i> Add Trait
-                        </button>
-                        <button class="btn" id="btnAddConnection">
-                            <i class="fas fa-link"></i> Add Connection
-                        </button>
-                        <button class="btn" id="btnAutoLayout">
-                            <i class="fas fa-sitemap"></i> Auto Layout
-                        </button>
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <div class="container">
+                    <!-- Dashboard Page -->
+                    <div id="dashboardPage" class="page">
+                        <div class="page-header">
+                            <h1 class="page-title" id="welcomeMessage">Research Dashboard</h1>
+                            <p class="page-subtitle">Monitor and contribute to clinical innovation projects</p>
+                        </div>
+                        
+                        <!-- User Stats -->
+                        <div class="dashboard-grid mb-8">
+                            <div class="col-span-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-chart-line"></i>
+                                            Research Overview
+                                        </h2>
+                                    </div>
+                                    <div id="userStats">
+                                        <!-- Stats loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity Feed & Tags -->
+                        <div class="dashboard-grid mb-8">
+                            <div class="col-span-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-bolt"></i>
+                                            Recent Activity
+                                        </h2>
+                                        <div class="activity-filters">
+                                            <button class="activity-filter active" data-filter="all">All</button>
+                                            <button class="activity-filter" data-filter="project">Projects</button>
+                                            <button class="activity-filter" data-filter="discussion">Discussions</button>
+                                            <button class="activity-filter" data-filter="comment">Comments</button>
+                                        </div>
+                                    </div>
+                                    <div id="activityFeed">
+                                        <!-- Activity loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-span-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-tags"></i>
+                                            Trending Topics
+                                        </h2>
+                                    </div>
+                                    <div id="tagsCloud">
+                                        <!-- Tags loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Featured Discussions -->
+                        <div class="dashboard-grid mb-8">
+                            <div class="col-span-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-fire"></i>
+                                            Featured Discussions
+                                        </h2>
+                                        <div class="search-bar">
+                                            <i class="search-icon fas fa-search"></i>
+                                            <input type="text" id="discussionSearch" class="search-input" 
+                                                   placeholder="Search discussions...">
+                                        </div>
+                                    </div>
+                                    <div id="featuredDiscussions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- Discussions loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Projects -->
+                        <div class="dashboard-grid">
+                            <div class="col-span-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="card-icon fas fa-project-diagram"></i>
+                                            Active Research Projects
+                                        </h2>
+                                        <button id="viewAllProjectsBtn" class="btn btn-outline btn-sm">
+                                            View All
+                                            <i class="fas fa-arrow-right ml-2"></i>
+                                        </button>
+                                    </div>
+                                    <div id="recentProjects" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        <!-- Projects loaded dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="toolbar-section">
-                        <button class="btn" id="btnUndo" title="Undo (Ctrl+Z)">
-                            <i class="fas fa-undo"></i> Undo
-                        </button>
-                        <button class="btn" id="btnRedo" title="Redo (Ctrl+Y)">
-                            <i class="fas fa-redo"></i> Redo
-                        </button>
-                        <button class="btn btn-primary" id="btnSaveNetwork">
-                            <i class="fas fa-save"></i> Save Session
-                        </button>
+                    <!-- All Projects Page -->
+                    <div id="projectsPage" class="page hidden">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">Research Projects</h1>
+                                    <p class="page-subtitle">Explore clinical innovation collaborations</p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="search-bar">
+                                        <i class="search-icon fas fa-search"></i>
+                                        <input type="text" id="projectSearch" class="search-input" 
+                                               placeholder="Search projects by title, tags, or institution...">
+                                    </div>
+                                    <div class="dropdown">
+                                        <button id="sortProjectsBtn" class="btn btn-outline btn-sm">
+                                            <i class="fas fa-sort mr-2"></i>
+                                            Sort
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button class="dropdown-item" data-sort="recent">Most Recent</button>
+                                            <button class="dropdown-item" data-sort="popular">Most Popular</button>
+                                            <button class="dropdown-item" data-sort="title">Alphabetical</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="allProjectsList" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Projects loaded dynamically -->
+                        </div>
                     </div>
+                    
+                    <!-- My Projects Page -->
+                    <div id="myProjectsPage" class="page hidden">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">My Research Projects</h1>
+                                    <p class="page-subtitle">Manage your clinical innovation initiatives</p>
+                                </div>
+                                <button id="createMyProjectBtn" class="btn btn-primary">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    New Project
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="myProjectsList" class="grid grid-cols-1 gap-6">
+                            <!-- My projects loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Collaborations Page -->
+                    <div id="collaborationsPage" class="page hidden">
+                        <div class="page-header">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="page-title">Collaborations</h1>
+                                    <p class="page-subtitle">Manage your research partnerships and team members</p>
+                                </div>
+                                <button id="inviteCollaboratorBtn" class="btn btn-primary">
+                                    <i class="fas fa-user-plus mr-2"></i>
+                                    Invite Collaborator
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="collaborationsList" class="grid grid-cols-1 gap-6">
+                            <!-- Collaborations loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Project Detail Page -->
+                    <div id="projectDetailPage" class="page hidden">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    
+                    <!-- Discussion Detail Page -->
+                    <div id="discussionDetailPage" class="page hidden">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    
+                  <!-- Profile Page -->
+<div id="profilePage" class="page hidden">
+    <div class="page-header">
+        <h1 class="page-title">Profile Settings</h1>
+        <p class="page-subtitle">Manage your account and preferences</p>
+    </div>
+    
+    <div class="dashboard-grid">
+        <div class="col-span-4">
+            <div class="card">
+                <div class="text-center p-6">
+                    <div id="profileAvatar" class="user-avatar mx-auto mb-4" style="width: 80px; height: 80px; font-size: 1.5rem;"></div>
+                    <h3 id="profileName" class="mb-1">Loading...</h3>
+                    <p id="profileRole" class="text-muted mb-4">Loading...</p>
+                    <button class="btn btn-outline btn-sm w-full">
+                        <i class="fas fa-camera mr-2"></i>
+                        Update Photo
+                    </button>
                 </div>
-                
-                <div id="networkCanvas">
-                    <!-- Connection layer -->
-                    <svg class="connections-layer" id="connectionsLayer"></svg>
-                    
-                    <!-- Trait nodes will be added here -->
-                    <div id="traitNodesContainer"></div>
-                    
-                    <!-- Connection creator (hidden by default) -->
-                    <div class="connection-creator" id="connectionCreator" style="display: none;">
-                        <!-- Will be shown when creating connections -->
+            </div>
+        </div>
+        
+        <div class="col-span-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Profile Information</h2>
+                </div>
+                <form id="profileForm" class="space-y-4 p-6">
+                    <div class="form-group">
+                        <label for="profileNameInput" class="form-label">Full Name</label>
+                        <input type="text" id="profileNameInput" class="form-input" placeholder="Your full name">
                     </div>
-                    
-                    <!-- Patient context panel -->
-                    <div class="context-panel" id="contextPanel">
-                        <div class="context-header">
-                            <div class="context-title">Patient Context</div>
-                            <button class="btn btn-sm" onclick="$('#contextPanel').hide()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="context-content" id="contextContent">
-                            <!-- Patient context will appear here -->
-                        </div>
+                    <div class="form-group">
+                        <label for="profileInstitution" class="form-label">Institution</label>
+                        <input type="text" id="profileInstitution" class="form-input" placeholder="Your institution or organization">
                     </div>
-                    
-                    <!-- Welcome message -->
-                    <div id="welcomeMessage" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: var(--text-tertiary);">
-                        <div style="font-size: 72px; opacity: 0.2; margin-bottom: 20px;">
-                            <i class="fas fa-wind"></i>
-                        </div>
-                        <h2 style="margin-bottom: 12px; color: var(--text-primary); font-size: 24px;">
-                            Welcome to AIRWAYSCOPE PRO v2.0
-                        </h2>
-                        <p style="max-width: 400px; line-height: 1.5;">
-                            Select a disease to begin mapping clinical pathways with persistent state management
-                        </p>
+                    <div class="form-group">
+                        <label for="profileBio" class="form-label">Bio</label>
+                        <textarea id="profileBio" class="form-input form-textarea" rows="4" placeholder="Tell us about your research interests and expertise..."></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="profileExpertise" class="form-label">Research Domains</label>
+                        <input type="text" id="profileExpertise" class="form-input" placeholder="e.g., Oncology, AI, Genomics, Clinical Trials">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
             </main>
-        </div>
-    </div>
-    
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-    
-    <!-- Modals -->
-    <div class="modal" id="addTraitModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add Clinical Trait</h2>
-                <button class="btn btn-sm" onclick="ModalManager.close('addTraitModal')">
-                    <i class="fas fa-times"></i>
+            
+            <!-- Quick Actions Menu (Floating Action Button) -->
+            <div class="quick-actions-menu">
+                <button class="quick-actions-btn" id="quickActionsMainBtn">
+                    <i class="fas fa-plus"></i>
                 </button>
+                <div class="quick-actions-dropdown" id="quickActionsDropdown">
+                    <div class="quick-action-item" data-action="new-project">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>New Research Project</span>
+                    </div>
+                    <div class="quick-action-item" data-action="new-discussion">
+                        <i class="fas fa-comments"></i>
+                        <span>Start Discussion</span>
+                    </div>
+                    <div class="quick-action-item" data-action="request-review">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Request Expert Review</span>
+                    </div>
+                    <div class="quick-action-item" data-action="find-collaborator">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Find Collaborator</span>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <!-- Trait form will be added by JS -->
-            </div>
+            
+            <!-- Bottom Navigation (Mobile) -->
+            <nav class="mobile-nav lg:hidden">
+                <a href="#dashboard" class="mobile-nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#projects" class="mobile-nav-item">
+                    <i class="fas fa-flask"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="#myprojects" class="mobile-nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>My Projects</span>
+                </a>
+                <a href="#collaborations" class="mobile-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Teams</span>
+                </a>
+                <a href="#profile" class="mobile-nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
         </div>
-    </div>
-    
-    <div class="modal" id="connectionModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Create Clinical Connection</h2>
-                <button class="btn btn-sm" onclick="ModalManager.close('connectionModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Connection form will be added by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- ====== RE-WRITTEN JAVASCRIPT ====== -->
-    <script>
-        // ============================================================================
-        // AIRWAYSCOPE PRO v2.0 - Complete Rewrite with All Improvements
-        // ============================================================================
-
-        // ====== GLOBAL STATE MANAGER (Improvement #1) ======
-        class StateManager {
-            static KEY = 'airwayscope_pro_state';
-            static AUTOSAVE_INTERVAL = 30000; // 30 seconds
-            
-            static state = {
-                currentDisease: null,
-                currentPatient: null,
-                traits: [],
-                connections: [],
-                nodePositions: new Map(),
-                selectedNode: null,
-                viewport: { zoom: 1, pan: { x: 0, y: 0 } },
-                sessionId: Date.now().toString(36),
-                lastSave: null
-            };
-            
-            static history = [];
-            static historyIndex = -1;
-            static MAX_HISTORY = 50;
-            
-            static init() {
-                // Load from localStorage
-                this.load();
-                
-                // Setup autosave
-                setInterval(() => this.autosave(), this.AUTOSAVE_INTERVAL);
-                
-                // Setup beforeunload
-                window.addEventListener('beforeunload', (e) => {
-                    if (this.state.traits.length > 0) {
-                        this.save();
-                    }
-                });
-                
-                console.log('✅ StateManager initialized');
-            }
-            
-            static save() {
-                try {
-                    const serializableState = {
-                        ...this.state,
-                        nodePositions: Array.from(this.state.nodePositions.entries()),
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    localStorage.setItem(this.KEY, JSON.stringify(serializableState));
-                    this.state.lastSave = new Date();
-                    
-                    // Show subtle save indicator
-                    $('#connectionStatus').text('Saved ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
-                    
-                    return true;
-                } catch (error) {
-                    console.error('❌ State save failed:', error);
-                    return false;
-                }
-            }
-            
-            static load() {
-                try {
-                    const saved = localStorage.getItem(this.KEY);
-                    if (saved) {
-                        const parsed = JSON.parse(saved);
-                        
-                        // Restore node positions
-                        if (parsed.nodePositions) {
-                            this.state.nodePositions = new Map(parsed.nodePositions);
-                        }
-                        
-                        // Restore other state
-                        this.state.traits = parsed.traits || [];
-                        this.state.connections = parsed.connections || [];
-                        this.state.currentDisease = parsed.currentDisease;
-                        this.state.currentPatient = parsed.currentPatient;
-                        this.state.viewport = parsed.viewport || { zoom: 1, pan: { x: 0, y: 0 } };
-                        this.state.lastSave = parsed.timestamp ? new Date(parsed.timestamp) : null;
-                        
-                        console.log('🔄 State restored from localStorage');
-                        return true;
-                    }
-                } catch (error) {
-                    console.error('❌ State load failed:', error);
-                }
-                return false;
-            }
-            
-            static autosave() {
-                if (this.state.traits.length > 0) {
-                    this.save();
-                }
-            }
-            
-            static clearAll() {
-                if (confirm('Clear all data? This cannot be undone.')) {
-                    localStorage.removeItem(this.KEY);
-                    this.state = {
-                        currentDisease: null,
-                        currentPatient: null,
-                        traits: [],
-                        connections: [],
-                        nodePositions: new Map(),
-                        selectedNode: null,
-                        viewport: { zoom: 1, pan: { x: 0, y: 0 } },
-                        sessionId: Date.now().toString(36),
-                        lastSave: null
-                    };
-                    this.history = [];
-                    this.historyIndex = -1;
-                    
-                    UI.renderNetwork();
-                    UI.showToast('State Cleared', 'All data has been cleared', 'warning');
-                }
-            }
-            
-            // ====== UNDO/REDO SYSTEM (Improvement #2) ======
-            static recordAction(action, data) {
-                // Don't record if we're undoing/redoing
-                if (this.isUndoing) return;
-                
-                // Clear redo history if we're not at the end
-                if (this.historyIndex < this.history.length - 1) {
-                    this.history = this.history.slice(0, this.historyIndex + 1);
-                }
-                
-                this.history.push({ action, data, timestamp: Date.now() });
-                
-                // Limit history size
-                if (this.history.length > this.MAX_HISTORY) {
-                    this.history.shift();
-                }
-                
-                this.historyIndex = this.history.length - 1;
-                UI.updateUndoRedoButtons();
-            }
-            
-            static undo() {
-                if (this.historyIndex < 0) return;
-                
-                const action = this.history[this.historyIndex];
-                this.isUndoing = true;
-                
-                switch (action.action) {
-                    case 'addTrait':
-                        this.state.traits = this.state.traits.filter(t => t.id !== action.data.id);
-                        this.state.nodePositions.delete(action.data.id);
-                        break;
-                        
-                    case 'addConnection':
-                        this.state.connections = this.state.connections.filter(c => c.id !== action.data.id);
-                        break;
-                        
-                    case 'updateTrait':
-                        const oldTrait = this.state.traits.find(t => t.id === action.data.id);
-                        if (oldTrait) {
-                            Object.assign(oldTrait, action.data.oldState);
-                        }
-                        break;
-                }
-                
-                this.historyIndex--;
-                this.isUndoing = false;
-                this.save();
-                UI.renderNetwork();
-                UI.showToast('Undo', `Undid: ${action.action}`, 'info');
-            }
-            
-            static redo() {
-                if (this.historyIndex >= this.history.length - 1) return;
-                
-                this.historyIndex++;
-                const action = this.history[this.historyIndex];
-                this.isUndoing = true;
-                
-                switch (action.action) {
-                    case 'addTrait':
-                        this.state.traits.push(action.data);
-                        break;
-                        
-                    case 'addConnection':
-                        this.state.connections.push(action.data);
-                        break;
-                        
-                    case 'updateTrait':
-                        const trait = this.state.traits.find(t => t.id === action.data.id);
-                        if (trait) {
-                            Object.assign(trait, action.data.newState);
-                        }
-                        break;
-                }
-                
-                this.isUndoing = false;
-                this.save();
-                UI.renderNetwork();
-                UI.showToast('Redo', `Redid: ${action.action}`, 'info');
-            }
-            
-            static updateUndoRedoUI() {
-                $('#btnUndo').prop('disabled', this.historyIndex < 0);
-                $('#btnRedo').prop('disabled', this.historyIndex >= this.history.length - 1);
-            }
-        }
-
-        // ====== CONNECTION MANAGER (Improvement #6 - PRECISE CONNECTIONS) ======
-        class ConnectionManager {
-            static COLORS = {
-                'treats': '#0f9d58',      // Green for treatments
-                'mitigates': '#0d47a1',   // Dark blue for mitigation
-                'causes': '#ea4335',       // Red for causation
-                'exacerbates': '#ff9800',  // Orange for exacerbation
-                'correlates': '#00bcd4',   // Cyan for correlation
-                'associated': '#9c27b0'    // Purple for association
-            };
-            
-            static STYLES = {
-                'treats': 'solid',
-                'mitigates': 'solid',
-                'causes': 'dashed',
-                'exacerbates': 'dashed',
-                'correlates': 'dotted',
-                'associated': 'dotted'
-            };
-            
-            static drawConnections() {
-                const svg = $('#connectionsLayer')[0];
-                svg.innerHTML = '';
-                
-                // Clear old labels
-                $('.connection-label').remove();
-                
-                // Group connections by source-target pairs for bundling
-                const connectionGroups = {};
-                StateManager.state.connections.forEach(conn => {
-                    const key = `${Math.min(conn.source, conn.target)}-${Math.max(conn.source, conn.target)}`;
-                    if (!connectionGroups[key]) connectionGroups[key] = [];
-                    connectionGroups[key].push(conn);
-                });
-                
-                // Draw bundled connections
-                Object.values(connectionGroups).forEach(group => {
-                    this.drawConnectionGroup(group);
-                });
-            }
-            
-            static drawConnectionGroup(connections) {
-                if (connections.length === 0) return;
-                
-                const firstConn = connections[0];
-                const sourceNode = $(`.trait-node[data-id="${firstConn.source}"]`);
-                const targetNode = $(`.trait-node[data-id="${firstConn.target}"]`);
-                
-                if (!sourceNode.length || !targetNode.length) return;
-                
-                // Get node positions and dimensions
-                const sourceRect = sourceNode[0].getBoundingClientRect();
-                const targetRect = targetNode[0].getBoundingClientRect();
-                const canvasRect = $('#networkCanvas')[0].getBoundingClientRect();
-                
-                // Calculate edge points (connect to edges, not centers)
-                const sourceCenter = {
-                    x: sourceRect.left + sourceRect.width / 2 - canvasRect.left,
-                    y: sourceRect.top + sourceRect.height / 2 - canvasRect.top
-                };
-                
-                const targetCenter = {
-                    x: targetRect.left + targetRect.width / 2 - canvasRect.left,
-                    y: targetRect.top + targetRect.height / 2 - canvasRect.top
-                };
-                
-                // Find intersection points with node edges
-                const sourceEdge = this.findEdgeIntersection(sourceCenter, targetCenter, sourceRect, canvasRect);
-                const targetEdge = this.findEdgeIntersection(targetCenter, sourceCenter, targetRect, canvasRect);
-                
-                // For multiple connections between same nodes, offset them
-                connections.forEach((conn, index) => {
-                    const offset = (index - (connections.length - 1) / 2) * 15;
-                    this.drawSingleConnection(conn, sourceEdge, targetEdge, offset);
-                });
-            }
-            
-            static findEdgeIntersection(from, to, nodeRect, canvasRect) {
-                // Convert to canvas coordinates
-                const nodeCenter = {
-                    x: nodeRect.left + nodeRect.width / 2 - canvasRect.left,
-                    y: nodeRect.top + nodeRect.height / 2 - canvasRect.top
-                };
-                
-                const angle = Math.atan2(to.y - from.y, to.x - from.x);
-                
-                // Calculate intersection with node rectangle
-                const halfWidth = nodeRect.width / 2;
-                const halfHeight = nodeRect.height / 2;
-                
-                // Calculate intersection point on rectangle edge
-                const ratio = Math.min(
-                    Math.abs(halfWidth / Math.cos(angle)),
-                    Math.abs(halfHeight / Math.sin(angle))
-                );
-                
-                return {
-                    x: nodeCenter.x + Math.cos(angle) * (halfWidth + 1),
-                    y: nodeCenter.y + Math.sin(angle) * (halfHeight + 1)
-                };
-            }
-            
-            static drawSingleConnection(connection, sourcePoint, targetPoint, offset) {
-                const svg = $('#connectionsLayer')[0];
-                
-                // Apply perpendicular offset
-                const angle = Math.atan2(targetPoint.y - sourcePoint.y, targetPoint.x - sourcePoint.x);
-                const perpendicular = angle + Math.PI / 2;
-                
-                const offsetSource = {
-                    x: sourcePoint.x + Math.cos(perpendicular) * offset,
-                    y: sourcePoint.y + Math.sin(perpendicular) * offset
-                };
-                
-                const offsetTarget = {
-                    x: targetPoint.x + Math.cos(perpendicular) * offset,
-                    y: targetPoint.y + Math.sin(perpendicular) * offset
-                };
-                
-                // Calculate control points for smooth curve
-                const dx = offsetTarget.x - offsetSource.x;
-                const dy = offsetTarget.y - offsetSource.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                const controlOffset = Math.min(distance * 0.3, 100);
-                const control1 = {
-                    x: offsetSource.x + dx * 0.5 - dy * 0.2,
-                    y: offsetSource.y + dy * 0.5 + dx * 0.2
-                };
-                
-                const control2 = {
-                    x: offsetTarget.x - dx * 0.5 - dy * 0.2,
-                    y: offsetTarget.y - dy * 0.5 + dx * 0.2
-                };
-                
-                // Create SVG path
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', 
-                    `M ${offsetSource.x} ${offsetSource.y} 
-                     C ${control1.x} ${control1.y}, ${control2.x} ${control2.y}, ${offsetTarget.x} ${offsetTarget.y}`
-                );
-                
-                // Style based on connection type
-                const color = this.COLORS[connection.type] || '#4361ee';
-                const style = this.STYLES[connection.type] || 'solid';
-                
-                path.setAttribute('stroke', color);
-                path.setAttribute('stroke-width', connection.strength || 2);
-                path.setAttribute('fill', 'none');
-                path.setAttribute('stroke-dasharray', style === 'dashed' ? '5,5' : style === 'dotted' ? '2,2' : 'none');
-                path.setAttribute('opacity', '0.8');
-                path.setAttribute('class', 'connection-line');
-                
-                // Add arrowhead for directional connections
-                if (['causes', 'exacerbates', 'treats', 'mitigates'].includes(connection.type)) {
-                    const markerId = `arrow-${connection.type}`;
-                    this.addArrowhead(svg, markerId, color);
-                    path.setAttribute('marker-end', `url(#${markerId})`);
-                }
-                
-                svg.appendChild(path);
-                
-                // Add label at midpoint
-                this.addConnectionLabel(connection, offsetSource, offsetTarget, control1, control2);
-            }
-            
-            static addArrowhead(svg, id, color) {
-                // Check if arrowhead already exists
-                if ($(`#${id}`).length) return;
-                
-                const defs = svg.querySelector('defs') || (() => {
-                    const d = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-                    svg.appendChild(d);
-                    return d;
-                })();
-                
-                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-                marker.setAttribute('id', id);
-                marker.setAttribute('viewBox', '0 0 10 10');
-                marker.setAttribute('refX', '8');
-                marker.setAttribute('refY', '5');
-                marker.setAttribute('markerWidth', '6');
-                marker.setAttribute('markerHeight', '6');
-                marker.setAttribute('orient', 'auto');
-                
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
-                path.setAttribute('fill', color);
-                
-                marker.appendChild(path);
-                defs.appendChild(marker);
-            }
-            
-            static addConnectionLabel(connection, start, end, control1, control2) {
-                // Calculate position along curve (30%)
-                const t = 0.3;
-                const x = Math.pow(1-t, 3)*start.x + 3*Math.pow(1-t, 2)*t*control1.x + 3*(1-t)*Math.pow(t, 2)*control2.x + Math.pow(t, 3)*end.x;
-                const y = Math.pow(1-t, 3)*start.y + 3*Math.pow(1-t, 2)*t*control1.y + 3*(1-t)*Math.pow(t, 2)*control2.y + Math.pow(t, 3)*end.y;
-                
-                // Calculate tangent for label rotation
-                const dx = 3*Math.pow(1-t, 2)*(control1.x-start.x) + 6*(1-t)*t*(control2.x-control1.x) + 3*Math.pow(t, 2)*(end.x-control2.x);
-                const dy = 3*Math.pow(1-t, 2)*(control1.y-start.y) + 6*(1-t)*t*(control2.y-control1.y) + 3*Math.pow(t, 2)*(end.y-control2.y);
-                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-                
-                const label = $(`
-                    <div class="connection-label" style="
-                        left: ${x}px; 
-                        top: ${y}px;
-                        transform: translate(-50%, -50%) rotate(${angle}deg);
-                        transform-origin: center;
-                        background: white;
-                        border-color: ${this.COLORS[connection.type] || '#4361ee'};
-                        color: ${this.COLORS[connection.type] || '#4361ee'};
-                    ">
-                        ${connection.type.toUpperCase()}
-                        ${connection.strength ? ` (${connection.strength}/5)` : ''}
+        
+        <!-- Modals -->
+        
+        <!-- New Project Modal -->
+        <div id="newProjectModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Initiate Research Project
+                    </h2>
+                    <button class="modal-close" id="closeProjectModal">&times;</button>
+                </div>
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label for="projectTitle" class="form-label">Project Title *</label>
+                        <input type="text" id="projectTitle" class="form-input" 
+                               placeholder="e.g., Genomic Biomarkers for Immunotherapy Response" required>
                     </div>
-                `);
-                
-                $('#networkCanvas').append(label);
-            }
-            
-            static updateConnectionPositions() {
-                this.drawConnections();
-            }
-        }
-
-        // ====== PATIENT CONTEXT MANAGER (Improvement #4) ======
-        class PatientContextManager {
-            static currentPatient = null;
-            
-            static init() {
-                // Load sample patients
-                this.loadSamplePatients();
-            }
-            
-            static loadSamplePatients() {
-                const patients = [
-                    { id: 1, name: 'David Wilson', age: 58, disease: 'Severe Asthma', gender: 'M' },
-                    { id: 2, name: 'Maria Garcia', age: 72, disease: 'COPD', gender: 'F' },
-                    { id: 3, name: 'John Smith', age: 65, disease: 'Asthma-COPD Overlap', gender: 'M' }
-                ];
-                
-                const select = $('#patientSelect');
-                select.empty();
-                select.append('<option value="">Select patient...</option>');
-                
-                patients.forEach(patient => {
-                    select.append(`<option value="${patient.id}">${patient.name} (${patient.age}, ${patient.disease})</option>`);
-                });
-                
-                select.change(() => {
-                    const patientId = parseInt(select.val());
-                    if (patientId) {
-                        this.showPatientContext(patients.find(p => p.id === patientId));
-                    } else {
-                        $('#contextPanel').hide();
-                    }
-                });
-            }
-            
-            static showPatientContext(patient) {
-                this.currentPatient = patient;
-                StateManager.state.currentPatient = patient;
-                StateManager.save();
-                
-                const traits = StateManager.state.traits;
-                const affectedTraits = traits.filter(t => 
-                    Math.random() > 0.3 // Simulate some traits being affected
-                );
-                
-                const contextContent = $('#contextContent');
-                contextContent.html(`
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 700; margin-bottom: 4px;">${patient.name}</div>
-                        <div style="font-size: 12px; color: var(--text-tertiary);">
-                            ${patient.age} years • ${patient.gender} • ${patient.disease}
-                        </div>
+                    <div class="form-group">
+                        <label for="projectDescription" class="form-label">Research Description *</label>
+                        <textarea id="projectDescription" class="form-input form-textarea" 
+                                  placeholder="Describe the clinical innovation focus, research questions, and objectives..."
+                                  rows="4" maxlength="2000" required></textarea>
+                        <div class="char-counter" id="descCounter">0/2000</div>
                     </div>
-                    
-                    <div style="margin-bottom: 12px;">
-                        <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--text-primary);">
-                            <i class="fas fa-stethoscope"></i> Affected Traits
-                        </div>
-                        <div style="font-size: 12px; color: var(--text-secondary);">
-                            ${affectedTraits.length} of ${traits.length} traits show clinical significance
-                        </div>
+                    <div class="form-group">
+                        <label for="projectInstitution" class="form-label">Lead Institution</label>
+                        <input type="text" id="projectInstitution" class="form-input" 
+                               placeholder="e.g., Oxford University">
                     </div>
-                    
-                    ${affectedTraits.slice(0, 5).map(trait => `
-                        <div style="padding: 8px; background: var(--bg-tertiary); border-radius: var(--radius-md); margin-bottom: 6px; font-size: 12px;">
-                            <div style="font-weight: 600; color: var(--text-primary);">${trait.name}</div>
-                            <div style="color: var(--text-tertiary);">Severity: ${Math.floor(Math.random() * 100)}%</div>
-                        </div>
-                    `).join('')}
-                    
-                    ${affectedTraits.length > 5 ? `
-                        <div style="text-align: center; padding: 8px; font-size: 11px; color: var(--text-tertiary);">
-                            + ${affectedTraits.length - 5} more traits
-                        </div>
-                    ` : ''}
-                    
-                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-light);">
-                        <button class="btn btn-sm" style="width: 100%;" onclick="PatientContextManager.highlightPatientTraits()">
-                            <i class="fas fa-highlighter"></i> Highlight Patient Traits
+                    <div class="form-group">
+                        <label for="projectTags" class="form-label">Research Domains</label>
+                        <input type="text" id="projectTags" class="form-input" 
+                               placeholder="e.g., genomics, oncology, machine learning">
+                        <p class="text-muted mt-1">Separate domains with commas</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectPosition" class="form-label">Your Position in this Project *</label>
+                        <select id="projectPosition" class="form-input" required>
+                            <option value="">Select your role</option>
+                            <option value="principal-investigator">Principal Investigator</option>
+                            <option value="co-investigator">Co-Investigator</option>
+                            <option value="clinical-lead">Clinical Lead</option>
+                            <option value="technical-lead">Technical Lead</option>
+                            <option value="data-scientist">Data Scientist</option>
+                            <option value="research-coordinator">Research Coordinator</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" id="cancelProjectBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-flask mr-2"></i>
+                            Initiate Project
                         </button>
                     </div>
-                `);
-                
-                $('#contextPanel').show();
-            }
-            
-            static highlightPatientTraits() {
-                // Highlight traits relevant to current patient
-                $('.trait-node').css('opacity', '0.4');
-                
-                // Simulate highlighting some traits
-                const traits = StateManager.state.traits;
-                traits.slice(0, Math.min(3, traits.length)).forEach(trait => {
-                    $(`.trait-node[data-id="${trait.id}"]`).css({
-                        opacity: '1',
-                        boxShadow: '0 0 0 2px #ff9800'
-                    });
-                });
-                
-                setTimeout(() => {
-                    $('.trait-node').css({
-                        opacity: '',
-                        boxShadow: ''
-                    });
-                }, 3000);
-            }
-        }
-
-        // ====== EXPORT MANAGER (Improvement #5) ======
-        class ExportManager {
-            static async exportToPDF() {
-                try {
-                    UI.showToast('Exporting', 'Generating clinical report...', 'info');
-                    
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF('p', 'mm', 'a4');
-                    
-                    // Title
-                    doc.setFontSize(20);
-                    doc.setTextColor(26, 115, 232);
-                    doc.text('Clinical Pathway Report', 20, 20);
-                    
-                    // Date and session info
-                    doc.setFontSize(10);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 30);
-                    doc.text(`Session: ${StateManager.state.sessionId}`, 20, 35);
-                    
-                    // Disease info
-                    if (StateManager.state.currentDisease) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(0, 0, 0);
-                        doc.text(`Disease: ${StateManager.state.currentDisease.name}`, 20, 45);
-                    }
-                    
-                    // Patient info
-                    if (StateManager.state.currentPatient) {
-                        doc.text(`Patient: ${StateManager.state.currentPatient.name}`, 20, 50);
-                    }
-                    
-                    // Network summary
-                    doc.setFontSize(14);
-                    doc.setTextColor(26, 115, 232);
-                    doc.text('Network Summary', 20, 65);
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(0, 0, 0);
-                    doc.text(`Traits: ${StateManager.state.traits.length}`, 20, 72);
-                    doc.text(`Connections: ${StateManager.state.connections.length}`, 60, 72);
-                    doc.text(`Network Density: ${this.calculateDensity()}%`, 100, 72);
-                    
-                    // Trait list
-                    let yPos = 85;
-                    doc.setFontSize(12);
-                    doc.setTextColor(26, 115, 232);
-                    doc.text('Clinical Traits:', 20, yPos);
-                    
-                    yPos += 10;
-                    doc.setFontSize(10);
-                    doc.setTextColor(0, 0, 0);
-                    
-                    StateManager.state.traits.forEach((trait, index) => {
-                        if (yPos > 250) {
-                            doc.addPage();
-                            yPos = 20;
-                        }
-                        
-                        doc.text(`${index + 1}. ${trait.name} (${trait.category})`, 25, yPos);
-                        doc.setFontSize(8);
-                        doc.text(trait.description.substring(0, 80) + '...', 30, yPos + 4);
-                        yPos += 10;
-                        doc.setFontSize(10);
-                    });
-                    
-                    // Save PDF
-                    doc.save(`clinical_report_${new Date().toISOString().slice(0,10)}.pdf`);
-                    
-                    UI.showToast('Export Complete', 'PDF report downloaded', 'success');
-                    
-                } catch (error) {
-                    console.error('PDF export failed:', error);
-                    UI.showToast('Export Failed', error.message, 'error');
-                }
-            }
-            
-            static calculateDensity() {
-                const n = StateManager.state.traits.length;
-                if (n < 2) return 0;
-                const maxConnections = n * (n - 1) / 2;
-                return Math.round((StateManager.state.connections.length / maxConnections) * 100);
-            }
-            
-            static exportToPNG() {
-                html2canvas(document.querySelector('#networkCanvas')).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `network_${new Date().toISOString().slice(0,10)}.png`;
-                    link.href = canvas.toDataURL();
-                    link.click();
-                    
-                    UI.showToast('Export Complete', 'Network image downloaded', 'success');
-                });
-            }
-            
-            static exportToJSON() {
-                const data = {
-                    metadata: {
-                        exported: new Date().toISOString(),
-                        version: 'AIRWAYSCOPE PRO v2.0'
-                    },
-                    state: {
-                        ...StateManager.state,
-                        nodePositions: Array.from(StateManager.state.nodePositions.entries())
-                    }
-                };
-                
-                const dataStr = JSON.stringify(data, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                const link = document.createElement('a');
-                link.download = `network_${new Date().toISOString().slice(0,10)}.json`;
-                link.href = dataUri;
-                link.click();
-                
-                UI.showToast('Export Complete', 'JSON data downloaded', 'success');
-            }
-        }
-
-        // ====== UI MANAGER ======
-        class UI {
-            static init() {
-                // Initialize tabs
-                $('.tab-btn').click(function() {
-                    const tabId = $(this).data('tab');
-                    $('.tab-btn').removeClass('active');
-                    $(this).addClass('active');
-                    $('.tab-pane').removeClass('active');
-                    $(`#${tabId}-tab`).addClass('active');
-                });
-                
-                // Load diseases
-                this.loadDiseases();
-                
-                // Setup event listeners
-                this.setupEventListeners();
-                
-                // Render initial network if state exists
-                if (StateManager.state.traits.length > 0) {
-                    this.renderNetwork();
-                    $('#welcomeMessage').hide();
-                }
-                
-                console.log('✅ UI initialized');
-            }
-            
-            static loadDiseases() {
-                const diseases = [
-                    { id: 1, name: 'Asthma', code: 'J45', description: 'Chronic inflammatory airway disease' },
-                    { id: 2, name: 'COPD', code: 'J44', description: 'Chronic obstructive pulmonary disease' },
-                    { id: 3, name: 'Bronchiectasis', code: 'J47', description: 'Abnormal widening of the bronchi' },
-                    { id: 4, name: 'Pulmonary Fibrosis', code: 'J84', description: 'Progressive lung scarring' }
-                ];
-                
-                const diseaseList = $('#diseaseList');
-                diseaseList.empty();
-                
-                diseases.forEach(disease => {
-                    const card = $(`
-                        <div class="disease-card" data-id="${disease.id}" 
-                             style="padding: 16px; background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-light); margin-bottom: 10px; cursor: pointer;">
-                            <div style="font-weight: 700; margin-bottom: 4px;">${disease.name}</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px;">${disease.code}</div>
-                            <div style="font-size: 13px; color: var(--text-secondary);">${disease.description}</div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- New Discussion Modal -->
+        <div id="newDiscussionModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-comments mr-2"></i>
+                        Initiate Discussion
+                    </h2>
+                    <button class="modal-close" id="closeDiscussionModal">&times;</button>
+                </div>
+                <form id="discussionForm">
+                    <input type="hidden" id="discussionProjectId">
+                    <div class="form-group">
+                        <label class="form-label">Discussion Type</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn active" 
+                                    data-type="brainstorm">
+                                <i class="fas fa-lightbulb mr-2"></i>
+                                Brainstorm
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
+                                    data-type="question">
+                                <i class="fas fa-question-circle mr-2"></i>
+                                Question
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
+                                    data-type="decision">
+                                <i class="fas fa-gavel mr-2"></i>
+                                Decision
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm discussion-type-btn" 
+                                    data-type="insight">
+                                <i class="fas fa-eye mr-2"></i>
+                                Insight
+                            </button>
                         </div>
-                    `);
-                    
-                    card.click(() => {
-                        StateManager.state.currentDisease = disease;
-                        StateManager.save();
-                        $('#currentDisease').text(disease.name);
-                        UI.showToast('Disease Selected', `Now mapping ${disease.name} pathways`, 'info');
-                    });
-                    
-                    diseaseList.append(card);
-                });
-            }
-            
-            static setupEventListeners() {
-                // Add trait button
-                $('#btnAddTrait').click(() => {
-                    ModalManager.showAddTraitModal();
-                });
-                
-                // Add connection button
-                $('#btnAddConnection').click(() => {
-                    ModalManager.showConnectionModal();
-                });
-                
-                // Auto layout
-                $('#btnAutoLayout').click(() => {
-                    LayoutManager.applyForceLayout();
-                });
-                
-                // Undo/Redo buttons
-                $('#btnUndo').click(() => StateManager.undo());
-                $('#btnRedo').click(() => StateManager.redo());
-                
-                // Save network
-                $('#btnSaveNetwork').click(() => {
-                    if (StateManager.save()) {
-                        UI.showToast('Session Saved', 'All changes saved to local storage', 'success');
-                    }
-                });
-                
-                // Keyboard shortcuts
-                $(document).keydown((e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        switch(e.key) {
-                            case 'z':
-                                e.preventDefault();
-                                StateManager.undo();
-                                break;
-                            case 'y':
-                                e.preventDefault();
-                                StateManager.redo();
-                                break;
-                            case 's':
-                                e.preventDefault();
-                                StateManager.save();
-                                break;
-                        }
-                    }
-                    
-                    if (e.key === 'Delete' && StateManager.state.selectedNode) {
-                        this.deleteSelectedNode();
-                    }
-                });
-                
-                // Click outside to deselect
-                $('#networkCanvas').click((e) => {
-                    if (e.target.id === 'networkCanvas') {
-                        StateManager.state.selectedNode = null;
-                        $('.trait-node').removeClass('selected');
-                    }
-                });
-            }
-            
-            static renderNetwork() {
-                const container = $('#traitNodesContainer');
-                container.empty();
-                
-                // Hide welcome message if we have traits
-                if (StateManager.state.traits.length > 0) {
-                    $('#welcomeMessage').hide();
-                }
-                
-                // Create trait nodes
-                StateManager.state.traits.forEach(trait => {
-                    this.createTraitNode(trait);
-                });
-                
-                // Draw connections
-                ConnectionManager.drawConnections();
-                
-                // Make nodes draggable
-                this.setupDraggableNodes();
-                
-                // Update undo/redo buttons
-                StateManager.updateUndoRedoUI();
-            }
-            
-            static createTraitNode(trait) {
-                const container = $('#traitNodesContainer');
-                
-                // Get saved position or calculate new one
-                let pos = StateManager.state.nodePositions.get(trait.id);
-                if (!pos) {
-                    pos = {
-                        x: 100 + (StateManager.state.traits.indexOf(trait) % 4) * 250,
-                        y: 100 + Math.floor(StateManager.state.traits.indexOf(trait) / 4) * 180
-                    };
-                    StateManager.state.nodePositions.set(trait.id, pos);
-                }
-                
-                const node = $(`
-                    <div class="trait-node" data-id="${trait.id}" 
-                         style="left: ${pos.x}px; top: ${pos.y}px; border-left-color: ${this.getCategoryColor(trait.category)}">
-                        <div class="node-header">
-                            <div class="node-title">${trait.name}</div>
-                            <span class="node-category">${trait.category}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="discussionTitle" class="form-label">Discussion Topic *</label>
+                        <input type="text" id="discussionTitle" class="form-input" 
+                               placeholder="What research challenge are we addressing?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="discussionContent" class="form-label">Research Context *</label>
+                        <textarea id="discussionContent" class="form-input form-textarea" 
+                                  placeholder="Provide background, context, and specific questions for discussion..."
+                                  rows="4" maxlength="5000" required></textarea>
+                        <div class="char-counter" id="discussionCounter">0/5000</div>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" id="cancelDiscussionBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Initiate Discussion
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Add Team Member Modal -->
+        <div id="addTeamMemberModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Add Team Member
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="teamMemberForm">
+                    <input type="hidden" id="teamProjectId">
+                    <div class="form-group">
+                        <label for="memberName" class="form-label">Full Name *</label>
+                        <input type="text" id="memberName" class="form-input" 
+                               placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberEmail" class="form-label">Email Address</label>
+                        <input type="email" id="memberEmail" class="form-input" 
+                               placeholder="Optional: email for notifications">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberPosition" class="form-label">Position/Role *</label>
+                        <input type="text" id="memberPosition" class="form-input" 
+                               placeholder="e.g., Co-Investigator, Data Analyst" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberInstitution" class="form-label">Institution</label>
+                        <input type="text" id="memberInstitution" class="form-input" 
+                               placeholder="Optional: their institution">
+                    </div>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" onclick="app.hideModal('addTeamMemberModal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Add Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Edit Project Modal -->
+        <div id="editProjectModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit Project
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="editProjectForm">
+                    <input type="hidden" id="editProjectId">
+                    <div class="form-group">
+                        <label for="editProjectTitle" class="form-label">Project Title *</label>
+                        <input type="text" id="editProjectTitle" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProjectDescription" class="form-label">Research Description *</label>
+                        <textarea id="editProjectDescription" class="form-input form-textarea" 
+                                  rows="4" maxlength="2000" required></textarea>
+                        <div class="char-counter" id="editDescCounter">0/2000</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProjectTags" class="form-label">Research Domains</label>
+                        <input type="text" id="editProjectTags" class="form-input">
+                        <p class="text-muted mt-1">Separate domains with commas</p>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" onclick="app.hideModal('editProjectModal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Invite Collaborator Modal -->
+        <div id="inviteCollaboratorModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Invite Collaborator
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="inviteCollaboratorForm">
+                    <div class="form-group">
+                        <label class="form-label">Invite Method</label>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button type="button" class="btn btn-outline btn-sm invite-method-btn active" 
+                                    data-method="email">
+                                <i class="fas fa-envelope mr-2"></i>
+                                Email
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm invite-method-btn" 
+                                    data-method="link">
+                                <i class="fas fa-link mr-2"></i>
+                                Share Link
+                            </button>
                         </div>
-                        <div class="node-content">
-                            ${trait.description}
-                            <div style="margin-top: 8px; font-size: 11px; color: var(--text-tertiary);">
-                                <i class="fas fa-chart-line"></i> Severity: ${trait.severity || 'N/A'}%
-                            </div>
+                    </div>
+                    
+                    <div id="emailInviteSection">
+                        <div class="form-group">
+                            <label for="collaboratorEmail" class="form-label">Email Address *</label>
+                            <input type="email" id="collaboratorEmail" class="form-input" 
+                                   placeholder="Enter email address" required>
                         </div>
-                        <div class="node-footer">
-                            <div>ID: ${trait.id}</div>
-                            <div>
-                                <button class="btn btn-sm" onclick="UI.showTraitDetails(${trait.id})">
-                                    <i class="fas fa-info"></i>
+                        <div class="form-group">
+                            <label for="inviteMessage" class="form-label">Personal Message</label>
+                            <textarea id="inviteMessage" class="form-input form-textarea" 
+                                      rows="3" placeholder="Add a personal message..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="linkInviteSection" class="hidden">
+                        <div class="card bg-surface p-4 mb-4">
+                            <p class="text-sm text-muted mb-2">Share this link with collaborators:</p>
+                            <div class="flex gap-2">
+                                <input type="text" id="shareableLink" class="form-input flex-1" 
+                                       value="https://thoraxlab.com/invite/abc123" readonly>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="app.copyInviteLink()">
+                                    <i class="fas fa-copy"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                `);
-                
-                node.click((e) => {
-                    e.stopPropagation();
-                    this.selectNode(node, trait);
-                });
-                
-                container.append(node);
-            }
-            
-            static selectNode(node, trait) {
-                $('.trait-node').removeClass('selected');
-                node.addClass('selected');
-                StateManager.state.selectedNode = trait;
-                
-                // Show patient context if available
-                if (StateManager.state.currentPatient) {
-                    PatientContextManager.showPatientContext(StateManager.state.currentPatient);
-                }
-            }
-            
-            static setupDraggableNodes() {
-                $('.trait-node').each(function() {
-                    const node = $(this);
-                    let isDragging = false;
-                    let startX, startY, startLeft, startTop;
                     
-                    node.on('mousedown', function(e) {
-                        if (e.button !== 0) return;
-                        
-                        isDragging = true;
-                        startX = e.clientX;
-                        startY = e.clientY;
-                        startLeft = parseInt(node.css('left'));
-                        startTop = parseInt(node.css('top'));
-                        
-                        node.css('cursor', 'grabbing');
-                        node.css('z-index', '1000');
-                        
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        $(document).on('mousemove', drag);
-                        $(document).on('mouseup', stopDrag);
-                    });
-                    
-                    function drag(e) {
-                        if (!isDragging) return;
-                        
-                        const dx = e.clientX - startX;
-                        const dy = e.clientY - startY;
-                        
-                        const newLeft = startLeft + dx;
-                        const newTop = startTop + dy;
-                        
-                        node.css('left', newLeft + 'px');
-                        node.css('top', newTop + 'px');
-                        
-                        // Update connections in real-time
-                        ConnectionManager.updateConnectionPositions();
-                    }
-                    
-                    function stopDrag() {
-                        if (!isDragging) return;
-                        
-                        isDragging = false;
-                        node.css('cursor', 'move');
-                        node.css('z-index', '10');
-                        
-                        // Save new position
-                        const traitId = parseInt(node.data('id'));
-                        const x = parseInt(node.css('left'));
-                        const y = parseInt(node.css('top'));
-                        
-                        StateManager.state.nodePositions.set(traitId, { x, y });
-                        StateManager.save();
-                        
-                        // Final connection redraw
-                        ConnectionManager.drawConnections();
-                        
-                        $(document).off('mousemove', drag);
-                        $(document).off('mouseup', stopDrag);
-                    }
-                });
-            }
-            
-            static getCategoryColor(category) {
-                const colors = {
-                    'Inflammatory': '#ea4335',
-                    'Physiological': '#0f9d58',
-                    'Behavioral': '#ff9800',
-                    'Comorbid': '#9c27b0',
-                    'Environmental': '#00bcd4',
-                    'Treatment': '#0d47a1'
-                };
-                return colors[category] || '#4361ee';
-            }
-            
-            static showTraitDetails(traitId) {
-                const trait = StateManager.state.traits.find(t => t.id === traitId);
-                if (!trait) return;
-                
-                ModalManager.showTraitDetailsModal(trait);
-            }
-            
-            static deleteSelectedNode() {
-                if (!StateManager.state.selectedNode) return;
-                
-                if (confirm(`Delete "${StateManager.state.selectedNode.name}" and all its connections?`)) {
-                    const traitId = StateManager.state.selectedNode.id;
-                    
-                    // Record action for undo
-                    StateManager.recordAction('addTrait', { ...StateManager.state.selectedNode });
-                    
-                    // Remove trait
-                    StateManager.state.traits = StateManager.state.traits.filter(t => t.id !== traitId);
-                    StateManager.state.nodePositions.delete(traitId);
-                    
-                    // Remove connections
-                    StateManager.state.connections = StateManager.state.connections.filter(conn => 
-                        conn.source !== traitId && conn.target !== traitId
-                    );
-                    
-                    StateManager.state.selectedNode = null;
-                    StateManager.save();
-                    this.renderNetwork();
-                    
-                    this.showToast('Trait Deleted', 'Trait removed from network', 'warning');
-                }
-            }
-            
-            static updateUndoRedoButtons() {
-                $('#btnUndo').prop('disabled', StateManager.historyIndex < 0);
-                $('#btnRedo').prop('disabled', StateManager.historyIndex >= StateManager.history.length - 1);
-            }
-            
-            static showToast(title, message, type = 'info') {
-                const container = $('#toastContainer');
-                
-                const toast = $(`
-                    <div class="toast">
-                        <div style="color: ${this.getToastColor(type)}; font-size: 18px;">
-                            <i class="fas ${this.getToastIcon(type)}"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 14px;">${title}</div>
-                            <div style="font-size: 13px; color: var(--text-secondary);">${message}</div>
-                        </div>
-                        <button class="btn btn-sm" onclick="$(this).parent().remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `);
-                
-                container.append(toast);
-                
-                setTimeout(() => {
-                    toast.remove();
-                }, 5000);
-            }
-            
-            static getToastColor(type) {
-                return {
-                    'success': '#0f9d58',
-                    'error': '#ea4335',
-                    'warning': '#ff9800',
-                    'info': '#1a73e8'
-                }[type] || '#1a73e8';
-            }
-            
-            static getToastIcon(type) {
-                return {
-                    'success': 'fa-check-circle',
-                    'error': 'fa-exclamation-circle',
-                    'warning': 'fa-exclamation-triangle',
-                    'info': 'fa-info-circle'
-                }[type] || 'fa-info-circle';
-            }
-        }
-
-        // ====== MODAL MANAGER ======
-        class ModalManager {
-            static showAddTraitModal() {
-                const modal = $('#addTraitModal');
-                const modalBody = modal.find('.modal-body');
-                
-                modalBody.html(`
-                    <div class="form-group">
-                        <label class="form-label">Trait Name *</label>
-                        <input type="text" class="form-control" id="traitName" placeholder="e.g., Eosinophilic Inflammation">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Category *</label>
-                        <select class="form-control" id="traitCategory">
-                            <option value="Inflammatory">Inflammatory</option>
-                            <option value="Physiological">Physiological</option>
-                            <option value="Behavioral">Behavioral</option>
-                            <option value="Comorbid">Comorbid</option>
-                            <option value="Environmental">Environmental</option>
-                            <option value="Treatment">Treatment</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" id="traitDescription" rows="3" 
-                                  placeholder="Clinical description of this trait..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Severity (0-100%)</label>
-                        <input type="range" class="form-control" id="traitSeverity" min="0" max="100" value="50">
-                        <div style="text-align: center; margin-top: 4px;">
-                            <span id="severityValue">50%</span>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="btn" style="flex: 1;" onclick="ModalManager.close('addTraitModal')">
+                    <div class="flex gap-3 justify-end mt-8">
+                        <button type="button" class="btn btn-outline" onclick="app.hideModal('inviteCollaboratorModal')">
                             Cancel
                         </button>
-                        <button class="btn btn-primary" style="flex: 1;" onclick="ModalManager.saveTrait()">
-                            Add Trait
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Send Invitation
                         </button>
                     </div>
-                `);
-                
-                // Update severity value display
-                $('#traitSeverity').on('input', function() {
-                    $('#severityValue').text(this.value + '%');
-                });
-                
-                modal.addClass('active');
-            }
-            
-            static saveTrait() {
-                const name = $('#traitName').val().trim();
-                const category = $('#traitCategory').val();
-                const description = $('#traitDescription').val().trim();
-                const severity = $('#traitSeverity').val();
-                
-                if (!name) {
-                    UI.showToast('Validation Error', 'Please enter a trait name', 'error');
-                    return;
-                }
-                
-                const newTrait = {
-                    id: Date.now(),
-                    name,
-                    category,
-                    description: description || 'No description provided',
-                    severity,
-                    createdAt: new Date().toISOString()
-                };
-                
-                // Record action for undo
-                StateManager.recordAction('addTrait', { ...newTrait });
-                
-                // Add to state
-                StateManager.state.traits.push(newTrait);
-                StateManager.save();
-                
-                // Update UI
-                UI.renderNetwork();
-                this.close('addTraitModal');
-                
-                UI.showToast('Trait Added', `${name} added to network`, 'success');
-            }
-            
-            static showConnectionModal() {
-                if (StateManager.state.traits.length < 2) {
-                    UI.showToast('Error', 'Need at least 2 traits to create connections', 'error');
-                    return;
-                }
-                
-                const modal = $('#connectionModal');
-                const modalBody = modal.find('.modal-body');
-                
-                const traitOptions = StateManager.state.traits.map(trait => 
-                    `<option value="${trait.id}">${trait.name} (${trait.category})</option>`
-                ).join('');
-                
-                modalBody.html(`
-                    <div class="form-group">
-                        <label class="form-label">Source Trait *</label>
-                        <select class="form-control" id="sourceTrait">
-                            <option value="">Select source trait...</option>
-                            ${traitOptions}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Target Trait *</label>
-                        <select class="form-control" id="targetTrait">
-                            <option value="">Select target trait...</option>
-                            ${traitOptions}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Relationship Type *</label>
-                        <select class="form-control" id="connectionType">
-                            <option value="causes">Causes</option>
-                            <option value="exacerbates">Exacerbates</option>
-                            <option value="mitigates">Mitigates</option>
-                            <option value="treats">Treats</option>
-                            <option value="correlates">Correlates With</option>
-                            <option value="associated">Associated With</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Strength (1-5)</label>
-                        <input type="range" class="form-control" id="connectionStrength" min="1" max="5" value="3">
-                        <div style="text-align: center; margin-top: 4px;">
-                            <span id="strengthValue">3</span>/5
+                </form>
+            </div>
+        </div>
+        
+        <!-- Notification Settings Modal -->
+        <div id="notificationSettingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-bell mr-2"></i>
+                        Notification Settings
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="space-y-4 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Project Updates</div>
+                            <div class="text-sm text-muted">Get notified about project activities</div>
                         </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Evidence / Notes</label>
-                        <textarea class="form-control" id="connectionEvidence" rows="2" 
-                                  placeholder="Clinical evidence or notes..."></textarea>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="btn" style="flex: 1;" onclick="ModalManager.close('connectionModal')">
-                            Cancel
-                        </button>
-                        <button class="btn btn-primary" style="flex: 1;" onclick="ModalManager.saveConnection()">
-                            Create Connection
-                        </button>
-                    </div>
-                `);
-                
-                // Update strength value display
-                $('#connectionStrength').on('input', function() {
-                    $('#strengthValue').text(this.value);
-                });
-                
-                modal.addClass('active');
-            }
-            
-            static saveConnection() {
-                const source = parseInt($('#sourceTrait').val());
-                const target = parseInt($('#targetTrait').val());
-                const type = $('#connectionType').val();
-                const strength = parseInt($('#connectionStrength').val());
-                const evidence = $('#connectionEvidence').val().trim();
-                
-                if (!source || !target) {
-                    UI.showToast('Validation Error', 'Please select both source and target traits', 'error');
-                    return;
-                }
-                
-                if (source === target) {
-                    UI.showToast('Validation Error', 'Source and target cannot be the same', 'error');
-                    return;
-                }
-                
-                // Check if connection already exists
-                const exists = StateManager.state.connections.find(conn => 
-                    (conn.source === source && conn.target === target) ||
-                    (conn.source === target && conn.target === source)
-                );
-                
-                if (exists) {
-                    UI.showToast('Connection Exists', 'These traits are already connected', 'warning');
-                    return;
-                }
-                
-                const newConnection = {
-                    id: `${source}-${target}-${Date.now()}`,
-                    source,
-                    target,
-                    type,
-                    strength,
-                    evidence: evidence || 'No evidence provided',
-                    createdAt: new Date().toISOString()
-                };
-                
-                // Record action for undo
-                StateManager.recordAction('addConnection', { ...newConnection });
-                
-                // Add to state
-                StateManager.state.connections.push(newConnection);
-                StateManager.save();
-                
-                // Update UI
-                ConnectionManager.drawConnections();
-                this.close('connectionModal');
-                
-                UI.showToast('Connection Added', 'New clinical connection created', 'success');
-            }
-            
-            static showTraitDetailsModal(trait) {
-                const modal = $(`
-                    <div class="modal active">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2 class="modal-title">${trait.name}</h2>
-                                <button class="btn btn-sm" onclick="$(this).closest('.modal').remove()">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div style="margin-bottom: 16px;">
-                                    <span class="node-category" style="background: ${UI.getCategoryColor(trait.category)}">
-                                        ${trait.category}
-                                    </span>
-                                </div>
-                                
-                                <div style="margin-bottom: 16px;">
-                                    <div style="font-weight: 600; margin-bottom: 4px;">Description</div>
-                                    <div>${trait.description}</div>
-                                </div>
-                                
-                                <div style="margin-bottom: 16px;">
-                                    <div style="font-weight: 600; margin-bottom: 4px;">Severity</div>
-                                    <div>${trait.severity || 'N/A'}%</div>
-                                </div>
-                                
-                                <div style="margin-bottom: 16px;">
-                                    <div style="font-weight: 600; margin-bottom: 4px;">Created</div>
-                                    <div>${new Date(trait.createdAt).toLocaleString()}</div>
-                                </div>
-                                
-                                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                                    <button class="btn btn-danger" style="flex: 1;" 
-                                            onclick="UI.deleteSelectedNode(); $(this).closest('.modal').remove()">
-                                        <i class="fas fa-trash"></i> Delete Trait
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Discussion Replies</div>
+                            <div class="text-sm text-muted">Notify when someone replies to your discussions</div>
                         </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                `);
-                
-                $('body').append(modal);
-            }
-            
-            static close(modalId) {
-                $(`#${modalId}`).removeClass('active');
-            }
-        }
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Collaboration Requests</div>
+                            <div class="text-sm text-muted">Notify about new collaboration requests</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium">Weekly Digest</div>
+                            <div class="text-sm text-muted">Receive weekly summary of activities</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end p-6 pt-0">
+                    <button class="btn btn-primary" onclick="app.hideModal('notificationSettingsModal')">
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // ====== LAYOUT MANAGER ======
-        class LayoutManager {
-            static applyForceLayout() {
-                const nodes = $('.trait-node');
-                if (nodes.length === 0) return;
-                
-                const canvas = $('#networkCanvas');
-                const centerX = canvas.width() / 2;
-                const centerY = canvas.height() / 2;
-                const radius = Math.min(canvas.width(), canvas.height()) * 0.35;
-                
-                nodes.each(function(index) {
-                    const node = $(this);
-                    const angle = (index / nodes.length) * Math.PI * 2;
-                    const x = centerX + Math.cos(angle) * radius - node.width() / 2;
-                    const y = centerY + Math.sin(angle) * radius - node.height() / 2;
-                    
-                    const traitId = parseInt(node.data('id'));
-                    StateManager.state.nodePositions.set(traitId, { x, y });
-                });
-                
-                StateManager.save();
-                UI.renderNetwork();
-                
-                UI.showToast('Layout Applied', 'Force-directed layout generated', 'success');
-            }
-        }
-
-        // ====== INITIALIZATION ======
-        $(document).ready(function() {
-            console.log('🚀 AIRWAYSCOPE PRO v2.0 Initializing...');
-            
-            // Initialize all systems in order
-            StateManager.init();
-            PatientContextManager.init();
-            UI.init();
-            
-            // Show welcome message
-            setTimeout(() => {
-                UI.showToast('System Ready', 'AIRWAYSCOPE PRO v2.0 loaded with persistent state', 'success');
-            }, 1000);
-            
-            // Keyboard shortcuts info
-            console.log('📋 Keyboard Shortcuts: Ctrl+Z (Undo), Ctrl+Y (Redo), Ctrl+S (Save), Delete (Remove)');
-        });
-
-        // ====== GLOBAL EXPORTS ======
-        window.StateManager = StateManager;
-        window.ConnectionManager = ConnectionManager;
-        window.PatientContextManager = PatientContextManager;
-        window.ExportManager = ExportManager;
-        window.UI = UI;
-        window.ModalManager = ModalManager;
-        window.LayoutManager = LayoutManager;
-    </script>
+    <!-- JavaScript -->
+    <script src="app.js"></script>
 </body>
 </html>
